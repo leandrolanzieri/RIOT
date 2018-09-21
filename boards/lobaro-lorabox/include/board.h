@@ -84,6 +84,16 @@ extern "C" {
  */
 void board_init(void);
 
+/**
+ * @name        DS18
+ *
+ * DS18 temperature sensor configuration.
+ * @{
+ */
+#define DS18_PARAM_PIN      (GPIO_PIN(PORT_B, 3))
+#define DS18_PARAM_PULL     (GPIO_IN)
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif
