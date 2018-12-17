@@ -20,11 +20,11 @@ Examples of runtime configurations are:
 - Private-public keys
 - System state variables
 
-These parameters might have constraints, like an specific order to be applied
+These parameters MAY have constraints, like an specific order to be applied
 (due to interdependencies) or value boundaries.
 
 The main advantages of having such a system are:
-- Easy to apply per-node configuration during deployment
+- Easy to apply per-node configurations during deployment
 - No need to implement a special mechanism for per-node configurations during
   firmware updates (only in the case of migration)
 - Common interface for modules to expose their runtime configuration and handle
@@ -66,7 +66,7 @@ validation and any logic needed for applying or obtaining the parameters.
 
 # 3. The RIOT Registry
 The RIOT Registry is a module in charge of exposing an
-**interface for handling persistent module configurations**. The RIOT registry
+**interface for handling persistent module configurations** (via registry handlers). The RIOT registry
 allows, among others, to:
 - Get or set a configuration parameter
 - Commit a configuration group
