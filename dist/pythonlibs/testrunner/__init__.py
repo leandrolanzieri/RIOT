@@ -7,10 +7,11 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 
-import os
 import sys
 from traceback import print_tb
+
 import pexpect
+import riotnode.node
 
 from .spawn import find_exc_origin, setup_child, teardown_child
 from .unittest import PexpectTestCase   # noqa, F401 expose to users
@@ -21,12 +22,13 @@ from .utils import test_utils_interactive_sync # noqa, F401 expose to users
 # default value (10)
 TIMEOUT = int(os.environ.get('RIOT_TEST_TIMEOUT') or 10)
 
-
 def run(testfunc, timeout=TIMEOUT, echo=True, traceback=False):
-    child = setup_child(timeout, env=os.environ,
-                        logfile=sys.stdout if echo else None)
+    node = riotnode.node.RIOTNode()
+    node.start_term(timeout=timeout, logfile=sys.stdout if echo else None)
+    node.reset()
+
     try:
-        testfunc(child)
+        testfunc(node.term)
     except pexpect.TIMEOUT:
         trace = find_exc_origin(sys.exc_info()[2])
         print("Timeout in expect script at \"%s\" (%s:%d)" % trace)
@@ -42,5 +44,5 @@ def run(testfunc, timeout=TIMEOUT, echo=True, traceback=False):
         return 1
     finally:
         print("")
-        teardown_child(child)
+        node.stop_term()
     return 0
