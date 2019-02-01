@@ -102,6 +102,7 @@ enum {
     SAUL_SENSE_CHARGE   = 0x94,     /**< sensor: coulomb counter */
     SAUL_SENSE_CURRENT  = 0x95,     /**< sensor: ammeter */
     SAUL_SENSE_PM       = 0x96,     /**< sensor: particulate matter */
+    SAUL_SENSE_CAP      = 0x97,     /**< sensor: capacitance */
     SAUL_CLASS_ANY      = 0xff      /**< any device - wildcard */
     /* extend this list as needed... */
 };

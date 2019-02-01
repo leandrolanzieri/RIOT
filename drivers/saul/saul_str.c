@@ -59,6 +59,7 @@ const char *saul_class_to_str(const uint8_t class_id)
         case SAUL_SENSE_CURRENT:   return "SENSE_CURRENT";
         case SAUL_SENSE_OCCUP:     return "SENSE_OCCUP";
         case SAUL_SENSE_PM:        return "SENSE_PM";
+        case SAUL_SENSE_CAP:       return "SENSE_CAP";
         case SAUL_CLASS_ANY:       return "CLASS_ANY";
         default:                   return "CLASS_UNKNOWN";
     }
