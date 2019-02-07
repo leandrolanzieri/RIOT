@@ -26,12 +26,12 @@
 
 static int _read(const void *dev, phydat_t *res)
 {
-    uint32_t raw;
-    if (ad7746_read_raw_ch((const ad7746_t *)dev, AD7746_READ_CAP_CH, &raw)) {
+    int val;
+    if (ad7746_read_capacitance((const ad7746_t *)dev, &val)) {
         return -ECANCELED;
     }
 
-    res->val[0] = ad7746_raw_to_capacitance(raw);
+    res->val[0] = val;
     res->unit = UNIT_F;
     res->scale = -15;
 

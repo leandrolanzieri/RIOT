@@ -40,7 +40,7 @@ extern "C" {
 #endif
 
 /**
- * @brief 0fF capacitance code
+ * @brief 0 fF capacitance code
  */
 #define AD7746_ZERO_SCALE_CODE  (0x800000LL)
 
@@ -151,81 +151,90 @@ typedef struct ad7746 {
 int ad7746_init(ad7746_t *dev, const ad7746_params_t *params);
 
 /**
- * @brief   Reads a raw value either from the capacitance channel or from the
- *          voltage / temperature channel if available
+ * @brief Reads the capacitance value of the currently selected input. Returns
+ *        the value in fF.
  *
- * @param[in] dev   device descriptor
- * @param[in] ch    channel to read:
- *                      - AD7746_READ_CAP_CH: Capacitance
- *                      - AD7746_READ_VT_CH: Voltage / temperature
- * @param[out] raw  read value
+ * @param[in]  dev   device descriptor
+ * @param[out] value read value
  *
  * @return AD7746_OK on success
- * @return AD7746_NODATA if no data is available
- * @return AD7746_I2C on error getting a reponse
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
  */
-int ad7746_read_raw_ch(const ad7746_t *dev, uint8_t ch, uint32_t *raw);
+int ad7746_read_capacitance(const ad7746_t *dev, int *value);
 
 /**
- * @brief   Convenience function that reads a raw value from the capacitance
- *          channel
+ * @brief Reads the voltage from the external voltage input (VIN). Returns the
+ *        value in mV.
  *
- * @param[in] dev   device descriptor
- * @param[out] raw  read value
+ * @note If the current mode of the voltage / temperature channel does not match
+ *       @ref AD7746_VT_MD_VIN it will be changed to this mode, causing data not
+ *       to be available rightaway. The time until new data is available will
+ *       depend on the @ref ad7746_params_t::vt_sample_rate "sample rate" of the
+ *       channel.
+ *
+ * @param[in, out] dev device descriptor
+ * @param[out] value read value in mV
  *
  * @return AD7746_OK on success
- * @return AD7746_NODATA if no data is available
- * @return AD7746_I2C on error getting a reponse
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
  */
-static inline int ad7746_read_raw_cap_ch(const ad7746_t *dev, uint32_t *raw)
-{
-    return ad7746_read_raw_ch(dev, AD7746_READ_CAP_CH, raw);
-}
+int ad7746_read_voltage_in(ad7746_t *dev, int *value);
 
 /**
- * @brief   Convenience function that reads a raw value from the voltage /
- *          temperature channel
+ * @brief Reads the voltage from the VDD pin. Returns the value in mV.
  *
- * @param[in] dev   device descriptor
- * @param[out] raw  read value
+ * @note If the current mode of the voltage / temperature channel does not match
+ *       @ref AD7746_VT_MD_VDD it will be changed to this mode, causing data not
+ *       to be available rightaway. The time until new data is available will
+ *       depend on the @ref ad7746_params_t::vt_sample_rate "sample rate" of the
+ *       channel.
+ *
+ * @param[in, out] dev device descriptor
+ * @param[out] value read value in mV
  *
  * @return AD7746_OK on success
- * @return AD7746_NODATA if no data is available
- * @return AD7746_I2C on error getting a reponse
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
  */
-static inline int ad7746_read_raw_vt_ch(const ad7746_t *dev, uint32_t *raw)
-{
-    return ad7746_read_raw_ch(dev, AD7746_READ_VT_CH, raw);
-}
+int ad7746_read_voltage_vdd(ad7746_t *dev, int *value);
 
 /**
- * @brief   Converts a raw code into a capacitance expressed in fF
+ * @brief Reads the temperature from the internal sensor.
  *
- * @param[in] raw   Raw code from the device
+ * @note If the current mode of the voltage / temperature channel does not match
+ *       @ref AD7746_VT_MD_TEMP it will be changed to this mode, causing data
+ *       not to be available rightaway. The time until new data is available
+ *       will depend on the @ref ad7746_params_t::vt_sample_rate "sample rate"
+ *       of the channel.
  *
- * @return capacitance in fF
+ * @param[in, out] dev device descriptor
+ * @param[out] value read value in celsius
+ *
+ * @return AD7746_OK on success
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
  */
-int ad7746_raw_to_capacitance(uint32_t raw);
+int ad7746_read_temperature_int(ad7746_t *dev, int *value);
 
 /**
- * @brief   Converts a raw code into temperature expressed in celsius (C)
+ * @brief Reads the temperature from the external sensor (see datasheet).
  *
- * @param[in] raw   Raw code from the device
+ * @note If the current mode of the voltage / temperature channel does not match
+ *       @ref AD7746_VT_MD_ETEMP it will be changed to this mode, causing data
+ *       not to be available rightaway. The time until new data is available
+ *       will depend on the @ref ad7746_params_t::vt_sample_rate "sample rate"
+ *       of the channel.
  *
- * @return temperature in celsius
+ * @param[in, out] dev device descriptor
+ * @param[out] value read value in celsius
+ *
+ * @return AD7746_OK on success
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
  */
-int ad7746_raw_to_temperature(uint32_t raw);
-
-/**
- * @brief   Converts a raw code into voltage expressed in mV
- *
- * @param[in] raw   Raw code from the device
- * @return voltage in mV
- *
- * @note Note when using the @ref AD7746_VT_MD_VDD mode, that the voltage from the
- *       VDD pin is internally attenuated by 6
- */
-int ad7746_raw_to_voltage(uint32_t raw);
+int ad7746_read_temperature_ext(ad7746_t *dev, int *value);
 
 /**
  * @brief   Sets the current input for the capacitive measurement
@@ -239,15 +248,26 @@ int ad7746_raw_to_voltage(uint32_t raw);
 int ad7746_set_cap_ch_input(const ad7746_t *dev, uint8_t input);
 
 /**
- * @brief   Sets the mode for the voltage / temperature channel
+ * @brief   Sets the mode for the voltage / temperature channel and updates the
+ *          descriptor with the new configuration.
  *
- * @param[in] dev   device descriptor
+ * @param[in, out]  dev   device descriptor
  * @param[in] mode  mode to which the channel has to be set
  *
  * @return AD7746_OK on success
  * @return AD7746_NOI2C on error
  */
-int ad7746_set_vt_channel_mode(const ad7746_t *dev, ad7746_vt_mode_t mode);
+int ad7746_set_vt_ch_mode(ad7746_t *dev, ad7746_vt_mode_t mode);
+
+/**
+ * @brief Returns the current mode of the voltage / temperature channel
+ *
+ * @param[in] dev device descriptor
+ * @return current mode
+ */
+static inline ad7746_vt_mode_t ad7746_get_vt_ch_mode(const ad7746_t *dev) {
+    return dev->params.vt_mode;
+}
 
 /**
  * @brief   Sets the sample rate for the voltage / temperature channel

@@ -25,14 +25,13 @@
 #include "ad7746.h"
 #include "ad7746_params.h"
 
-#define SLEEP       (500 * US_PER_MS)
+#define SLEEP       (1000 * US_PER_MS)
 
 static ad7746_t dev;
 
 int main(void)
 {
-    uint32_t data;
-    ad7746_vt_mode_t vt_mode = AD7746_VT_MD_TEMP;
+    int data;
 
     puts("AD746 capacitance to digital driver test application\n");
     printf("Initializing AD7746 at I2C_DEV(%i)... ",
@@ -46,39 +45,56 @@ int main(void)
         return -1;
     }
 
-    ad7746_set_vt_channel_mode(&dev, vt_mode);
+    /* show that if changed mode data may not be available rightaway */
+    if (ad7746_read_voltage_vdd(&dev, &data) == AD7746_OK) {
+        printf("VDD : %d mV\n", data);
+    }
+    else {
+        printf("No data available for VDD yet\n");
+    }
+
+    if (ad7746_read_temperature_int(&dev, &data) == AD7746_OK) {
+        printf("Internal temperature: %d C\n", data);
+    }
+    else {
+        printf("No data available for internal temperature yet\n");
+    }
 
     while (1) {
         int res;
         puts("=========================");
         puts("        Measuring");
         puts("=========================");
-        res = ad7746_read_raw_cap_ch(&dev, &data);
+        res = ad7746_read_capacitance(&dev, &data);
         if ( res == AD7746_OK) {
-            printf("Raw analog value: %"PRIu32"\n", data);
-            printf("Capacitance %d fF\n", ad7746_raw_to_capacitance(data));
+            printf("Capacitance %d fF\n", data);
         }
         else {
             printf("Error reading data. err: %d\n", res);
         }
 
-        res = ad7746_read_raw_vt_ch(&dev, &data);
-        if ( res == AD7746_OK) {
-            printf("Raw analog value: %"PRIu32"\n", data);
-            if (vt_mode == AD7746_VT_MD_TEMP) {
-                printf("Temperature: %d C\n", ad7746_raw_to_temperature(data));
-            }
-            else {
-                printf("Voltage: %d mV\n", ad7746_raw_to_voltage(data));
-            }
+        do {
+            res = ad7746_read_temperature_int(&dev, &data);
+        } while (res == AD7746_NODATA);
+
+        if (res == AD7746_OK) {
+            printf("Internal temperature: %d C\n", data);
         }
         else {
-            printf("Error reading data. err: %d\n", res);
+            printf("Error reading internal temperature\n");
         }
 
-        vt_mode = (vt_mode == AD7746_VT_MD_TEMP) ? AD7746_VT_MD_VDD :
-                                                   AD7746_VT_MD_TEMP;
-        ad7746_set_vt_channel_mode(&dev, vt_mode);
+        do {
+            res = ad7746_read_voltage_vdd(&dev, &data);
+        } while (res == AD7746_NODATA);
+
+        if (res == AD7746_OK) {
+            printf("VDD: %d mV\n", data);
+        }
+        else {
+            printf("Error reading VDD\n");
+        }
+
         puts("");
         xtimer_usleep(SLEEP);
     }
