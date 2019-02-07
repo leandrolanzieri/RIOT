@@ -41,5 +41,5 @@ static int _read(const void *dev, phydat_t *res)
 const saul_driver_t ad7746_saul_driver = {
     .read = _read,
     .write = saul_notsup,
-    .type = SAUL_SENSE_CAP,
+    .type = SAUL_SENSE_CAPACITANCE,
 };
