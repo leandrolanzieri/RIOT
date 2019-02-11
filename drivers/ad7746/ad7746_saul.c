@@ -24,7 +24,7 @@
 #include "saul.h"
 #include "ad7746.h"
 
-static int _read(const void *dev, phydat_t *res)
+static int _read_cap(const void *dev, phydat_t *res)
 {
     int val;
     if (ad7746_read_capacitance((const ad7746_t *)dev, &val)) {
@@ -38,8 +38,58 @@ static int _read(const void *dev, phydat_t *res)
     return 1;
 }
 
-const saul_driver_t ad7746_saul_driver = {
-    .read = _read,
+const saul_driver_t ad7746_saul_driver_cap = {
+    .read = _read_cap,
     .write = saul_notsup,
     .type = SAUL_SENSE_CAPACITANCE,
+};
+
+static int _read_temp(const void *dev, phydat_t *res)
+{
+    int val;
+    int result;
+    do {
+        result = ad7746_read_temperature_int((ad7746_t *)dev, &val);
+    } while (result == AD7746_NODATA);
+
+    if (result == AD7746_OK) {
+        res->val[0] = val;
+        res->unit = UNIT_TEMP_C;
+        res->scale = 0;
+        return 1;
+    }
+    else {
+        return -ECANCELED;
+    }
+}
+
+const saul_driver_t ad7746_saul_driver_temp = {
+    .read = _read_temp,
+    .write = saul_notsup,
+    .type = SAUL_SENSE_TEMP
+};
+
+static int _read_volt(const void *dev, phydat_t *res)
+{
+    int val;
+    int result;
+    do {
+        result = ad7746_read_voltage_in((ad7746_t *)dev, &val);
+    } while (result == AD7746_NODATA);
+
+    if (result == AD7746_OK) {
+        res->val[0] = val;
+        res->unit = UNIT_V;
+        res->scale = -3;
+        return 1;
+    }
+    else {
+        return -ECANCELED;
+    }
+}
+
+const saul_driver_t ad7746_saul_driver_volt = {
+    .read = _read_volt,
+    .write = saul_notsup,
+    .type = SAUL_SENSE_VOLTAGE
 };
