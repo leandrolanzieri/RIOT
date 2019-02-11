@@ -73,6 +73,7 @@ static int _raw_to_temperature(uint32_t raw);
  * @brief   Converts a raw code into voltage expressed in mV
  *
  * @param[in] raw   Raw code from the device
+ *
  * @return voltage in mV
  */
 static int _raw_to_voltage(uint32_t raw);

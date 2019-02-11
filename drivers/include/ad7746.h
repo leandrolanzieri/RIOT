@@ -10,7 +10,26 @@
  * @defgroup   drivers_ad7746 AD7746 Capacitance-to-digital converter driver
  * @ingroup    drivers_sensors
  * @ingroup    drivers_saul
- * @brief      I2C Capacitance-to-digital converter with temperature sensor
+ * @brief      I2C Capacitance-to-digital converter with temperature and voltage
+ *             sensors. The devices has two main channels: capacitance channel
+ *             and voltage / temperature channel.
+ *
+ *             The capacitance channel can measure from two different inputs
+ *             (CIN1 and CIN2), selected using @ref ad7746_set_cap_ch_input.
+ *
+ *             The voltage / temperature channel can measure from five different
+ *             sources: Voltage from VIN pins, internal VCC, internal
+ *             temperature sensor and external temperature sensor
+ *             (see datasheet for proper setup). The mode of this channel can be
+ *             set using @ref ad7746_set_vt_ch_mode or will be directly be set
+ *             when trying to read from a specific source which is not the
+ *             currently selected one. This mode change may lead to data not
+ *             being available right away (in which case the reading function
+ *             will return @ref AD7746_NODATA error code).
+ *
+ * @note       Constantly switching between modes in the voltage / temperature
+ *             channel may lead to invalid data, for what it seems to be a
+ *             device limitation.
  *
  * This driver provides @ref drivers_saul capabilities.
  * @{
@@ -31,13 +50,6 @@ extern "C" {
 
 #include "periph/i2c.h"
 #include "periph/gpio.h"
-
-/**
- * @brief  AD7746 default address
- */
-#ifndef AD7746_I2C_ADDRESS
-#define AD7746_I2C_ADDRESS  (0x48)
-#endif
 
 /**
  * @brief 0 fF capacitance code

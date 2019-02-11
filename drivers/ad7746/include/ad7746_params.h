@@ -36,7 +36,7 @@ extern "C" {
 #define AD7746_PARAM_I2C        (I2C_DEV(0))
 #endif
 #ifndef AD7746_PARAM_ADDR
-#define AD7746_PARAM_ADDR       (AD7746_I2C_ADDRESS)
+#define AD7746_PARAM_ADDR       (0x48)
 #endif
 #ifndef AD7746_PARAM_CAP_SR
 #define AD7746_PARAM_CAP_SR     (AD7746_CAP_SR_091)

@@ -45,7 +45,7 @@ int main(void)
         return -1;
     }
 
-    /* show that if changed mode data may not be available rightaway */
+    /* show that if changed mode data may not be available right away */
     if (ad7746_read_voltage_vdd(&dev, &data) == AD7746_OK) {
         printf("VDD : %d mV\n", data);
     }
@@ -83,18 +83,6 @@ int main(void)
         else {
             printf("Error reading internal temperature\n");
         }
-
-        do {
-            res = ad7746_read_voltage_vdd(&dev, &data);
-        } while (res == AD7746_NODATA);
-
-        if (res == AD7746_OK) {
-            printf("VDD: %d mV\n", data);
-        }
-        else {
-            printf("Error reading VDD\n");
-        }
-
         puts("");
         xtimer_usleep(SLEEP);
     }
