@@ -179,8 +179,8 @@ int ad7746_init(ad7746_t *dev, const ad7746_params_t *params);
  *       away. The time until new data is available will depend on the
  *       @ref ad7746_params_t::cap_sample_rate "sample rate" of the channel.
  *
- * @param[in, out] dev device decriptor
- * @param[out] value read value in fF
+ * @param[in, out] dev  device decriptor
+ * @param[out] value    read value in fF
  *
  * @return AD7746_OK on success
  * @return AD7746_NODATA if there is no data available in the channel
