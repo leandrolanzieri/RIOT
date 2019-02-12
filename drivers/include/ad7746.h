@@ -106,6 +106,14 @@ typedef enum {
 } ad7746_vt_mode_t;
 
 /**
+ * @brief Capacitance channel input
+ */
+typedef enum {
+    AD7746_CAP_IN_1 = 0, /**< CIN1 input */
+    AD7746_CAP_IN_2 /**< CIN2 input */
+} ad7746_cap_input_t;
+
+/**
  * @brief Capacitive channel sample rate
  */
 typedef enum {
@@ -140,8 +148,8 @@ typedef struct ad7746_params {
     ad7746_cap_sample_rate_t cap_sample_rate; /**< capacitance sample rate */
     ad7746_vt_sample_rate_t vt_sample_rate;   /**< voltage/temp sample rate */
     ad7746_vt_mode_t vt_mode;                 /**< mode of the voltage/temp ch */
+    ad7746_cap_input_t cap_input;             /**< selected capacitance input*/
 } ad7746_params_t;
-
 
 /**
  * @brief   AD7746 device descriptor
@@ -163,17 +171,40 @@ typedef struct ad7746 {
 int ad7746_init(ad7746_t *dev, const ad7746_params_t *params);
 
 /**
- * @brief Reads the capacitance value of the currently selected input. Returns
- *        the value in fF.
+ * @brief Reads the capacitance from the input 1 (CIN1). Returns the value in
+ *        fF.
  *
- * @param[in]  dev   device descriptor
- * @param[out] value read value
+ * @note If the currently selected input does not match @ref AD7746_CAP_IN_1 it
+ *       will be changed to it. This may cause data not to be available right
+ *       away. The time until new data is available will depend on the
+ *       @ref ad7746_params_t::cap_sample_rate "sample rate" of the channel.
+ *
+ * @param[in, out] dev device decriptor
+ * @param[out] value read value in fF
  *
  * @return AD7746_OK on success
  * @return AD7746_NODATA if there is no data available in the channel
  * @return AD7746_I2C if other error occurs
  */
-int ad7746_read_capacitance(const ad7746_t *dev, int *value);
+int ad7746_read_capacitance_1(ad7746_t *dev, int *value);
+
+/**
+ * @brief Reads the capacitance from the input 2 (CIN2). Returns the value in
+ *        fF.
+ *
+ * @note If the currently selected input does not match @ref AD7746_CAP_IN_2 it
+ *       will be changed to it. This may cause data not to be available right
+ *       away. The time until new data is available will depend on the
+ *       @ref ad7746_params_t::cap_sample_rate "sample rate" of the channel.
+ *
+ * @param[in, out] dev device decriptor
+ * @param[out] value read value in fF
+ *
+ * @return AD7746_OK on success
+ * @return AD7746_NODATA if there is no data available in the channel
+ * @return AD7746_I2C if other error occurs
+ */
+int ad7746_read_capacitance_2(ad7746_t *dev, int *value);
 
 /**
  * @brief Reads the voltage from the external voltage input (VIN). Returns the
@@ -181,7 +212,7 @@ int ad7746_read_capacitance(const ad7746_t *dev, int *value);
  *
  * @note If the current mode of the voltage / temperature channel does not match
  *       @ref AD7746_VT_MD_VIN it will be changed to this mode, causing data not
- *       to be available rightaway. The time until new data is available will
+ *       to be available right away. The time until new data is available will
  *       depend on the @ref ad7746_params_t::vt_sample_rate "sample rate" of the
  *       channel.
  *
@@ -199,7 +230,7 @@ int ad7746_read_voltage_in(ad7746_t *dev, int *value);
  *
  * @note If the current mode of the voltage / temperature channel does not match
  *       @ref AD7746_VT_MD_VDD it will be changed to this mode, causing data not
- *       to be available rightaway. The time until new data is available will
+ *       to be available right away. The time until new data is available will
  *       depend on the @ref ad7746_params_t::vt_sample_rate "sample rate" of the
  *       channel.
  *
@@ -217,7 +248,7 @@ int ad7746_read_voltage_vdd(ad7746_t *dev, int *value);
  *
  * @note If the current mode of the voltage / temperature channel does not match
  *       @ref AD7746_VT_MD_TEMP it will be changed to this mode, causing data
- *       not to be available rightaway. The time until new data is available
+ *       not to be available right away. The time until new data is available
  *       will depend on the @ref ad7746_params_t::vt_sample_rate "sample rate"
  *       of the channel.
  *
@@ -235,7 +266,7 @@ int ad7746_read_temperature_int(ad7746_t *dev, int *value);
  *
  * @note If the current mode of the voltage / temperature channel does not match
  *       @ref AD7746_VT_MD_ETEMP it will be changed to this mode, causing data
- *       not to be available rightaway. The time until new data is available
+ *       not to be available right away. The time until new data is available
  *       will depend on the @ref ad7746_params_t::vt_sample_rate "sample rate"
  *       of the channel.
  *

@@ -56,6 +56,9 @@ extern "C" {
 #ifndef AD7746_PARAM_EXC_CONFIG
 #define AD7746_PARAM_EXC_CONFIG (AD7746_EXC_A)
 #endif
+#ifndef AD7746_PARAM_CAP_IN
+#define AD7746_PARAM_CAP_IN     (AD7746_CAP_IN_1)
+#endif
 
 #ifndef AD7746_PARAMS
 #define AD7746_PARAMS          { .i2c        = AD7746_PARAM_I2C,         \
@@ -65,7 +68,8 @@ extern "C" {
                                  .exc_config = AD7746_PARAM_EXC_CONFIG,  \
                                  .cap_sample_rate = AD7746_PARAM_CAP_SR, \
                                  .vt_sample_rate = AD7746_PARAM_VT_SR,   \
-                                 .vt_mode = AD7746_PARAM_VT_MD }
+                                 .vt_mode = AD7746_PARAM_VT_MD,          \
+                                 .cap_input = AD7746_PARAM_CAP_IN }
 #endif
 #ifndef AD7746_SAUL_INFO
 #define AD7746_SAUL_INFO       { .name = "ad7746" }

@@ -65,7 +65,7 @@ int main(void)
         puts("=========================");
         puts("        Measuring");
         puts("=========================");
-        res = ad7746_read_capacitance(&dev, &data);
+        res = ad7746_read_capacitance_1(&dev, &data);
         if ( res == AD7746_OK) {
             printf("Capacitance %d fF\n", data);
         }

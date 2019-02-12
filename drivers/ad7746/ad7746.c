@@ -36,6 +36,36 @@
 #define CONF_TEST_VALUE (1 << AD7746_CONFIGURATION_VTF1_BIT)
 
 /**
+ * @brief Reads the capacitance value from a selected input. Changes the input
+ *        on the device if the requested is no the current one.
+ *
+ * @param[in] dev   device descriptor
+ * @param[out] value read value
+ * @param[in] input input to read from
+ *
+ * @return AD7746_OK on success
+ * @return AD7746_NODATA if no data is available
+ * @return AD7746_I2C on error getting a reponse
+ */
+static int _read_capacitance(ad7746_t *dev, int *value,
+                             ad7746_cap_input_t input);
+
+/**
+ * @brief   Reads the current value of voltage or temperature depending on the
+ *          @p mode. Changes the mode of the voltage / temperature channel on
+ *          the device of the requested is no the current one.
+ *
+ * @param[in] dev device descriptor
+ * @param[out] value read value
+ * @param[in] mode one of @ref ad7746_vt_mode_t
+ *
+ * @return AD7746_OK on success
+ * @return AD7746_NODATA if no data is available
+ * @return AD7746_I2C on error getting a reponse
+ */
+static int _read_voltage_temp(ad7746_t *dev, int *value, ad7746_vt_mode_t mode);
+
+/**
  * @brief   Reads a raw value either from the capacitance channel or from the
  *          voltage / temperature channel if available
  *
@@ -101,8 +131,9 @@ int ad7746_init(ad7746_t *dev, const ad7746_params_t *params)
         goto release;
     }
 
-    /* Enable capacitive channel */
-    reg = (1 << AD7746_CAP_SETUP_CAPEN_BIT);
+    /* Enable capacitive channel and select input */
+    reg = (1 << AD7746_CAP_SETUP_CAPEN_BIT) |
+          (dev->params.cap_input << AD7746_CAP_SETUP_CIN2_BIT);
     if (i2c_write_reg(I2C, ADDR, AD7746_REG_CAP_SETUP, reg, 0)) {
         DEBUG("[ad7746] init - error: unable to enable capacitive channel\n");
         goto release;
@@ -197,101 +228,37 @@ release:
     return res;
 }
 
-int ad7746_read_capacitance(const ad7746_t *dev, int *value)
+int ad7746_read_capacitance_1(ad7746_t *dev, int *value)
 {
-    uint32_t _raw;
-    int res = _read_raw_ch(dev, AD7746_READ_CAP_CH, &_raw);
-    if (res == AD7746_OK) {
-        *value = _raw_to_capacitance(_raw);
-    }
-    return res;
+    return _read_capacitance(dev, value, AD7746_CAP_IN_1);
+}
+
+int ad7746_read_capacitance_2(ad7746_t *dev, int *value)
+{
+    return _read_capacitance(dev, value, AD7746_CAP_IN_2);
 }
 
 int ad7746_read_voltage_in(ad7746_t *dev, int *value)
 {
-    int res;
-    uint32_t raw;
-
-    if (dev->params.vt_mode != AD7746_VT_MD_VIN) {
-        if (ad7746_set_vt_ch_mode(dev, AD7746_VT_MD_VIN) != AD7746_OK) {
-            return AD7746_NOI2C;
-        }
-        /* discard last reading */
-        _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    }
-
-    res = _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    if (res == AD7746_OK) {
-        *value = _raw_to_voltage(raw);
-    }
-
-    return res;
+    return _read_voltage_temp(dev, value, AD7746_VT_MD_VIN);
 }
 
 int ad7746_read_voltage_vdd(ad7746_t *dev, int *value)
 {
-    int res;
-    uint32_t raw;
-
-    if (dev->params.vt_mode != AD7746_VT_MD_VDD) {
-        if (ad7746_set_vt_ch_mode(dev, AD7746_VT_MD_VDD) != AD7746_OK) {
-            return AD7746_NOI2C;
-        }
-        /* discard last reading */
-       _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    }
-
-    res = _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    if (res == AD7746_OK) {
-        *value = _raw_to_voltage(raw) * 6;
-    }
-
-    return res;
+    return _read_voltage_temp(dev, value, AD7746_VT_MD_VDD);
 }
 
 int ad7746_read_temperature_int(ad7746_t *dev, int *value)
 {
-    int res;
-    uint32_t raw;
-
-    if (dev->params.vt_mode != AD7746_VT_MD_TEMP) {
-        if (ad7746_set_vt_ch_mode(dev, AD7746_VT_MD_TEMP) != AD7746_OK) {
-            return AD7746_NOI2C;
-        }
-        /* discard last reading */
-        _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    }
-
-    res = _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    if (res == AD7746_OK) {
-        *value = _raw_to_temperature(raw);
-    }
-
-    return res;
+    return _read_voltage_temp(dev, value, AD7746_VT_MD_TEMP);
 }
 
 int ad7746_read_temperature_ext(ad7746_t *dev, int *value)
 {
-    int res;
-    uint32_t raw;
-
-    if (dev->params.vt_mode != AD7746_VT_MD_ETEMP) {
-        if (ad7746_set_vt_ch_mode(dev, AD7746_VT_MD_ETEMP) != AD7746_OK) {
-            return AD7746_NOI2C;
-        }
-        /* discard last reading */
-        _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    }
-
-    res = _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
-    if (res == AD7746_OK) {
-        *value = _raw_to_temperature(raw);
-    }
-
-    return res;
+    return _read_voltage_temp(dev, value, AD7746_VT_MD_ETEMP);
 }
 
-int ad7746_set_cap_ch_input(const ad7746_t *dev, uint8_t input)
+int ad7746_set_cap_ch_input(const ad7746_t *dev, ad7746_cap_input_t input)
 {
     uint8_t reg;
     int res = AD7746_NOI2C;
@@ -303,7 +270,7 @@ int ad7746_set_cap_ch_input(const ad7746_t *dev, uint8_t input)
         goto release;
     }
 
-    if (input) {
+    if (input == AD7746_CAP_IN_2) {
         reg |= (1 << AD7746_CAP_SETUP_CIN2_BIT);
     }
     else {
@@ -370,6 +337,54 @@ int ad7746_set_vt_sr(const ad7746_t *dev, ad7746_vt_sample_rate_t sr)
 
 release:
     i2c_release(I2C);
+    return res;
+}
+
+static int _read_capacitance(ad7746_t *dev, int *value,
+                             ad7746_cap_input_t input)
+{
+    int res;
+    uint32_t raw;
+
+    if (dev->params.cap_input != input) {
+        if (ad7746_set_cap_ch_input(dev, input)) {
+            return AD7746_NOI2C;
+        }
+        /* discard last reading */
+        _read_raw_ch(dev, AD7746_READ_CAP_CH, &raw);
+    }
+
+    res = _read_raw_ch(dev, AD7746_READ_CAP_CH, &raw);
+    if (res == AD7746_OK) {
+        *value = _raw_to_capacitance(raw);
+    }
+
+    return res;
+}
+
+static int _read_voltage_temp(ad7746_t *dev, int *value, ad7746_vt_mode_t mode)
+{
+    int res;
+    uint32_t raw;
+
+    if (dev->params.vt_mode != mode) {
+        if (ad7746_set_vt_ch_mode(dev, mode)) {
+            return AD7746_NOI2C;
+        }
+        /* discard last reading */
+        _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
+    }
+
+    res = _read_raw_ch(dev, AD7746_READ_VT_CH, &raw);
+    if (res == AD7746_OK) {
+        if (mode == AD7746_VT_MD_ETEMP || mode == AD7746_VT_MD_TEMP) {
+            *value = _raw_to_temperature(raw);
+        }
+        else {
+            *value = _raw_to_voltage(raw);
+        }
+    }
+
     return res;
 }
 

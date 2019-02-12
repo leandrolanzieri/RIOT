@@ -27,7 +27,7 @@
 static int _read_cap(const void *dev, phydat_t *res)
 {
     int val;
-    if (ad7746_read_capacitance((const ad7746_t *)dev, &val)) {
+    if (ad7746_read_capacitance_1((ad7746_t *)dev, &val)) {
         return -ECANCELED;
     }
 
