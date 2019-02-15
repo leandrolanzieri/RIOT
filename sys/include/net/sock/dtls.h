@@ -1,3 +1,18 @@
+#ifndef NET_SOCK_DTLS_H
+#define NET_SOCK_DTLS_H
+
+#include <assert.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+#include "net/sock.h"
+#include "net/sock/udp.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Methods for sock_dtls_create.
  * Defines the DTLS protocol version to use.
@@ -110,3 +125,12 @@ ssize_t sock_dtls_send(sock_dtls_t *sock, sock_dtls_session_t *remote,
  * @return value < 0 on error
  */
 int sock_dtls_destroy(sock_dtls_t *sock);
+
+#include "sock_dtls_types.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* NET_SOCK_DTLS_H */
+/** @} */

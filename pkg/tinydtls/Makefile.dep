@@ -1,5 +1,7 @@
 ifneq (,$(filter tinydtls,$(USEPKG)))
   USEMODULE += tinydtls
+  USEMODULE += tinydtls_contrib
+  USEMODULE += event_callback
 endif
 
 ifneq (,$(filter tinydtls,$(USEMODULE)))
