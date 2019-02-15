@@ -100,7 +100,7 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
                        void *data, size_t max_len, uint32_t timeout);
 
 /**
- * @brief Encrypts and send a message to a remote peer
+ * @brief Encrypts and sends a message to a remote peer
  *
  * @param[in] sock      DTLS sock to use
  * @param[in] remote    DTLS session to use. Must not be NULL and

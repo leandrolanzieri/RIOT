@@ -11,7 +11,9 @@ struct sock_dtls {
 
 struct sock_dtls_session {
     session_t dtls_session;
-    sock_udp_ep_t *remote;
+    sock_udp_ep_t *remote_ep;
+    void *data;
+    size_t data_len;
 };
 
 struct sock_dtls_queue {
