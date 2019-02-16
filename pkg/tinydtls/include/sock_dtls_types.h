@@ -2,18 +2,28 @@
 #include "net/sock/udp.h"
 #include "dtls.h"
 
+#ifndef SOCK_DTLS_MBOX_SIZE
+#define SOCK_DTLS_MBOX_SIZE     (8)
+#endif
+
+typedef struct {
+    session_t session;
+    uint8_t *buf;
+    size_t len;
+} recv_msg_t;
+
 struct sock_dtls {
     dtls_context_t *dtls_ctx;
     sock_udp_t *udp_sock;
-    event_queue_t event_queue;
+    mbox_t mbox;
+    msg_t mbox_queue[SOCK_DTLS_MBOX_SIZE];
     struct sock_dtls_session *dtls_session;
+    recv_msg_t recv_msg;
 };
 
 struct sock_dtls_session {
     session_t dtls_session;
     sock_udp_ep_t *remote_ep;
-    void *data;
-    size_t data_len;
 };
 
 struct sock_dtls_queue {

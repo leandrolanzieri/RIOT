@@ -33,24 +33,16 @@ static dtls_handler_t _dtls_handler = {
 
 #define DTLS_EVENT_READ 0x01DB
 
-static int _event_connect_arg = DTLS_EVENT_CONNECT;
-static int _event_connected_arg = DTLS_EVENT_CONNECTED;
-static int _event_renegotiate_arg = DTLS_EVENT_RENEGOTIATE;
-static int _event_read_arg = DTLS_EVENT_READ;
-static event_callback_t _event_connect = { .arg = &_event_connect_arg };
-static event_callback_t _event_connected = { .arg = &_event_connected_arg };
-static event_callback_t _event_renegotiate = { .arg = &_event_renegotiate_arg };
-static event_callback_t _event_read = { .arg = &_event_read_arg };
-
 static int _read(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
                  size_t len)
 {
-    (void)session;
-    DEBUG("Decrypted message arrived\n");
+    msg_t msg = { .type = DTLS_EVENT_READ };
     sock_dtls_t *sock = dtls_get_app_data(ctx);
-    sock->dtls_session->data = buf;
-    sock->dtls_session->data_len = len;
-    event_post(&(sock->event_queue), (event_t *)&_event_read);
+    DEBUG("Decrypted message arrived\n");
+    sock->recv_msg.buf = buf;
+    sock->recv_msg.len = len;
+    memcpy(&sock->recv_msg.session, session, sizeof(session_t));
+    mbox_put(&sock->mbox, &msg);
     return 0;
 }
 
@@ -77,18 +69,20 @@ static int _event(struct dtls_context_t *ctx, session_t *session,
     (void)session;
 
     sock_dtls_t *sock = dtls_get_app_data(ctx);
+    msg_t msg = { .type = code };
     switch(code) {
+        // TODO unify cases
         case DTLS_EVENT_CONNECT:
             DEBUG("Event connect\n");
-            event_post(&(sock->event_queue), (event_t *)&_event_connect);
+            mbox_put(&sock->mbox, &msg);
             break;
         case DTLS_EVENT_CONNECTED:
             DEBUG("Event connected\n");
-            event_post(&(sock->event_queue), (event_t *)&_event_connected);
+            mbox_put(&sock->mbox, &msg);
             break;
         case DTLS_EVENT_RENEGOTIATE:
             DEBUG("Event renegotiate\n");
-            event_post(&(sock->event_queue), (event_t *)&_event_renegotiate);
+            mbox_put(&sock->mbox, &msg);
             break;
         default:
             return 0;
@@ -148,6 +142,7 @@ static int _get_psk_info(struct dtls_context_t *ctx, const session_t *session,
 int sock_dtls_init(void)
 {
     dtls_init();
+    // TODO remove log
     dtls_set_log_level(6);
     return 0;
 }
@@ -162,7 +157,7 @@ int sock_dtls_create(sock_dtls_t *sock, sock_udp_t *udp_sock, unsigned method)
         DEBUG("Error while getting a DTLS context\n");
         return -1;
     }
-    event_queue_init(&sock->event_queue);
+    mbox_init(&sock->mbox, sock->mbox_queue, SOCK_DTLS_MBOX_SIZE);
     dtls_set_handler(sock->dtls_ctx, &_dtls_handler);
     return 0;
 }
@@ -184,7 +179,7 @@ int sock_dtls_establish_session(sock_dtls_t *sock, sock_udp_ep_t *ep,
     uint8_t rcv_buffer[RCV_BUFFER];
     sock_udp_ep_t remote;
     session_t dtls_session;
-    event_callback_t *event;
+    msg_t msg;
 
     DEBUG("Establishing a DTLS session\n");
 
@@ -200,16 +195,16 @@ int sock_dtls_establish_session(sock_dtls_t *sock, sock_udp_ep_t *ep,
         return -1;
     }
     DEBUG("Waiting for ClientHello to be sent\n");
-    /* wait for the ClientHello message to be sent */
-    event = (event_callback_t *)event_wait(&sock->event_queue);
-    if (*(int *)event->arg != DTLS_EVENT_CONNECT) {
+    mbox_get(&sock->mbox, &msg);
+    if (msg.type != DTLS_EVENT_CONNECT) {
         DEBUG("DTLS handshake was not started\n");
         return -1;
+
     }
     DEBUG("ClientHello sent, waiting for handshake\n");
 
     /* receive packages from sock until the session is established */
-    while (!(event = (event_callback_t *)event_get(&sock->event_queue))) {
+    while (!mbox_try_get(&sock->mbox, &msg)) {
         ssize_t rcv_len = sock_udp_recv(sock->udp_sock, rcv_buffer,
                                         sizeof(rcv_buffer), SOCK_NO_TIMEOUT,
                                         &remote);
@@ -221,7 +216,7 @@ int sock_dtls_establish_session(sock_dtls_t *sock, sock_udp_ep_t *ep,
         }
     }
 
-    if (*((int *)event->arg) == DTLS_EVENT_CONNECTED) {
+    if (msg.type == DTLS_EVENT_CONNECTED) {
         DEBUG("DTLS handshake successful\n");
         return 0;
     }
@@ -250,7 +245,8 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
     ssize_t res;
     sock_udp_ep_t ep;
     session_t session;
-    (void)remote;
+    msg_t msg;
+
     assert(sock && data);
     DEBUG("Receiving buffer: %p\n", data);
     res = sock_udp_recv(sock->udp_sock, data, max_len, timeout, &ep);
@@ -262,19 +258,20 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
             DEBUG("Error handling message to DLTS\n");
             return -1;
         }
-        event_callback_t *ev = (event_callback_t *)event_wait(&sock->event_queue);
-        if (*(int *)ev->arg != DTLS_EVENT_READ) {
+        mbox_get(&sock->mbox, &msg);
+        if (msg.type != DTLS_EVENT_READ) {
             DEBUG("Unexpected event arrived\n");
             return -1;
         }
-        memcpy(data, sock->dtls_session->data, sock->dtls_session->data_len);
+
+        memcpy(data, sock->recv_msg.buf, sock->recv_msg.len);
 
         if (remote) {
             memcpy(&remote->dtls_session, &session, sizeof(session_t));
             remote->remote_ep = NULL;
         }
 
-        return sock->dtls_session->data_len;
+        return sock->recv_msg.len;
     }
     else {
         DEBUG("Error receiving UDP packet: %d\n", res);
