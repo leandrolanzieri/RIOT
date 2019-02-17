@@ -18,6 +18,7 @@ struct sock_dtls {
     mbox_t mbox;
     msg_t mbox_queue[SOCK_DTLS_MBOX_SIZE];
     struct sock_dtls_session *dtls_session;
+    struct sock_dtls_queue *dtls_queue;
     recv_msg_t recv_msg;
 };
 

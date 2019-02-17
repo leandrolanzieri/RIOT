@@ -153,6 +153,7 @@ int sock_dtls_create(sock_dtls_t *sock, sock_udp_t *udp_sock, unsigned method)
     assert(sock && udp_sock);
     sock->udp_sock = udp_sock;
     sock->dtls_ctx = dtls_new_context(sock);
+    sock->dtls_queue = NULL;
     if (!sock->dtls_ctx) {
         DEBUG("Error while getting a DTLS context\n");
         return -1;
@@ -165,8 +166,7 @@ int sock_dtls_create(sock_dtls_t *sock, sock_udp_t *udp_sock, unsigned method)
 void sock_dtls_init_server(sock_dtls_t *sock, sock_dtls_queue_t *queue,
                           sock_dtls_session_t *query_array, unsigned len)
 {
-    (void)sock;
-    // add queue to sock and assign here?
+    sock->dtls_queue = queue;
     queue->sessions = query_array;
     queue->sessions_numof = len;
     queue->sessions_used = 0;
@@ -248,35 +248,52 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
     msg_t msg;
 
     assert(sock && data);
-    DEBUG("Receiving buffer: %p\n", data);
-    res = sock_udp_recv(sock->udp_sock, data, max_len, timeout, &ep);
 
-    if (res > 0) {
-        _udp_ep_to_session(&ep, &session);
-        if (dtls_handle_message(sock->dtls_ctx, &session,
-                                (uint8_t *)data, res) < 0) {
-            DEBUG("Error handling message to DLTS\n");
-            return -1;
+    while (1) {
+        res = sock_udp_recv(sock->udp_sock, data, max_len, timeout, &ep);
+        if (res > 0) {
+            _udp_ep_to_session(&ep, &session);
+            dtls_handle_message(sock->dtls_ctx, &session, (uint8_t *)data, res);
+
+            if (mbox_try_get(&sock->mbox, &msg)) {
+                switch(msg.type) {
+                    case DTLS_EVENT_READ:
+                        memcpy(data, sock->recv_msg.buf, sock->recv_msg.len);
+                        if (remote) {
+                            memcpy(&remote->dtls_session, &session,
+                                sizeof(session_t));
+                            remote->remote_ep = NULL;
+                        }
+                        return sock->recv_msg.len;
+                    case DTLS_EVENT_CONNECTED:
+                        if (sock->dtls_queue &&
+                            (sock->dtls_queue->sessions_used <
+                            sock->dtls_queue->sessions_numof)) {
+                            // copy the new session to the queue? Is really needed?
+                            DEBUG("New incoming connection\n");
+                        }
+                        break;
+                    case DTLS_EVENT_CONNECT:
+                        DEBUG("New clienthello\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
-        mbox_get(&sock->mbox, &msg);
-        if (msg.type != DTLS_EVENT_READ) {
-            DEBUG("Unexpected event arrived\n");
-            return -1;
+        else {
+            DEBUG("Error receiving UDP packet: %d\n", res);
+            goto error_out;
         }
-
-        memcpy(data, sock->recv_msg.buf, sock->recv_msg.len);
-
-        if (remote) {
-            memcpy(&remote->dtls_session, &session, sizeof(session_t));
-            remote->remote_ep = NULL;
-        }
-
-        return sock->recv_msg.len;
     }
-    else {
-        DEBUG("Error receiving UDP packet: %d\n", res);
-    }
-    return 0;
+
+error_out:
+    return -1;
+}
+
+int sock_dtls_destroy(sock_dtls_t *sock)
+{
+    dtls_context_release(sock->dtls_ctx);
 }
 
 static void _udp_ep_to_session(sock_udp_ep_t *ep, session_t *session)
