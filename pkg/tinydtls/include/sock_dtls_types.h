@@ -21,6 +21,10 @@ typedef int (*psk_key_storage_t)(struct sock_dtls *sock,
                                  const unsigned char *id, size_t id_len,
                                  unsigned char *key, size_t key_len);
 
+typedef int (*ecdsa_storage_t)(struct sock_dtls *sock,
+                               struct sock_dtls_session *session,
+                               dtls_ecdsa_key_t **key);
+
 typedef struct {
     session_t session;
     uint8_t *buf;
@@ -33,6 +37,10 @@ typedef struct {
     psk_key_storage_t psk_key_storage;
 } psk_keys_t;
 
+typedef struct {
+    ecdsa_storage_t ecdsa_storage;
+} ecdsa_keys_t;
+
 struct sock_dtls {
     dtls_context_t *dtls_ctx;
     sock_udp_t *udp_sock;
@@ -42,6 +50,7 @@ struct sock_dtls {
     struct sock_dtls_queue *dtls_queue;
     recv_msg_t recv_msg;
     psk_keys_t psk;
+    ecdsa_keys_t ecdsa;
 };
 
 struct sock_dtls_session {
