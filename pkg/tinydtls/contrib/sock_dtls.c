@@ -21,8 +21,8 @@ static int _write(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
 
 static int _read(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
                  size_t len);
-static void _session_to_udp_ep(session_t *session, sock_udp_ep_t *ep);
-static void _udp_ep_to_session(sock_udp_ep_t *ep, session_t *session);
+static void _session_to_udp_ep(const session_t *session, sock_udp_ep_t *ep);
+static void _udp_ep_to_session(const sock_udp_ep_t *ep, session_t *session);
 
 static dtls_handler_t _dtls_handler = {
     .event = _event,
@@ -38,12 +38,20 @@ static int _read(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
 {
     msg_t msg = { .type = DTLS_EVENT_READ };
     sock_dtls_t *sock = dtls_get_app_data(ctx);
+    int res = -1;
+
     DEBUG("Decrypted message arrived\n");
-    sock->recv_msg.buf = buf;
-    sock->recv_msg.len = len;
-    memcpy(&sock->recv_msg.session, session, sizeof(session_t));
+    if (sock->recv_msg.len < len && sock->recv_msg.buf) {
+        DEBUG("Not enough place on buffer\n");
+        res = -1;
+    }
+    else {
+        sock->recv_msg.len = len;
+        memcpy(sock->recv_msg.buf, buf, len);
+        memcpy(&sock->recv_msg.session, session, sizeof(session_t));
+    }
     mbox_put(&sock->mbox, &msg);
-    return 0;
+    return res;
 }
 
 static int _write(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
@@ -90,51 +98,42 @@ static int _event(struct dtls_context_t *ctx, session_t *session,
     return 0;
 }
 
-#define PSK_DEFAULT_IDENTITY "Client_identity"
-#define PSK_DEFAULT_KEY "secretPSK"
-#define PSK_OPTIONS "i:k:"
-#define PSK_ID_MAXLEN 32
-#define PSK_MAXLEN 32
-
-static unsigned char psk_id[PSK_ID_MAXLEN] = PSK_DEFAULT_IDENTITY;
-static size_t psk_id_length = sizeof(PSK_DEFAULT_IDENTITY) - 1;
-static unsigned char psk_key[PSK_MAXLEN] = PSK_DEFAULT_KEY;
-static size_t psk_key_length = sizeof(PSK_DEFAULT_KEY) - 1;
-
 static int _get_psk_info(struct dtls_context_t *ctx, const session_t *session,
                          dtls_credentials_type_t type,
                          const unsigned char *id, size_t id_len,
                          unsigned char *result, size_t result_length)
 {
-    (void)ctx;
     (void)session;
+    sock_dtls_t *sock = (sock_dtls_t *)dtls_get_app_data(ctx);
+    sock_dtls_session_t _session;
+    sock_udp_ep_t ep;
 
+    _session_to_udp_ep(session, &ep);
+    _session.remote_ep = &ep;
+    memcpy(&_session.dtls_session, session, sizeof(session_t));
     switch(type) {
+        case DTLS_PSK_HINT:
+            if (sock->psk.psk_hint_storage) {
+                return sock->psk.psk_hint_storage(sock, &_session, result,
+                                                  result_length);
+            }
+            return 0;
+
         case DTLS_PSK_IDENTITY:
-            if (id_len) {
-                printf("got PSK identity hint: %.*s", id_len, id);
+            DEBUG("psk id request\n");
+            if (sock->psk.psk_id_storage) {
+                return sock->psk.psk_id_storage(sock, &_session, id, id_len,
+                                                result, result_length);
             }
-            if (result_length < psk_id_length) {
-                puts("Cannot set psk_identity, buffer too small");
-                return dtls_alert_fatal_create(DTLS_ALERT_INTERNAL_ERROR);
-            }
-
-            memcpy(result, psk_id, psk_id_length);
-            return psk_id_length;
+            return 0;
         case DTLS_PSK_KEY:
-            if (id_len != psk_id_length || memcmp(psk_id, id, id_len)) {
-                puts("PSK for unknown id requested");
-                return dtls_alert_fatal_create(DTLS_ALERT_ILLEGAL_PARAMETER);
+            if (sock->psk.psk_key_storage) {
+                return sock->psk.psk_key_storage(sock, &_session, id, id_len,
+                                                 result, result_length);
             }
-            else if (result_length < psk_key_length) {
-                puts("Cannot set PSK, buffer too small");
-                return dtls_alert_fatal_create(DTLS_ALERT_INTERNAL_ERROR);
-            }
-
-            memcpy(result, psk_key, psk_key_length);
-            return psk_key_length;
+            return 0;
         default:
-            puts("Unsupported request type");
+            DEBUG("Unsupported request type: %d\n", type);
             return 0;
     }
 }
@@ -143,7 +142,7 @@ int sock_dtls_init(void)
 {
     dtls_init();
     // TODO remove log
-    dtls_set_log_level(6);
+    //dtls_set_log_level(6);
     return 0;
 }
 
@@ -252,6 +251,8 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
     while (1) {
         res = sock_udp_recv(sock->udp_sock, data, max_len, timeout, &ep);
         if (res > 0) {
+            sock->recv_msg.buf = (uint8_t *)data;
+            sock->recv_msg.len = max_len;
             _udp_ep_to_session(&ep, &session);
             dtls_handle_message(sock->dtls_ctx, &session, (uint8_t *)data, res);
 
@@ -261,8 +262,7 @@ ssize_t sock_dtls_recv(sock_dtls_t *sock, sock_dtls_session_t *remote,
                         memcpy(data, sock->recv_msg.buf, sock->recv_msg.len);
                         if (remote) {
                             memcpy(&remote->dtls_session, &session,
-                                sizeof(session_t));
-                            remote->remote_ep = NULL;
+                                   sizeof(session_t));
                         }
                         return sock->recv_msg.len;
                     case DTLS_EVENT_CONNECTED:
@@ -293,10 +293,11 @@ error_out:
 
 int sock_dtls_destroy(sock_dtls_t *sock)
 {
-    dtls_context_release(sock->dtls_ctx);
+    dtls_free_context(sock->dtls_ctx);
+    return 0;
 }
 
-static void _udp_ep_to_session(sock_udp_ep_t *ep, session_t *session)
+static void _udp_ep_to_session(const sock_udp_ep_t *ep, session_t *session)
 {
     session->port = ep->port;
     session->size = sizeof(ipv6_addr_t) + sizeof(unsigned short);
@@ -304,7 +305,7 @@ static void _udp_ep_to_session(sock_udp_ep_t *ep, session_t *session)
     memcpy(&session->addr, &ep->addr.ipv6, sizeof(ipv6_addr_t));
 }
 
-static void _session_to_udp_ep(session_t *session, sock_udp_ep_t *ep)
+static void _session_to_udp_ep(const session_t *session, sock_udp_ep_t *ep)
 {
     ep->port = session->port;
     memcpy(&ep->addr.ipv6, &session->addr, sizeof(ipv6_addr_t));
