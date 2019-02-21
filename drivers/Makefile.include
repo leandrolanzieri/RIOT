@@ -222,6 +222,10 @@ ifneq (,$(filter rn2xx3,$(USEMODULE)))
   USEMODULE_INCLUDES += $(RIOTBASE)/drivers/rn2xx3/include
 endif
 
+ifneq (,$(filter sara_r410m,$(USEMODULE)))
+  USEMODULE_INCLUDES += $(RIOTBASE)/drivers/sara_r410m/include
+endif
+
 ifneq (,$(filter sdcard_spi,$(USEMODULE)))
   USEMODULE_INCLUDES += $(RIOTBASE)/drivers/sdcard_spi/include
 endif

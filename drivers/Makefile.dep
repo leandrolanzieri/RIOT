@@ -395,6 +395,12 @@ ifneq (,$(filter rn2%3,$(USEMODULE)))
   USEMODULE += fmt
 endif
 
+ifneq (,$(filter sara_r410m,$(USEMODULE)))
+  FEATURES_REQUIRED += periph_gpio
+  FEATURES_REQUIRED += periph_uart
+  USEMODULE += at
+endif
+
 ifneq (,$(filter sdcard_spi,$(USEMODULE)))
   FEATURES_REQUIRED += periph_gpio
   FEATURES_REQUIRED += periph_spi
