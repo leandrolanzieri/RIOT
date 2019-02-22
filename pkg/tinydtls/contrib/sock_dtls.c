@@ -6,7 +6,7 @@
 #define ENABLE_DEBUG (1)
 #include "debug.h"
 
-#define RCV_BUFFER (128)
+#define RCV_BUFFER (512)
 
 static int _event(struct dtls_context_t *ctx, session_t *session,
                   dtls_alert_level_t level, unsigned short code);
@@ -15,8 +15,9 @@ static int _get_psk_info(struct dtls_context_t *ctx, const session_t *session,
                          dtls_credentials_type_t type,
                          const unsigned char *id, size_t id_len,
                          unsigned char *result, size_t result_length);
-#endif
+#endif /* DTLS_PSK */
 
+#ifdef DTLS_ECC
 static int _get_ecdsa_key(struct dtls_context_t *ctx, const session_t *session,
                           const dtls_ecdsa_key_t **result);
 
@@ -25,6 +26,7 @@ static int _verify_ecdsa_key(struct dtls_context_t *ctx,
                              const unsigned char *other_pub_x,
                              const unsigned char *other_pub_y,
                              size_t key_size);
+#endif /* DTLS_ECC */
 
 static int _write(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
                   size_t len);
@@ -38,9 +40,11 @@ static dtls_handler_t _dtls_handler = {
     .event = _event,
 #ifdef DTLS_PSK
     .get_psk_info = _get_psk_info,
-#endif
+#endif /* DTLS_PSK */
+#ifdef DTLS_ECC
     .get_ecdsa_key = _get_ecdsa_key,
     .verify_ecdsa_key = _verify_ecdsa_key,
+#endif /* DTLS_ECC */
     .write = _write,
     .read = _read,
 };
@@ -154,10 +158,10 @@ static int _get_psk_info(struct dtls_context_t *ctx, const session_t *session,
 }
 #endif
 
+#ifdef DTLS_ECC
 static int _get_ecdsa_key(struct dtls_context_t *ctx, const session_t *session,
                           const dtls_ecdsa_key_t **result)
 {
-    // TODO change this ecdsa key
     dtls_ecdsa_key_t *key;
     sock_dtls_t *sock = (sock_dtls_t *)dtls_get_app_data(ctx);
     sock_dtls_session_t _session;
@@ -178,27 +182,32 @@ static int _get_ecdsa_key(struct dtls_context_t *ctx, const session_t *session,
 }
 
 static int _verify_ecdsa_key(struct dtls_context_t *ctx,
-                                          const session_t *session,
-                                          const unsigned char *other_pub_x,
-                                          const unsigned char *other_pub_y,
-                                          size_t key_size)
+                             const session_t *session,
+                             const unsigned char *other_pub_x,
+                             const unsigned char *other_pub_y, size_t key_size)
 {
-    (void) ctx;
-    (void) session;
-    (void) other_pub_x;
-    (void) other_pub_y;
-    (void) key_size;
-
-    /* TODO: As far for tinyDTLS 0.8.2 this is not used */
-
+    sock_dtls_session_t _session;
+    sock_udp_ep_t ep;
+    sock_dtls_t *sock = (sock_dtls_t *)dtls_get_app_data(ctx);
+    if (sock->ecdsa.ecdsa_verify) {
+        _session_to_udp_ep(session, &ep);
+        _session.remote_ep = &ep;
+        memcpy(&_session.dtls_session, session, sizeof(session_t));
+        if (sock->ecdsa.ecdsa_verify(sock, &_session, other_pub_x, other_pub_y,
+                                     key_size)) {
+            DEBUG("Could not verify ECDSA public keys\n");
+            return -1;
+        }
+    }
     return 0;
 }
+#endif /* DTLS_ECC */
 
 int sock_dtls_init(void)
 {
     dtls_init();
     // TODO remove log
-    dtls_set_log_level(6);
+    //dtls_set_log_level(6);
     return 0;
 }
 
@@ -358,7 +367,7 @@ static void _udp_ep_to_session(const sock_udp_ep_t *ep, session_t *session)
 {
     session->port = ep->port;
     session->size = sizeof(ipv6_addr_t) + sizeof(unsigned short);
-    session->ifindex = ep->netif;
+    session->ifindex = 0;
     memcpy(&session->addr, &ep->addr.ipv6, sizeof(ipv6_addr_t));
 }
 

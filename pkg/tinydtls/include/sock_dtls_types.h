@@ -25,6 +25,11 @@ typedef int (*ecdsa_storage_t)(struct sock_dtls *sock,
                                struct sock_dtls_session *session,
                                dtls_ecdsa_key_t **key);
 
+typedef int (*ecdsa_verify_t)(struct sock_dtls *sock,
+                              struct sock_dtls_session *session,
+                              const unsigned char *pub_x,
+                              const unsigned char *pub_y, size_t key_size);
+
 typedef struct {
     session_t session;
     uint8_t *buf;
@@ -39,6 +44,7 @@ typedef struct {
 
 typedef struct {
     ecdsa_storage_t ecdsa_storage;
+    ecdsa_verify_t ecdsa_verify;
 } ecdsa_keys_t;
 
 struct sock_dtls {
