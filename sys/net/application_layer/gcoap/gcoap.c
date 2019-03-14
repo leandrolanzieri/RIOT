@@ -26,6 +26,7 @@
 #include "assert.h"
 #include "net/gcoap.h"
 #include "net/sock/util.h"
+#include "link_format.h"
 #include "mutex.h"
 #include "random.h"
 #include "thread.h"
@@ -914,23 +915,19 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
         const coap_resource_t *resource = listener->resources;
 
         for (unsigned i = 0; i < listener->resources_len; i++) {
-            size_t path_len = strlen(resource->path);
             if (out) {
-                /* only add new resources if there is space in the buffer */
-                if ((pos + path_len + 3) > maxlen) {
-                    break;
-                }
                 if (pos) {
-                    out[pos++] = ',';
+                    pos += link_format_add_link_separator(&out[pos],
+                                                          maxlen - pos);
                 }
-                out[pos++] = '<';
-                memcpy(&out[pos], resource->path, path_len);
-                pos += path_len;
-                out[pos++] = '>';
+                pos += link_format_add_target(resource->path, &out[pos],
+                                              maxlen - pos);
             }
             else {
-                pos += (pos) ? 3 : 2;
-                pos += path_len;
+                if (pos) {
+                    pos += link_format_add_link_separator(NULL, 0);
+                }
+                pos += link_format_add_target(resource->path, NULL, 0);
             }
             ++resource;
         }
