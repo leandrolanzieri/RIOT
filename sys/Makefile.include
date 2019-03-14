@@ -94,3 +94,7 @@ endif
 ifneq (native,$(BOARD))
   INCLUDES += -I$(RIOTBASE)/sys/libc/include
 endif
+
+ifneq (,$(filter link_format, $(USEMODULE)))
+  INCLUDES += -I$(RIOTBASE)/sys/link_format/include
+endif
