@@ -58,7 +58,7 @@ static void _find_obs_memo_resource(gcoap_observe_memo_t **memo,
 
 /* Internal variables */
 const coap_resource_t _default_resources[] = {
-    { "/.well-known/core", COAP_GET, _well_known_core_handler, NULL },
+    { .path = "/.well-known/core", .methods = COAP_GET, .handler = _well_known_core_handler, .context = NULL },
 };
 
 static gcoap_listener_t _default_listener = {
@@ -918,10 +918,16 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
             if (out) {
                 if (pos) {
                     pos += link_format_add_link_separator(&out[pos],
-                                                          maxlen - pos);
+                                                        maxlen - pos);
                 }
-                pos += link_format_add_target(resource->path, &out[pos],
-                                              maxlen - pos);
+                if (resource->desc) {
+                    pos += resource->desc(&out[pos], maxlen - pos, cf,
+                                          resource->context);
+                }
+                else {
+                    pos += link_format_add_target(resource->path, &out[pos],
+                                                maxlen - pos);
+                }
             }
             else {
                 if (pos) {

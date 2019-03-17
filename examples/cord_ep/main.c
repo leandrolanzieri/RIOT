@@ -26,6 +26,7 @@
 #include "net/gcoap.h"
 #include "net/cord/common.h"
 #include "net/cord/ep_standalone.h"
+#include "link_format.h"
 
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -63,6 +64,28 @@ static ssize_t _handler_dummy(coap_pkt_t *pdu,
     return resp_len;
 }
 
+static ssize_t _temp_descriptor(char *buf, size_t len, uint8_t format, void *context)
+{
+    (void)context;
+    if (format != COAP_FORMAT_LINK) {
+        return -1;
+    }
+
+    link_format_param_t params[] = {
+        { .type = LINK_FORMAT_PARAM_RES_TYPE, .value = "temperature" },
+        { .type = LINK_FORMAT_PARAM_IF_DESC, .value = "sensor" },
+        { .type = LINK_FORMAT_PARAM_CT, .value = "0" }
+    };
+    link_format_t lf = {
+        .target = "/sense/temp",
+        .target_len = strlen("/sense/temp"),
+        .params = params,
+        .params_len = 3
+    };
+    
+    return link_format_encode_link(&lf, (char *)buf, len);
+}
+
 static ssize_t _handler_info(coap_pkt_t *pdu,
                              uint8_t *buf, size_t len, void *ctx)
 {
@@ -76,9 +99,9 @@ static ssize_t _handler_info(coap_pkt_t *pdu,
 }
 
 static const coap_resource_t _resources[] = {
-    { "/node/info",  COAP_GET, _handler_info, NULL },
-    { "/sense/hum",  COAP_GET, _handler_dummy, NULL },
-    { "/sense/temp", COAP_GET, _handler_dummy, NULL }
+    { .path = "/node/info",  .methods = COAP_GET, .handler = _handler_info, .context = NULL },
+    { .path = "/sense/hum",  .methods = COAP_GET, .handler = _handler_dummy, .context = NULL },
+    { .path = "/sense/temp", .methods = COAP_GET, .handler = _handler_dummy, .context = NULL, .desc = _temp_descriptor }
 };
 
 static gcoap_listener_t _listener = {
