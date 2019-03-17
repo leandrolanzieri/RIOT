@@ -260,6 +260,8 @@ typedef struct {
  */
 typedef ssize_t (*coap_handler_t)(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context);
 
+typedef ssize_t (*coap_resource_desc_t)(char *buf, size_t len, uint8_t format, void *context);
+
 /**
  * @brief   Type for CoAP resource entry
  */
@@ -267,6 +269,7 @@ typedef struct {
     const char *path;               /**< URI path of resource               */
     unsigned methods;               /**< OR'ed methods this resource allows */
     coap_handler_t handler;         /**< ptr to resource handler            */
+    coap_resource_desc_t desc;      /**< ptr to resource description handler */
     void *context;                  /**< ptr to user defined context data   */
 } coap_resource_t;
 
