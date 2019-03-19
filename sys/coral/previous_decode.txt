@@ -1,0 +1,173 @@
+
+// do we need depth?
+// NOTE: split these states?
+static int _decode_cbor_element(cn_cbor *cb, int depth, _decode_ctx_t *ctx)
+{
+    (void)depth;
+    switch(ctx->state) {
+        case START_ROOT:
+            if (cb->type != CN_CBOR_ARRAY) {
+                puts("Error, malformed element in doc root");
+            }
+            ctx->state = ELEMENT_CODE;
+            break;
+        case ELEMENT_CODE:
+            if (cb->type != CN_CBOR_INT) {
+                puts("Error, malformed element, no code at start");
+                return -1;
+            }
+            coral_element_t *e = _get_form_element_pool(ctx->pool);
+            coral_append_element(ctx->parent, e);
+            ctx->current = e;
+
+            /* next state depends on the element type */
+            switch(cb->v.uint) {
+                case CORAL_TYPE_LINK:
+                    puts("We found a link");
+                    ctx->state = LINK_REL;
+                    break;
+                case CORAL_TYPE_FORM:
+                    puts("We found a form");
+                    ctx->state = FORM_OP;
+                    break;
+                case CORAL_TYPE_REP:
+                    puts("We found an embedded representation");
+                    ctx->state = REP_BYTES;
+                    break;
+                case CORAL_TYPE_DIR_BASE:
+                    puts("We found a base directive");
+                    // TODO: add embedded directive states
+                    break;
+                default:
+                    puts("Not valid coral element");
+                    return -1;
+            }
+            e->type = cb->v.uint;
+            break;
+        case LINK_REL:
+            if (ctx->current->type != CORAL_TYPE_LINK) {
+                puts("Error, invalid state");
+                return -1;
+            }
+            if (cb->type != CN_CBOR_TEXT) {
+                puts("Error, no link rel");
+                return -1;
+            }
+            ctx->current->v.link.rel_type.str = cb->v.str;
+            ctx->current->v.link.rel_type.len = cb->length;
+            ctx->state = LINK_TARGET;
+            break;
+        case FORM_OP:
+            if (ctx->current->type != CORAL_TYPE_FORM) {
+                puts("Error, invalid state");
+                return -1;
+            }
+            if (cb->type != CN_CBOR_TEXT) {
+                puts("Error, no form op");
+                return -1;
+            }
+            ctx->current->v.form.op_type.str = cb->v.str;
+            ctx->current->v.form.op_type.len = cb->length;
+            ctx->state = FORM_METHOD;
+            break;
+        case REP_BYTES:
+            if (ctx->current->type != CORAL_TYPE_REP) {
+                puts("Error, invalid state");
+                return -1;
+            }
+            if (cb->type != CN_CBOR_BYTES) {
+                puts("Error, no bytes on rep");
+                return -1;
+            }
+            ctx->current->v.rep.bytes = cb->v.bytes;
+            ctx->current->v.rep.bytes_len = cb->length;
+            ctx->state = START_ROOT;
+            break;
+            // TODO: directives
+        case LINK_TARGET:
+            if (ctx->current->type != CORAL_TYPE_LINK) {
+                puts("Error, invalid state");
+                return -1;
+            }
+            if (cb->type != CN_CBOR_TEXT) { // TODO: This will change to CIRI or literal, for now just text
+                puts("Only text in targets for now");
+                return -1;
+            }
+            ctx->current->v.link.target.str = cb->v.str;
+            ctx->current->v.link.target.len = cb->length;
+            ctx->state = START_ROOT;
+            break;
+        case FORM_METHOD:
+            if (ctx->current->type != CORAL_TYPE_FORM) {
+                puts("Error, invalid state");
+                return -1;
+            }
+            if (cb->type != CN_CBOR_INT) { // NOTE: only CoAP uses int?
+                puts("Error, form method should be int");
+                return -1;
+            }
+            ctx->current->v.form.method = cb->v.uint;
+            ctx->state = FORM_TARGET;
+            break;
+        case FORM_TARGET:
+            if (ctx->current->type != CORAL_TYPE_FORM) {
+                printf("Error, invalid state: %d\n", FORM_TARGET);
+                return -1;
+            }
+            if (cb->type != CN_CBOR_TEXT) { // TODO: This will change to CIRI or literal, for now just text
+                puts("Error, only text in targets for now");
+                return -1;
+            }
+            ctx->current->v.link.target.str = cb->v.str;
+            ctx->current->v.link.target.len = cb->length;
+            ctx->state = START_ROOT;
+            break;
+        default:
+            puts("Context state todo");
+    }
+    return 0;
+}
+
+static void _decode_cbor(cn_cbor *cb, _coral_element_pool_t *pool)
+{
+    int depth = 0;
+    cn_cbor *p = cb;
+    _decode_ctx_t ctx;
+    ctx.pool = pool;
+    ctx.parent = _get_form_element_pool(pool);
+    ctx.state = START_ROOT;
+    ctx.current = NULL;
+
+    coral_create_document(ctx.parent);
+
+    while (p)
+    {
+visit:
+      _decode_cbor_element(p, depth, &ctx);
+      if (p->first_child) {
+        //puts("visiting children");
+        ctx.parent = ctx.current;
+        p = p->first_child;
+        depth++;
+      } else{
+        if (p->next) {
+          //puts("visiting sibling");
+          p = p->next;
+        } else {
+          while (p->parent) {
+            //puts("back to parent");
+            depth--;
+            if (p->parent->next) {
+              //puts("moving to uncle");
+              p = p->parent->next;
+              goto visit;
+            }
+            //puts("moving to grandparent");
+            p = p->parent;
+            ctx.parent = ctx.current->parent;
+          }
+          return;
+        }
+      }
+    }
+}
