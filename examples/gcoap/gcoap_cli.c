@@ -33,11 +33,20 @@ static void _resp_handler(unsigned req_state, coap_pkt_t* pdu,
                           sock_udp_ep_t *remote);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _riot_board_desc(uint8_t *buf, size_t buf_len, uint8_t format, void *ctx);
 
 /* CoAP resources. Must be sorted by path (ASCII order). */
 static const coap_resource_t _resources[] = {
-    { "/cli/stats", COAP_GET | COAP_PUT, _stats_handler, NULL },
-    { "/riot/board", COAP_GET, _riot_board_handler, NULL },
+    { .path = "/cli/stats",
+      .methods = COAP_GET | COAP_PUT,
+      .handler = _stats_handler,
+      .context = NULL },
+
+    { .path = "/riot/board",
+      .methods = COAP_GET,
+      .handler = _riot_board_handler,
+      .desc = _riot_board_desc,
+      .context = NULL },
 };
 
 static gcoap_listener_t _listener = {
@@ -149,6 +158,18 @@ static ssize_t _riot_board_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, vo
         puts("gcoap_cli: msg buffer too small");
         return gcoap_response(pdu, buf, len, COAP_CODE_INTERNAL_SERVER_ERROR);
     }
+}
+
+static ssize_t _riot_board_desc(uint8_t *buf, size_t buf_len, uint8_t format, void *ctx)
+{
+    (void)format;
+    (void)ctx;
+    uint8_t desc[] = "</riot/board>;ct=\"0\";rt=\"info\"";
+    if (buf_len >= sizeof(desc)) {
+        memcpy(buf, desc, sizeof(desc));
+        return sizeof(desc);
+    }
+    return -1;
 }
 
 static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)

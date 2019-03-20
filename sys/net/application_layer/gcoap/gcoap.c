@@ -57,7 +57,10 @@ static void _find_obs_memo_resource(gcoap_observe_memo_t **memo,
 
 /* Internal variables */
 const coap_resource_t _default_resources[] = {
-    { "/.well-known/core", COAP_GET, _well_known_core_handler, NULL },
+    { .path = "/.well-known/core",
+      .methods = COAP_GET,
+      .handler = _well_known_core_handler,
+      .context = NULL },
 };
 
 static gcoap_listener_t _default_listener = {
@@ -936,17 +939,33 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
         for (unsigned i = 0; i < listener->resources_len; i++) {
             size_t path_len = strlen(resource->path);
             if (out) {
-                /* only add new resources if there is space in the buffer */
-                if ((pos + path_len + 3) > maxlen) {
+                if (pos && (pos + 1) > maxlen) {
                     break;
                 }
-                if (pos) {
+                else {
                     out[pos++] = ',';
                 }
-                out[pos++] = '<';
-                memcpy(&out[pos], resource->path, path_len);
-                pos += path_len;
-                out[pos++] = '>';
+
+                if (resource->desc) {
+                    ssize_t res = resource->desc((uint8_t *)&out[pos], maxlen - pos, cf,
+                                                 resource->context);
+                    if (res > 0) {
+                        pos += res;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else {
+                    /* only add new resources if there is space in the buffer */
+                    if ((pos + path_len + 2) > maxlen) {
+                        break;
+                    }
+                    out[pos++] = '<';
+                    memcpy(&out[pos], resource->path, path_len);
+                    pos += path_len;
+                    out[pos++] = '>';
+                }
             }
             else {
                 pos += (pos) ? 3 : 2;

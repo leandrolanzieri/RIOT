@@ -44,6 +44,18 @@
  * subtrees of `/resource01/`, then a first resource with the path `/resource01`
  * and exact matching should be register, and then a second one with the path
  * `/resource01/` and subtree matching.
+ * 
+ * ### Resource description ###
+ * The `/.well-known/core` handler by default describes the available resources
+ * in a simple manner, just returning the registered path. If a resource needs
+ * a more detailed description, like adding metadata (e.g. resource type or
+ * interface description), or describing resources under the same prefix,
+ * the @ref coap_resource_t::desc "description handler" of the resource
+ * has to be implemented.
+ * 
+ * The description handler will be called when a description of the resource
+ * is needed, and it should fill the given buffer with the information in the
+ * given format (for now only `CoRE Link Format` COAP_FORMAT_LINK).
  *
  * ### Handler functions ###
  *
@@ -282,13 +294,19 @@ typedef struct {
 typedef ssize_t (*coap_handler_t)(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context);
 
 /**
+ * @brief   Resource description handler type
+ */
+typedef ssize_t (*coap_resource_desc_t)(uint8_t *buf, size_t len, uint8_t format, void *context);
+
+/**
  * @brief   Type for CoAP resource entry
  */
 typedef struct {
-    const char *path;               /**< URI path of resource               */
-    unsigned methods;               /**< OR'ed methods this resource allows */
-    coap_handler_t handler;         /**< ptr to resource handler            */
-    void *context;                  /**< ptr to user defined context data   */
+    const char *path;               /**< URI path of resource                */
+    unsigned methods;               /**< OR'ed methods this resource allows  */
+    coap_handler_t handler;         /**< ptr to resource handler             */
+    coap_resource_desc_t desc;      /**< ptr to resource description handler */
+    void *context;                  /**< ptr to user defined context data    */
 } coap_resource_t;
 
 /**
