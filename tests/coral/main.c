@@ -47,39 +47,42 @@ int main(void)
 {
 
     puts("Some cn-cbor tests in RIOT");
+    printf("Size of a coral element: %d\n", sizeof(coral_element_t));
 
     coral_element_t coral_doc;
+    coral_link_target_t link_target;
     coral_create_document(&coral_doc);
 
     coral_element_t sensor_resource;
-    coral_create_link(&sensor_resource, "temperature", "/sens/temp");
+    coral_literal_string(&link_target, "/sense/temp");
+    coral_create_link(&sensor_resource, "temperature", &link_target);
     coral_append_element(&coral_doc, &sensor_resource);
 
     coral_element_t sensor_desc;
-    coral_create_link(&sensor_desc, "describedby", "http://example.com/phys.owl#Temperature");
+    coral_literal_string(&link_target, "http://example.com/phys.owl#Temperature");
+    coral_create_link(&sensor_desc, "describedby", &link_target);
     coral_append_element(&sensor_resource, &sensor_desc);
 
-    coral_element_t embedded_rep;
-    uint8_t _rep[] = { 0x12, 0x34, 0x56, 0x78 };
-    coral_create_rep(&embedded_rep, _rep, sizeof(_rep));
-    coral_append_element(&sensor_resource, &embedded_rep);
+    // coral_element_t embedded_rep;
+    // uint8_t _rep[] = { 0x12, 0x34, 0x56, 0x78 };
+    // coral_create_rep(&embedded_rep, _rep, sizeof(_rep));
+    // coral_append_element(&sensor_resource, &embedded_rep);
     
-    coral_element_t actuator_resource;
-    coral_create_form(&actuator_resource, "heater", COAP_POST, "/act/heat");
-    coral_append_element(&coral_doc, &actuator_resource);
+    // coral_element_t actuator_resource;
+    // coral_create_form(&actuator_resource, "heater", COAP_POST, "/act/heat");
+    // coral_append_element(&coral_doc, &actuator_resource);
 
-
-    coral_element_t actuator_desc;
-    coral_create_link(&actuator_desc, "describedby", "http://example.com/phys.owl#Heater");
-    coral_append_element(&actuator_resource, &actuator_desc);
+    // coral_element_t actuator_desc;
+    // coral_create_link(&actuator_desc, "describedby", "http://example.com/phys.owl#Heater");
+    // coral_append_element(&actuator_resource, &actuator_desc);
 
     coral_print_structure(&coral_doc);
     size_t used = coral_encode(&coral_doc, ebuf, ENCODING_BUF_SIZE);
-
-    puts("\nNow parsing the encoded output\n\n");
-    coral_element_t out[6];
-    coral_decode(out, sizeof(out) / sizeof(out[0]), ebuf, used);
-    coral_print_structure(out);
+    (void)used;
+    // puts("\nNow parsing the encoded output\n\n");
+    // coral_element_t out[6];
+    // coral_decode(out, sizeof(out) / sizeof(out[0]), ebuf, used);
+    // coral_print_structure(out);
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

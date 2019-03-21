@@ -44,8 +44,34 @@ typedef struct {
     size_t len;
 } coral_str_t;
 
-// TODO this could be a CIRI
-typedef coral_str_t coral_link_target_t;
+typedef struct {
+    uint8_t *bytes;
+    unsigned bytes_len;
+} coral_bytes_t;
+
+typedef enum  {
+    CORAL_LITERAL_BOOL,
+    CORAL_LITERAL_INT,
+    CORAL_LITERAL_FLOAT,
+    CORAL_LITERAL_TIME,
+    CORAL_LITERAL_BYTES,
+    CORAL_LITERAL_TEXT,
+    CORAL_LITERAL_NULL
+} coral_literal_type_t;
+
+typedef struct {
+    coral_literal_type_t type;
+    union {
+        int as_int;
+        float as_float;
+        coral_bytes_t as_bytes;
+        coral_str_t as_str;
+        // time
+    } v;
+} coral_literal_t;
+
+// TODO this could be a CIRI as well
+typedef coral_literal_t coral_link_target_t;
 typedef coral_str_t coral_form_target_t;
 
 typedef struct {
@@ -95,7 +121,7 @@ void coral_print_structure(coral_element_t *root);
  */
 void coral_create_document(coral_element_t *root);
 
-void coral_create_link(coral_element_t *link, char *rel, char *target);
+void coral_create_link(coral_element_t *link, char *rel, coral_link_target_t *target);
 
 void coral_create_form(coral_element_t *form, char *op, uint8_t method,
                        char *target);
@@ -105,10 +131,12 @@ void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len);
 int coral_append_element(coral_element_t *root, coral_element_t *el);
 
 ssize_t coral_encode(coral_element_t *root, uint8_t *buf, size_t buf_len);
+/** @} */
+
 
 int coral_decode(coral_element_t *e, unsigned e_len, uint8_t *buf, size_t buf_len);
 
-/** @} */
+void coral_literal_string(coral_literal_t *literal, char *str);
 
 #ifdef __cplusplus
 }
