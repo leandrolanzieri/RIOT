@@ -82,7 +82,7 @@ void coral_create_document(coral_element_t *root)
     root->parent = NULL;
 }
 
-void coral_create_link(coral_element_t *link, char *rel, char *target)
+void coral_create_link(coral_element_t *link, char *rel, coral_link_target_t *target)
 {
     link->type = CORAL_TYPE_LINK;
     link->next = NULL;
@@ -91,8 +91,7 @@ void coral_create_link(coral_element_t *link, char *rel, char *target)
     link->parent = NULL;
     link->v.link.rel_type.str = rel;
     link->v.link.rel_type.len = strlen(rel);
-    link->v.link.target.str = target;
-    link->v.link.target.len = strlen(target);
+    memcpy(&link->v.link.target, target, sizeof(coral_link_target_t));
 }
 
 void coral_create_form(coral_element_t *form, char *op, uint8_t method,
@@ -217,7 +216,27 @@ static void _encode_link(coral_element_t *e)
     val = cn_cbor_string_create(e->v.link.rel_type.str, &_ct, NULL);
     cn_cbor_array_append(e->cbor_root, val, NULL);
 
-    val = cn_cbor_string_create(e->v.link.target.str, &_ct, NULL);
+    switch (e->v.link.target.type) {
+        case CORAL_LITERAL_TEXT:
+            val = cn_cbor_string_create(e->v.link.target.v.as_str.str, &_ct, NULL);
+            break;
+        case CORAL_LITERAL_BOOL:
+            val = cn_cbor_int_create(0, &_ct, NULL);
+            val->type = e->v.link.target.v.as_int ? CN_CBOR_TRUE : CN_CBOR_FALSE;
+            break;
+        case CORAL_LITERAL_BYTES:
+            val = cn_cbor_data_create(e->v.link.target.v.as_bytes.bytes, e->v.link.target.v.as_bytes.bytes_len, &_ct, NULL);
+            break;
+        case CORAL_LITERAL_INT:
+            val = cn_cbor_int_create(e->v.link.target.v.as_int, &_ct, NULL);
+            break;
+        case CORAL_LITERAL_FLOAT:
+            val = cn_cbor_float_create(e->v.link.target.v.as_float, &_ct, NULL);
+            break;
+        default:
+            DEBUG("Invalid literal type");
+            return;
+    }
     cn_cbor_array_append(e->cbor_root, val, NULL);
 }
 
@@ -246,6 +265,7 @@ static void _encode_rep(coral_element_t *e)
     cn_cbor_array_append(e->cbor_root, val, NULL);
 }
 
+
 static void _print_visited(coral_element_t *e, int depth, void *context)
 {
     (void)context;
@@ -259,8 +279,8 @@ static void _print_visited(coral_element_t *e, int depth, void *context)
     switch (e->type) {
         case CORAL_TYPE_LINK:
             DEBUG("link - rel: %.*s <%.*s>", e->v.link.rel_type.len,
-                   e->v.link.rel_type.str, e->v.link.target.len,
-                   e->v.link.target.str);
+                   e->v.link.rel_type.str, e->v.link.target.v.as_str.len,
+                   e->v.link.target.v.as_str.str);
             break;
 
         case CORAL_TYPE_FORM:
@@ -343,12 +363,12 @@ static int _decode_link(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
         DEBUG("Error, link target only can be text for now\n");
         return -1;
     }
-    ctx->current->v.link.target.str = p->v.str;
-    ctx->current->v.link.target.len = p->length;
+    ctx->current->v.link.target.v.as_str.str = p->v.str;
+    ctx->current->v.link.target.v.as_str.len = p->length;
 
     DEBUG("We found a link:\n");
     DEBUG("- Rel: %.*s\n", ctx->current->v.link.rel_type.len, ctx->current->v.link.rel_type.str);
-    DEBUG("- Target: %.*s\n", ctx->current->v.link.target.len, ctx->current->v.link.target.str);
+    DEBUG("- Target: %.*s\n", ctx->current->v.link.target.v.as_str.len, ctx->current->v.link.target.v.as_str.str);
 
     coral_append_element(ctx->parent, ctx->current);
 
