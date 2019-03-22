@@ -45,7 +45,7 @@ typedef struct {
 } coral_str_t;
 
 typedef struct {
-    uint8_t *bytes;
+    const uint8_t *bytes;
     unsigned bytes_len;
 } coral_bytes_t;
 
@@ -72,7 +72,7 @@ typedef struct {
 
 // TODO this could be a CIRI as well
 typedef coral_literal_t coral_link_target_t;
-typedef coral_str_t coral_form_target_t;
+typedef coral_literal_t coral_form_target_t;
 
 typedef struct {
     coral_str_t rel_type;
@@ -81,8 +81,8 @@ typedef struct {
 
 typedef struct {
     coral_str_t op_type;
-    uint8_t method;
     coral_form_target_t target;
+    unsigned method; // Check the order of fields
 } coral_form_t;
 
 typedef struct {
@@ -94,7 +94,7 @@ typedef struct {
 typedef struct coral_element {
     struct coral_element *next;
     struct coral_element *children;
-    struct coral_element *last_child;
+    struct coral_element *last_child; // could be removed eventually
     struct coral_element *parent;
     coral_element_type_t type;
     cn_cbor *cbor_root;
@@ -124,7 +124,7 @@ void coral_create_document(coral_element_t *root);
 void coral_create_link(coral_element_t *link, char *rel, coral_link_target_t *target);
 
 void coral_create_form(coral_element_t *form, char *op, uint8_t method,
-                       char *target);
+                       coral_form_target_t *target);
 
 void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len);
 
