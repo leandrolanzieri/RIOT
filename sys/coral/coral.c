@@ -543,9 +543,14 @@ static int _decode_cbor(cn_cbor *cb, _coral_element_pool_t *pool)
     coral_create_document(ctx.parent);
     ctx.current = NULL;
 
+    printf("CBOR root: %p\n", (void*)cb);
     while (p) {
     cn_cbor *res = NULL;
 element:
+        if (p == cb) {
+            DEBUG("Back to CBOR root, done decoding\n");
+            return 0;
+        }
         if (p->type != CN_CBOR_ARRAY || !p->first_child) {
             DEBUG("Error, should be a CBOR array\n");
             return -1;
@@ -585,11 +590,9 @@ element:
         }
         else {
             if (p->next) {
-                DEBUG("Moving to next element\n");
                 p = p->next;
             }
             else {
-                DEBUG("There is no next element\n");
                 while (p->parent) {
                     if (p->parent->next) {
                         ctx.parent = ctx.parent->parent;
