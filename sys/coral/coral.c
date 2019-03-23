@@ -53,6 +53,7 @@ static void _encode_visited(coral_element_t *e, int depth, void *context);
 static void _encode_link(coral_element_t *e);
 static void _encode_form(coral_element_t *e);
 static void _encode_rep(coral_element_t *e);
+static void _encode_form_field(coral_element_t *e);
 
 /* decoding functions */
 static int _decode_cbor(cn_cbor *cb, _coral_element_pool_t *pool);
@@ -108,6 +109,16 @@ void coral_create_form(coral_element_t *form, char *op, uint8_t method,
     memcpy(&form->v.form.target, target, sizeof(coral_form_target_t));
 }
 
+void coral_create_form_field(coral_element_t *field, char *type,
+                             coral_literal_t *literal)
+{
+    _init_element(field);
+    field->type = CORAL_TYPE_FORM_FIELD;
+    field->v.field.name.str = type;
+    field->v.field.name.len = strlen(type);
+    memcpy(&field->v.field.val, literal, sizeof(coral_form_field_t));
+}
+
 void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len)
 {
     rep->type = CORAL_TYPE_REP;
@@ -121,6 +132,11 @@ void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len)
 
 int coral_append_element(coral_element_t *root, coral_element_t *el)
 {
+    /* can only append fields to forms */
+    if (root->type == CORAL_TYPE_FORM && el->type != CORAL_TYPE_FORM_FIELD) {
+        return -1;
+    }
+
     root->children_n++;
     el->next = NULL;
     el->parent = root;
@@ -191,6 +207,9 @@ static void _encode_visited(coral_element_t *e, int depth, void *context)
         case CORAL_TYPE_REP:
             _encode_rep(e);
             break;
+        case CORAL_TYPE_FORM_FIELD:
+            _encode_form_field(e);
+            break;
         case CORAL_TYPE_BODY:
             break;
         default:
@@ -244,6 +263,15 @@ static void _encode_link(coral_element_t *e)
     cn_cbor_array_append(e->cbor_root, val, NULL);
 
     _encode_literal(&e->v.link.target, &val);
+    cn_cbor_array_append(e->cbor_root, val, NULL);
+}
+
+static void _encode_form_field(coral_element_t *e)
+{
+    cn_cbor *val = cn_cbor_string_create(e->v.field.name.str, &_ct, NULL);
+    cn_cbor_array_append(e->cbor_root, val, NULL);
+
+    _encode_literal(&e->v.field.val, &val);
     cn_cbor_array_append(e->cbor_root, val, NULL);
 }
 
@@ -310,7 +338,7 @@ static void _print_visited(coral_element_t *e, int depth, void *context)
         DEBUG("|--");
     }
     DEBUG("|(%d children)", e->children_n);
-    DEBUG(" type: ");
+    DEBUG(" TYPE: ");
 
     switch (e->type) {
         case CORAL_TYPE_LINK:
@@ -323,6 +351,12 @@ static void _print_visited(coral_element_t *e, int depth, void *context)
             DEBUG("form - op: %.*s method: %d target: ", e->v.form.op_type.len,
                    e->v.form.op_type.str, e->v.form.method);
             _print_literal(&e->v.form.target);
+            break;
+
+        case CORAL_TYPE_FORM_FIELD:
+            DEBUG("form field - type: %.*s value: ", e->v.field.name.len,
+                  e->v.field.name.str);
+            _print_literal(&e->v.field.val);
             break;
 
         case CORAL_TYPE_BODY:
@@ -349,23 +383,18 @@ static void _visit(coral_element_t *e, coral_visitor_t visitor, void *context)
 visit:
       visitor(p, depth, context);
       if (p->children) {
-        //DEBUG("visiting children\n");
         p = p->children;
         depth++;
       } else{
         if (p->next) {
-          //DEBUG("visiting sibling\n");
           p = p->next;
         } else {
           while (p->parent) {
-            //DEBUG("back to parent\n");
             depth--;
             if (p->parent->next) {
-              //DEBUG("moving to uncle\n");
               p = p->parent->next;
               goto visit;
             }
-            //DEBUG("moving to grandparent\n");
             p = p->parent;
           }
           return;
@@ -382,7 +411,6 @@ static int _decode_literal(coral_literal_t *literal, cn_cbor *cb)
             literal->v.as_str.str = cb->v.str;
             literal->v.as_str.len = cb->length;
             break;
-        // TODO: Add other literal types
         case CN_CBOR_TRUE:
         case CN_CBOR_FALSE:
             literal->type = CORAL_LITERAL_BOOL;
@@ -431,7 +459,7 @@ static int _decode_link(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     /* target */
     p = p->next;
     if (!p) {
-        DEBUG("Error, link has no target");
+        DEBUG("Error, link has no target\n");
         return -1;
     }
     _decode_literal(&ctx->current->v.link.target, p);
@@ -452,10 +480,48 @@ static int _decode_link(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     return 0;
 }
 
-static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
+static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
 {
     cn_cbor *p;
     ctx->current = _get_from_element_pool(ctx->pool);
+    _init_element(ctx->current);
+    ctx->current->parent = ctx->parent;
+    ctx->current->type = CORAL_TYPE_FORM_FIELD;
+
+    /* form type */
+    p = cb->first_child;
+    if (!p || p->type != CN_CBOR_TEXT) {
+        DEBUG("Error, form field type should be text. Type is: %d\n", p->type);
+        return -1;
+    }
+
+    ctx->current->v.field.name.str = p->v.str;
+    ctx->current->v.field.name.len = p->length;
+
+    /* form value */
+    p = p->next;
+    if (!p) {
+        DEBUG("Error, form field has no value\n");
+        return -1;
+    }
+    _decode_literal(&ctx->current->v.field.val, p);
+
+    DEBUG("We found a form field:\n");
+    DEBUG("- Type: %.*s\n", ctx->current->v.field.name.len, ctx->current->v.field.name.str);
+    DEBUG("Target: ");
+    _print_literal(&ctx->current->v.field.val);
+
+    coral_append_element(ctx->parent, ctx->current);
+    return 0;
+}
+
+static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
+{
+    (void)body;
+    cn_cbor *p;
+    coral_element_t *e = _get_from_element_pool(ctx->pool);
+    coral_element_t *parent = ctx->parent;
+    ctx->current = e;
     ctx->current->parent = ctx->parent;
     ctx->current->type = CORAL_TYPE_FORM;
     ctx->current->next = NULL;
@@ -488,20 +554,36 @@ static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     }
     _decode_literal(&ctx->current->v.link.target, p);
 
+    /* check if there are fields */
+    p = p->next;
+    if (!p) {
+        DEBUG("Form has no fields\n");
+    }
+    else {
+        if (p->type != CN_CBOR_ARRAY) {
+            DEBUG("Error, form fields should be in an array. Type: %d\n", p->type);
+            return -1;
+        }
+        p = p->first_child;
+        ctx->parent = ctx->current;
+        DEBUG("Form has fields\n");
+        while (p) {
+            _decode_form_field(p, ctx);
+            p = p->next;
+        }
+
+        ctx->current = e;
+        ctx->parent = parent;
+    }
+
     DEBUG("We found a form:\n");
     DEBUG("- Op type: %.*s\n", ctx->current->v.form.op_type.len, ctx->current->v.form.op_type.str);
     DEBUG("- Method: %d\n", ctx->current->v.form.method);
     DEBUG("- Target: ");
     _print_literal(&ctx->current->v.form.target);
+    DEBUG("\n");
 
     coral_append_element(ctx->parent, ctx->current);
-
-    /* if has a body point to it */
-    if (p->next && p->next->type == CN_CBOR_ARRAY) {
-        DEBUG("Form has a body\n");
-        *body = p->next->first_child;
-    }
-    DEBUG("\n");
     return 0;
 }
 
