@@ -25,10 +25,10 @@
 #include "memarray.h"
 #include "coral.h"
 
-#define ENABLE_DEBUG (1)
+#define ENABLE_DEBUG (0)
 #include "debug.h"
 
-#define CORAL_CBOR_NUM_RECORDS  (128)
+#define CORAL_CBOR_NUM_RECORDS  (256)
 
 
 typedef struct {
@@ -180,9 +180,6 @@ int coral_decode(coral_element_t *e, unsigned e_len, uint8_t *buf,
         DEBUG("CBOR root empty\n");
         DEBUG("Error code: %d at pos %d\n", err.err, err.pos);
     }
-    (void)cbor_root;
-    (void)e;
-    (void)e_len;
     _decode_cbor(cbor_root, &pool);
     return -1;
 }
@@ -239,7 +236,6 @@ static void _encode_visited(coral_element_t *e, int depth, void *context)
     }
 
     if (e->children) {
-        puts("Element has children");
         e->cbor_body = cn_cbor_array_create(&_ct, NULL);
         cn_cbor_array_append(e->cbor_root, e->cbor_body, NULL);
     }
@@ -328,31 +324,37 @@ static void _encode_rep(coral_element_t *e)
 }
 
 
-static void _print_literal(coral_literal_t *l)
+static void _print_literal(coral_literal_t *l, unsigned debug)
 {
+    (void)debug;
+#if ENABLE_DEBUG == 0
+    if (debug) {
+        return;
+    }
+#endif
     switch (l->type) {
         case CORAL_LITERAL_BOOL:
-            DEBUG("%s", l->v.as_int ? "true" : "false");
+            printf("%s", l->v.as_int ? "true" : "false");
             break;
         case CORAL_LITERAL_BYTES:
             for (unsigned i = 0; i < l->v.as_bytes.bytes_len; i++) {
-                DEBUG("%02x ", l->v.as_bytes.bytes[i]);
+                printf("%02x ", l->v.as_bytes.bytes[i]);
             }
             break;
         case CORAL_LITERAL_TEXT:
-            DEBUG("\"%.*s\"", l->v.as_str.len, l->v.as_str.str);
+            printf("\"%.*s\"", l->v.as_str.len, l->v.as_str.str);
             break;
         case CORAL_LITERAL_NULL:
-            DEBUG("NULL");
+            printf("NULL");
             break;
         case CORAL_LITERAL_TIME:
-            DEBUG("Time format not implemented");
+            printf("Time format not implemented");
             break;
         case CORAL_LITERAL_FLOAT:
-            DEBUG("%f", l->v.as_float);
+            printf("%f", l->v.as_float);
             break;
         default:
-            DEBUG("Unknown literal type");
+            printf("Unknown literal type");
             break;
     }
 }
@@ -360,51 +362,51 @@ static void _print_literal(coral_literal_t *l)
 static void _print_visited(coral_element_t *e, int depth, void *context)
 {
     (void)context;
-    DEBUG("|--");
+    printf("|--");
     for (int i = 0; i < depth; i++) {
-        DEBUG("|--");
+        printf("|--");
     }
-    DEBUG("|(%d children)", e->children_n);
-    DEBUG(" TYPE: ");
+    printf("|(%d children)", e->children_n);
+    printf(" TYPE: ");
 
     switch (e->type) {
         case CORAL_TYPE_LINK:
-            DEBUG("link - rel: %.*s target: ", e->v.link.rel_type.len,
+            printf("link - rel: %.*s target: ", e->v.link.rel_type.len,
                    e->v.link.rel_type.str);
-            _print_literal(&e->v.link.target);
+            _print_literal(&e->v.link.target, 0);
             break;
 
         case CORAL_TYPE_FORM:
-            DEBUG("form - op: %.*s method: %d target: ", e->v.form.op_type.len,
+            printf("form - op: %.*s method: %d target: ", e->v.form.op_type.len,
                    e->v.form.op_type.str, e->v.form.method);
-            _print_literal(&e->v.form.target);
+            _print_literal(&e->v.form.target, 0);
             break;
 
         case CORAL_TYPE_FORM_FIELD:
-            DEBUG("form field - type: %.*s value: ", e->v.field.name.len,
+            printf("form field - type: %.*s value: ", e->v.field.name.len,
                   e->v.field.name.str);
-            _print_literal(&e->v.field.val);
+            _print_literal(&e->v.field.val, 0);
             break;
 
         case CORAL_TYPE_BODY:
-            DEBUG("document body");
+            printf("document body");
             break;
         case CORAL_TYPE_REP:
-            DEBUG("embedded representation: ");
+            printf("embedded representation: ");
             for (unsigned i = 0; i < e->v.rep.bytes_len; i++) {
-                DEBUG("%#x ", e->v.rep.bytes[i]);
+                printf("%#x ", e->v.rep.bytes[i]);
             }
             break;
         case CORAL_TYPE_REP_METADATA:
-            DEBUG("representation metadata - name: %.*s value: ",
+            printf("representation metadata - name: %.*s value: ",
                   e->v.rep_m.name.len, e->v.rep_m.name.str);
-            _print_literal(&e->v.field.val);
+            _print_literal(&e->v.field.val, 0);
             break;
         default:
-            DEBUG("undefined");
+            printf("undefined");
             break;
     }
-    DEBUG("\n");
+    printf("\n");
 }
 
 static void _visit(coral_element_t *e, coral_visitor_t visitor, void *context)
@@ -499,7 +501,7 @@ static int _decode_link(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     DEBUG("We found a link:\n");
     DEBUG("- Rel: %.*s\n", ctx->current->v.link.rel_type.len, ctx->current->v.link.rel_type.str);
     DEBUG("Target: ");
-    _print_literal(&ctx->current->v.link.target);
+    _print_literal(&ctx->current->v.link.target, 1);
 
     coral_append_element(ctx->parent, ctx->current);
 
@@ -540,19 +542,19 @@ static int _decode_rep_metadata(cn_cbor **cb, _decode_ctx_t *ctx)
     }
     _decode_literal(&ctx->current->v.rep_m.val, p);
     coral_append_element(ctx->parent, ctx->current);
-    puts("added metadata to parent");
     *cb = p->next;
 
     DEBUG("We found a rep metadata:\n");
     DEBUG("- Name: %.*s\n", ctx->current->v.rep_m.name.len,
           ctx->current->v.rep_m.name.str);
     DEBUG("- Value: ");
-    _print_literal(&ctx->current->v.rep_m.val);
+    _print_literal(&ctx->current->v.rep_m.val, 1);
+    DEBUG("\n");
 
     return 0;
 }
 
-static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
+static int _decode_form_field(cn_cbor **cb, _decode_ctx_t *ctx)
 {
     cn_cbor *p;
     ctx->current = _get_from_element_pool(ctx->pool);
@@ -561,7 +563,7 @@ static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
     ctx->current->type = CORAL_TYPE_FORM_FIELD;
 
     /* form field type */
-    p = cb->first_child;
+    p = *cb;
     if (!p || p->type != CN_CBOR_TEXT) {
         DEBUG("Error, form field type should be text. Type is: %d\n", p->type);
         return -1;
@@ -578,11 +580,13 @@ static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
     }
     _decode_literal(&ctx->current->v.field.val, p);
     coral_append_element(ctx->parent, ctx->current);
+    *cb = p->next;
 
     DEBUG("We found a form field:\n");
-    DEBUG("- Type: %.*s\n", ctx->current->v.field.name.len, ctx->current->v.field.name.str);
+    DEBUG("- Type: %.*s\n", ctx->current->v.field.name.len,
+          ctx->current->v.field.name.str);
     DEBUG("Target: ");
-    _print_literal(&ctx->current->v.field.val);
+    _print_literal(&ctx->current->v.field.val, 1);
 
     return 0;
 }
@@ -627,6 +631,14 @@ static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     }
     _decode_literal(&ctx->current->v.link.target, p);
 
+    DEBUG("We found a form:\n");
+    DEBUG("- Op type: %.*s\n", ctx->current->v.form.op_type.len, ctx->current->v.form.op_type.str);
+    DEBUG("- Method: %d\n", ctx->current->v.form.method);
+    DEBUG("- Target: ");
+    _print_literal(&ctx->current->v.form.target, 1);
+    DEBUG("\n");
+    coral_append_element(ctx->parent, ctx->current);
+
     /* check if there are fields */
     p = p->next;
     if (!p) {
@@ -641,22 +653,14 @@ static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
         ctx->parent = ctx->current;
         DEBUG("Form has fields\n");
         while (p) {
-            _decode_form_field(p, ctx);
-            p = p->next;
+            DEBUG("Decoding form field\n");
+            _decode_form_field(&p, ctx);
         }
 
         ctx->current = e;
         ctx->parent = parent;
     }
 
-    DEBUG("We found a form:\n");
-    DEBUG("- Op type: %.*s\n", ctx->current->v.form.op_type.len, ctx->current->v.form.op_type.str);
-    DEBUG("- Method: %d\n", ctx->current->v.form.method);
-    DEBUG("- Target: ");
-    _print_literal(&ctx->current->v.form.target);
-    DEBUG("\n");
-
-    coral_append_element(ctx->parent, ctx->current);
     return 0;
 }
 
@@ -718,7 +722,6 @@ static int _decode_cbor(cn_cbor *cb, _coral_element_pool_t *pool)
     coral_create_document(ctx.parent);
     ctx.current = NULL;
 
-    printf("CBOR root: %p\n", (void*)cb);
     while (p) {
     cn_cbor *res = NULL;
 element:
