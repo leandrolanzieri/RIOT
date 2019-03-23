@@ -56,16 +56,16 @@ int main(void)
 
     (void)link_target;
     /* create a CoRAL link of temperature sensor and append to doc */
-    // coral_element_t sensor_resource;
-    // coral_literal_string(&link_target, "/sense/temp");
-    // coral_create_link(&sensor_resource, "temperature", &link_target);
-    // coral_append_element(&coral_doc, &sensor_resource);
+    coral_element_t sensor_resource;
+    coral_literal_string(&link_target, "/sense/temp");
+    coral_create_link(&sensor_resource, "temperature", &link_target);
+    coral_append_element(&coral_doc, &sensor_resource);
 
-    // /* create a CoRAL link that describes the previous link */
-    // coral_element_t sensor_desc;
-    // coral_literal_string(&link_target, "http://example.com/phys.owl#Temperature");
-    // coral_create_link(&sensor_desc, "describedby", &link_target);
-    // coral_append_element(&sensor_resource, &sensor_desc);
+    /* create a CoRAL link that describes the previous link */
+    coral_element_t sensor_desc;
+    coral_literal_string(&link_target, "http://example.com/phys.owl#Temperature");
+    coral_create_link(&sensor_desc, "describedby", &link_target);
+    coral_append_element(&sensor_resource, &sensor_desc);
 
     /* create a CoRAL embedded representation of the previous link */
     coral_element_t embedded_rep;
@@ -86,18 +86,24 @@ int main(void)
     coral_append_element(&embedded_rep, &embedded_metadata2);
 
     /* create a CoRAL form of a heater actuator */
-    // coral_element_t actuator_resource;
-    // coral_form_target_t form_target;
-    // coral_literal_string(&form_target, "/act/heat");
-    // coral_create_form(&actuator_resource, "heater", COAP_POST, &form_target);
-    // coral_append_element(&coral_doc, &actuator_resource);
+    coral_element_t actuator_resource;
+    coral_form_target_t form_target;
+    coral_literal_string(&form_target, "/act/heat");
+    coral_create_form(&actuator_resource, "heater", COAP_POST, &form_target);
+    coral_append_element(&coral_doc, &actuator_resource);
 
-    // /* create a form field for previous form */
-    // coral_element_t actuator_field;
-    // coral_literal_t field_val;
-    // coral_literal_string(&field_val, "field_val");
-    // coral_create_form_field(&actuator_field, "field_name", &field_val);
-    // coral_append_element(&actuator_resource, &actuator_field);
+    /* create a form field for previous form */
+    coral_element_t actuator_field;
+    coral_literal_t field_val;
+    coral_literal_string(&field_val, "field_val");
+    coral_create_form_field(&actuator_field, "field_name", &field_val);
+    coral_append_element(&actuator_resource, &actuator_field);
+
+    coral_element_t actuator_field2;
+    coral_literal_t field_val2;
+    coral_literal_string(&field_val2, "field_val2");
+    coral_create_form_field(&actuator_field2, "field_name2", &field_val2);
+    coral_append_element(&actuator_resource, &actuator_field2);
 
     /* print the structure in memory */
     coral_print_structure(&coral_doc);
@@ -108,7 +114,7 @@ int main(void)
     /* parse the buffer again into CoRAL and print it */
     (void)used;
     puts("\nNow parsing the encoded output\n\n");
-    coral_element_t out[6];
+    coral_element_t out[10];
     coral_decode(out, sizeof(out) / sizeof(out[0]), ebuf, used);
     coral_print_structure(out);
 
