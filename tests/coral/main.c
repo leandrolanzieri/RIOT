@@ -107,10 +107,10 @@ int main(void)
 
     /* parse the buffer again into CoRAL and print it */
     (void)used;
-    // puts("\nNow parsing the encoded output\n\n");
-    // coral_element_t out[6];
-    // coral_decode(out, sizeof(out) / sizeof(out[0]), ebuf, used);
-    // coral_print_structure(out);
+    puts("\nNow parsing the encoded output\n\n");
+    coral_element_t out[6];
+    coral_decode(out, sizeof(out) / sizeof(out[0]), ebuf, used);
+    coral_print_structure(out);
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

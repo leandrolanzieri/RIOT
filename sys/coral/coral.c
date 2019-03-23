@@ -238,7 +238,6 @@ static void _encode_visited(coral_element_t *e, int depth, void *context)
             DEBUG("Unknown coral element\n");
     }
 
-
     if (e->children) {
         puts("Element has children");
         e->cbor_body = cn_cbor_array_create(&_ct, NULL);
@@ -397,7 +396,7 @@ static void _print_visited(coral_element_t *e, int depth, void *context)
             }
             break;
         case CORAL_TYPE_REP_METADATA:
-            DEBUG("representation metadata - name: %*s value: ",
+            DEBUG("representation metadata - name: %.*s value: ",
                   e->v.rep_m.name.len, e->v.rep_m.name.str);
             _print_literal(&e->v.field.val);
             break;
@@ -522,8 +521,9 @@ static int _decode_rep_metadata(cn_cbor **cb, _decode_ctx_t *ctx)
     ctx->current->type = CORAL_TYPE_REP_METADATA;
 
     /* metadata name */
-    p = (*cb)->first_child;
+    p = *cb;
     if (!p || p->type != CN_CBOR_TEXT) {
+        puts("here");
         DEBUG("Error, representation metadata name should be text."
               "Type is: %d\n", p->type);
         return -1;
@@ -540,13 +540,13 @@ static int _decode_rep_metadata(cn_cbor **cb, _decode_ctx_t *ctx)
     }
     _decode_literal(&ctx->current->v.rep_m.val, p);
     coral_append_element(ctx->parent, ctx->current);
-
+    puts("added metadata to parent");
     *cb = p->next;
 
     DEBUG("We found a rep metadata:\n");
     DEBUG("- Name: %.*s\n", ctx->current->v.rep_m.name.len,
           ctx->current->v.rep_m.name.str);
-    DEBUG("Value: ");
+    DEBUG("- Value: ");
     _print_literal(&ctx->current->v.rep_m.val);
 
     return 0;
