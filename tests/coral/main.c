@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include "shell.h"
 #include "shell_commands.h"
@@ -47,7 +48,7 @@ int main(void)
 {
 
     puts("Some cn-cbor tests in RIOT");
-    printf("Size of a coral element: %d\n", sizeof(coral_element_t));
+    printf("Size of a coral element: %zu\n", sizeof(coral_element_t));
 
     /* create CoRAL root element */
     coral_element_t coral_doc;
