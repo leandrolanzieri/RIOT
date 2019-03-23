@@ -36,7 +36,8 @@ typedef enum {
     CORAL_TYPE_REP = 0,
     CORAL_TYPE_DIR_BASE = 1,
     CORAL_TYPE_LINK = 2,
-    CORAL_TYPE_FORM = 3
+    CORAL_TYPE_FORM = 3,
+    CORAL_TYPE_FORM_FIELD = 4
 } coral_element_type_t;
 
 typedef struct {
@@ -70,9 +71,14 @@ typedef struct {
     } v;
 } coral_literal_t;
 
-// TODO this could be a CIRI as well
-typedef coral_literal_t coral_link_target_t;
-typedef coral_literal_t coral_form_target_t;
+typedef struct {
+    coral_str_t name;
+    coral_literal_t val; // TODO: This should be CIRI as well
+} coral_key_value_t;
+
+typedef coral_literal_t coral_link_target_t; // TODO: This could be a CIRI as well
+typedef coral_literal_t coral_form_target_t; // TODO: This could be a CIRI as well
+typedef coral_key_value_t coral_form_field_t;
 
 typedef struct {
     coral_str_t rel_type;
@@ -104,6 +110,7 @@ typedef struct coral_element {
         coral_link_t link;
         coral_form_t form;
         coral_rep_t rep;
+        coral_form_field_t field;
     } v;
 } coral_element_t;
 
@@ -127,6 +134,9 @@ void coral_create_form(coral_element_t *form, char *op, uint8_t method,
                        coral_form_target_t *target);
 
 void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len);
+
+void coral_create_form_field(coral_element_t *field, char *type,
+                             coral_literal_t *literal);
 
 int coral_append_element(coral_element_t *root, coral_element_t *el);
 
