@@ -53,7 +53,7 @@ static void _encode_visited(coral_element_t *e, int depth, void *context);
 static void _encode_link(coral_element_t *e);
 static void _encode_form(coral_element_t *e);
 static void _encode_rep(coral_element_t *e);
-static void _encode_form_field(coral_element_t *e);
+static void _encode_key_value(coral_element_t *e);
 
 /* decoding functions */
 static int _decode_cbor(cn_cbor *cb, _coral_element_pool_t *pool);
@@ -110,22 +110,31 @@ void coral_create_form(coral_element_t *form, char *op, uint8_t method,
 }
 
 void coral_create_form_field(coral_element_t *field, char *type,
-                             coral_literal_t *literal)
+                             coral_literal_t *value)
 {
     _init_element(field);
     field->type = CORAL_TYPE_FORM_FIELD;
     field->v.field.name.str = type;
     field->v.field.name.len = strlen(type);
-    memcpy(&field->v.field.val, literal, sizeof(coral_form_field_t));
+    memcpy(&field->v.field.val, value, sizeof(coral_literal_t));
+}
+
+void coral_create_rep_metadata(coral_element_t *metadata, char *name,
+                               coral_literal_t *value)
+{
+    assert(metadata && name && value);
+    _init_element(metadata);
+    metadata->type = CORAL_TYPE_REP_METADATA;
+    metadata->v.rep_m.name.str = name;
+    metadata->v.rep_m.name.len = strlen(name);
+    memcpy(&metadata->v.rep_m.val, value, sizeof(coral_literal_t));
 }
 
 void coral_create_rep(coral_element_t *rep, uint8_t *buf, size_t buf_len)
 {
+    assert(rep && buf);
+    _init_element(rep);
     rep->type = CORAL_TYPE_REP;
-    rep->next = NULL;
-    rep->children = NULL;
-    rep->children_n = 0;
-    rep->parent = NULL;
     rep->v.rep.bytes = buf;
     rep->v.rep.bytes_len = buf_len;
 }
@@ -134,6 +143,13 @@ int coral_append_element(coral_element_t *root, coral_element_t *el)
 {
     /* can only append fields to forms */
     if (root->type == CORAL_TYPE_FORM && el->type != CORAL_TYPE_FORM_FIELD) {
+        DEBUG("Error, only append form fields to forms\n");
+        return -1;
+    }
+
+    /* can only append metadata to embedded representations */
+    if (root->type == CORAL_TYPE_REP && el->type != CORAL_TYPE_REP_METADATA) {
+        DEBUG("Error, only append metadata to representations\n");
         return -1;
     }
 
@@ -149,6 +165,7 @@ int coral_append_element(coral_element_t *root, coral_element_t *el)
     }
 
     root->last_child = el;
+
     return 0;
 }
 
@@ -193,30 +210,37 @@ static void _encode_visited(coral_element_t *e, int depth, void *context)
     (void)depth;
     (void)context;
 
-    if (e->type != CORAL_TYPE_BODY) {
+    if (e->type != CORAL_TYPE_BODY && e->type != CORAL_TYPE_REP_METADATA) {
         e->cbor_root = cn_cbor_array_create(&_ct, NULL);
     }
 
     switch (e->type) {
         case CORAL_TYPE_LINK:
+            DEBUG("Encoding link\n");
             _encode_link(e);
             break;
         case CORAL_TYPE_FORM:
+            DEBUG("Encoding form\n");
             _encode_form(e);
             break;
         case CORAL_TYPE_REP:
+            DEBUG("Encoding rep\n");
             _encode_rep(e);
             break;
         case CORAL_TYPE_FORM_FIELD:
-            _encode_form_field(e);
-            break;
+        case CORAL_TYPE_REP_METADATA:
+            DEBUG("Encoding key / value\n");
+            _encode_key_value(e);
+            return;
         case CORAL_TYPE_BODY:
             break;
         default:
             DEBUG("Unknown coral element\n");
     }
 
+
     if (e->children) {
+        puts("Element has children");
         e->cbor_body = cn_cbor_array_create(&_ct, NULL);
         cn_cbor_array_append(e->cbor_root, e->cbor_body, NULL);
     }
@@ -266,13 +290,17 @@ static void _encode_link(coral_element_t *e)
     cn_cbor_array_append(e->cbor_root, val, NULL);
 }
 
-static void _encode_form_field(coral_element_t *e)
+static void _encode_key_value(coral_element_t *e)
 {
     cn_cbor *val = cn_cbor_string_create(e->v.field.name.str, &_ct, NULL);
-    cn_cbor_array_append(e->cbor_root, val, NULL);
+    e->cbor_root = val;
 
-    _encode_literal(&e->v.field.val, &val);
-    cn_cbor_array_append(e->cbor_root, val, NULL);
+    if (e->parent && e->parent->cbor_body) {
+        cn_cbor_array_append(e->parent->cbor_body, val, NULL);
+        _encode_literal(&e->v.field.val, &val);
+        cn_cbor_array_append(e->parent->cbor_body, val, NULL);
+    }
+
 }
 
 static void _encode_form(coral_element_t *e)
@@ -367,6 +395,11 @@ static void _print_visited(coral_element_t *e, int depth, void *context)
             for (unsigned i = 0; i < e->v.rep.bytes_len; i++) {
                 DEBUG("%#x ", e->v.rep.bytes[i]);
             }
+            break;
+        case CORAL_TYPE_REP_METADATA:
+            DEBUG("representation metadata - name: %*s value: ",
+                  e->v.rep_m.name.len, e->v.rep_m.name.str);
+            _print_literal(&e->v.field.val);
             break;
         default:
             DEBUG("undefined");
@@ -480,6 +513,45 @@ static int _decode_link(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
     return 0;
 }
 
+static int _decode_rep_metadata(cn_cbor **cb, _decode_ctx_t *ctx)
+{
+    cn_cbor *p;
+    ctx->current = _get_from_element_pool(ctx->pool);
+    _init_element(ctx->current);
+    ctx->current->parent = ctx->parent;
+    ctx->current->type = CORAL_TYPE_REP_METADATA;
+
+    /* metadata name */
+    p = (*cb)->first_child;
+    if (!p || p->type != CN_CBOR_TEXT) {
+        DEBUG("Error, representation metadata name should be text."
+              "Type is: %d\n", p->type);
+        return -1;
+    }
+
+    ctx->current->v.rep_m.name.str = p->v.str;
+    ctx->current->v.rep_m.name.len = p->length;
+
+    /* metdata value */
+    p = p->next;
+    if (!p) {
+        DEBUG("Error, metadata has no value\n");
+        return -1;
+    }
+    _decode_literal(&ctx->current->v.rep_m.val, p);
+    coral_append_element(ctx->parent, ctx->current);
+
+    *cb = p->next;
+
+    DEBUG("We found a rep metadata:\n");
+    DEBUG("- Name: %.*s\n", ctx->current->v.rep_m.name.len,
+          ctx->current->v.rep_m.name.str);
+    DEBUG("Value: ");
+    _print_literal(&ctx->current->v.rep_m.val);
+
+    return 0;
+}
+
 static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
 {
     cn_cbor *p;
@@ -488,7 +560,7 @@ static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
     ctx->current->parent = ctx->parent;
     ctx->current->type = CORAL_TYPE_FORM_FIELD;
 
-    /* form type */
+    /* form field type */
     p = cb->first_child;
     if (!p || p->type != CN_CBOR_TEXT) {
         DEBUG("Error, form field type should be text. Type is: %d\n", p->type);
@@ -505,13 +577,13 @@ static int _decode_form_field(cn_cbor *cb, _decode_ctx_t *ctx)
         return -1;
     }
     _decode_literal(&ctx->current->v.field.val, p);
+    coral_append_element(ctx->parent, ctx->current);
 
     DEBUG("We found a form field:\n");
     DEBUG("- Type: %.*s\n", ctx->current->v.field.name.len, ctx->current->v.field.name.str);
     DEBUG("Target: ");
     _print_literal(&ctx->current->v.field.val);
 
-    coral_append_element(ctx->parent, ctx->current);
     return 0;
 }
 
@@ -519,6 +591,7 @@ static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
 {
     (void)body;
     cn_cbor *p;
+    *body = NULL;
     coral_element_t *e = _get_from_element_pool(ctx->pool);
     coral_element_t *parent = ctx->parent;
     ctx->current = e;
@@ -590,6 +663,10 @@ static int _decode_form(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
 static int _decode_rep(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
 {
     cn_cbor *p;
+    coral_element_t *e = _get_from_element_pool(ctx->pool);
+    coral_element_t *parent = ctx->parent;
+    ctx->current = e;
+    *body = NULL; /* metadata is parsed here */
     ctx->current = _get_from_element_pool(ctx->pool);
     ctx->current->type = CORAL_TYPE_REP;
 
@@ -604,15 +681,31 @@ static int _decode_rep(cn_cbor *cb, cn_cbor **body, _decode_ctx_t *ctx)
 
     DEBUG("We found an embedded representation\n");
     DEBUG("- Amount of bytes: %d\n", ctx->current->v.rep.bytes_len);
-
+    DEBUG("\n");
     coral_append_element(ctx->parent, ctx->current);
 
-    /* if has a body point to it */
-    if (p->next && p->next->type == CN_CBOR_ARRAY) {
-        DEBUG("Rep has a body\n");
-        *body = p->next->first_child;
+    /* check if there is metadata */
+    p = p->next;
+    if (!p) {
+        DEBUG("Representation has no metadata\n");
     }
-    DEBUG("\n");
+    else {
+        if (p->type != CN_CBOR_ARRAY) {
+            DEBUG("Error, emb rep metadata should be an array. Type: %d\n", p->type);
+            return -1;
+        }
+        p = p->first_child;
+        ctx->parent = ctx->current;
+        DEBUG("Representation has metadata\n");
+        while (p) {
+            DEBUG("Decoding metadata\n");
+            _decode_rep_metadata(&p, ctx);
+        }
+
+        ctx->current = e;
+        ctx->parent = parent;
+    }
+
     return 0;
 }
 
