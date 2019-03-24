@@ -28,20 +28,48 @@
 
 static ciri_opt_t opts[CIRI_OPTS_BUFFER_LEN];
 
-static void _print_opt(ciri_opt_t *e)
+static void _print_opt(ciri_opt_t *href)
 {
-     printf(" Option type: ");
-
-    switch (e->type) {
+    switch (href->type) {
         case CIRI_OPT_SCHEME:
-            printf("scheme | content: %.*s", e->v.string.len, e->v.string.str);
+            printf("- scheme: %.*s", href->v.string.len, href->v.string.str);
             break;
-        // TODO add others
+        case CIRI_OPT_HOST_NAME:
+            printf("- host name: %.*s", href->v.string.len, href->v.string.str);
+            break;
+        case CIRI_OPT_HOST_IP:
+            printf("- host IP: ");
+            ipv6_addr_print(&href->v.ip);
+            break;
+        case CIRI_OPT_PORT:
+            printf("- port: %d", href->v.integer);
+            break;
+        case CIRI_OPT_PATH_TYPE:
+            printf("- path type: %d", href->v.path_type);
+            break;
+        case CIRI_OPT_PATH:
+            printf("- path: %.*s", href->v.string.len, href->v.string.str);
+            break;
+        case CIRI_OPT_QUERY:
+            printf("- query: %.*s", href->v.string.len, href->v.string.str);
+            break;
+        case CIRI_OPT_FRAGMENT:
+            printf("- fragment: %.*s", href->v.string.len, href->v.string.str);
+            break;
         default:
-            printf("other");
+            printf("unknown");
             break;
     }
-    puts("");
+}
+
+static void print_options(ciri_opt_t *href)
+{
+    puts("Options");
+    while (href) {
+        _print_opt(href);
+        puts("");
+        href = href->next;
+    }
 }
 
 
@@ -86,12 +114,23 @@ int main(void)
     puts("Constrained Internationalized Resource Identifiers (CIRI)\n"
          "Test application");
 
+    print_options(&scheme);
+    puts("");
+
     printf("- [CHECK] well formed: ");
     if (ciri_is_well_formed(&scheme) != CIRI_RET_OK) {
         puts("Fail");
     }
     else {
         puts("Success");
+    }
+
+    printf("- [CHECK] absolute: ");
+    if (ciri_is_absolute(&scheme) != CIRI_RET_OK) {
+        puts("No");
+    }
+    else {
+        puts("Yes");
     }
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];

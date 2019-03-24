@@ -86,14 +86,24 @@ int ciri_is_well_formed(ciri_opt_t *href)
     ciri_opt_t *opt = href;
     while(opt) {
         if (!_valid_transition(prev_type, opt->type)) {
-            DEBUG("Invalid transition detected\n");
+            DEBUG("Malformed CIRI, invalid transition detected\n");
             return CIRI_RET_ERR;
         }
         prev_type = opt->type;
         opt = opt->next;
     }
     if (!_valid_last_opt(prev_type)) {
-        DEBUG("Invalid last option\n");
+        DEBUG("Malformed CIRI, invalid last option\n");
+        return CIRI_RET_ERR;
+    }
+    return CIRI_RET_OK;
+}
+
+int ciri_is_absolute(ciri_opt_t *href)
+{
+    assert(href);
+    if (ciri_is_well_formed(href) != CIRI_RET_OK ||
+        href->type != CIRI_OPT_SCHEME) {
         return CIRI_RET_ERR;
     }
     return CIRI_RET_OK;
