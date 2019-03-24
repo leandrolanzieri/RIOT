@@ -31,6 +31,9 @@
 
 #define CIRI_CBOR_NUM_RECORDS  (16)
 
+static void _create_from_string(ciri_opt_t *href, char *query, ciri_opt_t *prev);
+static void _create_from_int(ciri_opt_t *href, uint16_t num, ciri_opt_t *prev);
+
 // static void *_cbor_calloc(size_t count, size_t size, void *memblock);
 // static void _cbor_free(void *ptr, void *memblock);
 
@@ -117,6 +120,86 @@ int ciri_is_relative(ciri_opt_t *href)
     return CIRI_RET_OK;
 }
 
+void ciri_append_opt(ciri_opt_t *prev, ciri_opt_t *href)
+{
+    if (prev && href) {
+        prev->next = href;
+    }
+}
+
+void ciri_create_scheme(ciri_opt_t *href, char *scheme, ciri_opt_t *prev)
+{
+    assert(href && scheme);
+    href->type = CIRI_OPT_SCHEME;
+    _create_from_string(href, scheme, prev);
+}
+
+void ciri_create_host_name(ciri_opt_t *href, char *host_name, ciri_opt_t *prev)
+{
+    assert(href && host_name);
+    href->type = CIRI_OPT_HOST_NAME;
+    _create_from_string(href, host_name, prev);
+}
+
+void ciri_create_host_ip(ciri_opt_t *href, ipv6_addr_t *ip, ciri_opt_t *prev)
+{
+    assert(href && ip);
+    href->type = CIRI_OPT_HOST_IP;
+    href->v.ip = ip;
+    href->next = NULL;
+    ciri_append_opt(prev, href);
+}
+
+void ciri_create_port(ciri_opt_t *href, uint16_t port, ciri_opt_t *prev)
+{
+    assert(href);
+    href->type = CIRI_OPT_PORT;
+    _create_from_int(href, port, prev);
+}
+
+void ciri_create_path(ciri_opt_t *href, char *path, ciri_opt_t *prev)
+{
+    assert(href);
+    href->type = CIRI_OPT_PATH;
+    _create_from_string(href, path, prev);
+}
+
+void ciri_create_path_type(ciri_opt_t *href, uint16_t type,
+                           ciri_opt_t *prev)
+{
+    assert(href);
+    href->type = CIRI_OPT_PATH_TYPE;
+    _create_from_int(href, type, prev);
+}
+
+void ciri_create_query(ciri_opt_t *href, char *query, ciri_opt_t *prev)
+{
+    assert(href);
+    href->type = CIRI_OPT_QUERY;
+    _create_from_string(href, query, prev);
+}
+
+void ciri_create_fragment(ciri_opt_t *href, char *fragment, ciri_opt_t *prev)
+{
+    assert(href);
+    href->type = CIRI_OPT_FRAGMENT;
+    _create_from_string(href, fragment, prev);
+}
+
+static void _create_from_string(ciri_opt_t *href, char *str, ciri_opt_t *prev)
+{
+    href->next = NULL;
+    href->v.string.str = str;
+    href->v.string.len = strlen(str);
+    ciri_append_opt(prev, href);
+}
+
+static void _create_from_int(ciri_opt_t *href, uint16_t num, ciri_opt_t *prev)
+{
+    href->next = NULL;
+    href->v.integer = num;
+    ciri_append_opt(prev, href);
+}
 // static void *_cbor_calloc(size_t count, size_t size, void *memblock)
 // {
 //     (void)count;

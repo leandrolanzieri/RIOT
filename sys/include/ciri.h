@@ -52,24 +52,45 @@ typedef struct {
     size_t len;
 } ciri_str_t;
 
-typedef enum {
-    CIRI_PATH_ABS = 0,
-    CIRI_PATH_APPEND_REL = 1,
-    CIRI_PATH_APPEND = 2,
-    CIRI_PATH_REL = 3
-    // should define everything?
-} ciri_path_type_t;
+/**
+ * @name CIRI path types
+ * @{
+ */
+#define CIRI_PATH_ABS        (0)
+#define CIRI_PATH_APPEND_REL (1)
+#define CIRI_PATH_APPEND     (2)
+#define CIRI_PATH_REL        (3)
+/* @} */
+// should define everything?
 
 typedef struct ciri_opt {
     ciri_opt_type_t type;
     struct ciri_opt *next;
     union {
         ciri_str_t string;
-        ipv6_addr_t ip;
-        ciri_path_type_t path_type;
+        ipv6_addr_t *ip;
         uint16_t integer;
     }v;
 } ciri_opt_t;
+
+void ciri_append_opt(ciri_opt_t *prev, ciri_opt_t *href);
+
+void ciri_create_scheme(ciri_opt_t *href, char *scheme, ciri_opt_t *prev);
+
+void ciri_create_host_name(ciri_opt_t *href, char *host_name, ciri_opt_t *prev);
+
+void ciri_create_host_ip(ciri_opt_t *href, ipv6_addr_t *ip, ciri_opt_t *prev);
+
+void ciri_create_port(ciri_opt_t *href, uint16_t port, ciri_opt_t *prev);
+
+void ciri_create_path(ciri_opt_t *href, char *path, ciri_opt_t *prev);
+
+void ciri_create_path_type(ciri_opt_t *href, uint16_t type,
+                           ciri_opt_t *prev);
+
+void ciri_create_query(ciri_opt_t *href, char *query, ciri_opt_t *prev);
+
+void ciri_create_fragment(ciri_opt_t *href, char *fragment, ciri_opt_t *prev);
 
 int ciri_is_well_formed(ciri_opt_t *href);
 

@@ -39,13 +39,13 @@ static void _print_opt(ciri_opt_t *href)
             break;
         case CIRI_OPT_HOST_IP:
             printf("- host IP: ");
-            ipv6_addr_print(&href->v.ip);
+            ipv6_addr_print(href->v.ip);
             break;
         case CIRI_OPT_PORT:
             printf("- port: %d", href->v.integer);
             break;
         case CIRI_OPT_PATH_TYPE:
-            printf("- path type: %d", href->v.path_type);
+            printf("- path type: %d", href->v.integer);
             break;
         case CIRI_OPT_PATH:
             printf("- path: %.*s", href->v.string.len, href->v.string.str);
@@ -95,21 +95,21 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
-    ciri_opt_t scheme = { .type = CIRI_OPT_SCHEME,
-                          .v.string = { "coap", sizeof("coap") } };
-    ciri_opt_t host_ip = { .type = CIRI_OPT_HOST_IP, .next = NULL,
-                           .v.ip = {{0x20, 0x01, 0x0D, 0xB8, 0x00, 0x00, 0x00,
-                                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                     0x00, 0x01}} };
-    ciri_opt_t port = { .type = CIRI_OPT_PORT, .v.integer = 5683 };
-    ciri_opt_t path1 = { .type = CIRI_OPT_PATH,
-                         .v.string = { "well-known", sizeof("well-known") } };
-    ciri_opt_t path2 = { .type = CIRI_OPT_PATH,
-                         .v.string = { "core", sizeof("core") } };
-    scheme.next = &host_ip;
-    host_ip.next = &port;
-    port.next = &path1;
-    path1.next = &path2;
+    ciri_opt_t scheme;
+    ciri_opt_t host_ip;
+    ciri_opt_t port;
+    ciri_opt_t path1;
+    ciri_opt_t path2;
+    ciri_opt_t query;
+    ipv6_addr_t ip = {{0x20, 0x01, 0x0D, 0xB8, 0x00, 0x00, 0x00, 0x00,
+                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01}};
+    
+    ciri_create_scheme(&scheme, "coap", NULL);
+    ciri_create_host_ip(&host_ip, &ip, &scheme);
+    ciri_create_port(&port, 5683, &host_ip);
+    ciri_create_path(&path1, "well-known", &port);
+    ciri_create_path(&path2, "core", &path1);
+    ciri_create_query(&query, "rt=temperature-c", &path2);
 
     puts("Constrained Internationalized Resource Identifiers (CIRI)\n"
          "Test application");
