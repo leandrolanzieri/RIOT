@@ -133,6 +133,14 @@ int main(void)
         puts("Yes");
     }
 
+    printf("- [CHECK] relative: ");
+    if (ciri_is_relative(&scheme) != CIRI_RET_OK) {
+        puts("No");
+    }
+    else {
+        puts("Yes");
+    }
+
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
 

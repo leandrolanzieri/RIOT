@@ -109,6 +109,14 @@ int ciri_is_absolute(ciri_opt_t *href)
     return CIRI_RET_OK;
 }
 
+int ciri_is_relative(ciri_opt_t *href)
+{
+    if (ciri_is_absolute(href) == CIRI_RET_OK) {
+        return CIRI_RET_ERR;
+    }
+    return CIRI_RET_OK;
+}
+
 // static void *_cbor_calloc(size_t count, size_t size, void *memblock)
 // {
 //     (void)count;
