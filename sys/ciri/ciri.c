@@ -7,10 +7,11 @@
  */
 
 /**
- * @ingroup sys_coral
+ * @ingroup sys_ciri
  * @{
  * @file
- * @brief   Functions to encode and decode CoRE CoRAL
+ * @brief   Implementation of Constrained Internationalized Resource Identifiers
+ *          (CIRI)
  *
  * @author  Leandro Lanzieri <leandro.lanzieri@haw-hamburg.de>
  * @}
@@ -30,46 +31,86 @@
 
 #define CIRI_CBOR_NUM_RECORDS  (16)
 
-static void _print_opt(ciri_opt_t *e);
-static void *_cbor_calloc(size_t count, size_t size, void *memblock);
-static void _cbor_free(void *ptr, void *memblock);
+// static void *_cbor_calloc(size_t count, size_t size, void *memblock);
+// static void _cbor_free(void *ptr, void *memblock);
 
-static cn_cbor _block_storage_data[CIRI_CBOR_NUM_RECORDS];
-static memarray_t _storage;
-static cn_cbor_context _ct = {
-    .calloc_func = _cbor_calloc,
-    .free_func = _cbor_free,
-    .context = &_storage
-};
+// static cn_cbor _block_storage_data[CIRI_CBOR_NUM_RECORDS];
+// static memarray_t _storage;
+// static cn_cbor_context _ct = {
+//     .calloc_func = _cbor_calloc,
+//     .free_func = _cbor_free,
+//     .context = &_storage
+// };
 
-static void _print_opt(ciri_opt_t *e)
+static int _valid_transition(ciri_opt_type_t prev, ciri_opt_type_t next)
 {
-     printf(" Option type: ");
-
-    switch (e->type) {
+    switch (prev) {
+        case CIRI_OPT_BEGIN:
+            return ((next == CIRI_OPT_SCHEME) || (next == CIRI_OPT_HOST_NAME) ||
+                    (next == CIRI_OPT_HOST_IP) || (next == CIRI_OPT_PORT) ||
+                    (next == CIRI_OPT_PATH_TYPE) || (next == CIRI_OPT_PATH) ||
+                    (next == CIRI_OPT_QUERY) || (next == CIRI_OPT_FRAGMENT) ||
+                    (next == CIRI_OPT_END));
         case CIRI_OPT_SCHEME:
-            printf("scheme | content: %s", e->v.string);
-            break;
-        // TODO add others
+            return ((next == CIRI_OPT_HOST_NAME) || (next == CIRI_OPT_HOST_IP));
+        case CIRI_OPT_HOST_NAME:
+        case CIRI_OPT_HOST_IP:
+            return ((next == CIRI_OPT_PORT));
+        case CIRI_OPT_PORT:
+        case CIRI_OPT_PATH_TYPE:
+        case CIRI_OPT_PATH:
+            return ((next == CIRI_OPT_PATH) || (next == CIRI_OPT_QUERY) ||
+                    (next == CIRI_OPT_FRAGMENT) || next == CIRI_OPT_END);
+        case CIRI_OPT_QUERY:
+            return ((next == CIRI_OPT_QUERY) || (next == CIRI_OPT_FRAGMENT) ||
+                    (next == CIRI_OPT_END));
+        case CIRI_OPT_FRAGMENT:
+            return (next == CIRI_OPT_END);
         default:
-            printf("other");
-            break;
+            DEBUG("Unknown option type\n");
+            return 0;
     }
-    puts("");
 }
 
-static void *_cbor_calloc(size_t count, size_t size, void *memblock)
+static int _valid_last_opt(ciri_opt_type_t type)
 {
-    (void)count;
-    void *block = memarray_alloc(memblock);
-    if (block) {
-        memset(block, 0, size);
-    }
-    return block;
+    return ((type == CIRI_OPT_PORT) || (type == CIRI_OPT_PATH_TYPE) ||
+            (type == CIRI_OPT_PATH) || (type == CIRI_OPT_QUERY) ||
+            (type == CIRI_OPT_FRAGMENT) || (type == CIRI_OPT_END));
 }
 
-static void _cbor_free(void *ptr, void *memblock)
+int ciri_is_well_formed(ciri_opt_t *href)
 {
-    memarray_free(memblock, ptr);
+    assert(href);
+    ciri_opt_type_t prev_type = CIRI_OPT_BEGIN;
+    ciri_opt_t *opt = href;
+    while(opt) {
+        if (!_valid_transition(prev_type, opt->type)) {
+            DEBUG("Invalid transition detected\n");
+            return CIRI_RET_ERR;
+        }
+        prev_type = opt->type;
+        opt = opt->next;
+    }
+    if (!_valid_last_opt(prev_type)) {
+        DEBUG("Invalid last option\n");
+        return CIRI_RET_ERR;
+    }
+    return CIRI_RET_OK;
 }
+
+// static void *_cbor_calloc(size_t count, size_t size, void *memblock)
+// {
+//     (void)count;
+//     void *block = memarray_alloc(memblock);
+//     if (block) {
+//         memset(block, 0, size);
+//     }
+//     return block;
+// }
+
+// static void _cbor_free(void *ptr, void *memblock)
+// {
+//     memarray_free(memblock, ptr);
+// }
 
