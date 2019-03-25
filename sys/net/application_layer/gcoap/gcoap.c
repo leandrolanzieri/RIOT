@@ -54,10 +54,12 @@ static int _find_obs_memo(gcoap_observe_memo_t **memo, sock_udp_ep_t *remote,
                                                        coap_pkt_t *pdu);
 static void _find_obs_memo_resource(gcoap_observe_memo_t **memo,
                                    const coap_resource_t *resource);
+static ssize_t _encode_resource(char *buf, size_t maxlen,
+                                const coap_resource_t *res, uint8_t cf);
 
 /* Internal variables */
 const coap_resource_t _default_resources[] = {
-    { "/.well-known/core", COAP_GET, _well_known_core_handler, NULL },
+    { "/.well-known/core", COAP_GET, _well_known_core_handler, NULL, { NULL } },
 };
 
 static gcoap_listener_t _default_listener = {
@@ -934,23 +936,9 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
         const coap_resource_t *resource = listener->resources;
 
         for (unsigned i = 0; i < listener->resources_len; i++) {
-            size_t path_len = strlen(resource->path);
-            if (out) {
-                /* only add new resources if there is space in the buffer */
-                if ((pos + path_len + 3) > maxlen) {
-                    break;
-                }
-                if (pos) {
-                    out[pos++] = ',';
-                }
-                out[pos++] = '<';
-                memcpy(&out[pos], resource->path, path_len);
-                pos += path_len;
-                out[pos++] = '>';
-            }
-            else {
-                pos += (pos) ? 3 : 2;
-                pos += path_len;
+            ssize_t res = _encode_resource(&out[pos], maxlen - pos, resource, cf);
+            if (res > 0) {
+                pos += res;
             }
             ++resource;
         }
@@ -959,6 +947,41 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
     }
 
     return (int)pos;
+}
+
+static ssize_t _encode_resource(char *buf, size_t maxlen,
+                                const coap_resource_t *res, uint8_t cf)
+{
+    (void)cf;
+    size_t path_len = strlen(res->path);
+    size_t pos = 0;
+
+    if (buf) {
+        if ((path_len + 3) > maxlen) {
+            return -1;
+        }
+        buf[pos++] = '<';
+        memcpy(&buf[pos], res->path, path_len);
+        pos += path_len;
+        buf[pos++] = '>';
+
+        for (unsigned i = 0; res->attr[i]; i++) {
+            size_t attr_len = strlen(res->attr[i]);
+            if ((pos + attr_len + 1) > maxlen) {
+                return -2;
+            }
+            buf[pos++] = ';';
+            memcpy(&buf[pos], res->attr[i], attr_len);
+            pos += attr_len;
+        }
+    }
+    else {
+        pos += path_len + 3;
+        for (unsigned i = 0; res->attr[i]; i++) {
+            pos += strlen(res->attr[i]) + 1;
+        }
+    }
+    return pos;
 }
 
 int gcoap_add_qstring(coap_pkt_t *pdu, const char *key, const char *val)

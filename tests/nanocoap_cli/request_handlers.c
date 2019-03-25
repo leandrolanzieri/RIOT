@@ -74,7 +74,7 @@ static ssize_t _value_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *c
 /* must be sorted by path (ASCII order) */
 const coap_resource_t coap_resources[] = {
     COAP_WELL_KNOWN_CORE_DEFAULT_HANDLER,
-    { "/value", COAP_GET | COAP_PUT | COAP_POST, _value_handler, NULL },
+    { "/value", COAP_GET | COAP_PUT | COAP_POST, _value_handler, NULL, { NULL } },
 };
 
 const unsigned coap_resources_numof = sizeof(coap_resources) / sizeof(coap_resources[0]);

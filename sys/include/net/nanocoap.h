@@ -210,6 +210,13 @@ extern "C" {
 #endif
 
 /**
+ * @brief   Maximum number of attributes in a resource
+ */
+#ifndef NANOCOAP_NATTR_MAX
+#define NANOCOAP_NATTR_MAX          (8)
+#endif
+
+/**
  * @brief    Maximum length of a resource path string read from or written to
  *           a message
  */
@@ -289,6 +296,7 @@ typedef struct {
     unsigned methods;               /**< OR'ed methods this resource allows */
     coap_handler_t handler;         /**< ptr to resource handler            */
     void *context;                  /**< ptr to user defined context data   */
+    char *attr[NANOCOAP_NATTR_MAX];
 } coap_resource_t;
 
 /**
