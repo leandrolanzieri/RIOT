@@ -943,7 +943,6 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf, uint8_t *query
             query_len = strlen((char *)query);
         }
         else {
-            puts(".");
             query_len = next - (char *)query;
         }
     }
@@ -954,8 +953,6 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf, uint8_t *query
 
         for (unsigned i = 0; i < listener->resources_len; i++) {
             if (!query || !query_len || _resource_matches_query(resource, (char *)query, query_len)) {
-                (void)_resource_matches_query;
-                (void)query;
                 ssize_t res = _encode_resource(&out[pos], maxlen - pos, resource, cf);
                 if (res > 0) {
                     pos += res;
