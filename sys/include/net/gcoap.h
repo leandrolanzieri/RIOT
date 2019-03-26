@@ -701,6 +701,7 @@ uint8_t gcoap_op_state(void);
  * @param[in]  maxlen   length of @p buf, ignored if @p buf is NULL
  * @param[in]  cf       content format to use for the resource list, currently
  *                      only COAP_FORMAT_LINK supported
+ * @param[in]  query    '\0' terminated string contaning the URI query
  *
  * @todo    add support for `JSON CoRE Link Format`
  * @todo    add support for 'CBOR CoRE Link Format`
@@ -708,7 +709,7 @@ uint8_t gcoap_op_state(void);
  * @return  the number of bytes written to @p buf
  * @return  -1 on error
  */
-int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf);
+int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf, uint8_t *query);
 
 /**
  * @brief   Adds a single Uri-Query option to a CoAP request

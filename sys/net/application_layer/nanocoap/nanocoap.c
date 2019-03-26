@@ -150,13 +150,25 @@ int coap_match_path(const coap_resource_t *resource, uint8_t *uri)
 {
     assert(resource && uri);
     int res;
+    int prefix = 0;
+    int cmp_len = strlen((char *)uri);
+
+    if (uri[cmp_len - 1] == '*') {
+        prefix = 1;
+        cmp_len--;
+    }
 
     if (resource->methods & COAP_MATCH_SUBTREE) {
         int len = strlen(resource->path);
-        res = strncmp((char *)uri, resource->path, len);
+        res = strncmp((char *)uri, resource->path, (len > cmp_len) ? cmp_len : len);
     }
     else {
-        res = strcmp((char *)uri, resource->path);
+        if (prefix) {
+            res = strncmp((char *)uri, resource->path, cmp_len);
+        }
+        else {
+            res = strcmp((char *)uri, resource->path);
+        }
     }
     return res;
 }

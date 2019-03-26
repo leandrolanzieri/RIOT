@@ -56,7 +56,8 @@ static void _find_obs_memo_resource(gcoap_observe_memo_t **memo,
                                    const coap_resource_t *resource);
 static ssize_t _encode_resource(char *buf, size_t maxlen,
                                 const coap_resource_t *res, uint8_t cf);
-
+static unsigned _resource_matches_query(const coap_resource_t *res,
+                                        char *query, size_t query_len);
 /* Internal variables */
 const coap_resource_t _default_resources[] = {
     { "/.well-known/core", COAP_GET, _well_known_core_handler, NULL, { NULL } },
@@ -498,17 +499,20 @@ static void _expire_request(gcoap_request_memo_t *memo)
  * Handler for /.well-known/core. Lists registered handlers, except for
  * /.well-known/core itself.
  */
+
 static ssize_t _well_known_core_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len,
                                         void *ctx)
 {
     (void)ctx;
+    uint8_t query[NANOCOAP_URI_MAX];
 
+    coap_get_uri_query(pdu, query);
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     coap_opt_add_format(pdu, COAP_FORMAT_LINK);
     ssize_t plen = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
 
     plen += gcoap_get_resource_list(pdu->payload, (size_t)pdu->payload_len,
-                                    COAP_FORMAT_LINK);
+                                    COAP_FORMAT_LINK, query);
     return plen;
 }
 
@@ -920,7 +924,7 @@ uint8_t gcoap_op_state(void)
     return count;
 }
 
-int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
+int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf, uint8_t *query)
 {
     (void)cf; /* only used in the assert below. */
     assert(cf == COAP_FORMAT_LINK);
@@ -930,23 +934,86 @@ int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf)
 
     char *out = (char *)buf;
     size_t pos = 0;
+    size_t query_len;
+    query++; /* skip '&' */
+    if (query) {
+        /* only the first query should be considered */
+        char *next = strchr((char *)query, '&');
+        if (!next) {
+            query_len = strlen((char *)query);
+        }
+        else {
+            puts(".");
+            query_len = next - (char *)query;
+        }
+    }
 
     /* write payload */
     while (listener) {
         const coap_resource_t *resource = listener->resources;
 
         for (unsigned i = 0; i < listener->resources_len; i++) {
-            ssize_t res = _encode_resource(&out[pos], maxlen - pos, resource, cf);
-            if (res > 0) {
-                pos += res;
+            if (!query || !query_len || _resource_matches_query(resource, (char *)query, query_len)) {
+                (void)_resource_matches_query;
+                (void)query;
+                ssize_t res = _encode_resource(&out[pos], maxlen - pos, resource, cf);
+                if (res > 0) {
+                    pos += res;
+                }
             }
             ++resource;
         }
 
         listener = listener->next;
     }
-
+    if (!pos) {
+        out[pos++] = '\0';
+    }
     return (int)pos;
+}
+
+static unsigned _resource_matches_query(const coap_resource_t *res,
+                                        char *query, size_t query_len)
+{
+    unsigned prefix = 0;
+
+    /* check if filtering by 'href' */
+    if (query_len > sizeof("href") && !strncmp("href=", query, sizeof("href"))) {
+        if (!coap_match_path(res, (uint8_t *)(query + sizeof("href")))) {
+            return 1;
+        }
+        return 0;
+    }
+
+    if (!res->attr[0]) {
+        return 0;
+    }
+
+    /* query must have value */
+    char *attr = strchr(query, '=');
+    if (!attr) {
+        return 0;
+    }
+    attr++;
+
+    /* check if value is a prefix */
+    if (query[query_len - 1] == '*') {
+        query_len = query + query_len - attr - 1;
+        prefix = 1;
+    }
+
+    /* find matching attribute */
+    for (unsigned i = 0; res->attr[i]; i++) {
+        if (prefix) {
+            return (strlen(res->attr[i]) >= query_len &&
+                    !strncmp(query, res->attr[i], query_len));
+        }
+        else {
+            return (strlen(res->attr[i]) == query_len &&
+                    !strcmp(query, res->attr[i]));
+        }
+    }
+    return 0;
 }
 
 static ssize_t _encode_resource(char *buf, size_t maxlen,
