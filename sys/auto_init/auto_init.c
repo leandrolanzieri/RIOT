@@ -317,7 +317,10 @@ void auto_init(void)
 
 #ifdef MODULE_AUTO_INIT_SAUL
     DEBUG("auto_init SAUL\n");
-
+#ifdef MODULE_GCOAP
+    extern void auto_init_saul_coap(void);
+    auto_init_saul_coap();
+#endif
 #ifdef MODULE_SAUL_ADC
     extern void auto_init_adc(void);
     auto_init_adc();
