@@ -73,9 +73,9 @@ extern "C" {
 
 #ifndef BMX055_SAULINFO
 #define BMX055_SAULINFO                         \
-    {   { .name = "Magnetometer (bmx055)"   },  \
-        { .name = "Accelerometer (bmx055)"  },  \
-        { .name = "Gyroscope (bmx055)"      },  \
+    {   { .name = "bmx055/magnetometer"   },  \
+        { .name = "bmx055/accelerometer"  },  \
+        { .name = "bmx055/gyroscope"      },  \
     }
 #endif
 /** @} */

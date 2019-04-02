@@ -66,8 +66,8 @@ extern "C" {
  * @{
  */
 #ifndef LTC4150_SAULINFO
-#define LTC4150_SAULINFO              { .name = "LTC4150 charge" }, \
-                                      { .name = "LTC4150 average current" }
+#define LTC4150_SAULINFO              { .name = "ltc4150/charge" }, \
+                                      { .name = "ltc4150/average_current" }
 #endif
 
 /**@}*/
