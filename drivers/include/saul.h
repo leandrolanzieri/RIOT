@@ -23,6 +23,35 @@
  * be used for automated searching and matching of devices (e.g. connect light
  * sensor automatically with the color of an RGB LED...).
  *
+ * ## Naming convention ##
+ *
+ * To have an uniform naming structure the following guidelines are proposed:
+ * - Simple LEDs should be named `led/<color>/<number>`. If color is not known
+ *   'unkn' should be used.
+ * - RGB LEDs should be named `led/rgb/<number>/<r,g,b>`, where:
+ *   - r: red
+ *   - g: green
+ *   - b: blue
+ * - Buttons should be named `button/<number>`.
+ * - Joysticks should be named `joystick/<number>/<c,l,r,u,d>`, where:
+ *   - c: center
+ *   - l: left
+ *   - r: right
+ *   - u: up
+ *   - d: down
+ * - Other devices should be named with their code, always in lower case.
+ * - If multiple drivers are provided under the same device, the device
+ *   name should be used as a prefix. E.g.: `<device>/temperature`,
+ *   `<device>/humidity`.
+ * - Given it is not so common that multiple instances of the same device are
+ *   present on the board, numbering is not mandatory for only one instance.
+ * - Numbering should be included in devices if more than one instance
+ *   is present on the board: `<device>/<number>`.
+ * - Enumerations should be consecutive and start with 0, unless there is a good
+ *   reason not to do so.
+ * - Avoid the usage of the following characters: *  (  )  :  ?  #  [  ]  @  +
+ *   ,  ;  :  .  =  &  '.
+ *
  * The SAUL module enables further the automated initialization of preconfigured
  * actuators/sensor via auto_init and the access to all available devices via
  * one unified shell command.
