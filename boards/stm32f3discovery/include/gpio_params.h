@@ -33,47 +33,47 @@ extern "C" {
 static const  saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "LD3",
+        .name = "/led/unkn/3",
         .pin = LED0_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD4",
+        .name = "/led/unkn/4",
         .pin = LED1_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD5",
+        .name = "/led/unkn/5",
         .pin = LED2_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD6",
+        .name = "/led/unkn/6",
         .pin = LED3_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD7",
+        .name = "/led/unkn/7",
         .pin = LED4_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD8",
+        .name = "/led/unkn/8",
         .pin = LED5_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD9",
+        .name = "/led/unkn/9",
         .pin = LED6_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD10",
+        .name = "/led/unkn/10",
         .pin = LED7_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "BTN USER",
+        .name = "button/0",
         .pin  = BTN0_PIN,
         .mode = BTN0_MODE
     },

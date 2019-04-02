@@ -31,14 +31,14 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 {
     #if MODULE_OLIMEX_ESP32_GATEWAY
     {
-        .name = "LED",
+        .name = "led/unkn/",
         .pin = LED0_PIN,
         .mode = GPIO_OUT,
         .flags = SAUL_GPIO_INIT_CLEAR
     },
     #endif
     {
-        .name = "BUT1",
+        .name = "button/1",
         .pin = BUTTON0_PIN,
         .mode = GPIO_IN,
         .flags = SAUL_GPIO_INVERTED

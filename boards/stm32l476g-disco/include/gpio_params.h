@@ -32,37 +32,37 @@ extern "C" {
 static const  saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "LD4",
+        .name = "/led/unkn/4",
         .pin = LED0_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LD5",
+        .name = "/led/unkn/5",
         .pin = LED1_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "Joystick (Center)",
+        .name = "joystick/0/c",
         .pin = BTN0_PIN,
         .mode = BTN0_MODE
     },
     {
-        .name = "Joystick (Left)",
+        .name = "joystick/0/l",
         .pin = BTN1_PIN,
         .mode = BTN1_MODE
     },
     {
-        .name = "Joystick (Down)",
+        .name = "joystick/0/d",
         .pin = BTN2_PIN,
         .mode = BTN2_MODE
     },
     {
-        .name = "Joystick (Right)",
+        .name = "joystick/0/r",
         .pin = BTN3_PIN,
         .mode = BTN3_MODE
     },
     {
-        .name = "Joystick (Up)",
+        .name = "joystick/0/u",
         .pin = BTN4_PIN,
         .mode = BTN4_MODE
     },

@@ -33,13 +33,13 @@ extern "C" {
 static const saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "Button A",
+        .name = "button/0",
         .pin  = BTN0_PIN,
         .mode = BTN0_MODE,
         .flags = SAUL_GPIO_INVERTED,
     },
     {
-        .name = "Button B",
+        .name = "button/1",
         .pin  = BTN1_PIN,
         .mode = BTN1_MODE,
         .flags = SAUL_GPIO_INVERTED,

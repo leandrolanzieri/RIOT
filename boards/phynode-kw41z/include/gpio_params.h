@@ -37,7 +37,7 @@ static const  saul_gpio_params_t saul_gpio_params[] =
      * RGB LED (D10). The RGB LED is configured with 3 LEDx macros. */
 #ifdef LED0_PIN
     {
-        .name = "D2 (Orange)",
+        .name = "led/orange/0",
         .pin = LED0_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
@@ -45,7 +45,7 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 #endif /* LED0_PIN */
 #ifdef LED1_PIN
     {
-        .name = "D10 RGB (Red)",
+        .name = "led/rgb/0/r",
         .pin = LED1_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
@@ -53,7 +53,7 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 #endif /* LED1_PIN */
 #ifdef LED2_PIN
     {
-        .name = "D10 RGB (Green)",
+        .name = "led/rgb/0/g",
         .pin = LED2_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
@@ -61,14 +61,14 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 #endif /* LED1_PIN */
 #ifdef LED3_PIN
     {
-        .name = "D10 RGB (Blue)",
+        .name = "led/rgb/0/b",
         .pin = LED3_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
     },
 #endif /* LED1_PIN */
     {
-        .name = "S2 (Button)",
+        .name = "button/2",
         .pin = BTN0_PIN,
         .mode = BTN0_MODE,
         .flags = (SAUL_GPIO_INVERTED),
