@@ -53,16 +53,16 @@ extern "C" {
  */
 #ifndef SHT1X_SAULINFO
 #ifdef MODULE_SHT15
-#define SHT1X_SAULINFO                { .name = "SHT15 temperature" }, \
-                                      { .name = "SHT15 humidity" }
+#define SHT1X_SAULINFO                { .name = "sht15/temperature" }, \
+                                      { .name = "sht15/humidity" }
 #else
 #ifdef MODULE_SHT10
-#define SHT1X_SAULINFO                { .name = "SHT10 temperature" }, \
-                                      { .name = "SHT10 humidity" }
+#define SHT1X_SAULINFO                { .name = "sht10/temperature" }, \
+                                      { .name = "sht10/humidity" }
 #else
 /* SHT11 is the most commonly used, so use that as default */
-#define SHT1X_SAULINFO                { .name = "SHT11 temperature" }, \
-                                      { .name = "SHT11 humidity" }
+#define SHT1X_SAULINFO                { .name = "sht11/temperature" }, \
+                                      { .name = "sht11/humidity" }
 #endif /* MODULE_SHT10 */
 #endif /* MODULE_SHT15 */
 #endif /* SHT1X_SAULINFO */

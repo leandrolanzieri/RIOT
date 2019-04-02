@@ -64,4 +64,14 @@ nimble_controller:
 nimble_drivers_nrf52:
 	"$(MAKE)" -C $(PDIR)/nimble/drivers/nrf52/src/ -f $(TDIR)/drivers.nrf52.mk
 
+# additional, RIOT specific nimble modules
+nimble_addr:
+	"$(MAKE)" -C $(TDIR)/addr/
+
+nimble_scanlist:
+	"$(MAKE)" -C $(TDIR)/scanlist
+
+nimble_scanner:
+	"$(MAKE)" -C $(TDIR)/scanner
+
 include $(RIOTBASE)/pkg/pkg.mk

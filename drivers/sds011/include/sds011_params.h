@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifndef SDS011_SAUL_INFO
-#define SDS011_SAUL_INFO            { .name = "SDS011" }
+#define SDS011_SAUL_INFO            { .name = "sds011" }
 #endif
 /** @} */
 

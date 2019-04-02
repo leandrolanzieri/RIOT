@@ -64,7 +64,7 @@ extern "C"
 /**
  * @brief   SAUL info
  */
-#define GROVE_LEDBAR_SAUL_INFO  { .name = "Grove LED bar" }
+#define GROVE_LEDBAR_SAUL_INFO  { .name = "grove_led_bar" }
 
 /**
  * @brief   Grove LED bar configuration

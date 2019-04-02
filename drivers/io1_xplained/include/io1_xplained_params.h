@@ -42,10 +42,10 @@ extern "C" {
 #define IO1_XPLAINED_PARAMS       { .addr = IO1_XPLAINED_PARAM_ADDR }
 #endif
 #ifndef IO1_XPLAINED_SAUL_INFO
-#define IO1_XPLAINED_SAUL_INFO    {{ .name = "Temperature (IO1 Xplained)" }, \
-                                   { .name = "LED (IO1 Xplained)" },         \
-                                   { .name = "GPIO1 (IO1 Xplained)" },       \
-                                   { .name = "GPIO2 (IO1 Xplained)" }}
+#define IO1_XPLAINED_SAUL_INFO    {{ .name = "io1_xplained/temperature" }, \
+                                   { .name = "io1_xplained/led/unkn/0" },  \
+                                   { .name = "io1_xplained/gpio/1" },      \
+                                   { .name = "io1_xplained/gpio/2 }}
 #endif
 /**@}*/
 

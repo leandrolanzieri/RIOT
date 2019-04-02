@@ -30,7 +30,7 @@ extern "C" {
 static const  saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "BOOT",
+        .name = "button/0",
         .pin = BUTTON0_PIN,
         .mode = GPIO_IN,
         .flags = SAUL_GPIO_INVERTED

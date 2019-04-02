@@ -36,7 +36,7 @@ static const  saul_gpio_params_t saul_gpio_params[] =
      * been applied. See boards/usb-kw41z/include/board.h */
 #ifdef LED0_PIN
     {
-        .name = "D2",
+        .name = "led/unkn/2",
         .pin = LED0_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
@@ -44,14 +44,14 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 #endif /* LED0_PIN */
 #ifdef LED1_PIN
     {
-        .name = "D3",
+        .name = "led/unkn/3",
         .pin = LED1_PIN,
         .mode = GPIO_OUT,
         .flags = (SAUL_GPIO_INVERTED | SAUL_GPIO_INIT_CLEAR),
     },
 #endif /* LED1_PIN */
     {
-        .name = "SW1",
+        .name = "button/1",
         .pin = BTN0_PIN,
         .mode = BTN0_MODE,
         .flags = (SAUL_GPIO_INVERTED),

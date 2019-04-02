@@ -146,6 +146,7 @@ endif
 
 ifneq (,$(filter gnrc_netif,$(USEMODULE)))
   USEMODULE += netif
+  USEMODULE += l2util
   USEMODULE += fmt
   ifneq (,$(filter netdev_ieee802154,$(USEMODULE)))
     USEMODULE += gnrc_netif_ieee802154
@@ -207,13 +208,13 @@ ifneq (,$(filter gnrc_sixlowpan_frag,$(USEMODULE)))
 endif
 
 ifneq (,$(filter gnrc_sixlowpan_iphc,$(USEMODULE)))
+  USEMODULE += gnrc_ipv6
   USEMODULE += gnrc_sixlowpan
   USEMODULE += gnrc_sixlowpan_ctx
   USEMODULE += gnrc_sixlowpan_iphc_nhc
 endif
 
 ifneq (,$(filter gnrc_sixlowpan,$(USEMODULE)))
-  USEMODULE += gnrc_ipv6
   USEMODULE += sixlowpan
 endif
 
@@ -405,6 +406,11 @@ ifneq (,$(filter isrpipe,$(USEMODULE)))
   USEMODULE += tsrb
 endif
 
+ifneq (,$(filter isrpipe_read_timeout,$(USEMODULE)))
+  USEMODULE += isrpipe
+  USEMODULE += xtimer
+endif
+
 ifneq (,$(filter shell_commands,$(USEMODULE)))
   ifneq (,$(filter fib,$(USEMODULE)))
     USEMODULE += posix_inet
@@ -428,6 +434,7 @@ endif
 
 ifneq (,$(filter lwip_sixlowpan,$(USEMODULE)))
   USEMODULE += lwip_ipv6_autoconfig
+  USEMODULE += l2util
 endif
 
 ifneq (,$(filter lwip_ipv6_autoconfig lwip_ipv6_mld,$(USEMODULE)))
@@ -781,9 +788,8 @@ ifneq (,$(filter skald,$(USEMODULE)))
   USEMODULE += random
 endif
 
-ifneq (,$(filter cord_epsim_standalone,$(USEMODULE)))
-  USEMODULE += cord_epsim
-  USEMODULE += xtimer
+ifneq (,$(filter bluetil_addr,$(USEMODULE)))
+  USEMODULE += fmt
 endif
 
 ifneq (,$(filter cord_epsim,$(USEMODULE)))
