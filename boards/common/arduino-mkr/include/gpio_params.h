@@ -34,7 +34,7 @@ extern "C" {
 static const  saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "LED(Green)",
+        .name = "led/green/0",
         .pin = LED0_PIN,
         .mode = GPIO_OUT
     },

@@ -32,23 +32,23 @@ extern "C" {
 static const  saul_gpio_params_t saul_gpio_params[] =
 {
     {
-        .name = "LED 0",
+        .name = "/led/unkn/0",
         .pin = LED0_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "LED 1",
+        .name = "/led/unkn/1",
         .pin = LED1_PIN,
         .mode = GPIO_OUT
     },
     {
-        .name = "Button 1",
+        .name = "button/1",
         .pin = PB0_PIN,
         .mode = GPIO_IN_PU,
         .flags = SAUL_GPIO_INVERTED
     },
     {
-        .name = "Button 2",
+        .name = "button/2",
         .pin = PB1_PIN,
         .mode = GPIO_IN_PU,
         .flags = SAUL_GPIO_INVERTED

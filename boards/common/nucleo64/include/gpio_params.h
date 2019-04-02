@@ -34,13 +34,13 @@ static const  saul_gpio_params_t saul_gpio_params[] =
 {
 #ifdef AUTO_INIT_LED0
     {
-        .name = "LED(green)",
+        .name = "led/green/0",
         .pin = LED0_PIN,
         .mode = GPIO_OUT
     },
 #endif
     {
-        .name = "Button(B1 User)",
+        .name = "button/1",
         .pin  = BTN0_PIN,
         .mode = BTN0_MODE,
 #ifndef CPU_MODEL_STM32L433RC
