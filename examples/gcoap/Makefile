@@ -42,7 +42,7 @@ USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
 USEMODULE += saul_default
-USEMODULE += bmp180
+USEMODULE += saul_coap
 USEMODULE += fmt
 
 # Comment this out to disable code in RIOT that does safety checking

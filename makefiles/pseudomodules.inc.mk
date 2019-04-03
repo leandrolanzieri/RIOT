@@ -61,6 +61,7 @@ PSEUDOMODULES += prng
 PSEUDOMODULES += prng_%
 PSEUDOMODULES += riotboot_%
 PSEUDOMODULES += saul_adc
+PSEUDOMODULES += saul_coap
 PSEUDOMODULES += saul_default
 PSEUDOMODULES += saul_gpio
 PSEUDOMODULES += saul_nrf_temperature
