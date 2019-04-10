@@ -5,124 +5,53 @@
 #include "registry/registry.h"
 #include "kernel_defines.h"
 #include "assert.h"
-#define ENABLE_DEBUG (0)
+
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
-static int _registry_cmp_name(clist_node_t *current, void *name);
-static int _registry_call_commit(clist_node_t *current, void *name);
-static void _parse_name(char *name, int *name_argc, char *name_argv[]);
-static registry_handler_t *_handler_parse_and_lookup(char *name, int *name_argc,
-                                                     char *name_argv[]);
+static registry_config_group_t *_lookup_group(const char *name, size_t name_len);
 
-clist_node_t registry_handlers;
+clist_node_t registry_config_groups;
 
-static int _registry_cmp_name(clist_node_t *current, void *name)
+static registry_config_group_t *_lookup_group(const char *name, size_t name_len)
 {
-    assert(current != NULL);
-    registry_handler_t *hndlr = container_of(current, registry_handler_t, node);
-    return !strcmp(hndlr->name, (char *)name);
-}
+    registry_config_group_t *group = (registry_config_group_t *)registry_config_groups.next;
+    registry_config_group_t *res = NULL;
 
-static registry_handler_t *_handler_lookup(char *name)
-{
-    clist_node_t *node;
-    registry_handler_t *hndlr = NULL;
-    node = clist_foreach(&registry_handlers, _registry_cmp_name, name);
-
-    if (node != NULL) {
-        hndlr = container_of(node, registry_handler_t, node);
+    if (!group) {
+        goto out;
     }
 
-    return hndlr;
-}
-
-static void _parse_name(char *name, int *name_argc, char *name_argv[])
-{
-    int i = 0;
-    char *_name_p = &name[0];
-
-    while (_name_p) {
-        name_argv[i++] = _name_p;
-        while(1) {
-            if (*_name_p == '\0') {
-                _name_p = NULL;
-                break;
-            }
-
-            if (*_name_p == REGISTRY_NAME_SEPARATOR) {
-                *_name_p = '\0';
-                _name_p++;
-                break;
-            }
-            _name_p++;
+    do {
+        DEBUG("Comparing %s to %.*s\n", group->name, name_len, name);
+        if (!strncmp(group->name, name, name_len)) {
+            res = group;
+            goto out;
         }
-    }
+    } while (&group->node != registry_config_groups.next);
 
-    *name_argc = i;
+out:
+    return res;
 }
 
 void registry_init(void)
 {
-    registry_handlers.next = NULL;
-    registry_store_init();
+    registry_config_groups.next = NULL;
 }
 
-void registry_register(registry_handler_t *handler)
+void registry_register(registry_config_group_t *handler)
 {
     assert(handler != NULL);
-    clist_rpush(&registry_handlers, &(handler->node));
+    clist_rpush(&registry_config_groups, &(handler->node));
 }
 
-static registry_handler_t *_handler_parse_and_lookup(char *name, int *name_argc,
-                                                     char *name_argv[])
-{
-    _parse_name(name, name_argc, name_argv);
-    return _handler_lookup(name_argv[0]);
-}
-
-int registry_set_value(char *name, char *val_str)
-{
-    int name_argc;
-    char *name_argv[REGISTRY_MAX_DIR_DEPTH];
-    registry_handler_t *hndlr;
-
-    hndlr = _handler_parse_and_lookup(name, &name_argc, name_argv);
-
-    if (!hndlr) {
-        return -EINVAL;
-    }
-
-    return hndlr->hndlr_set(name_argc - 1, &name_argv[1], val_str,
-                            hndlr->context);
-}
-
-char *registry_get_value(char *name, char *buf, int buf_len)
-{
-    int name_argc;
-    char *name_argv[REGISTRY_MAX_DIR_DEPTH];
-    registry_handler_t *hndlr;
-
-    hndlr = _handler_parse_and_lookup(name, &name_argc, name_argv);
-
-    if (!hndlr) {
-        return NULL;
-    }
-
-    if (!hndlr->hndlr_get) {
-        return NULL;
-    }
-
-    return hndlr->hndlr_get(name_argc - 1, &name_argv[1], buf, buf_len,
-                            hndlr->context);
-}
-
-static int _registry_call_commit(clist_node_t *current, void *res)
+static int _call_commit(clist_node_t *current, void *res)
 {
     assert(current != NULL);
     int _res = *(int *)res;
-    registry_handler_t *hndlr = container_of(current, registry_handler_t, node);
-    if (hndlr->hndlr_commit) {
-        _res = hndlr->hndlr_commit(hndlr->context);
+    registry_config_group_t *group = container_of(current, registry_config_group_t, node);
+    if (group->commit) {
+        _res = group->commit(group->ctx);
         if (!*(int *)res) {
             *(int *)res = _res;
         }
@@ -132,67 +61,105 @@ static int _registry_call_commit(clist_node_t *current, void *res)
 
 int registry_commit(char *name)
 {
-    int name_argc;
     int rc = 0;
 
     if (name) {
-        registry_handler_t *hndlr;
-        char *name_argv[REGISTRY_MAX_DIR_DEPTH];
+        registry_config_group_t *group;
 
-        hndlr = _handler_parse_and_lookup(name, &name_argc, name_argv);
-        if (!hndlr) {
+        group = _lookup_group(name, strlen(name));
+        if (!group) {
             return -EINVAL;
         }
-        if (hndlr->hndlr_commit) {
-            return hndlr->hndlr_commit(hndlr->context);
+        if (group->commit) {
+            return group->commit(group->ctx);
         }
         else {
             return 0;
         }
     }
     else {
-        clist_foreach(&registry_handlers, _registry_call_commit,
+        clist_foreach(&registry_config_groups, _call_commit,
                       (void *)(&rc));
         return rc;
     }
 }
 
-int registry_export(int (*export_func)(const char *name, char *val), char *name)
+void registry_register_config_group(registry_config_group_t *group)
 {
-    assert(export_func != NULL);
-    int name_argc;
-    char *name_argv[REGISTRY_MAX_DIR_DEPTH];
-    registry_handler_t *hndlr;
+    assert(group);
+    clist_rpush(&registry_config_groups, &(group->node));
+}
 
-    if (name) {
-        DEBUG("[registry export] exporting %s\n", name);
-        hndlr = _handler_parse_and_lookup(name, &name_argc, name_argv);
-        if (!hndlr) {
-            return -EINVAL;
+int registry_set_config(cn_cbor *cb)
+{
+    assert(cb && cb->type == CN_CBOR_MAP);
+    cn_cbor *current = cb->first_child;
+
+    while (current && current->type == CN_CBOR_TEXT) {
+        registry_config_group_t *group = _lookup_group(current->v.str, current->length);
+        if (!group || !group->set) {
+            DEBUG("[%s] Could not find group or has no 'set' handler\n", __func__);
+            continue;
         }
-        if (hndlr->hndlr_export) {
-            return hndlr->hndlr_export(export_func, name_argc - 1,
-                                       &name_argv[1], hndlr->context);
+        current = current->next;
+        group->set(current, group->ctx);
+        current = current->next;
+    }
+    return 0;
+}
+
+cn_cbor *registry_get_config(cn_cbor *cb, cn_cbor_context *cb_ctx)
+{
+    assert(cb_ctx);
+    registry_config_group_t *group; 
+    cn_cbor *root = cn_cbor_map_create(cb_ctx, NULL);
+
+    if (!cb || !cb->length) {
+        /* should return everything */
+        group = (registry_config_group_t *)registry_config_groups.next;
+
+        if (!group) {
+            return NULL;
         }
-        else {
-            return 0;
-        }
+
+        do {
+            group = (registry_config_group_t *)group->node.next;
+            if (group->get) {
+                cn_cbor *config = group->get(NULL, cb_ctx, group->ctx);
+                if (config) {
+                    cn_cbor_mapput_string(root, group->name, config, cb_ctx, NULL);
+                }
+            }
+        } while (&group->node != registry_config_groups.next);
+        return root;
     }
     else {
-        DEBUG("[registry export] exporting all\n");
-        clist_node_t *node = registry_handlers.next;
-
-        if (!node) {
-            return -1;
-        }
-
-        do  {
-            node = node->next;
-            hndlr = container_of(node, registry_handler_t, node);
-            if (hndlr->hndlr_export) {
-                hndlr->hndlr_export(export_func, 0, NULL, hndlr->context);
+        /* should return only the groups that match the keys */
+        cn_cbor *current = cb->first_child;
+        while (current) {
+            DEBUG("Looking for: %.*s\n", current->length, current->v.str);
+            group = _lookup_group(current->v.str, current->length);
+            current = current->next;
+            if (!group || !group->get) {
+                DEBUG("[%s] Could not find group or has no 'get' hander\n", __func__);
             }
-        } while (node != registry_handlers.next);
-        return 0;
+            else {
+                cn_cbor *config;
+                if (current->length) {
+                    DEBUG("Map not empty, get some parameters\n");
+                    /* if particular parameters are asked for pass the map */
+                    config = group->get(current, cb_ctx, group->ctx);
+                }
+                else {
+                    DEBUG("Map empty, get all parameters");
+                    config = group->get(NULL, cb_ctx, group->ctx);
+                }
+                if (config) {
+                    cn_cbor_mapput_string(root, group->name, config, cb_ctx, NULL);
+                }
+            }
+            current = current->next;
+        }
+        return root;
     }
 }

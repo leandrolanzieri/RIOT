@@ -1,6 +1,7 @@
 ifneq (,$(filter registry,$(USEMODULE)))
   USEMODULE += base64
   USEMODULE += fmt
+  USEPKG += cn-cbor
 endif
 
 ifneq (,$(filter eepreg,$(USEMODULE)))
