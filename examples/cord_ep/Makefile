@@ -31,6 +31,9 @@ USEMODULE += fmt
 # development process:
 CFLAGS += -DDEVELHELP
 
+# Use CLIF parameters in coap resources
+CFLAGS += -DNANOCOAP_CLIF_STATIC
+
 # For debugging and demonstration purposes, we limit the lifetime to 60s
 CFLAGS += -DCORD_LT=60
 
