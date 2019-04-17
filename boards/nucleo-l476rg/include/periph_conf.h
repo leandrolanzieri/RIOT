@@ -280,6 +280,12 @@ static const spi_conf_t spi_config[] = {
 /** @} */
 
 /**
+ * @brief AT86RF2XX pin configuration
+ */
+#define AT86RF2XX_PARAM_SLEEP      GPIO_PIN(PORT_A, 4)
+#define AT86RF2XX_PARAM_RESET      GPIO_PIN(PORT_B, 0)
+
+/**
  * @name   RTC configuration
  * @{
  */

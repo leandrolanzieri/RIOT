@@ -1,1 +1,4 @@
 include $(RIOTBOARD)/common/nucleo/Makefile.dep
+
+# Define radio driver
+USEMODULE += at86rf233
