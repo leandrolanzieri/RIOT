@@ -52,6 +52,34 @@ typedef struct {
 } saul_gpio_params_t;
 #endif /* MODULE_SAUL_GPIO */
 
+#if MODULE_SAUL_RGB_LED || DOXYGEN
+/**
+ * @brief SAUL RGB LED channels
+ */
+typedef enum {
+    SAUL_RGB_LED_RED = 0,
+    SAUL_RGB_LED_GREEN,
+    SAUL_RGB_LED_BLUE
+} saul_rgb_led_ch_t;
+
+/**
+ * @brief Macro to define a channel of a SAUL RGB LED as unused
+ */
+#define SAUL_RGB_LED_CH_UNDEF { .pin = GPIO_UNDEF }
+
+/**
+ * @brief Undefined value for SAUL RGB LED driver
+ */
+#define SAUL_RGB_LED_UNDEF_VAL  (-1)
+
+/**
+ * @brief   SAUL RGB LED abstraction of GPIOs configuration
+ */
+typedef struct {
+    saul_gpio_params_t gpios[3]; /**< GPIO configurations of channels */
+} saul_rgb_led_params_t;
+#endif /* MODULE_SAUL_RGB_LED */
+
 #if MODULE_SAUL_ADC || DOXYGEN
 /**
  * @brief   Direct mapped ADC configuration values

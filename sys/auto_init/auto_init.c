@@ -321,6 +321,10 @@ void auto_init(void)
     extern void auto_init_gpio(void);
     auto_init_gpio();
 #endif
+#ifdef MODULE_SAUL_RGB_LED
+    extern void auto_init_rgb_led(void);
+    auto_init_rgb_led();
+#endif
 #ifdef MODULE_SAUL_NRF_TEMPERATURE
     extern void auto_init_nrf_temperature(void);
     auto_init_nrf_temperature();
