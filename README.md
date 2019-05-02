@@ -1,6 +1,9 @@
 [![Nightly CI status master][master-ci-badge]][master-ci-link]
 [![IRC][irc-badge]][irc-link]
 
+## **IoThon 2019**: Find the "Getting Started" guides [here](IOTHON_2019_RIOT_CHALLENGE_GUIDE.md)
+
+
                           ZZZZZZ
                         ZZZZZZZZZZZZ
                       ZZZZZZZZZZZZZZZZ
