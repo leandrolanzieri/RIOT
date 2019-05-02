@@ -23,9 +23,11 @@
 #include "fmt.h"
 #include "shell.h"
 #include "net/ipv6/addr.h"
+#include "net/sock/util.h"
 #include "net/gcoap.h"
 #include "net/cord/common.h"
 #include "net/cord/ep_standalone.h"
+#include "net/cord/ep.h"
 
 #define MAIN_QUEUE_SIZE     (8)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -98,12 +100,35 @@ int main(void)
     /* setup CoAP resources */
     gcoap_register_listener(&_listener);
 
-    /* register event callback with cord_ep_standalone */
-    cord_ep_standalone_reg_cb(_on_ep_event);
+    /* parse RD address information */
+    sock_udp_ep_t rd_ep;
+
+    /* parse RD server address */
+    if (sock_udp_str2ep(&rd_ep, RD_ADDR) < 0) {
+        puts("error: unable to parse RD address from RD_ADDR variable");
+        return 1;
+    }
+
+    rd_ep.port = RD_PORT;
+    rd_ep.family = AF_INET6;
+    rd_ep.netif = SOCK_ADDR_ANY_NETIF;
 
     puts("Client information:");
     printf("  ep: %s\n", cord_common_get_ep());
     printf("  lt: %is\n", (int)CORD_LT);
+    printf(" RD address: %s:%u\n", RD_ADDR, (unsigned)rd_ep.port);
+    xtimer_sleep(3);
+
+    /* register event callback with cord_ep_standalone */
+    cord_ep_standalone_reg_cb(_on_ep_event);
+    
+
+    puts("Registering to RD...");
+    if (cord_ep_register(&rd_ep, NULL) != CORD_EP_OK) {
+        puts("error: could not register to RD.");
+        return 1;
+    }
+    puts("Registered!");
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);

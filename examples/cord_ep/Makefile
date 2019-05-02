@@ -32,9 +32,35 @@ USEMODULE += fmt
 CFLAGS += -DDEVELHELP
 
 # For debugging and demonstration purposes, we limit the lifetime to 60s
-CFLAGS += -DCORD_LT=60
+RD_LT ?= 60
+CFLAGS += -DCORD_LT=$(RD_LT)
+
+# If nothing else is defined, we use CoAP default port
+RD_PORT ?= COAP_PORT
+CFLAGS += -DRD_PORT=$(RD_PORT)
+
+# The RD server's address must be defined by the build environment by setting
+# the RD_ADDR environment variable. Per default, this value is set to the
+# loopback address for enabling the build tests to successfully build this
+# example.
+RD_ADDR ?= \"affe::1\"
+CFLAGS += -DRD_ADDR=$(RD_ADDR)
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
+
+# Set a custom channel if needed
+ifneq (,$(filter cc110x,$(USEMODULE)))          # radio is cc110x sub-GHz
+  DEFAULT_CHANNEL ?= 0
+  CFLAGS += -DCC110X_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
+else
+  ifneq (,$(filter at86rf212b,$(USEMODULE)))    # radio is IEEE 802.15.4 sub-GHz
+    DEFAULT_CHANNEL ?= 5
+    CFLAGS += -DIEEE802154_DEFAULT_SUBGHZ_CHANNEL=$(DEFAULT_CHANNEL)
+  else                                          # radio is IEEE 802.15.4 2.4 GHz
+    DEFAULT_CHANNEL ?= 26
+    CFLAGS += -DIEEE802154_DEFAULT_CHANNEL=$(DEFAULT_CHANNEL)
+  endif
+endif

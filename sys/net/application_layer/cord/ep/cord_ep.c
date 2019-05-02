@@ -34,7 +34,7 @@
 #include "net/cord/ep_standalone.h"
 #endif
 
-#define ENABLE_DEBUG        (0)
+#define ENABLE_DEBUG        (1)
 #include "debug.h"
 
 #define FLAG_SUCCESS        (0x0001)
@@ -207,6 +207,7 @@ static int _discover_internal(const sock_udp_ep_t *remote,
                               char *regif, size_t maxlen)
 {
     coap_pkt_t pkt;
+    DEBUG("[%s] enter\n", __func__);
 
     /* save pointer to result buffer */
     _regif_buf = regif;
@@ -222,6 +223,7 @@ static int _discover_internal(const sock_udp_ep_t *remote,
     gcoap_add_qstring(&pkt, "rt", "core.rd");
     size_t pkt_len = coap_opt_finish(&pkt, COAP_OPT_FINISH_NONE);
     res = gcoap_req_send2(buf, pkt_len, remote, _on_discover);
+    DEBUG("[%s] send\n", __func__);
     if (res < 0) {
         return CORD_EP_ERR;
     }
@@ -252,8 +254,10 @@ int cord_ep_register(const sock_udp_ep_t *remote, const char *regif)
     /* if no registration interface is given, we will need to trigger a URI
      * discovery for it first (see section 5.2) */
     if (regif == NULL) {
+        DEBUG("No regif provided\n");
         retval = _discover_internal(remote, _rd_regif, sizeof(_rd_regif));
         if (retval != CORD_EP_OK) {
+            DEBUG("Could not get regif\n");
             goto end;
         }
     }
@@ -296,6 +300,7 @@ int cord_ep_register(const sock_udp_ep_t *remote, const char *regif)
     retval = _sync();
 
 end:
+    DEBUG("end\n");
     /* if we encountered any error, we mark the endpoint as not connected */
     if (retval != CORD_EP_OK) {
         _rd_loc[0] = '\0';
