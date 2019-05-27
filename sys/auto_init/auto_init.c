@@ -531,4 +531,10 @@ void auto_init(void)
     auto_init_candev();
 
 #endif /* MODULE_AUTO_INIT_CAN */
+
+#ifdef MODULE_RUNCONF_REG
+    DEBUG("auto_init RunConf Registry\n");
+    extern void runconf_reg_init(void);
+    runconf_reg_init();
+#endif /* MODULE_RUNCONF_REG */
 }
