@@ -94,17 +94,17 @@ void runconf_reg_init(void);
 
 void runconf_reg_add_group(runconf_reg_group_t *group);
 
-runconf_reg_group_t *runconf_reg_get_group(const char *name, ssize_t name_len);
+runconf_reg_group_t *runconf_reg_get_group(const char *name, size_t name_len);
 
-int runconf_reg_parse_key(char *name, int *name_argc, char **name_argv,
-                         unsigned name_argv_len);
+runconf_reg_group_t *runconf_reg_get_key(const char *name, size_t name_len,
+                                         const runconf_reg_key_t **out);
 
 int runconf_reg_set_value(int name_argc, char **name_argv,
                           runconf_reg_group_t *group, runconf_reg_key_t *key,
                           runconf_reg_value_t *val);
 
-int runconf_reg_set_value_from_str(char *name, ssize_t name_len, char *val,
-                                   ssize_t val_len);
+int runconf_reg_set_value_from_str(char *name, size_t name_len, char *val,
+                                   size_t val_len);
 
 #ifdef __cplusplus
 }

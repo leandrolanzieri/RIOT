@@ -48,7 +48,7 @@ static const runconf_reg_key_t _params[] = {
 };
 
 static runconf_reg_group_t _group = {
-    .name = "net/lorawan",
+    .name = "net" RUNCONF_REG_KEY_SEPARATOR "lorawan",
     .keys = _params,
     .keys_numof = (sizeof(_params) / sizeof(*_params)),
     .get = _get_handler,

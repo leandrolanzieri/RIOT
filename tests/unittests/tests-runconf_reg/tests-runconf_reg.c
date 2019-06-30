@@ -19,8 +19,6 @@ static void _test_setup(void) {
 
 static void test_runconf_reg_add_get_groups(void)
 {
-    _test_setup();
-
     runconf_reg_group_t my_module_group = {
         .name = "my_module"
     };
@@ -32,31 +30,47 @@ static void test_runconf_reg_add_get_groups(void)
     runconf_reg_add_group(&my_module_group);
     runconf_reg_add_group(&another_group);
 
-    runconf_reg_group_t *res = runconf_reg_get_group("my_module", -1);
+    runconf_reg_group_t *res = runconf_reg_get_group(my_module_group.name,
+                                                     strlen(my_module_group.name));
     TEST_ASSERT(res == &my_module_group);
 }
 
-static void test_runconf_parse_key(void)
+static void test_runconf_get_key(void)
 {
-    _test_setup();
-    char input_path[80] = { 0 };
-    char *input_argv[] = { "module", "group", "subgroup", "key" };
-    unsigned exp_argc = sizeof(input_argv) / sizeof(input_argv[0]);
-    int out_argc = 0;
-    char *out_argv[exp_argc];
+    const runconf_reg_key_t keys[] = {
+        {
+            .name = "key_1",
+            .type = RUNCONF_REG_TYPE_BOOL
+        },
+        {
+            .name = "key_2",
+            .type = RUNCONF_REG_TYPE_BOOL
+        }
+    };
 
-    strcat(input_path, input_argv[0]);
-    for (unsigned i = 1; i < exp_argc; i++) {
-        strcat(input_path, RUNCONF_REG_KEY_SEPARATOR);
-        strcat(input_path, input_argv[i]);
-    }
+    runconf_reg_group_t group = {
+        .name = "get_key_module",
+        .keys = keys,
+        .keys_numof = sizeof(keys) / sizeof(*keys)
+    };
 
-    TEST_ASSERT_EQUAL_INT(runconf_reg_parse_key(input_path, &out_argc, out_argv,
-                                               exp_argc),
-                          0);
-    TEST_ASSERT_EQUAL_INT(out_argc, exp_argc);
-    for (int i = 0; i < out_argc; i++) {
-        TEST_ASSERT_EQUAL_STRING(input_argv[i], out_argv[i]);
+    char name[24] = { '\0' };
+
+    runconf_reg_add_group(&group);
+
+    for (unsigned i = 0; i < (sizeof(keys) / sizeof(*keys)); i++) {
+        strcat(name, group.name);
+        strcat(name, RUNCONF_REG_KEY_SEPARATOR);
+        strcat(name, keys[i].name);
+
+        const runconf_reg_key_t *key;
+        runconf_reg_group_t *found_group;
+        found_group = runconf_reg_get_key(name, strlen(name), &key);
+
+        TEST_ASSERT(&group == found_group);
+        TEST_ASSERT(&keys[i] == key);
+
+        name[0] = '\0';
     }
 }
 
@@ -64,10 +78,10 @@ Test *tests_runconf_reg_tests(void)
 {
     EMB_UNIT_TESTFIXTURES(fixtures) {
         new_TestFixture(test_runconf_reg_add_get_groups),
-        new_TestFixture(test_runconf_parse_key)
+        new_TestFixture(test_runconf_get_key)
     };
 
-    EMB_UNIT_TESTCALLER(runconf_reg_tests, NULL, NULL, fixtures);
+    EMB_UNIT_TESTCALLER(runconf_reg_tests, _test_setup, NULL, fixtures);
 
     return (Test *)&runconf_reg_tests;
 }
