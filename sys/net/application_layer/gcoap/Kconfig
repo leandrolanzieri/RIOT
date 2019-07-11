@@ -1,0 +1,103 @@
+menu "Gcoap"
+    depends on MODULE_GCOAP
+
+menu "Buffer Sizes"
+
+config GCOAP_PDU_BUF_SIZE
+    int "Request or response buffer size"
+    default 128
+
+config GCOAP_REQ_OPTIONS_BUF
+    int "Request buffer reduction"
+    default 4
+    help
+        Reduce payload length by this value for a request.
+        Accommodates writing Content-Format option in gcoap_finish(). May be
+        set to zero if the function is not used.
+
+config GCOAP_RESP_OPTIONS_BUF
+    int "Response buffer reduction"
+    default 4
+    help
+        Reduce payload length by this value for a response.
+        Accommodates writing Content-Format option in gcoap_finish(). May be
+        set to zero if the function is not used.
+
+config GCOAP_OBS_OPTIONS_BUF
+    int "Size of observe notification options"
+    default 4
+    help
+        Reduce payload length by this value for an observe notification.
+        Accommodates writing Content-Format option in gcoap_finish(). May be
+        set to zero if the function is not used.
+
+endmenu # Buffer Sizes
+
+menu "Observe options"
+
+config GCOAP_OBS_CLIENTS_MAX
+    int "Maximum number of Observe clients"
+    default 2
+
+# should this be related to GCOAP_OBS_CLIENTS_MAX?
+config GCOAP_OBS_REGISTRATIONS_MAX
+    int "Maximum number of registrations for Observable resources"
+    default 2
+
+config GCOAP_OBS_VALUE_WIDTH
+    int "Width in bytes of the Observe option value for a notification"
+    default 3
+    help
+        This width is used to determine the length of the 'tick' used to measure
+        the time between observable changes to a resource. A tick is expressed
+        internally as GCOAP_OBS_TICK_EXPONENT, which is the base 2 log value of
+        the tick length in microseconds.
+
+        The canonical setting for the value is 3 (exponent 5), which results in
+        a tick length of 32 usec, per sec. 3.4, 4.4 of the RFC. Width 2
+        (exponent 16) results in a tick length of ~64 msec, and width 1
+        (exponent 24) results in a tick length of ~17 sec.
+
+        The tick length must be short enough so that the Observe value strictly
+        increases for each new notification. The purpose of the value is to
+        allow a client to detect message reordering withing the network latency
+        period (128 sec). For resources that change slowly, the reduced
+        message length is useful when packet size is limited.
+
+endmenu # Observe options
+
+config GCOAP_MSG_QUEUE_SIZE
+    int "Message queue size"
+    default 4
+
+config GCOAP_PORT
+    int "Server port"
+    default 5683
+
+config GCOAP_REQ_WAITING_MAX
+    int "Maximum amount of requests awaiting a response"
+    default 2
+
+config GCOAP_TOKENLEN_MAX
+    def_int 8
+    help
+        Maximum length in bytes for a token
+
+config GCOAP_TOKENLEN
+    int "Length in bytes for a token"
+    default 2
+    range 0 GCOAP_TOKENLEN_MAX
+
+config GCOAP_RECV_TIMEOUT
+    int "Time in usec to wait for an incoming message"
+    default 1000000
+
+config GCOAP_NON_TIMEOUT
+    int "Non-confirmable response timeout [usec]"
+    default 5000000
+
+config GCOAP_RESEND_BUFS_MAX
+    int "PDU buffers available for resending confirmable messages"
+    default 1
+
+endmenu # Gcoap

@@ -1,0 +1,5 @@
+menu "Networking"
+
+source "$(RIOTBASE)/sys/net/application_layer/gcoap/Kconfig"
+
+endmenu # Networking

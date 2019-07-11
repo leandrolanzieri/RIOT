@@ -1,0 +1,5 @@
+menu "System Modules"
+
+source "$(RIOTBASE)/sys/net/Kconfig"
+
+endmenu # System Modules

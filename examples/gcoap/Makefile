@@ -19,11 +19,11 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo \
 
 ## Uncomment to redefine port, for example use 61616 for RFC 6282 UDP compression.
 #GCOAP_PORT = 5683
-#CFLAGS += -DGCOAP_PORT=$(GCOAP_PORT)
+#CFLAGS += -DCONFIG_GCOAP_PORT=$(GCOAP_PORT)
 
 ## Uncomment to redefine request token length, max 8.
 #GCOAP_TOKENLEN = 2
-#CFLAGS += -DGCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
+#CFLAGS += -DCONFIG_GCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
