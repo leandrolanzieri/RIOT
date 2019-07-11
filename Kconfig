@@ -1,0 +1,3 @@
+mainmenu "RIOT Kernel Configuration"
+
+osource "$(KCONFIG_GENERATED_DEPENDENCIES)"

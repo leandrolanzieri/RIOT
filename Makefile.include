@@ -117,10 +117,22 @@ all: link
 
 include $(RIOTMAKE)/info.inc.mk
 
+
 # Static code analysis tools provided by LLVM
 include $(RIOTMAKE)/scan-build.inc.mk
 
 export RIOTBUILD_CONFIG_HEADER_C = $(BINDIR)/riotbuild/riotbuild.h
+
+
+# Generated dir will contain Kconfig generated configurations
+GENERATED_DIR = $(BINDIR)/generated
+# This file will contain all generated configuration from kconfig
+KCONFIG_GENERATED_AUTOCONF_HEADER_C = $(GENERATED_DIR)/autoconf.h
+# This file will contain the calculated dependencies formated in Kconfig
+export KCONFIG_GENERATED_DEPENDENCIES = $(GENERATED_DIR)/Kconfig.dep
+
+include $(RIOTMAKE)/kconfig.mk
+
 
 ifeq ($(OS),Darwin)
   OPEN   := open
@@ -448,6 +460,7 @@ DIRS += $(EXTERNAL_MODULE_DIRS)
 
 # Define dependencies required for building (headers, downloading source files,)
 BUILDDEPS += $(RIOTBUILD_CONFIG_HEADER_C)
+BUILDDEPS += $(KCONFIG_GENERATED_AUTOCONF_HEADER_C)
 BUILDDEPS += pkg-prepare
 BUILDDEPS += $(APPDEPS)
 
@@ -739,6 +752,7 @@ endif
 CFLAGS := $(patsubst -D%,,$(CFLAGS))
 CFLAGS := $(patsubst -U%,,$(CFLAGS))
 CFLAGS += -include '$(RIOTBUILD_CONFIG_HEADER_C)'
+CFLAGS += -include '$(KCONFIG_GENERATED_AUTOCONF_HEADER_C)'
 
 # include mcuboot support
 include $(RIOTMAKE)/mcuboot.mk
