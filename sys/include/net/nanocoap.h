@@ -115,40 +115,6 @@ extern "C" {
 #define COAP_FORMAT_NONE        (UINT16_MAX)
 
 /**
- * @defgroup net_nanocoap_conf    Nanocoap compile configurations
- * @ingroup  net_nanocoap
- * @ingroup  config
- * @{
- */
-/** @brief   Maximum number of Options in a message */
-#ifndef NANOCOAP_NOPTS_MAX
-#define NANOCOAP_NOPTS_MAX          (16)
-#endif
-
-/**
- * @brief    Maximum length of a resource path string read from or written to
- *           a message
- */
-#ifndef NANOCOAP_URI_MAX
-#define NANOCOAP_URI_MAX            (64)
-#endif
-
-/**
- * @brief    Maximum size for a blockwise transfer as a power of 2
- */
-#ifndef NANOCOAP_BLOCK_SIZE_EXP_MAX
-#define NANOCOAP_BLOCK_SIZE_EXP_MAX  (6)
-#endif
-
-#if defined(MODULE_GCOAP) || defined(DOXYGEN)
-/** @brief   Maximum length of a query string written to a message */
-#ifndef NANOCOAP_QS_MAX
-#define NANOCOAP_QS_MAX             (64)
-#endif
-#endif
-/** @} */
-
-/**
  * @name coap_opt_finish() flag parameter values
  *
  * Directs packet/buffer updates when user finishes adding options
@@ -186,7 +152,7 @@ typedef struct {
     uint8_t *payload;                           /**< pointer to payload      */
     uint16_t payload_len;                       /**< length of payload       */
     uint16_t options_len;                       /**< length of options array */
-    coap_optpos_t options[NANOCOAP_NOPTS_MAX];  /**< option offset array     */
+    coap_optpos_t options[CONFIG_NANOCOAP_NOPTS_MAX];  /**< option offset array     */
 #ifdef MODULE_GCOAP
     uint32_t observe_value;                     /**< observe value           */
 #endif
@@ -497,18 +463,18 @@ static inline ssize_t coap_get_location_query(const coap_pkt_t *pkt,
  * This function decodes the pkt's URI option into a "/"-separated and
  * '\0'-terminated string.
  *
- * Caller must ensure @p target can hold at least NANOCOAP_URI_MAX bytes!
+ * Caller must ensure @p target can hold at least CONFIG_NANOCOAP_URI_MAX bytes!
  *
  * @param[in]   pkt     pkt to work on
  * @param[out]  target  buffer for target URI
  *
- * @returns     -ENOSPC     if URI option is larger than NANOCOAP_URI_MAX
+ * @returns     -ENOSPC     if URI option is larger than CONFIG_NANOCOAP_URI_MAX
  * @returns     nr of bytes written to @p target (including '\0')
  */
 static inline ssize_t coap_get_uri_path(const coap_pkt_t *pkt, uint8_t *target)
 {
     return coap_opt_get_string(pkt, COAP_OPT_URI_PATH, target,
-                               NANOCOAP_URI_MAX, '/');
+                               CONFIG_NANOCOAP_URI_MAX, '/');
 }
 
 /**
@@ -517,18 +483,18 @@ static inline ssize_t coap_get_uri_path(const coap_pkt_t *pkt, uint8_t *target)
  * This function decodes the pkt's URI_QUERY option into a "&"-separated and
  * '\0'-terminated string.
  *
- * Caller must ensure @p target can hold at least NANOCOAP_URI_MAX bytes!
+ * Caller must ensure @p target can hold at least CONFIG_NANOCOAP_URI_MAX bytes!
  *
  * @param[in]   pkt     pkt to work on
  * @param[out]  target  buffer for target URI
  *
- * @returns     -ENOSPC     if URI option is larger than NANOCOAP_URI_MAX
+ * @returns     -ENOSPC     if URI option is larger than CONFIG_NANOCOAP_URI_MAX
  * @returns     nr of bytes written to @p target (including '\0')
  */
 static inline ssize_t coap_get_uri_query(const coap_pkt_t *pkt, uint8_t *target)
 {
     return coap_opt_get_string(pkt, COAP_OPT_URI_QUERY, target,
-                               NANOCOAP_URI_MAX, '&');
+                               CONFIG_NANOCOAP_URI_MAX, '&');
 }
 /**@}*/
 

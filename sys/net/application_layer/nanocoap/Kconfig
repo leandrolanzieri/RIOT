@@ -1,0 +1,24 @@
+menu "Nanocoap"
+    depends on MODULE_NANOCOAP
+
+config NANOCOAP_NOPTS_MAX
+    int "Maximum number of Options in a message"
+    default 16
+
+config NANOCOAP_URI_MAX
+    int "Maximum length of an URI"
+    default 64
+    help
+        Maximum length of a resource path string read from or written to a
+        message
+
+config NANOCOAP_BLOCK_SIZE_EXP_MAX
+    int "Maximum size for blockwise transfers, as a power of 2"
+    default 6
+
+config NANOCOAP_QS_MAX
+    int "Maximum length of a written query string"
+    depends on MODULE_GCOAP
+    default 64
+
+endmenu # Nanocoap
