@@ -1,0 +1,6 @@
+menu "Application Layer"
+
+rsource "gcoap/Kconfig"
+rsource "nanocoap/Kconfig"
+
+endmenu # Application Layer

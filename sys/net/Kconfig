@@ -1,6 +1,6 @@
 menu "Networking"
 
-rsource "application_layer/gcoap/Kconfig"
-rsource "application_layer/nanocoap/Kconfig"
+rsource "application_layer/Kconfig"
+rsource "sock/Kconfig"
 
 endmenu # Networking
