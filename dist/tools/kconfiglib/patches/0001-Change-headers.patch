@@ -1,0 +1,40 @@
+From a24550fd5f4d16473a6a8dad04f98f67257507d7 Mon Sep 17 00:00:00 2001
+From: Leandro Lanzieri <leandro.lanzieri@haw-hamburg.de>
+Date: Sun, 13 Oct 2019 22:53:45 +0200
+Subject: [PATCH 1/1] Change headers
+
+---
+ examples/merge_config.py | 2 +-
+ genconfig.py             | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/examples/merge_config.py b/examples/merge_config.py
+index ef11d79..95a5442 100755
+--- a/examples/merge_config.py
++++ b/examples/merge_config.py
+@@ -100,7 +100,7 @@ for config in sys.argv[3:]:
+     print(kconf.load_config(config, replace=False))
+ 
+ # Write the merged configuration
+-print(kconf.write_config(sys.argv[2]))
++print(kconf.write_config(sys.argv[2], header=""))
+ 
+ # Print warnings for symbols whose actual value doesn't match the assigned
+ # value
+diff --git a/genconfig.py b/genconfig.py
+index bb3e6ff..886235d 100755
+--- a/genconfig.py
++++ b/genconfig.py
+@@ -100,7 +100,8 @@ only supported for backwards compatibility).
+     kconf = kconfiglib.Kconfig(args.kconfig_filename)
+     kconf.load_config()
+ 
+-    kconf.write_autoconf(args.header_path)
++    kconf.write_autoconf(args.header_path,
++                         header="/* RIOT Configuration header file */\n")
+ 
+     if args.config_out is not None:
+         kconf.write_config(args.config_out, save_old=False)
+-- 
+2.20.1
+
