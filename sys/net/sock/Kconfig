@@ -1,0 +1,28 @@
+
+menuconfig KCONFIG_MODULE_SOCK_UTIL
+    bool "Configure Sock Utilities" if "$(module-sock-util)" != ""
+    help
+        Enable this to configure Sock Utilities using Kconfig.
+
+if KCONFIG_MODULE_SOCK_UTIL
+
+config SOCK_SCHEME_MAXLEN
+    int "Scheme maximum length"
+    default 16
+    help
+        Maximum length of the scheme part for sock_urlsplit(). Ensures hard limit
+        on the string iterator.
+
+config SOCK_HOSTPORT_MAXLEN
+    int "Host:Port maximum length"
+    default 64
+    help
+        Maximum length of host:port part for sock_urlsplit().
+
+config SOCK_URLPATH_MAXLEN
+    int "Path maximum length"
+    default 64
+    help
+        Maximum length path for sock_urlsplit().
+
+endif # KCONFIG_MODULE_SOCK_UTIL
