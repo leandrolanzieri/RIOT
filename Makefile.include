@@ -130,14 +130,7 @@ include $(RIOTMAKE)/scan-build.inc.mk
 
 export RIOTBUILD_CONFIG_HEADER_C = $(BINDIR)/riotbuild/riotbuild.h
 
-
-# Generated dir will contain Kconfig generated configurations
-GENERATED_DIR = $(BINDIR)/generated
-# This file will contain all generated configuration from kconfig
-KCONFIG_GENERATED_AUTOCONF_HEADER_C = $(GENERATED_DIR)/autoconf.h
-# This file will contain the calculated dependencies formated in Kconfig
-export KCONFIG_GENERATED_DEPENDENCIES = $(GENERATED_DIR)/Kconfig.dep
-
+# Include Kconfig functionalities
 include $(RIOTMAKE)/kconfig.mk
 
 
