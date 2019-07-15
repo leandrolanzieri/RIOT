@@ -86,7 +86,7 @@ static void test_gcoap__client_get_req(void)
                           coap_get_total_hdr_len(&pdu));
     TEST_ASSERT_EQUAL_INT(COAP_TYPE_NON, coap_get_type(&pdu));
 
-    char uri[NANOCOAP_URI_MAX] = {0};
+    char uri[CONFIG_NANOCOAP_URI_MAX] = {0};
     coap_get_uri_path(&pdu, (uint8_t *)&uri[0]);
     TEST_ASSERT_EQUAL_STRING(&path[0], &uri[0]);
     TEST_ASSERT_EQUAL_INT(0, pdu.payload_len);
@@ -228,7 +228,7 @@ static void test_gcoap__client_get_path_defer(void)
 
     coap_parse(&pdu, buf, len);
 
-    char uri[NANOCOAP_URI_MAX] = {0};
+    char uri[CONFIG_NANOCOAP_URI_MAX] = {0};
     coap_get_uri_path(&pdu, (uint8_t *)&uri[0]);
     TEST_ASSERT_EQUAL_STRING(&path[0], &uri[0]);
 }
@@ -268,7 +268,7 @@ static void test_gcoap__server_get_req(void)
     TEST_ASSERT_EQUAL_INT(COAP_TYPE_NON, coap_get_type(&pdu));
     TEST_ASSERT_EQUAL_INT(0, pdu.payload_len);
 
-    char uri[NANOCOAP_URI_MAX] = {0};
+    char uri[CONFIG_NANOCOAP_URI_MAX] = {0};
     coap_get_uri_path(&pdu, (uint8_t *)&uri[0]);
     TEST_ASSERT_EQUAL_STRING("/cli/stats", &uri[0]);
 }
