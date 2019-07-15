@@ -55,7 +55,8 @@ int sock_udp_ep_fmt(const sock_udp_ep_t *endpoint, char *addr_str, uint16_t *por
  * @note Caller has to make sure hostport and urlpath can hold the results!
  *       Make sure to provide space for @ref SOCK_HOSTPORT_MAXLEN respectively
  *       @ref SOCK_URLPATH_MAXLEN bytes, if pointers are not NULL.
- *       Scheme part of the URL is limited to @ref SOCK_SCHEME_MAXLEN length.
+ *       Scheme part of the URL is limited to @ref CONFIG_SOCK_SCHEME_MAXLEN
+ *       length.
  *
  * @pre `url != NULL`
  *
@@ -109,8 +110,8 @@ bool sock_udp_ep_equal(const sock_udp_ep_t *a, const sock_udp_ep_t *b);
  *
  * Ensures a hard limit on the string iterator
  * */
-#ifndef SOCK_SCHEME_MAXLEN
-#define SOCK_SCHEME_MAXLEN      (16U)
+#ifndef CONFIG_SOCK_SCHEME_MAXLEN
+#define CONFIG_SOCK_SCHEME_MAXLEN      (16U)
 #endif
 
 /**

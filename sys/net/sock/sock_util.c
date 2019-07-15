@@ -83,10 +83,10 @@ int sock_udp_ep_fmt(const sock_udp_ep_t *endpoint, char *addr_str, uint16_t *por
 
 static char* _find_hoststart(const char *url)
 {
-    /* Increment SOCK_SCHEME_MAXLEN due to comparison with the colon after the
-     * scheme part
+    /* Increment CONFIG_SOCK_SCHEME_MAXLEN due to comparison with the colon
+     * after the scheme part
      */
-    size_t remaining = SOCK_SCHEME_MAXLEN + 1;
+    size_t remaining = CONFIG_SOCK_SCHEME_MAXLEN + 1;
     char *urlpos = (char*)url;
     while(*urlpos && remaining) {
         remaining--;
