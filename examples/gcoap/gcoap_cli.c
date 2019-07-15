@@ -207,7 +207,7 @@ int gcoap_cli_cmd(int argc, char **argv)
 {
     /* Ordered like the RFC method code numbers, but off by 1. GET is code 0. */
     char *method_codes[] = {"get", "post", "put"};
-    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    uint8_t buf[CONFIG_GCOAP_PDU_BUF_SIZE];
     coap_pkt_t pdu;
     size_t len;
 
@@ -219,7 +219,7 @@ int gcoap_cli_cmd(int argc, char **argv)
     if (strcmp(argv[1], "info") == 0) {
         uint8_t open_reqs = gcoap_op_state();
 
-        printf("CoAP server is listening on port %u\n", GCOAP_PORT);
+        printf("CoAP server is listening on port %u\n", CONFIG_GCOAP_PORT);
         printf(" CLI requests sent: %u\n", req_count);
         printf("CoAP open requests: %u\n", open_reqs);
         return 0;
@@ -251,7 +251,7 @@ int gcoap_cli_cmd(int argc, char **argv)
      */
     if (((argc == apos + 3) && (code_pos == 0)) ||
         ((argc == apos + 4) && (code_pos != 0))) {
-        gcoap_req_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE, code_pos+1, argv[apos+2]);
+        gcoap_req_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE, code_pos+1, argv[apos+2]);
         coap_hdr_set_type(pdu.hdr, msg_type);
 
         size_t paylen = (argc == apos + 4) ? strlen(argv[apos+3]) : 0;
@@ -278,7 +278,7 @@ int gcoap_cli_cmd(int argc, char **argv)
         }
         else {
             /* send Observe notification for /cli/stats */
-            switch (gcoap_obs_init(&pdu, &buf[0], GCOAP_PDU_BUF_SIZE,
+            switch (gcoap_obs_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE,
                     &_resources[0])) {
             case GCOAP_OBS_INIT_OK:
                 DEBUG("gcoap_cli: creating /cli/stats notification\n");

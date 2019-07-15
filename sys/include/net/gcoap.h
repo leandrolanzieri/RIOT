@@ -38,7 +38,7 @@
  *
  * ## Server Operation ##
  *
- * gcoap listens for requests on GCOAP_PORT, 5683 by default. You can redefine
+ * gcoap listens for requests on CONFIG_GCOAP_PORT, 5683 by default. You can redefine
  * this by uncommenting the appropriate lines in gcoap's make file.
  *
  * gcoap allows an application to specify a collection of request resource paths
@@ -236,22 +236,22 @@ extern "C" {
 /**
  * @brief  Size for module message queue
  */
-#ifndef GCOAP_MSG_QUEUE_SIZE
-#define GCOAP_MSG_QUEUE_SIZE    (4)
+#ifndef CONFIG_GCOAP_MSG_QUEUE_SIZE
+#define CONFIG_GCOAP_MSG_QUEUE_SIZE    (4)
 #endif
 
 /**
  * @brief   Server port; use RFC 7252 default if not defined
  */
-#ifndef GCOAP_PORT
-#define GCOAP_PORT              (5683)
+#ifndef CONFIG_GCOAP_PORT
+#define CONFIG_GCOAP_PORT              (5683)
 #endif
 
 /**
  * @brief   Size of the buffer used to build a CoAP request or response
  */
-#ifndef GCOAP_PDU_BUF_SIZE
-#define GCOAP_PDU_BUF_SIZE      (128)
+#ifndef CONFIG_GCOAP_PDU_BUF_SIZE
+#define CONFIG_GCOAP_PDU_BUF_SIZE      (128)
 #endif
 
 /**
@@ -260,8 +260,8 @@ extern "C" {
  * Accommodates writing Content-Format option in gcoap_finish(). May set to
  * zero if function not used.
  */
-#ifndef GCOAP_REQ_OPTIONS_BUF
-#define GCOAP_REQ_OPTIONS_BUF   (4)
+#ifndef CONFIG_GCOAP_REQ_OPTIONS_BUF
+#define CONFIG_GCOAP_REQ_OPTIONS_BUF   (4)
 #endif
 
 /**
@@ -270,8 +270,8 @@ extern "C" {
  * Accommodates writing Content-Format option in gcoap_finish(). May set to
  * zero if function not used.
  */
-#ifndef GCOAP_RESP_OPTIONS_BUF
-#define GCOAP_RESP_OPTIONS_BUF  (4)
+#ifndef CONFIG_GCOAP_RESP_OPTIONS_BUF
+#define CONFIG_GCOAP_RESP_OPTIONS_BUF  (4)
 #endif
 
 /**
@@ -280,15 +280,15 @@ extern "C" {
  * Accommodates writing Content-Format option in gcoap_finish(). May set to
  * zero if function not used.
  */
-#ifndef GCOAP_OBS_OPTIONS_BUF
-#define GCOAP_OBS_OPTIONS_BUF   (4)
+#ifndef CONFIG_GCOAP_OBS_OPTIONS_BUF
+#define CONFIG_GCOAP_OBS_OPTIONS_BUF   (4)
 #endif
 
 /**
  * @brief   Maximum number of requests awaiting a response
  */
-#ifndef GCOAP_REQ_WAITING_MAX
-#define GCOAP_REQ_WAITING_MAX   (2)
+#ifndef CONFIG_GCOAP_REQ_WAITING_MAX
+#define CONFIG_GCOAP_REQ_WAITING_MAX   (2)
 #endif
 /** @} */
 
@@ -308,8 +308,8 @@ extern "C" {
  *
  * Value must be in the range 0 to @ref GCOAP_TOKENLEN_MAX.
  */
-#ifndef GCOAP_TOKENLEN
-#define GCOAP_TOKENLEN          (2)
+#ifndef CONFIG_GCOAP_TOKENLEN
+#define CONFIG_GCOAP_TOKENLEN          (2)
 #endif
 
 /**
@@ -337,8 +337,8 @@ extern "C" {
  * @ingroup net_gcoap_conf
  * @brief   Time in usec that the event loop waits for an incoming CoAP message
  */
-#ifndef GCOAP_RECV_TIMEOUT
-#define GCOAP_RECV_TIMEOUT      (1 * US_PER_SEC)
+#ifndef CONFIG_GCOAP_RECV_TIMEOUT
+#define CONFIG_GCOAP_RECV_TIMEOUT      (1 * US_PER_SEC)
 #endif
 
 /**
@@ -347,8 +347,8 @@ extern "C" {
  *
  * Set to 0 to disable timeout.
  */
-#ifndef GCOAP_NON_TIMEOUT
-#define GCOAP_NON_TIMEOUT       (5000000U)
+#ifndef CONFIG_GCOAP_NON_TIMEOUT
+#define CONFIG_GCOAP_NON_TIMEOUT       (5000000U)
 #endif
 
 /**
@@ -368,16 +368,16 @@ extern "C" {
  * @ingroup net_gcoap_conf
  * @brief   Maximum number of Observe clients
  */
-#ifndef GCOAP_OBS_CLIENTS_MAX
-#define GCOAP_OBS_CLIENTS_MAX   (2)
+#ifndef CONFIG_GCOAP_OBS_CLIENTS_MAX
+#define CONFIG_GCOAP_OBS_CLIENTS_MAX   (2)
 #endif
 
 /**
  * @ingroup net_gcoap_conf
  * @brief   Maximum number of registrations for Observable resources
  */
-#ifndef GCOAP_OBS_REGISTRATIONS_MAX
-#define GCOAP_OBS_REGISTRATIONS_MAX     (2)
+#ifndef CONFIG_GCOAP_OBS_REGISTRATIONS_MAX
+#define CONFIG_GCOAP_OBS_REGISTRATIONS_MAX     (2)
 #endif
 
 /**

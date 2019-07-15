@@ -70,17 +70,17 @@ static gcoap_listener_t _default_listener = {
 typedef struct {
     mutex_t lock;                       /* Shares state attributes safely */
     gcoap_listener_t *listeners;        /* List of registered listeners */
-    gcoap_request_memo_t open_reqs[GCOAP_REQ_WAITING_MAX];
+    gcoap_request_memo_t open_reqs[CONFIG_GCOAP_REQ_WAITING_MAX];
                                         /* Storage for open requests; if first
                                            byte of an entry is zero, the entry
                                            is available */
     atomic_uint next_message_id;        /* Next message ID to use */
-    sock_udp_ep_t observers[GCOAP_OBS_CLIENTS_MAX];
+    sock_udp_ep_t observers[CONFIG_GCOAP_OBS_CLIENTS_MAX];
                                         /* Observe clients; allows reuse for
                                            observe memos */
-    gcoap_observe_memo_t observe_memos[GCOAP_OBS_REGISTRATIONS_MAX];
+    gcoap_observe_memo_t observe_memos[CONFIG_GCOAP_OBS_REGISTRATIONS_MAX];
                                         /* Observed resource registrations */
-    uint8_t resend_bufs[GCOAP_RESEND_BUFS_MAX][GCOAP_PDU_BUF_SIZE];
+    uint8_t resend_bufs[GCOAP_RESEND_BUFS_MAX][CONFIG_GCOAP_PDU_BUF_SIZE];
                                         /* Buffers for PDU for request resends;
                                            if first byte of an entry is zero,
                                            the entry is available */
@@ -92,7 +92,7 @@ static gcoap_state_t _coap_state = {
 
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
 static char _msg_stack[GCOAP_STACK_SIZE];
-static msg_t _msg_queue[GCOAP_MSG_QUEUE_SIZE];
+static msg_t _msg_queue[CONFIG_GCOAP_MSG_QUEUE_SIZE];
 static sock_udp_t _sock;
 
 
@@ -102,13 +102,13 @@ static void *_event_loop(void *arg)
     msg_t msg_rcvd;
     (void)arg;
 
-    msg_init_queue(_msg_queue, GCOAP_MSG_QUEUE_SIZE);
+    msg_init_queue(_msg_queue, CONFIG_GCOAP_MSG_QUEUE_SIZE);
 
     sock_udp_ep_t local;
     memset(&local, 0, sizeof(sock_udp_ep_t));
     local.family = AF_INET6;
     local.netif  = SOCK_ADDR_ANY_NETIF;
-    local.port   = GCOAP_PORT;
+    local.port   = CONFIG_GCOAP_PORT;
 
     int res = sock_udp_create(&_sock, &local, NULL, 0);
     if (res < 0) {
@@ -166,7 +166,7 @@ static void *_event_loop(void *arg)
 static void _listen(sock_udp_t *sock)
 {
     coap_pkt_t pdu;
-    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+    uint8_t buf[CONFIG_GCOAP_PDU_BUF_SIZE];
     sock_udp_ep_t remote;
     gcoap_request_memo_t *memo = NULL;
     uint8_t open_reqs = gcoap_op_state();
@@ -177,7 +177,8 @@ static void _listen(sock_udp_t *sock)
      * waiting so the request's timeout can be handled in a timely manner in
      * _event_loop(). */
     ssize_t res = sock_udp_recv(sock, buf, sizeof(buf),
-                                open_reqs > 0 ? GCOAP_RECV_TIMEOUT : SOCK_NO_TIMEOUT,
+                                open_reqs > 0 ?
+                                    CONFIG_GCOAP_RECV_TIMEOUT : SOCK_NO_TIMEOUT,
                                 &remote);
     if (res <= 0) {
 #if ENABLE_DEBUG
@@ -441,7 +442,7 @@ static void _find_req_memo(gcoap_request_memo_t **memo_ptr, coap_pkt_t *src_pdu,
     coap_pkt_t *memo_pdu = &memo_pdu_data;
     unsigned cmplen      = coap_get_token_len(src_pdu);
 
-    for (int i = 0; i < GCOAP_REQ_WAITING_MAX; i++) {
+    for (int i = 0; i < CONFIG_GCOAP_REQ_WAITING_MAX; i++) {
         if (_coap_state.open_reqs[i].state == GCOAP_MEMO_UNUSED)
             continue;
 
@@ -523,7 +524,7 @@ static int _find_observer(sock_udp_ep_t **observer, sock_udp_ep_t *remote)
 {
     int empty_slot = -1;
     *observer      = NULL;
-    for (unsigned i = 0; i < GCOAP_OBS_CLIENTS_MAX; i++) {
+    for (unsigned i = 0; i < CONFIG_GCOAP_OBS_CLIENTS_MAX; i++) {
 
         if (_coap_state.observers[i].family == AF_UNSPEC) {
             empty_slot = i;
@@ -555,7 +556,7 @@ static int _find_obs_memo(gcoap_observe_memo_t **memo, sock_udp_ep_t *remote,
     sock_udp_ep_t *remote_observer = NULL;
     _find_observer(&remote_observer, remote);
 
-    for (unsigned i = 0; i < GCOAP_OBS_REGISTRATIONS_MAX; i++) {
+    for (unsigned i = 0; i < CONFIG_GCOAP_OBS_REGISTRATIONS_MAX; i++) {
         if (_coap_state.observe_memos[i].observer == NULL) {
             empty_slot = i;
             continue;
@@ -591,7 +592,7 @@ static void _find_obs_memo_resource(gcoap_observe_memo_t **memo,
                                    const coap_resource_t *resource)
 {
     *memo = NULL;
-    for (int i = 0; i < GCOAP_OBS_REGISTRATIONS_MAX; i++) {
+    for (int i = 0; i < CONFIG_GCOAP_OBS_REGISTRATIONS_MAX; i++) {
         if (_coap_state.observe_memos[i].observer != NULL
                 && _coap_state.observe_memos[i].resource == resource) {
             *memo = &_coap_state.observe_memos[i];
@@ -644,24 +645,24 @@ int gcoap_req_init(coap_pkt_t *pdu, uint8_t *buf, size_t len,
     pdu->hdr = (coap_hdr_t *)buf;
 
     /* generate token */
-#if GCOAP_TOKENLEN
-    uint8_t token[GCOAP_TOKENLEN];
-    for (size_t i = 0; i < GCOAP_TOKENLEN; i += 4) {
+#if CONFIG_GCOAP_TOKENLEN
+    uint8_t token[CONFIG_GCOAP_TOKENLEN];
+    for (size_t i = 0; i < CONFIG_GCOAP_TOKENLEN; i += 4) {
         uint32_t rand = random_uint32();
         memcpy(&token[i],
                &rand,
-               (GCOAP_TOKENLEN - i >= 4) ? 4 : GCOAP_TOKENLEN - i);
+               (CONFIG_GCOAP_TOKENLEN - i >= 4) ? 4 : CONFIG_GCOAP_TOKENLEN - i);
     }
     uint16_t msgid = (uint16_t)atomic_fetch_add(&_coap_state.next_message_id, 1);
-    ssize_t res = coap_build_hdr(pdu->hdr, COAP_TYPE_NON, &token[0], GCOAP_TOKENLEN,
-                                 code, msgid);
+    ssize_t res = coap_build_hdr(pdu->hdr, COAP_TYPE_NON, &token[0],
+                                 CONFIG_GCOAP_TOKENLEN, code, msgid);
 #else
     uint16_t msgid = (uint16_t)atomic_fetch_add(&_coap_state.next_message_id, 1);
-    ssize_t res = coap_build_hdr(pdu->hdr, COAP_TYPE_NON, NULL, GCOAP_TOKENLEN,
-                                 code, msgid);
+    ssize_t res = coap_build_hdr(pdu->hdr, COAP_TYPE_NON, NULL,
+                                 CONFIG_GCOAP_TOKENLEN, code, msgid);
 #endif
 
-    coap_pkt_init(pdu, buf, len - GCOAP_REQ_OPTIONS_BUF, res);
+    coap_pkt_init(pdu, buf, len - CONFIG_GCOAP_REQ_OPTIONS_BUF, res);
     if (path != NULL) {
         res = coap_opt_add_string(pdu, COAP_OPT_URI_PATH, path, '/');
     }
@@ -722,7 +723,7 @@ size_t gcoap_req_send(const uint8_t *buf, size_t len,
     if ((resp_handler != NULL) || (msg_type == COAP_TYPE_CON)) {
         mutex_lock(&_coap_state.lock);
         /* Find empty slot in list of open requests. */
-        for (int i = 0; i < GCOAP_REQ_WAITING_MAX; i++) {
+        for (int i = 0; i < CONFIG_GCOAP_REQ_WAITING_MAX; i++) {
             if (_coap_state.open_reqs[i].state == GCOAP_MEMO_UNUSED) {
                 memo = &_coap_state.open_reqs[i];
                 memo->state = GCOAP_MEMO_WAIT;
@@ -745,7 +746,8 @@ size_t gcoap_req_send(const uint8_t *buf, size_t len,
             for (int i = 0; i < GCOAP_RESEND_BUFS_MAX; i++) {
                 if (!_coap_state.resend_bufs[i][0]) {
                     memo->msg.data.pdu_buf = &_coap_state.resend_bufs[i][0];
-                    memcpy(memo->msg.data.pdu_buf, buf, GCOAP_PDU_BUF_SIZE);
+                    memcpy(memo->msg.data.pdu_buf, buf,
+                           CONFIG_GCOAP_PDU_BUF_SIZE);
                     memo->msg.data.pdu_len = len;
                     break;
                 }
@@ -765,7 +767,7 @@ size_t gcoap_req_send(const uint8_t *buf, size_t len,
         case COAP_TYPE_NON:
             memo->send_limit = GCOAP_SEND_LIMIT_NON;
             memcpy(&memo->msg.hdr_buf[0], buf, GCOAP_HEADER_MAXLEN);
-            timeout = GCOAP_NON_TIMEOUT;
+            timeout = CONFIG_GCOAP_NON_TIMEOUT;
             break;
         default:
             memo->state = GCOAP_MEMO_UNUSED;
@@ -828,7 +830,7 @@ int gcoap_resp_init(coap_pkt_t *pdu, uint8_t *buf, size_t len, unsigned code)
 
     pdu->options_len = 0;
     pdu->payload     = buf + header_len;
-    pdu->payload_len = len - header_len - GCOAP_RESP_OPTIONS_BUF;
+    pdu->payload_len = len - header_len - CONFIG_GCOAP_RESP_OPTIONS_BUF;
 
     if (coap_get_observe(pdu) == COAP_OBS_REGISTER) {
         /* generate initial notification value */
@@ -857,7 +859,7 @@ int gcoap_obs_init(coap_pkt_t *pdu, uint8_t *buf, size_t len,
                                     memo->token_len, COAP_CODE_CONTENT, msgid);
 
     if (hdrlen > 0) {
-        coap_pkt_init(pdu, buf, len - GCOAP_OBS_OPTIONS_BUF, hdrlen);
+        coap_pkt_init(pdu, buf, len - CONFIG_GCOAP_OBS_OPTIONS_BUF, hdrlen);
 
         uint32_t now       = xtimer_now_usec();
         pdu->observe_value = (now >> GCOAP_OBS_TICK_EXPONENT) & 0xFFFFFF;
@@ -890,7 +892,7 @@ size_t gcoap_obs_send(const uint8_t *buf, size_t len,
 uint8_t gcoap_op_state(void)
 {
     uint8_t count = 0;
-    for (int i = 0; i < GCOAP_REQ_WAITING_MAX; i++) {
+    for (int i = 0; i < CONFIG_GCOAP_REQ_WAITING_MAX; i++) {
         if (_coap_state.open_reqs[i].state != GCOAP_MEMO_UNUSED) {
             count++;
         }
