@@ -1,0 +1,5 @@
+menu "System Modules"
+
+rsource "net/Kconfig"
+
+endmenu # System Modules
