@@ -1,0 +1,5 @@
+menu "Generic (GNRC) network stack"
+
+orsource "network_layer/Kconfig"
+
+endmenu # Generic (GNRC) network stack

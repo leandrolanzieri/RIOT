@@ -1,6 +1,7 @@
 menu "Networking"
 
 orsource "application_layer/*/Kconfig"
+rsource "gnrc/Kconfig"
 rsource "sock/Kconfig"
 
 endmenu # Networking
