@@ -2,5 +2,6 @@ menu "GNRC IPv6"
     depends on "$(module-gnrc-ipv6)" != ""
 
 rsource "blacklist/Kconfig"
+rsource "whitelist/Kconfig"
 
 endmenu # GNRC IPv6

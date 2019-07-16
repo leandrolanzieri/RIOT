@@ -1,0 +1,12 @@
+menuconfig KCONFIG_MODULE_GNRC_IPV6_WHITELIST
+    bool "GNRC IPv6 whitelisting" if "$(module-gnrc-ipv6-whitelist)" != ""
+    help
+        Enable this to configure GNRC IPv6 whitelisting using Kconfig.
+
+if KCONFIG_MODULE_GNRC_IPV6_WHITELIST
+
+config GNRC_IPV6_WHITELIST_SIZE
+    int "Maximum size of the whitelist"
+    default 8
+
+endif # KCONFIG_MODULE_GNRC_IPV6_WHITELIST
