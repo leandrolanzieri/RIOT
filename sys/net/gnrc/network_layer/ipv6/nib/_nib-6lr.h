@@ -12,7 +12,7 @@
  *
  * @file
  * @brief   Definitions related to 6Lo router (6LR) functionality of the NIB
- * @see     @ref GNRC_IPV6_NIB_CONF_6LR
+ * @see     @ref CONFIG_GNRC_IPV6_NIB_CONF_6LR
  *
  * @author  Martine Lenders <m.lenders@fu-berlin.de>
  */
@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#if GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN)
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN)
 /**
  * @brief   Gets address registration state of a neighbor
  *
@@ -123,7 +123,7 @@ gnrc_pktsnip_t *_copy_and_handle_aro(gnrc_netif_t *netif, const ipv6_hdr_t *ipv6
  * @param[in] netif The interface.
  */
 void _set_rtr_adv(gnrc_netif_t *netif);
-#else   /* GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN) */
+#else   /* CONFIG_GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN) */
 #define _rtr_sol_on_6lr(netif, icmpv6)  (false)
 #define _get_ar_state(nbr)              (_ADDR_REG_STATUS_IGNORE)
 #define _set_ar_state(nbr, state)       (void)nbr; (void)state
@@ -133,7 +133,7 @@ void _set_rtr_adv(gnrc_netif_t *netif);
 #define _copy_and_handle_aro(netif, ipv6, icmpv6, aro, sl2ao) \
                                         (NULL)
 #define _set_rtr_adv(netif)             (void)netif
-#endif  /* GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN) */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LR || defined(DOXYGEN) */
 
 #ifdef __cplusplus
 }

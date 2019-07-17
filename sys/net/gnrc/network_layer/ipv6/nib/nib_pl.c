@@ -66,7 +66,7 @@ int gnrc_ipv6_nib_pl_set(unsigned iface,
     if (netif->ipv6.aac_mode == GNRC_NETIF_AAC_AUTO) {
         dst->flags |= _PFX_SLAAC;
     }
-#if GNRC_IPV6_NIB_CONF_6LBR && GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LBR && CONFIG_GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
     if (gnrc_netif_is_6lbr(netif)) {
         _nib_abr_entry_t *abr = NULL;
 
@@ -79,7 +79,7 @@ int gnrc_ipv6_nib_pl_set(unsigned iface,
     gnrc_netif_release(netif);
 #endif  /* MODULE_GNRC_NETIF */
     mutex_unlock(&_nib_mutex);
-#if defined(MODULE_GNRC_NETIF) && GNRC_IPV6_NIB_CONF_ROUTER
+#if defined(MODULE_GNRC_NETIF) && CONFIG_GNRC_IPV6_NIB_CONF_ROUTER
     /* update prefixes down-stream */
     _handle_snd_mc_ra(netif);
 #endif
@@ -100,7 +100,7 @@ void gnrc_ipv6_nib_pl_del(unsigned iface,
             (ipv6_addr_match_prefix(pfx, &dst->pfx) >= pfx_len)) {
             _nib_pl_remove(dst);
             mutex_unlock(&_nib_mutex);
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_CONF_ROUTER
             gnrc_netif_t *netif = gnrc_netif_get_by_pid(iface);
 
             if (netif) {

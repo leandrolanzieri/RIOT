@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-#if (GNRC_IPV6_NIB_CONF_6LBR && GNRC_IPV6_NIB_CONF_MULTIHOP_P6C) || defined(DOXYGEN)
+#if (CONFIG_GNRC_IPV6_NIB_CONF_6LBR && CONFIG_GNRC_IPV6_NIB_CONF_MULTIHOP_P6C) || defined(DOXYGEN)
 /**
  * @brief   Adds the address of an authoritative border router to the NIB
  *
@@ -45,7 +45,7 @@ int gnrc_ipv6_nib_abr_add(const ipv6_addr_t *addr);
  * @param[in] addr  The address of an authoritative border router.
  */
 void gnrc_ipv6_nib_abr_del(const ipv6_addr_t *addr);
-#endif  /* (GNRC_IPV6_NIB_CONF_6LBR && GNRC_IPV6_NIB_CONF_MULTIHOP_P6C) || defined(DOXYGEN) */
+#endif  /* (CONFIG_GNRC_IPV6_NIB_CONF_6LBR && CONFIG_GNRC_IPV6_NIB_CONF_MULTIHOP_P6C) || defined(DOXYGEN) */
 
 #ifdef __cplusplus
 }

@@ -17,7 +17,7 @@
 
 #include "_nib-internal.h"
 
-#if GNRC_IPV6_NIB_CONF_6LBR && GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LBR && CONFIG_GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
 int gnrc_ipv6_nib_abr_add(const ipv6_addr_t *addr)
 {
     _nib_abr_entry_t *abr;

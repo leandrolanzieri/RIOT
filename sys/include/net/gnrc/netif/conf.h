@@ -74,7 +74,7 @@ extern "C" {
  *
  * @note    Used for calculation of @ref GNRC_NETIF_IPV6_GROUPS_NUMOF
  */
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_CONF_ROUTER
 #define GNRC_NETIF_IPV6_RTR_ADDR   (1)
 #else
 #define GNRC_NETIF_IPV6_RTR_ADDR   (0)
@@ -129,7 +129,7 @@ extern "C" {
 #elif   MODULE_CC110X
 #define GNRC_NETIF_L2ADDR_MAXLEN   (1U)
 #else
-#define GNRC_NETIF_L2ADDR_MAXLEN   (GNRC_IPV6_NIB_L2ADDR_MAX_LEN)
+#define GNRC_NETIF_L2ADDR_MAXLEN   (CONFIG_GNRC_IPV6_NIB_L2ADDR_MAX_LEN)
 #endif
 #endif
 

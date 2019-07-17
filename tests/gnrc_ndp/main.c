@@ -701,7 +701,7 @@ static void test_rtr_sol_send__dst_global(void)
     test_rtr_sol_send(&test_dst);
 }
 
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_CONF_ROUTER
 static void test_rtr_adv_send(const ipv6_addr_t *src, const ipv6_addr_t *dst,
                               bool fin, gnrc_pktsnip_t *exp_ext_opts)
 {
@@ -895,7 +895,7 @@ static Test *tests_gnrc_ndp_send(void)
         new_TestFixture(test_rtr_sol_send__dst_NULL),
         new_TestFixture(test_rtr_sol_send__dst_local),
         new_TestFixture(test_rtr_sol_send__dst_global),
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_CONF_ROUTER
         new_TestFixture(test_rtr_adv_send__src_NULL_dst_NULL_no_fin_no_ext_opts),
         new_TestFixture(test_rtr_adv_send__src_NULL_dst_NULL_no_fin_ext_opts),
         new_TestFixture(test_rtr_adv_send__src_NULL_dst_NULL_fin_no_ext_opts),

@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-#if GNRC_IPV6_NIB_CONF_ROUTER || defined(DOXYGEN)
+#if CONFIG_GNRC_IPV6_NIB_CONF_ROUTER || defined(DOXYGEN)
 /**
  * @brief   Initializes interface for router behavior
  *
@@ -43,12 +43,12 @@ static inline void _init_iface_router(gnrc_netif_t *netif)
     netif->ipv6.last_ra = UINT32_MAX;
     netif->ipv6.ra_sent = 0;
     netif->flags |= GNRC_NETIF_FLAGS_IPV6_FORWARDING;
-#if !GNRC_IPV6_NIB_CONF_6LR || GNRC_IPV6_NIB_CONF_6LBR
+#if !CONFIG_GNRC_IPV6_NIB_CONF_6LR || CONFIG_GNRC_IPV6_NIB_CONF_6LBR
     netif->flags |= GNRC_NETIF_FLAGS_IPV6_RTR_ADV;
-#endif  /* !GNRC_IPV6_NIB_CONF_6LR || GNRC_IPV6_NIB_CONF_6LBR */
-#if GNRC_IPV6_NIB_CONF_6LBR
+#endif  /* !CONFIG_GNRC_IPV6_NIB_CONF_6LR || CONFIG_GNRC_IPV6_NIB_CONF_6LBR */
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LBR
     netif->flags |= GNRC_NETIF_FLAGS_6LO_ABR;
-#endif  /* GNRC_IPV6_NIB_CONF_6LBR */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LBR */
     gnrc_netif_ipv6_group_join_internal(netif, &ipv6_addr_all_routers_link_local);
 }
 
@@ -102,7 +102,7 @@ void _set_rtr_adv(gnrc_netif_t *netif);
 /**
  * @brief   Send router advertisements
  *
- * If @ref GNRC_IPV6_NIB_CONF_MULTIHOP_P6C is not 0 this sends one router
+ * If @ref CONFIG_GNRC_IPV6_NIB_CONF_MULTIHOP_P6C is not 0 this sends one router
  * advertisement per configured ABR, otherwise it just sends one single router
  * advertisement for the interface.
  *
@@ -113,7 +113,7 @@ void _set_rtr_adv(gnrc_netif_t *netif);
  */
 void _snd_rtr_advs(gnrc_netif_t *netif, const ipv6_addr_t *dst,
                   bool final);
-#else  /* GNRC_IPV6_NIB_CONF_ROUTER */
+#else  /* CONFIG_GNRC_IPV6_NIB_CONF_ROUTER */
 #define _init_iface_router(netif)                       (void)netif
 #define _call_route_info_cb(netif, type, ctx_addr, ctx) (void)netif; \
                                                         (void)type; \
@@ -125,7 +125,7 @@ void _snd_rtr_advs(gnrc_netif_t *netif, const ipv6_addr_t *dst,
 #define _snd_rtr_advs(netif, dst, final)                (void)netif; \
                                                         (void)dst; \
                                                         (void)final
-#endif /* GNRC_IPV6_NIB_CONF_ROUTER */
+#endif /* CONFIG_GNRC_IPV6_NIB_CONF_ROUTER */
 
 #ifdef __cplusplus
 }

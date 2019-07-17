@@ -24,7 +24,7 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
-#if GNRC_IPV6_NIB_CONF_6LN || GNRC_IPV6_NIB_CONF_SLAAC
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN || CONFIG_GNRC_IPV6_NIB_CONF_SLAAC
 static char addr_str[IPV6_ADDR_MAX_STR_LEN];
 
 void _auto_configure_addr(gnrc_netif_t *netif, const ipv6_addr_t *pfx,
@@ -41,9 +41,9 @@ void _auto_configure_addr(gnrc_netif_t *netif, const ipv6_addr_t *pfx,
     DEBUG("nib: add address based on %s/%u automatically to interface %u\n",
           ipv6_addr_to_str(addr_str, pfx, sizeof(addr_str)),
           pfx_len, netif->pid);
-#if GNRC_IPV6_NIB_CONF_6LN
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN
     bool new_address = false;
-#endif  /* GNRC_IPV6_NIB_CONF_6LN */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LN */
     gnrc_netif_ipv6_get_iid(netif, (eui64_t *)&addr.u64[1]);
     ipv6_addr_init_prefix(&addr, pfx, pfx_len);
     if ((idx = gnrc_netif_ipv6_addr_idx(netif, &addr)) < 0) {
@@ -53,12 +53,12 @@ void _auto_configure_addr(gnrc_netif_t *netif, const ipv6_addr_t *pfx,
                   netif->pid);
             return;
         }
-#if GNRC_IPV6_NIB_CONF_6LN
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN
         new_address = true;
-#endif  /* GNRC_IPV6_NIB_CONF_6LN */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LN */
     }
 
-#if GNRC_IPV6_NIB_CONF_6LN
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN
     /* mark link-local addresses as valid on 6LN */
     if (gnrc_netif_is_6ln(netif) && ipv6_addr_is_link_local(pfx)) {
         /* don't do this beforehand or risk a deadlock:
@@ -68,19 +68,19 @@ void _auto_configure_addr(gnrc_netif_t *netif, const ipv6_addr_t *pfx,
         netif->ipv6.addrs_flags[idx] &= ~GNRC_NETIF_IPV6_ADDRS_FLAGS_STATE_MASK;
         netif->ipv6.addrs_flags[idx] |= GNRC_NETIF_IPV6_ADDRS_FLAGS_STATE_VALID;
     }
-#endif  /* GNRC_IPV6_NIB_CONF_6LN */
-#if GNRC_IPV6_NIB_CONF_6LN
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LN */
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN
     if (new_address && gnrc_netif_is_6ln(netif) &&
         !gnrc_netif_is_6lbr(netif)) {
         _handle_rereg_address(&netif->ipv6.addrs[idx]);
     }
-#else   /* GNRC_IPV6_NIB_CONF_6LN */
+#else   /* CONFIG_GNRC_IPV6_NIB_CONF_6LN */
     (void)idx;
-#endif  /* GNRC_IPV6_NIB_CONF_6LN */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LN */
 }
-#endif  /* GNRC_IPV6_NIB_CONF_6LN || GNRC_IPV6_NIB_CONF_SLAAC */
+#endif  /* CONFIG_GNRC_IPV6_NIB_CONF_6LN || CONFIG_GNRC_IPV6_NIB_CONF_SLAAC */
 
-#if GNRC_IPV6_NIB_CONF_SLAAC
+#if CONFIG_GNRC_IPV6_NIB_CONF_SLAAC
 static bool _try_l2addr_reconfiguration(gnrc_netif_t *netif)
 {
     uint8_t hwaddr[GNRC_NETIF_L2ADDR_MAXLEN];
@@ -91,7 +91,7 @@ static bool _try_l2addr_reconfiguration(gnrc_netif_t *netif)
         return false;
     }
     luid_get(hwaddr, hwaddr_len);
-#if GNRC_IPV6_NIB_CONF_6LN
+#if CONFIG_GNRC_IPV6_NIB_CONF_6LN
     if (hwaddr_len == IEEE802154_LONG_ADDRESS_LEN) {
         if (gnrc_netapi_set(netif->pid, NETOPT_ADDRESS_LONG, 0, hwaddr,
                             hwaddr_len) < 0) {
@@ -206,8 +206,8 @@ void _handle_valid_addr(const ipv6_addr_t *addr)
         gnrc_netif_release(netif);
     }
 }
-#else  /* GNRC_IPV6_NIB_CONF_SLAAC */
+#else  /* CONFIG_GNRC_IPV6_NIB_CONF_SLAAC */
 typedef int dont_be_pedantic;
-#endif /* GNRC_IPV6_NIB_CONF_SLAAC */
+#endif /* CONFIG_GNRC_IPV6_NIB_CONF_SLAAC */
 
 /** @} */
