@@ -1,0 +1,127 @@
+# Copyright (C) 2019 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+menuconfig KCONFIG_MODULE_GNRC_IPV6_NIB
+    bool "GNRC IPv6 NIB" if "$(module-gnrc-ipv6-nib)" != ""
+    help
+        Enable this to configure GNRC IPv6 NIB using Kconfig.
+
+if KCONFIG_MODULE_GNRC_IPV6_NIB
+
+config GNRC_IPV6_NIB_CONF_6LBR
+    bool "Enable features for 6Lo border router"
+    default "$(module-gnrc-ipv6-nib-6lbr)" != ""
+
+config GNRC_IPV6_NIB_CONF_6LR
+    bool "Enable features for 6Lo router"
+    default y if "$(module-gnrc-ipv6-nib-6lr)" != ""
+    default GNRC_IPV6_NIB_CONF_6LBR
+
+config GNRC_IPV6_NIB_CONF_6LN
+    bool "Enable features for 6Lo node"
+    default GNRC_IPV6_NIB_CONF_6LR
+
+config GNRC_IPV6_NIB_CONF_ROUTER
+    bool "Enable features for IPv6 routers"
+    default y if "$(module-gnrc-ipv6-nib-router)" != ""
+    default GNRC_IPV6_NIB_CONF_6LR
+
+config GNRC_IPV6_NIB_CONF_ADV_ROUTER
+    bool "Enable router advertising at interface start-up"
+    default (GNRC_IPV6_NIB_CONF_ROUTER && (!GNRC_IPV6_NIB_CONF_6LR || GNRC_IPV6_NIB_CONF_6LBR))
+
+config GNRC_IPV6_NIB_CONF_ARSM
+    bool "Enable NDP address resolution state-machine"
+    default GNRC_IPV6_NIB_CONF_6LR if "$(module-gnrc-ipv6-nib-6ln)" != ""
+    default y
+
+config GNRC_IPV6_NIB_CONF_QUEUE_PKT
+    bool "Queue packets for address resolution"
+    default n if "$(module-gnrc-ipv6-nib-6ln)" != ""
+    default !GNRC_IPV6_6LN
+
+config GNRC_IPV6_NIB_CONF_SLAAC
+    bool "Enable handling of NDP messages"
+    default y if "$(module-gnrc-ipv6-nib-6lbr)" != ""
+    default n if "$(module-gnrc-ipv6-nib-6lr)" != ""
+    default n if "$(module-gnrc-ipv6-nib-6ln)" != ""
+    help
+        Enable handling of NDP messages according for stateless address
+        auto-configuration (if activated on interface). See RFC 4862.
+
+config GNRC_IPV6_NIB_CONF_DC
+    bool "Disable destination cache"
+    default GNRC_IPV6_NIB_CONF_REDIRECT
+
+config GNRC_IPV6_NIB_CONF_REDIRECT
+    bool "Enable handling of redirect messages"
+
+config GNRC_IPV6_NIB_CONF_DNS
+    bool "Enable DNS configuration"
+    default y if "$(module-gnrc-ipv6-nib-dns)" != ""
+    default n
+    help
+        Enable DNS configuration options. See RFC 8106.
+
+config GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
+    bool "Enable multihop prefix and 6LoWPAN context distribution"
+    default GNRC_IPV6_NIB_CONF_6LR
+    help
+        Enable multihop prefix and 6LoWPAN context distribution. See RFC 6775,
+        section 8.1.
+
+config GNRC_IPV6_NIB_CONF_MULTIHOP_DAD
+    bool "Enable multihop duplicate address detection"
+    help
+        Enable multihop duplicate address detection. See RFC 6775, section 8.2.
+
+config GNRC_IPV6_NIB_CONF_REACH_TIME_RESET
+    int "Reset time for reachability time [ms]"
+    default 7200000
+    help
+        Reset time in milliseconds for the reachability time. See RFC 4861,
+        section 6.3.4.
+
+config GNRC_IPV6_NIB_CONF_NO_RTR_SOL
+    bool "Disable router solicitations"
+    help
+        Disable router solicitations. Warning: Only do this if you know what
+        you're doing.
+
+config GNRC_IPV6_NIB_L2ADDR_MAX_LEN
+    int "Maximum link-layer address length (aligned)"
+    default 8
+
+config GNRC_IPV6_NIB_DEFAULT_ROUTER_NUMOF
+    int "Number of default routers in the list"
+    default 1
+    help
+        Number of default routers in the default router list. Attention: This
+        number has direct influence on the maximum number of default routers.
+
+config GNRC_IPV6_NIB_NUMOF
+    int "Number of entries in NIB"
+    default 16 if "$(module-gnrc-ipv6-nib-6lbr)" != ""
+    default 1 if ("$(module-gnrc-ipv6-nib-6ln)" != "") && !GNRC_IPV6_NIB_CONF_6LR
+    default 4
+    help
+        Number of entries in NIB. Attention: This number has direct influence on
+        the maximum number of neighbors and duplicate address detection table
+        entries.
+
+config GNRC_IPV6_NIB_OFFL_NUMOF
+    int "Number of off-link entries in NIB"
+    default 8
+    help
+        Number of off-link entries in NIB. Attention: This number is equal to
+        the maximum number of forwarding table and prefix list entries in NIB.
+
+config GNRC_IPV6_NIB_ABR_NUMOF
+    int "Number of authoritative border router entries in NIB"
+    depends on GNRC_IPV6_NIB_CONF_MULTIHOP_P6C
+    default 1
+
+endif # KCONFIG_MODULE_GNRC_IPV6_NIB
