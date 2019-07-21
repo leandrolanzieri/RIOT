@@ -50,6 +50,8 @@ static volatile thread_t *_waiter;
 static struct {
     char menu[PATH_MAX_LEN];
     char queue[PATH_MAX_LEN];
+    char brew[PATH_MAX_LEN];
+    int brew_method;
 } ccm_paths;
 
 
@@ -97,6 +99,30 @@ static void _parse_machine(uint8_t *buf, size_t len)
                 memcpy(ccm_paths.queue, e->v.link.target.v.as_str.str,
                        e->v.link.target.v.as_str.len);
                 ccm_paths.queue[e->v.link.target.v.as_str.len] = '\0';
+            }
+        }
+        else if (e->type == CORAL_TYPE_FORM) {
+            /* look for brew resource */
+            if (!ccm_paths.brew[0] &&
+                !strncmp(e->v.form.op_type.str, CCM_BREW_TYPE,
+                         e->v.form.op_type.len)) {
+                DEBUG("Found how to ask for coffees! :-)\n");
+                DEBUG("At: %.*s\n", e->v.form.target.v.as_str.len, e->v.form.target.v.as_str.str);
+                memcpy(ccm_paths.brew, e->v.form.target.v.as_str.str,
+                       e->v.form.target.v.as_str.len);
+                ccm_paths.brew[e->v.form.target.v.as_str.len] = '\0';
+
+                /* try to get method */
+                coral_element_t *f = e->children;
+                while (f) {
+                    if (f->type == CORAL_TYPE_FORM_FIELD &&
+                        !strncmp(f->v.field.name.str, CCM_BREW_METHOD_TYPE,
+                                 f->v.field.name.len)) {
+                        DEBUG("We need to use method %d\n", f->v.field.val.v.as_int);
+                        ccm_paths.brew_method = f->v.field.val.v.as_int;
+                    }
+                    f = f->next;
+                }
             }
         }
         e = e->next;
@@ -282,6 +308,33 @@ static int _print_queue(char *addr, char *port)
     return _sync();
 }
 
+static int _order_coffee(char *addr, char *port)
+{
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+
+    if (!ccm_paths.brew[0]) {
+        if (_discover_resources(&pdu, buf, addr, port) < 0) {
+            puts("Could not get a machine description");
+            return 1;
+        }
+    }
+    if (!ccm_paths.brew[0]) {
+        puts("Could not find how to order coffees");
+        return 1;
+    }
+    gcoap_req_init(&pdu, buf, GCOAP_PDU_BUF_SIZE, ccm_paths.brew_method,
+                   ccm_paths.brew);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+    size_t len = coap_opt_finish(&pdu, COAP_OPT_FINISH_NONE);
+    if (!_send(buf, len, addr, port, _on_queue_get)) {
+        puts("could not send the queue request");
+        return 1;
+    }
+    _waiter = sched_active_thread;
+    return _sync();
+}
+
 int ccm_client_cmd(int argc, char **argv)
 {
     if (argc == 1) {
@@ -294,9 +347,13 @@ int ccm_client_cmd(int argc, char **argv)
     else if (!strcmp(argv[1], "queue")) {
         return _print_queue(argv[2], argv[3]);
     }
+    else if (!strcmp(argv[1], "brew")) {
+        puts("Only one type of coffee for now, sorry...");
+        return _order_coffee(argv[2], argv[3]);
+    }
 
 usage:
-    printf("usage: %s <menu|queue|order> <addr> <port>\n", argv[0]);
+    printf("usage: %s <menu|queue|brew> <addr> <port>\n", argv[0]);
     return 1;
 }
 

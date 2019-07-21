@@ -38,6 +38,7 @@
 static ssize_t _ccm_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _ccm_menu_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _ccm_queue_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _ccm_brew_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 
 static ssize_t _get_coral_representation(uint8_t *buf, size_t len);
 
@@ -58,6 +59,11 @@ static const coap_resource_t _resources[] = {
         .path = CCM_RESOURCE_BASE,
         .methods = COAP_GET,
         .handler = _ccm_handler,
+    },
+    {
+        .path = CCM_RESOURCE_BREW,
+        .methods = COAP_POST,
+        .handler = _ccm_brew_handler,
     },
     {
         .path = CCM_RESOURCE_MENU,
@@ -144,6 +150,16 @@ static ssize_t _ccm_menu_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void
     size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
     resp_len += _encode_menu(pdu->payload, pdu->payload_len);
     return resp_len;
+}
+
+static ssize_t _ccm_brew_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
+{
+    (void)ctx;
+    DEBUG("A brew is being requested\n");
+    printf("Order requested: %.*s\n", pdu->payload_len, pdu->payload);
+
+    return gcoap_response(pdu, buf, len, COAP_CODE_CREATED);
+    // TODO: Send location path
 }
 
 static ssize_t _ccm_queue_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
