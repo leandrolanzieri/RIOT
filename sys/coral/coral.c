@@ -28,7 +28,7 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-#define CORAL_CBOR_NUM_RECORDS  (256)
+#define CORAL_CBOR_NUM_RECORDS  (256) // ?
 
 
 typedef struct {
@@ -74,6 +74,12 @@ static cn_cbor_context _ct = {
     .context = &_storage
 };
 
+void coral_init(void)
+{
+    memarray_init(&_storage, _block_storage_data, sizeof(cn_cbor),
+                  CORAL_CBOR_NUM_RECORDS);
+}
+
 void coral_create_document(coral_element_t *root)
 {
     root->type = CORAL_TYPE_BODY;
@@ -83,7 +89,7 @@ void coral_create_document(coral_element_t *root)
     root->parent = NULL;
 }
 
-void coral_create_link(coral_element_t *link, char *rel, coral_link_target_t *target)
+void coral_create_link(coral_element_t *link, const char *rel, coral_link_target_t *target)
 {
     link->type = CORAL_TYPE_LINK;
     link->next = NULL;
@@ -188,8 +194,6 @@ ssize_t coral_encode(coral_element_t *root, uint8_t *buf, size_t buf_len)
 {
     (void)root;
     ssize_t pos = 0;
-    memarray_init(&_storage, _block_storage_data, sizeof(cn_cbor),
-                  CORAL_CBOR_NUM_RECORDS);
     
     _visit(root, _encode_visited, NULL);
     pos += cn_cbor_encoder_write(buf, pos, buf_len, root->cbor_body);
@@ -230,6 +234,7 @@ static void _encode_visited(coral_element_t *e, int depth, void *context)
             _encode_key_value(e);
             return;
         case CORAL_TYPE_BODY:
+            DEBUG("Document body, no need to encode\n");
             break;
         default:
             DEBUG("Unknown coral element\n");
@@ -353,6 +358,9 @@ static void _print_literal(coral_literal_t *l, unsigned debug)
         case CORAL_LITERAL_FLOAT:
             printf("%f", l->v.as_float);
             break;
+        case CORAL_LITERAL_INT:
+            printf("%d", l->v.as_int);
+            break;
         default:
             printf("Unknown literal type");
             break;
@@ -439,6 +447,7 @@ visit:
 
 static int _decode_literal(coral_literal_t *literal, cn_cbor *cb)
 {
+    printf("cbor type of literal: %d\n", cb->type);
     switch (cb->type) {
         case CN_CBOR_TEXT:
             literal->type = CORAL_LITERAL_TEXT;
@@ -456,6 +465,7 @@ static int _decode_literal(coral_literal_t *literal, cn_cbor *cb)
             literal->v.as_bytes.bytes_len = cb->length;
             break;
         case CN_CBOR_INT:
+        case CN_CBOR_UINT:
             literal->type = CORAL_LITERAL_INT;
             literal->v.as_int = cb->v.uint;
             break;

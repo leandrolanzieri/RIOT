@@ -119,6 +119,8 @@ typedef struct coral_element {
 // TODO remove
 void coral_print_structure(coral_element_t *root);
 
+void coral_init(void);
+
 /**
  * @name CoRAL encoder functions
  * @{
@@ -130,7 +132,7 @@ void coral_print_structure(coral_element_t *root);
  */
 void coral_create_document(coral_element_t *root);
 
-void coral_create_link(coral_element_t *link, char *rel, coral_link_target_t *target);
+void coral_create_link(coral_element_t *link, const char *rel, coral_link_target_t *target);
 
 void coral_create_form(coral_element_t *form, char *op, uint8_t method,
                        coral_form_target_t *target);
@@ -150,7 +152,9 @@ ssize_t coral_encode(coral_element_t *root, uint8_t *buf, size_t buf_len);
 
 int coral_decode(coral_element_t *e, unsigned e_len, uint8_t *buf, size_t buf_len);
 
-void coral_literal_string(coral_literal_t *literal, char *str);
+void coral_literal_string(coral_literal_t *literal, const char *str);
+
+void coral_literal_int(coral_literal_t *literal, int val);
 
 #ifdef __cplusplus
 }
