@@ -50,6 +50,7 @@ static ccm_queue_item_t coffee_queue[CCM_QUEUE_SIZE];
 #define CCM_RESOURCE_BASE   "/ccm"
 #define CCM_RESOURCE_MENU   CCM_RESOURCE_BASE "/m"
 #define CCM_RESOURCE_QUEUE  CCM_RESOURCE_BASE "/q"
+#define CCM_RESOURCE_BREW  CCM_RESOURCE_BASE "/b"
 
 /* CoAP resources. Must be sorted by path (ASCII order). */
 static const coap_resource_t _resources[] = {
@@ -202,6 +203,25 @@ ssize_t _get_coral_representation(uint8_t *buf, size_t len)
     coral_literal_string(&coffee_queue_value, CCM_RESOURCE_QUEUE);
     coral_create_link(&coffee_queue_resource, CCM_QUEUE_TYPE, &coffee_queue_value);
     coral_append_element(&coral_doc, &coffee_queue_resource);
+
+    /* create form for brew order */
+    coral_element_t coffee_brew_resource;
+    coral_form_target_t coffee_brew_value;
+    coral_literal_string(&coffee_brew_value, CCM_RESOURCE_BREW);
+    coral_create_form(&coffee_brew_resource, CCM_BREW_TYPE, COAP_POST, &coffee_brew_value);
+    coral_append_element(&coral_doc, &coffee_brew_resource);
+
+    coral_element_t coffee_brew_accept;
+    coral_literal_t coffee_brew_accept_value;
+    coral_literal_int(&coffee_brew_accept_value, COAP_FORMAT_HTCPC);
+    coral_create_form_field(&coffee_brew_accept, CCM_BREW_CT_TYPE, &coffee_brew_accept_value);
+    coral_append_element(&coffee_brew_resource, &coffee_brew_accept);
+
+    coral_element_t coffee_brew_method;
+    coral_literal_t coffee_brew_method_value;
+    coral_literal_int(&coffee_brew_method_value, COAP_POST);
+    coral_create_form_field(&coffee_brew_method, CCM_BREW_METHOD_TYPE, &coffee_brew_method_value);
+    coral_append_element(&coffee_brew_resource, &coffee_brew_method);
 
     coral_print_structure(&coral_doc);
     ssize_t used = coral_encode(&coral_doc, buf, len);
