@@ -28,7 +28,7 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-#define CORAL_CBOR_NUM_RECORDS  (256) // ?
+#define CORAL_CBOR_NUM_RECORDS  (128) // ?
 
 
 typedef struct {
@@ -192,10 +192,10 @@ int coral_decode(coral_element_t *e, unsigned e_len, uint8_t *buf,
 
 ssize_t coral_encode(coral_element_t *root, uint8_t *buf, size_t buf_len)
 {
-    (void)root;
     ssize_t pos = 0;
     
     _visit(root, _encode_visited, NULL);
+    DEBUG("Encoded, now writting\n");
     pos += cn_cbor_encoder_write(buf, pos, buf_len, root->cbor_body);
     cn_cbor_free(root->cbor_body, &_ct);
     return pos;
@@ -282,12 +282,15 @@ static void _encode_link(coral_element_t *e)
 {
     cn_cbor *val = cn_cbor_int_create(CORAL_TYPE_LINK, &_ct, NULL);
     cn_cbor_array_append(e->cbor_root, val, NULL);
+    DEBUG("[%s] added type\n", __func__);
 
     val = cn_cbor_string_create(e->v.link.rel_type.str, &_ct, NULL);
     cn_cbor_array_append(e->cbor_root, val, NULL);
+    DEBUG("[%s] added rel type\n", __func__);
 
     _encode_literal(&e->v.link.target, &val);
     cn_cbor_array_append(e->cbor_root, val, NULL);
+    DEBUG("[%s] added target\n", __func__);
 }
 
 static void _encode_key_value(coral_element_t *e)
@@ -447,7 +450,6 @@ visit:
 
 static int _decode_literal(coral_literal_t *literal, cn_cbor *cb)
 {
-    printf("cbor type of literal: %d\n", cb->type);
     switch (cb->type) {
         case CN_CBOR_TEXT:
             literal->type = CORAL_LITERAL_TEXT;

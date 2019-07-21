@@ -37,19 +37,19 @@
 
 static ssize_t _ccm_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 static ssize_t _ccm_menu_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
+static ssize_t _ccm_queue_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 
-ssize_t _get_coral_representation(uint8_t *buf, size_t len);
-static ssize_t _get_machine_coral(uint8_t *buf, size_t len);
+static ssize_t _get_coral_representation(uint8_t *buf, size_t len);
 
-#define CCM_QUEUE_SIZE  (10)
-
+/* machine descriptor */
 static ccm_t coffee_machine;
+
+#define CCM_QUEUE_SIZE  (5)
 static ccm_queue_item_t coffee_queue[CCM_QUEUE_SIZE];
 
 #define CCM_RESOURCE_BASE   "/ccm"
 #define CCM_RESOURCE_MENU   CCM_RESOURCE_BASE "/m"
-
-static const char *_ccm_resource_menu = CCM_RESOURCE_MENU;
+#define CCM_RESOURCE_QUEUE  CCM_RESOURCE_BASE "/q"
 
 /* CoAP resources. Must be sorted by path (ASCII order). */
 static const coap_resource_t _resources[] = {
@@ -63,6 +63,11 @@ static const coap_resource_t _resources[] = {
         .methods = COAP_GET,
         .handler = _ccm_menu_handler,
     },
+    {
+        .path = CCM_RESOURCE_QUEUE,
+        .methods = COAP_GET,
+        .handler = _ccm_queue_handler,
+    },
 };
 
 static gcoap_listener_t _listener = {
@@ -70,26 +75,6 @@ static gcoap_listener_t _listener = {
     sizeof(_resources) / sizeof(_resources[0]),
     NULL
 };
-
-
-static ssize_t _get_machine_coral(uint8_t *buf, size_t len)
-{
-    coral_element_t coral_doc;
-    coral_create_document(&coral_doc);
-
-    /* create a CoRAL link of count */
-    coral_element_t coffee_count_resource;
-    coral_link_target_t coffee_count_value;
-    coral_literal_int(&coffee_count_value, (int)ccm_queue_get_count(&coffee_machine));
-    coral_create_link(&coffee_count_resource, "count", &coffee_count_value);
-    coral_append_element(&coral_doc, &coffee_count_resource);
-
-    coral_print_structure(&coral_doc);
-    size_t used = coral_encode(&coral_doc, buf, len);
-    od_hex_dump(buf, used, OD_WIDTH_DEFAULT);
-
-    return used;
-}
 
 /**
  * brief Encodes the menu in the format "example/htcpc"
@@ -154,10 +139,48 @@ static ssize_t _ccm_menu_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void
     (void)ctx;
     DEBUG("The menu is being requested\n");
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    // coap_opt_add_format(pdu, COAP_FORMAT_HTCPC);
-    coap_opt_add_format(pdu, COAP_FORMAT_JSON);
+    coap_opt_add_format(pdu, COAP_FORMAT_HTCPC);
     size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
     resp_len += _encode_menu(pdu->payload, pdu->payload_len);
+    return resp_len;
+}
+
+static ssize_t _ccm_queue_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
+{
+    (void)ctx;
+    coral_element_t coral_doc;
+    coral_element_t queue_element;
+    coral_link_target_t queue_value;
+
+    coral_create_document(&coral_doc);
+
+    // Mock of queues
+    // TODO: Generate this
+    coral_literal_string(&queue_value, "/ccm/o/0");
+    coral_create_link(&queue_element, CCM_ORDER_TYPE, &queue_value);
+    coral_append_element(&coral_doc, &queue_element);
+
+    coral_element_t queue_status;
+    coral_link_target_t queue_status_value;
+    coral_literal_string(&queue_status_value, "queued");
+    coral_create_link(&queue_status, CCM_ORDER_STATUS_TYPE, &queue_status_value);
+    coral_append_element(&queue_element, &queue_status);
+
+    coral_element_t machine_link;
+    coral_link_target_t machine_link_value;
+    coral_literal_string(&machine_link_value, CCM_RESOURCE_BASE);
+    coral_create_link(&machine_link, CCM_MACHINE_TYPE, &machine_link_value);
+    coral_append_element(&coral_doc, &machine_link);
+
+    DEBUG("The queue is being requested\n");
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+    coap_opt_add_format(pdu, COAP_FORMAT_CBOR);
+    size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
+
+    coral_print_structure(&coral_doc);
+    ssize_t used = coral_encode(&coral_doc, pdu->payload, pdu->payload_len);
+    od_hex_dump(pdu->payload, used, OD_WIDTH_DEFAULT);
+    resp_len += used;
     return resp_len;
 }
 
@@ -169,11 +192,16 @@ ssize_t _get_coral_representation(uint8_t *buf, size_t len)
     /* create link for menu resource */
     coral_element_t coffee_menu_resource;
     coral_link_target_t coffee_menu_value;
-    coral_literal_string(&coffee_menu_value, _ccm_resource_menu);
-    coral_create_link(&coffee_menu_resource, _ccm_menu_type, &coffee_menu_value);
+    coral_literal_string(&coffee_menu_value, CCM_RESOURCE_MENU);
+    coral_create_link(&coffee_menu_resource, CCM_MENU_TYPE, &coffee_menu_value);
     coral_append_element(&coral_doc, &coffee_menu_resource);
 
-    /*  */
+    /* create link for orders queue resource */
+    coral_element_t coffee_queue_resource;
+    coral_link_target_t coffee_queue_value;
+    coral_literal_string(&coffee_queue_value, CCM_RESOURCE_QUEUE);
+    coral_create_link(&coffee_queue_resource, CCM_QUEUE_TYPE, &coffee_queue_value);
+    coral_append_element(&coral_doc, &coffee_queue_resource);
 
     coral_print_structure(&coral_doc);
     ssize_t used = coral_encode(&coral_doc, buf, len);
@@ -190,7 +218,6 @@ static ssize_t _ccm_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx
     size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
 
     ssize_t rep_len = _get_coral_representation(pdu->payload, pdu->payload_len);
-    (void)_get_machine_coral;
     if (rep_len < 0) {
         DEBUG("Error getting coral representation of the resources\n");
         return 0;

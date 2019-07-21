@@ -41,16 +41,15 @@
 /* Counts requests sent by CLI. */
 static uint16_t req_count = 0;
 
-#define CORAL_DECODE_BUF_LEN (10)
+#define CORAL_DECODE_BUF_LEN (20)
 coral_element_t decode_buf[CORAL_DECODE_BUF_LEN];
-uint8_t test_buf[128];
 
 static volatile thread_t *_waiter;
 
 #define PATH_MAX_LEN    (32)
 static struct {
     char menu[PATH_MAX_LEN];
-    //char queue[PATH_MAX_LEN];
+    char queue[PATH_MAX_LEN];
 } ccm_paths;
 
 
@@ -80,13 +79,24 @@ static void _parse_machine(uint8_t *buf, size_t len)
         if (e->type == CORAL_TYPE_LINK) {
             /* look for coffee menu */
             if (!ccm_paths.menu[0] &&
-                !strncmp(e->v.link.rel_type.str, _ccm_menu_type,
+                !strncmp(e->v.link.rel_type.str, CCM_MENU_TYPE,
                          e->v.link.rel_type.len)) {
-                DEBUG("Found a coffee menu at: ");
+                DEBUG("Found the coffee menu at: ");
                 DEBUG("%.*s\n", e->v.link.target.v.as_str.len, e->v.link.target.v.as_str.str);
                 memcpy(ccm_paths.menu, e->v.link.target.v.as_str.str,
                        e->v.link.target.v.as_str.len);
                 ccm_paths.menu[e->v.link.target.v.as_str.len] = '\0';
+            }
+
+            /* look for coffee queue */
+            if (!ccm_paths.queue[0] &&
+                !strncmp(e->v.link.rel_type.str, CCM_QUEUE_TYPE,
+                         e->v.link.rel_type.len)) {
+                DEBUG("Found the coffee queue at: ");
+                DEBUG("%.*s\n", e->v.link.target.v.as_str.len, e->v.link.target.v.as_str.str);
+                memcpy(ccm_paths.queue, e->v.link.target.v.as_str.str,
+                       e->v.link.target.v.as_str.len);
+                ccm_paths.queue[e->v.link.target.v.as_str.len] = '\0';
             }
         }
         e = e->next;
@@ -101,7 +111,6 @@ static void _on_discovery(unsigned req_state, coap_pkt_t *pdu,
 
     if (req_state == GCOAP_MEMO_RESP) {
         _parse_machine(pdu->payload, pdu->payload_len);
-        DEBUG("Machine parsed\n");
         flag = FLAG_SUCCESS;
     }
     else if (req_state == GCOAP_MEMO_TIMEOUT) {
@@ -219,7 +228,55 @@ static int _print_menu(char *addr, char *port)
     size_t len = coap_opt_finish(&pdu, COAP_OPT_FINISH_NONE);
     if (!_send(buf, len, addr, port, _on_menu_get)) {
         puts("could not send the menu request");
-        return -1;
+        return 1;
+    }
+    _waiter = sched_active_thread;
+    return _sync();
+}
+
+static void _on_queue_get(unsigned req_state, coap_pkt_t *pdu,
+                          sock_udp_ep_t *remote)
+{
+    (void)remote;
+    thread_flags_t flag = FLAG_ERR;
+
+    if (req_state == GCOAP_MEMO_RESP) {
+        od_hex_dump(pdu->payload, pdu->payload_len, OD_WIDTH_DEFAULT);
+        coral_decode(decode_buf, CORAL_DECODE_BUF_LEN, pdu->payload,
+                     pdu->payload_len);
+        coral_print_structure(decode_buf);
+        flag = FLAG_SUCCESS;
+    }
+    else if (req_state == GCOAP_MEMO_TIMEOUT) {
+        puts("Timed out while getting the menu");
+        flag = FLAG_TIMEOUT;
+    }
+
+    thread_flags_set((thread_t *)_waiter, flag);
+}
+
+static int _print_queue(char *addr, char *port)
+{
+    coap_pkt_t pdu;
+    uint8_t buf[GCOAP_PDU_BUF_SIZE];
+
+    if (!ccm_paths.queue[0]) {
+        if (_discover_resources(&pdu, buf, addr, port) < 0) {
+            puts("Could not get a machine description");
+            return 1;
+        }
+    }
+    if (!ccm_paths.queue[0]) {
+        puts("Could not find the coffees queue");
+        return 1;
+    }
+    gcoap_req_init(&pdu, buf, GCOAP_PDU_BUF_SIZE, COAP_METHOD_GET,
+                   ccm_paths.queue);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+    size_t len = coap_opt_finish(&pdu, COAP_OPT_FINISH_NONE);
+    if (!_send(buf, len, addr, port, _on_queue_get)) {
+        puts("could not send the queue request");
+        return 1;
     }
     _waiter = sched_active_thread;
     return _sync();
@@ -233,6 +290,9 @@ int ccm_client_cmd(int argc, char **argv)
 
     if (!strcmp(argv[1], "menu")) {
         return _print_menu(argv[2], argv[3]);
+    }
+    else if (!strcmp(argv[1], "queue")) {
+        return _print_queue(argv[2], argv[3]);
     }
 
 usage:
