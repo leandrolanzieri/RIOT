@@ -141,6 +141,12 @@ extern "C" {
 #define SX127X_PARAM_DIO3                   GPIO_UNDEF
 
 #define SX127X_PARAM_PASELECT               (SX127X_PA_BOOST)
+
+#define SX127X_USE_PWR_SWITCH               (1)
+
+#define SX127X_PARAM_PWR_SWITCH_PIN         XBEE1_EN_PIN
+
+#define SX127X_PARAM_PWR_SWITCH_ACTIVE      (0)
 /** @} */
 
 /**
