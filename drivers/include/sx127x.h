@@ -675,6 +675,38 @@ void sx127x_set_iq_invert(sx127x_t *dev, bool iq_invert);
  */
 void sx127x_set_freq_hop(sx127x_t *dev, bool freq_hop_on);
 
+#if defined(SX127X_USE_PWR_SWITCH) || defined(DOXYGEN)
+/**
+ * @brief   Turns the SX127X device on, using the defined
+ *          @ref sx127x_params_t::pwr_switch_pin "power switch pin".
+ *
+ * @param dev                           The sx127x device descriptor
+ *
+ * @return @ref SX127X_INIT_OK on success
+ * @return @ref SX127X_ERR_GPIOS if no power switch pin is defined
+ *
+ * @note In order to use this function `SX127X_USE_PWR_SWITCH` has to be
+ *       defined, together with @ref sx127x_params_t::pwr_switch_pin and
+ *       @ref sx127x_params_t::pwr_switch_active.
+ */
+int sx127x_on(const sx127x_t *dev);
+
+/**
+ * @brief   Turns the SX127X device off, using the defined
+ *          @ref sx127x_params_t::pwr_switch_pin "power switch pin".
+ *
+ * @param dev                           The sx127x device descriptor
+ *
+ * @return @ref SX127X_INIT_OK on success
+ * @return -@ref SX127X_ERR_GPIOS if no power switch pin is defined
+ *
+ * @note In order to use this function `SX127X_USE_PWR_SWITCH` has to be
+ *       defined, together with @ref sx127x_params_t::pwr_switch_pin and
+ *       @ref sx127x_params_t::pwr_switch_active.
+ */
+int sx127x_off(const sx127x_t *dev);
+#endif /* SX127X_USE_PWR_SWITCH || DOXYGEN */
+
 #ifdef __cplusplus
 }
 #endif
