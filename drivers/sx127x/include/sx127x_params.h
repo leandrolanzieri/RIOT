@@ -72,30 +72,43 @@ extern "C" {
 #define SX127X_PARAM_RX_SWITCH              GPIO_UNDEF
 #endif
 
-#ifndef SX127X_PARAMS
-#if defined(SX127X_USE_TX_SWITCH) || defined(SX127X_USE_RX_SWITCH)
-#define SX127X_PARAMS             { .spi            = SX127X_PARAM_SPI,          \
-                                    .nss_pin        = SX127X_PARAM_SPI_NSS,      \
-                                    .reset_pin      = SX127X_PARAM_RESET,        \
-                                    .dio0_pin       = SX127X_PARAM_DIO0,         \
-                                    .dio1_pin       = SX127X_PARAM_DIO1,         \
-                                    .dio2_pin       = SX127X_PARAM_DIO2,         \
-                                    .dio3_pin       = SX127X_PARAM_DIO3,         \
-                                    .rx_switch_pin  = SX127X_PARAM_RX_SWITCH,    \
-                                    .tx_switch_pin  = SX127X_PARAM_TX_SWITCH,    \
-                                    .paselect       = SX127X_PARAM_PASELECT }
+#ifndef SX127X_PARAM_PWR_SWITCH_PIN
+#define SX127X_PARAM_PWR_SWITCH_PIN             GPIO_UNDEF
+#endif
+
+#ifndef SX127X_PARAM_PWR_SWITCH_ACTIVE
+#define SX127X_PARAM_PWR_SWITCH_ACTIVE             (0)
+#endif
+
+#if defined(SX127X_USE_TX_SWITCH) || defined(SX127X_USE_TX_SWITCH)
+#define _SX127X_TX_RX_PARAMS    .rx_switch_pin = SX127X_PARAM_RX_SWITCH, \
+                                .tx_switch_pin = SX127X_PARAM_TX_SWITCH,
 #else
-#define SX127X_PARAMS             { .spi       = SX127X_PARAM_SPI,          \
-                                    .nss_pin   = SX127X_PARAM_SPI_NSS,      \
-                                    .reset_pin = SX127X_PARAM_RESET,        \
-                                    .dio0_pin  = SX127X_PARAM_DIO0,         \
-                                    .dio1_pin  = SX127X_PARAM_DIO1,         \
-                                    .dio2_pin  = SX127X_PARAM_DIO2,         \
-                                    .dio3_pin  = SX127X_PARAM_DIO3,         \
-                                    .paselect  = SX127X_PARAM_PASELECT }
+#define _SX127X_TX_RX_PARAMS
 #endif
+
+#if defined(SX127X_USE_PWR_SWITCH)
+#define _SX127X_PWR_PARAMS  .pwr_switch_pin = SX127X_PARAM_PWR_SWITCH_PIN, \
+                            .pwr_switch_active = SX127X_PARAM_PWR_SWITCH_ACTIVE,
+#else
+#define _SX127X_PWR_PARAMS
 #endif
-/**@}*/
+
+#define _SX127X_PARAMS(TX_RX, PWR) { .spi         = SX127X_PARAM_SPI,     \
+                                     .nss_pin     = SX127X_PARAM_SPI_NSS, \
+                                     .reset_pin   = SX127X_PARAM_RESET,   \
+                                     .dio0_pin    = SX127X_PARAM_DIO0,    \
+                                     .dio1_pin    = SX127X_PARAM_DIO1,    \
+                                     .dio2_pin    = SX127X_PARAM_DIO2,    \
+                                     .dio3_pin    = SX127X_PARAM_DIO3,    \
+                                     TX_RX                                \
+                                     PWR                                  \
+                                     .paselect    = SX127X_PARAM_PASELECT }
+
+#ifndef SX127X_PARAMS
+#define SX127X_PARAMS _SX127X_PARAMS(_SX127X_TX_RX_PARAMS, _SX127X_PWR_PARAMS)
+#endif
+/** @} */
 
 /**
  * @brief   SX127X configuration

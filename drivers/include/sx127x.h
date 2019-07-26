@@ -200,6 +200,10 @@ typedef struct {
 
 /**
  * @brief   SX127X hardware and global parameters.
+ *
+ * @note To use @ref sx127x_params_t::pwr_switch_pin "pwr_switch_pin" and
+ *       @ref sx127x_params_t::pwr_switch_active "pwr_switch_active",
+ *       SX127X_USE_PWR_SWITCH has to be defined.
  */
 typedef struct {
     spi_t spi;                         /**< SPI device */
@@ -214,6 +218,10 @@ typedef struct {
 #if defined(SX127X_USE_TX_SWITCH) || defined(SX127X_USE_RX_SWITCH)
     gpio_t rx_switch_pin;              /**< Rx antenna switch */
     gpio_t tx_switch_pin;              /**< Tx antenna switch */
+#endif
+#if defined(SX127X_USE_PWR_SWITCH) || defined(DOXYGEN)
+    gpio_t pwr_switch_pin;             /**< Power switch */
+    int pwr_switch_active;             /**< Power switch active level */
 #endif
     uint8_t paselect;                  /**< Power amplifier mode (RFO or PABOOST) */
 } sx127x_params_t;
