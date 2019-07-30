@@ -44,7 +44,7 @@ $(KCONFIG_GENERATED_DEPENDENCIES): FORCE
 # Opens the menuconfig interface for configuration of modules using the Kconfig
 # system.
 menuconfig: $(KCONFIG_CONFIG) $(MENUCONFIG)
-	$(Q)KCONFIG_CONFIG=$(KCONFIG_CONFIG) $(MENUCONFIG) $(KCONFIG)
+	$(Q)OS=$(OS) KCONFIG_CONFIG=$(KCONFIG_CONFIG) $(MENUCONFIG) $(KCONFIG)
 
 # Generates a merged configuration file from the given sources
 $(KCONFIG_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) FORCE
