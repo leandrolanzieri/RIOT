@@ -1,6 +1,7 @@
 # Define tools to use
 MENUCONFIG ?= $(RIOTTOOLS)/kconfiglib/menuconfig.py
 GENCONFIG ?= $(RIOTTOOLS)/kconfiglib/genconfig.py
+GUICONFIG ?= $(RIOTTOOLS)/kconfiglib/guiconfig.py
 MERGECONFIG ?= $(RIOTTOOLS)/kconfiglib/merge_config.py
 
 $(MENUCONFIG):
@@ -9,5 +10,7 @@ $(MENUCONFIG):
 	@echo "[INFO] Kconfiglib downloaded"
 
 $(GENCONFIG): $(MENUCONFIG)
+
+$(GUICONFIG): $(MENUCONFIG)
 
 $(MERGECONFIG): $(MENUCONFIG)

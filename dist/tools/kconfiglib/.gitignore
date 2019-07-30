@@ -1,4 +1,5 @@
 genconfig.py
+guiconfig.py
 kconfiglib.py
 menuconfig.py
 merge_config.py
