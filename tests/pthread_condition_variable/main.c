@@ -27,7 +27,7 @@ static pthread_cond_t cv;
 static volatile int is_finished;
 static volatile long count;
 static volatile long expected_value;
-static char stack[THREAD_STACKSIZE_MAIN];
+static char stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 /**
  * @brief   This thread tries to lock the mutex to enter the critical section.

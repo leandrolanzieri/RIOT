@@ -46,7 +46,7 @@ extern "C" {
  * @brief   Stack size used for the pktdump thread
  */
 #ifndef GNRC_PKTDUMP_STACKSIZE
-#define GNRC_PKTDUMP_STACKSIZE          (THREAD_STACKSIZE_MAIN)
+#define GNRC_PKTDUMP_STACKSIZE          (CONFIG_THREAD_STACKSIZE_MAIN)
 #endif
 
 /**

@@ -32,7 +32,7 @@
 #include "can/conn/isotp.h"
 #include "can/device.h"
 
-#define THREAD_STACKSIZE   (THREAD_STACKSIZE_MAIN)
+#define THREAD_STACKSIZE   (CONFIG_THREAD_STACKSIZE_MAIN)
 #define RECEIVE_THREAD_MSG_QUEUE_SIZE   (8)
 
 #include "timex.h"

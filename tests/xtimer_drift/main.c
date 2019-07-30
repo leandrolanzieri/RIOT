@@ -46,9 +46,9 @@
 #define TEST_MSG_RX_USLEEP  (200LU)
 #define TEST_MSG_QUEUE_SIZE (4U)
 
-char slacker_stack1[THREAD_STACKSIZE_DEFAULT];
-char slacker_stack2[THREAD_STACKSIZE_DEFAULT];
-char worker_stack[THREAD_STACKSIZE_MAIN];
+char slacker_stack1[CONFIG_THREAD_STACKSIZE_DEFAULT];
+char slacker_stack2[CONFIG_THREAD_STACKSIZE_DEFAULT];
+char worker_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 struct timer_msg {
     xtimer_t timer;

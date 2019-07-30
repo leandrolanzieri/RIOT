@@ -33,7 +33,7 @@
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define CC110X_MAC_STACKSIZE     (THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
+#define CC110X_MAC_STACKSIZE     (CONFIG_THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
 #ifndef CC110X_MAC_PRIO
 #define CC110X_MAC_PRIO          (GNRC_NETIF_PRIO)
 #endif

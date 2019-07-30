@@ -111,7 +111,7 @@ static void *reader(void *arg)
 
 int main(void)
 {
-    static char stacks[NUM_CHILDREN][THREAD_STACKSIZE_MAIN];
+    static char stacks[NUM_CHILDREN][CONFIG_THREAD_STACKSIZE_MAIN];
 
     puts("START");
     /* Get main thread pid */

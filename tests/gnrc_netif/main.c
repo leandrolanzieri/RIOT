@@ -38,15 +38,15 @@
 #include "utlist.h"
 #include "xtimer.h"
 
-#define ETHERNET_STACKSIZE          (THREAD_STACKSIZE_MAIN)
-#define IEEE802154_STACKSIZE        (THREAD_STACKSIZE_MAIN)
+#define ETHERNET_STACKSIZE          (CONFIG_THREAD_STACKSIZE_MAIN)
+#define IEEE802154_STACKSIZE        (CONFIG_THREAD_STACKSIZE_MAIN)
 
 static gnrc_netif_t *ethernet_netif = NULL;
 static gnrc_netif_t *ieee802154_netif = NULL;
 static gnrc_netif_t *netifs[DEFAULT_DEVS_NUMOF];
 static char ethernet_netif_stack[ETHERNET_STACKSIZE];
 static char ieee802154_netif_stack[ETHERNET_STACKSIZE];
-static char netifs_stack[DEFAULT_DEVS_NUMOF][THREAD_STACKSIZE_DEFAULT];
+static char netifs_stack[DEFAULT_DEVS_NUMOF][CONFIG_THREAD_STACKSIZE_DEFAULT];
 static bool init_called = false;
 
 static inline void _test_init(gnrc_netif_t *netif);
@@ -157,7 +157,7 @@ static void test_creation(void)
 
     for (unsigned i = 0; i < DEFAULT_DEVS_NUMOF; i++) {
         TEST_ASSERT_NOT_NULL((netifs[i] = gnrc_netif_create(
-                netifs_stack[i], THREAD_STACKSIZE_DEFAULT,
+                netifs_stack[i], CONFIG_THREAD_STACKSIZE_DEFAULT,
                 GNRC_NETIF_PRIO, "netif", devs[i], &default_ops
             )));
         TEST_ASSERT_NOT_NULL(netifs[i]->ops);

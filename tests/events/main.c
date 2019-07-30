@@ -27,7 +27,7 @@
 #include "event/timeout.h"
 #include "event/callback.h"
 
-#define STACKSIZE       THREAD_STACKSIZE_DEFAULT
+#define STACKSIZE       CONFIG_THREAD_STACKSIZE_DEFAULT
 #define PRIO            (THREAD_PRIORITY_MAIN - 1)
 
 static char stack[STACKSIZE];

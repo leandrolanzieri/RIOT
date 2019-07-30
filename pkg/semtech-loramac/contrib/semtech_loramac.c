@@ -51,7 +51,7 @@
 #include "debug.h"
 
 #define SEMTECH_LORAMAC_MSG_QUEUE                   (4U)
-#define SEMTECH_LORAMAC_LORAMAC_STACKSIZE           (THREAD_STACKSIZE_DEFAULT)
+#define SEMTECH_LORAMAC_LORAMAC_STACKSIZE           (CONFIG_THREAD_STACKSIZE_DEFAULT)
 static msg_t _semtech_loramac_msg_queue[SEMTECH_LORAMAC_MSG_QUEUE];
 static char _semtech_loramac_stack[SEMTECH_LORAMAC_LORAMAC_STACKSIZE];
 kernel_pid_t semtech_loramac_pid;

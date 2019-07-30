@@ -43,7 +43,7 @@ static kernel_pid_t _pid = KERNEL_PID_UNDEF;
  * @brief   Allocate memory for the UDP thread's stack
  */
 #if ENABLE_DEBUG
-static char _stack[GNRC_UDP_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static char _stack[GNRC_UDP_STACK_SIZE + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF];
 #else
 static char _stack[GNRC_UDP_STACK_SIZE];
 #endif

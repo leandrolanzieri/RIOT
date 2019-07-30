@@ -26,7 +26,7 @@
 #define ITERATIONS 15
 #define BUF_SIZE 7
 
-static char stack_get[THREAD_STACKSIZE_DEFAULT];
+static char stack_get[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 static char rb_buf[BUF_SIZE];
 static ringbuffer_t rb = RINGBUFFER_INIT(rb_buf);

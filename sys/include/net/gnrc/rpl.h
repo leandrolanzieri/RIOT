@@ -123,7 +123,7 @@ extern "C" {
  * @brief   Default stack size to use for the RPL thread
  */
 #ifndef GNRC_RPL_STACK_SIZE
-#define GNRC_RPL_STACK_SIZE     (THREAD_STACKSIZE_DEFAULT)
+#define GNRC_RPL_STACK_SIZE     (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 /**

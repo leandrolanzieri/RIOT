@@ -25,7 +25,7 @@
 static mutex_t mutex = MUTEX_INIT;
 static volatile int indicator;
 static kernel_pid_t main_pid;
-static char stack[THREAD_STACKSIZE_DEFAULT];
+static char stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 #ifdef BOARD_NATIVE
 static const unsigned KITERATIONS = 100;

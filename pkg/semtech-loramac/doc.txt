@@ -110,7 +110,7 @@
  * #define RECV_MSG_QUEUE                   (4U)
  * static msg_t _recv_queue[RECV_MSG_QUEUE];
  *
- * static char _recv_stack[THREAD_STACKSIZE_DEFAULT];
+ * static char _recv_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
  * ```
  * - Implement the thread: it initializes its message queue and then
  * simply calls the blocking `semtech_loramac_recv` function in a loop:

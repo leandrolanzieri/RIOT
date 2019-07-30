@@ -28,7 +28,7 @@
 #include "kernel_types.h"
 
 /* One stack for all threads. DON'T TRY THIS AT HOME!! */
-static char dummy_stack[THREAD_STACKSIZE_IDLE];
+static char dummy_stack[CONFIG_THREAD_STACKSIZE_IDLE];
 
 static void *thread_func(void *arg)
 {

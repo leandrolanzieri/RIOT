@@ -33,7 +33,7 @@
 static char sock_inbuf[SOCK_INBUF_SIZE];
 static bool server_running;
 static sock_ip_t server_sock;
-static char server_stack[THREAD_STACKSIZE_DEFAULT];
+static char server_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static msg_t server_msg_queue[SERVER_MSG_QUEUE_SIZE];
 
 static void *_server_thread(void *args)

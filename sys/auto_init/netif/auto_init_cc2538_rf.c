@@ -28,7 +28,7 @@
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define CC2538_MAC_STACKSIZE       (THREAD_STACKSIZE_DEFAULT)
+#define CC2538_MAC_STACKSIZE       (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #ifndef CC2538_MAC_PRIO
 #define CC2538_MAC_PRIO            (GNRC_NETIF_PRIO)
 #endif

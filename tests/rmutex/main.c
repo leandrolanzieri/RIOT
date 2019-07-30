@@ -27,7 +27,7 @@
 
 extern volatile thread_t *sched_active_thread;
 
-static char stacks[THREAD_NUMOF][THREAD_STACKSIZE_MAIN];
+static char stacks[THREAD_NUMOF][CONFIG_THREAD_STACKSIZE_MAIN];
 
 static const char prios[THREAD_NUMOF] = {THREAD_PRIORITY_MAIN - 1, 4, 5, 2, 4};
 static const char depth[THREAD_NUMOF] = {5, 3, 3, 4, 5};

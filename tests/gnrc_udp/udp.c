@@ -33,7 +33,7 @@
 
 #define SERVER_MSG_QUEUE_SIZE   (8U)
 #define SERVER_PRIO             (THREAD_PRIORITY_MAIN - 1)
-#define SERVER_STACKSIZE        (THREAD_STACKSIZE_MAIN)
+#define SERVER_STACKSIZE        (CONFIG_THREAD_STACKSIZE_MAIN)
 #define SERVER_RESET            (0x8fae)
 
 static gnrc_netreg_entry_t server = GNRC_NETREG_ENTRY_INIT_PID(0, KERNEL_PID_UNDEF);

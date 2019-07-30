@@ -36,7 +36,7 @@ static gnrc_mac_timeout_type_t timeout_2;
 static gnrc_mac_timeout_type_t timeout_3;
 static uint32_t start_time;
 
-static char worker_stack[THREAD_STACKSIZE_MAIN];
+static char worker_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 
 /* This thread will print the drift to stdout once per second */

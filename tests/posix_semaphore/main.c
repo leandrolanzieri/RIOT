@@ -34,8 +34,8 @@
 
 #define SEMAPHORE_MSG_QUEUE_SIZE        (8)
 #define SEMAPHORE_TEST_THREADS          (5)
-static char test1_thread_stack[THREAD_STACKSIZE_MAIN];
-static char test2_thread_stack[SEMAPHORE_TEST_THREADS][THREAD_STACKSIZE_MAIN];
+static char test1_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char test2_thread_stack[SEMAPHORE_TEST_THREADS][CONFIG_THREAD_STACKSIZE_MAIN];
 static msg_t main_msg_queue[SEMAPHORE_MSG_QUEUE_SIZE];
 static msg_t test1_msg_queue[SEMAPHORE_MSG_QUEUE_SIZE];
 

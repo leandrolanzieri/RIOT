@@ -34,7 +34,7 @@
 #include "thread.h"
 #include "xtimer.h"
 
-#define EMB6_STACKSIZE  (THREAD_STACKSIZE_DEFAULT)
+#define EMB6_STACKSIZE  (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #define EMB6_PRIO       (THREAD_PRIORITY_MAIN - 3)
 #define EMB6_DELAY      (500)
 

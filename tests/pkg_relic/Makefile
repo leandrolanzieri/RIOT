@@ -33,7 +33,7 @@ BOARD_INSUFFICIENT_MEMORY :=    i-nucleo-lrwan1 \
                                 stm32l0538-disco \
                                 #
 
-CFLAGS += -DTHREAD_STACKSIZE_MAIN=\(5*THREAD_STACKSIZE_DEFAULT\)
+CFLAGS += -DCONFIG_THREAD_STACKSIZE_MAIN=\(5*CONFIG_THREAD_STACKSIZE_DEFAULT\)
 
 USEPKG += relic
 USEMODULE += embunit

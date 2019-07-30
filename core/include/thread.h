@@ -65,7 +65,7 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~ {.c}
  * #include "thread.h"
  *
- * char rcv_thread_stack[THREAD_STACKSIZE_MAIN];
+ * char rcv_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
  *
  * void *rcv_thread(void *arg)
  * {
@@ -182,53 +182,53 @@ struct _thread {
 };
 
 /**
- * @def THREAD_STACKSIZE_DEFAULT
+ * @def CONFIG_THREAD_STACKSIZE_DEFAULT
  * @brief A reasonable default stack size that will suffice most smaller tasks
  *
  * @note This value must be defined by the CPU specific implementation, please
  *       take a look at @c cpu/$CPU/include/cpu_conf.h
  */
-#ifndef THREAD_STACKSIZE_DEFAULT
-#error THREAD_STACKSIZE_DEFAULT must be defined per CPU
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#error CONFIG_THREAD_STACKSIZE_DEFAULT must be defined per CPU
 #endif
 #ifdef DOXYGEN
-#define THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT
 #endif
 
 /**
- * @def THREAD_STACKSIZE_IDLE
+ * @def CONFIG_THREAD_STACKSIZE_IDLE
  * @brief Size of the idle task's stack in bytes
  *
  * @note This value must be defined by the CPU specific implementation, please
  *       take a look at @c cpu/$CPU/include/cpu_conf.h
  */
-#ifndef THREAD_STACKSIZE_IDLE
-#error THREAD_STACKSIZE_IDLE must be defined per CPU
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#error CONFIG_THREAD_STACKSIZE_IDLE must be defined per CPU
 #endif
 #ifdef DOXYGEN
-#define THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE
 #endif
 
 /**
- * @def THREAD_EXTRA_STACKSIZE_PRINTF
+ * @def CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
  * @brief Size of the task's printf stack in bytes
  *
  * @note This value must be defined by the CPU specific implementation, please
  *       take a look at @c cpu/$CPU/include/cpu_conf.h
  */
-#ifndef THREAD_EXTRA_STACKSIZE_PRINTF
-#error THREAD_EXTRA_STACKSIZE_PRINTF must be defined per CPU
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#error CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF must be defined per CPU
 #endif
 #ifdef DOXYGEN
-#define THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
 #endif
 
 /**
- * @def THREAD_STACKSIZE_MAIN
+ * @def CONFIG_THREAD_STACKSIZE_MAIN
  * @brief Size of the main task's stack in bytes
  */
-#ifndef THREAD_STACKSIZE_MAIN
-#define THREAD_STACKSIZE_MAIN      (THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF)
+#ifndef CONFIG_THREAD_STACKSIZE_MAIN
+#define CONFIG_THREAD_STACKSIZE_MAIN      (CONFIG_THREAD_STACKSIZE_DEFAULT + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF)
 #endif
 
 /**
@@ -242,7 +242,7 @@ struct _thread {
  * @brief Medium stack size
  */
 #ifndef THREAD_STACKSIZE_MEDIUM
-#define THREAD_STACKSIZE_MEDIUM THREAD_STACKSIZE_DEFAULT
+#define THREAD_STACKSIZE_MEDIUM CONFIG_THREAD_STACKSIZE_DEFAULT
 #endif
 
 /**

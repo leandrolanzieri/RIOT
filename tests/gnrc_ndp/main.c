@@ -932,7 +932,7 @@ int main(void)
 
 #define MSG_QUEUE_SIZE          (2)
 
-static char test_netif_stack[THREAD_STACKSIZE_DEFAULT];
+static char test_netif_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static msg_t msg_queue_main[MSG_QUEUE_SIZE];
 static gnrc_netreg_entry_t netreg_entry;
 static netdev_test_t dev;

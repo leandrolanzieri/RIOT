@@ -27,7 +27,7 @@
 #include "pir.h"
 #include "pir_params.h"
 
-static char pir_handler_stack[THREAD_STACKSIZE_MAIN];
+static char pir_handler_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 static pir_t dev;
 
 void* pir_handler(void *arg)

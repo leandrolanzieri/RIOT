@@ -31,7 +31,7 @@
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define MRF24J40_MAC_STACKSIZE     (THREAD_STACKSIZE_DEFAULT)
+#define MRF24J40_MAC_STACKSIZE     (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #ifndef MRF24J40_MAC_PRIO
 #define MRF24J40_MAC_PRIO          (GNRC_NETIF_PRIO)
 #endif

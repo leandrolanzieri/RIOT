@@ -25,7 +25,7 @@
 
 static kernel_pid_t _main_pid;
 
-static char stack[THREAD_STACKSIZE_MAIN];
+static char stack[CONFIG_THREAD_STACKSIZE_MAIN];
 static void *second_thread(void *arg)
 {
     (void) arg;

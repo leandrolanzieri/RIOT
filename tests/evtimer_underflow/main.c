@@ -27,7 +27,7 @@
 #define WORKER_MSG_QUEUE_SIZE   (8)
 
 msg_t worker_msg_queue[WORKER_MSG_QUEUE_SIZE];
-static char worker_stack[THREAD_STACKSIZE_MAIN];
+static char worker_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 static evtimer_t evtimer;
 static evtimer_msg_event_t events[] = {
     { .event = { .offset = 0 }, .msg = { .content = { .ptr = "1" } } },

@@ -24,7 +24,7 @@
 gnrc_netif_t *_mock_netif = NULL;
 
 static netdev_test_t _mock_netdev;
-static char _mock_netif_stack[THREAD_STACKSIZE_MAIN];
+static char _mock_netif_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 static int _get_device_type(netdev_t *dev, void *value, size_t max_len)
 {
@@ -62,7 +62,7 @@ void _tests_init(void)
     netdev_test_set_get_cb(&_mock_netdev, NETOPT_ADDRESS,
                            _get_address);
     _mock_netif = gnrc_netif_ethernet_create(
-           _mock_netif_stack, THREAD_STACKSIZE_DEFAULT, GNRC_NETIF_PRIO,
+           _mock_netif_stack, CONFIG_THREAD_STACKSIZE_DEFAULT, GNRC_NETIF_PRIO,
             "mockup_eth", &_mock_netdev.netdev
         );
     assert(_mock_netif != NULL);

@@ -52,7 +52,7 @@ extern "C" {
 #include "cpu_conf.h"
 #define DEBUG_PRINT(...) \
     do { \
-        if ((sched_active_thread == NULL) || (sched_active_thread->stack_size >= THREAD_EXTRA_STACKSIZE_PRINTF)) { \
+        if ((sched_active_thread == NULL) || (sched_active_thread->stack_size >= CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF)) { \
             printf(__VA_ARGS__); \
         } \
         else { \
@@ -103,7 +103,7 @@ extern "C" {
  * @brief Extra stacksize needed when ENABLE_DEBUG==1
  */
 #if ENABLE_DEBUG
-#define DEBUG_EXTRA_STACKSIZE THREAD_EXTRA_STACKSIZE_PRINTF
+#define DEBUG_EXTRA_STACKSIZE CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
 #else
 #define DEBUG_EXTRA_STACKSIZE (0)
 #endif

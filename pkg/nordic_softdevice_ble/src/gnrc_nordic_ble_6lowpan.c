@@ -67,7 +67,7 @@
 /* XXX: netdev required by gnrc_netif, but not implemented fully for
  * nordic_softdevice_ble for legacy reasons */
 
-static char _stack[(THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)];
+static char _stack[(CONFIG_THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)];
 
 static gnrc_netif_t *_ble_netif = NULL;
 

@@ -33,7 +33,7 @@
  * @brief   MAC layer stack parameters
  * @{
  */
-#define CC2420_MAC_STACKSIZE           (THREAD_STACKSIZE_MAIN)
+#define CC2420_MAC_STACKSIZE           (CONFIG_THREAD_STACKSIZE_MAIN)
 #ifndef CC2420_MAC_PRIO
 #define CC2420_MAC_PRIO                (GNRC_NETIF_PRIO)
 #endif

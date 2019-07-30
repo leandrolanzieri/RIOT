@@ -32,7 +32,7 @@ extern usbus_cdcecm_device_t cdcecm;
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define CDCECM_MAC_STACKSIZE (THREAD_STACKSIZE_DEFAULT)
+#define CDCECM_MAC_STACKSIZE (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #ifndef CDCECM_MAC_PRIO
 #define CDCECM_MAC_PRIO      (GNRC_NETIF_PRIO)
 #endif

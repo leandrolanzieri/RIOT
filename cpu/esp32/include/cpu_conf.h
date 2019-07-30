@@ -35,9 +35,17 @@ extern "C" {
  * @name   Stack size configuration
  * @{
  */
-#define THREAD_EXTRA_STACKSIZE_PRINTF (1024)
-#define THREAD_STACKSIZE_DEFAULT      (2048)
-#define THREAD_STACKSIZE_IDLE         (2048)
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF (1024)
+#endif
+
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT      (2048)
+#endif
+
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE         (2048)
+#endif
 /** @} */
 
 /**

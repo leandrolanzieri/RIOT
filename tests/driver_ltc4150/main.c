@@ -43,7 +43,7 @@ static const ltc4150_recorder_t test_recorder = {
     .reset = reset_cb,
 };
 static kernel_pid_t target_pid;
-static char busy_thread_stack[THREAD_STACKSIZE_DEFAULT];
+static char busy_thread_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static ltc4150_dev_t ltc4150;
 static int change_of_load_level = 0;
 

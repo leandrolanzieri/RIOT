@@ -46,7 +46,7 @@ extern "C" {
  * @brief   Default stack size to use for the nettest thread
  */
 #ifndef GNRC_NETTEST_STACK_SIZE
-#define GNRC_NETTEST_STACK_SIZE     (THREAD_STACKSIZE_DEFAULT)
+#define GNRC_NETTEST_STACK_SIZE     (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 /**

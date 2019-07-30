@@ -29,7 +29,7 @@
 
 #define NB_THREADS  (5U)
 
-static char stacks[NB_THREADS][THREAD_STACKSIZE_DEFAULT];
+static char stacks[NB_THREADS][CONFIG_THREAD_STACKSIZE_DEFAULT];
 static kernel_pid_t pids[NB_THREADS];
 
 static void *_thread_fn(void *arg)

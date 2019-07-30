@@ -37,7 +37,7 @@
 
 #define SENDER_PRIO         (THREAD_PRIORITY_MAIN - 1)
 static kernel_pid_t sender_pid;
-static char sender_stack[THREAD_STACKSIZE_MAIN / 2];
+static char sender_stack[CONFIG_THREAD_STACKSIZE_MAIN / 2];
 
 semtech_loramac_t loramac;
 

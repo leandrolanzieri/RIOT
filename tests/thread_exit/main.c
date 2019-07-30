@@ -22,8 +22,8 @@
 
 #include "thread.h"
 
-char second_thread_stack[THREAD_STACKSIZE_MAIN];
-char third_thread_stack[THREAD_STACKSIZE_MAIN];
+char second_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+char third_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 void *fourth_thread(void *arg)
 {

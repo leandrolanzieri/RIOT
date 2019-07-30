@@ -74,8 +74,8 @@ static void *idle_thread(void *arg)
 const char *main_name = "main";
 const char *idle_name = "idle";
 
-static char main_stack[THREAD_STACKSIZE_MAIN];
-static char idle_stack[THREAD_STACKSIZE_IDLE];
+static char main_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char idle_stack[CONFIG_THREAD_STACKSIZE_IDLE];
 
 void kernel_init(void)
 {

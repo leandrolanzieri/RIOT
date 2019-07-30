@@ -30,7 +30,7 @@ static encx24j600_t encx24j600;
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define ENCX24J600_MAC_STACKSIZE    (THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
+#define ENCX24J600_MAC_STACKSIZE    (CONFIG_THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
 #ifndef ENCX24J600_MAC_PRIO
 #define ENCX24J600_MAC_PRIO         (GNRC_NETIF_PRIO)
 #endif

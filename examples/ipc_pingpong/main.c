@@ -41,7 +41,7 @@ void *second_thread(void *arg)
     return NULL;
 }
 
-char second_thread_stack[THREAD_STACKSIZE_MAIN];
+char second_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 int main(void)
 {

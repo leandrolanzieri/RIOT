@@ -40,7 +40,7 @@
 
 static int server_socket = -1;
 static char server_buffer[SERVER_BUFFER_SIZE];
-static char server_stack[THREAD_STACKSIZE_DEFAULT];
+static char server_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static msg_t server_msg_queue[SERVER_MSG_QUEUE_SIZE];
 
 static void *_server_thread(void *args)

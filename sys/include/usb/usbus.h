@@ -44,7 +44,7 @@ extern "C" {
  * @brief USBUS thread stack size
  */
 #ifndef USBUS_STACKSIZE
-#define USBUS_STACKSIZE             (THREAD_STACKSIZE_DEFAULT)
+#define USBUS_STACKSIZE             (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 /**

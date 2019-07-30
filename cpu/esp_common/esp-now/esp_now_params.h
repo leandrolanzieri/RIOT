@@ -27,7 +27,7 @@
  */
 #ifndef ESP_NOW_STACKSIZE
 /** The size of the stack used for the ESP-NOW netdev driver thread */
-#define ESP_NOW_STACKSIZE       (THREAD_STACKSIZE_DEFAULT)
+#define ESP_NOW_STACKSIZE       (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 #ifndef ESP_NOW_PRIO

@@ -34,7 +34,7 @@
 
 #define BYTES_TOTAL (26)
 
-static char stacks[2][THREAD_STACKSIZE_MAIN];
+static char stacks[2][CONFIG_THREAD_STACKSIZE_MAIN];
 
 static char pipe_bufs[2][6];
 static ringbuffer_t rbs[2];

@@ -32,7 +32,7 @@
 using namespace std;
 
 /* thread's stack */
-char threadA_stack [THREAD_STACKSIZE_MAIN];
+char threadA_stack [CONFIG_THREAD_STACKSIZE_MAIN];
 
 /* thread's function */
 void *threadA_func(void *arg);

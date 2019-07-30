@@ -28,12 +28,12 @@
  * ## Requirements
  *
  * TweetNaCl requires more than 2K of stack, so beware that you're allocating at
- * least `THREAD_STACKSIZE_DEFAULT + 2048` bytes.
+ * least `CONFIG_THREAD_STACKSIZE_DEFAULT + 2048` bytes.
  * 
  * You can do it easily by adding:
  * 
  * ```makefile
- * CFLAGS += '-DTHREAD_STACKSIZE_MAIN=(THREAD_STACKSIZE_DEFAULT + 2048)'
+ * CFLAGS += '-DCONFIG_THREAD_STACKSIZE_MAIN=(CONFIG_THREAD_STACKSIZE_DEFAULT + 2048)'
  * ```
  * 
  * to your makefile.

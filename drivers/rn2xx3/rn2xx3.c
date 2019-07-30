@@ -30,7 +30,7 @@
 
 #define ENABLE_DEBUG    (0)
 /* Warning: to correctly display the debug message from sleep timer callback,,
-   add CFLAGS+=-DTHREAD_STACKSIZE_IDLE=THREAD_STACKSIZE_DEFAULT to the build
+   add CFLAGS+=-CONFIG_THREAD_STACKSIZE_IDLE=CONFIG_THREAD_STACKSIZE_DEFAULT to the build
    command.
 */
 #include "debug.h"

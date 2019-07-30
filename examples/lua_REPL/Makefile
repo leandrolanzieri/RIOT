@@ -50,7 +50,7 @@ QUIET ?= 1
 # This value is in excess because we are not sure of the exact requirements of
 # lua (see the package's docs). It must be fixed in the future by taking
 # appropriate measurements.
-CFLAGS += -DTHREAD_STACKSIZE_MAIN='(THREAD_STACKSIZE_DEFAULT+7000)'
+CFLAGS += -DCONFIG_THREAD_STACKSIZE_MAIN='(CONFIG_THREAD_STACKSIZE_DEFAULT+7000)'
 
 USEPKG += lua
 

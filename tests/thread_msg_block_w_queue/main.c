@@ -25,7 +25,7 @@
 #include "thread.h"
 #include "msg.h"
 
-char t1_stack[THREAD_STACKSIZE_MAIN];
+char t1_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 kernel_pid_t p_send = KERNEL_PID_UNDEF, p_recv = KERNEL_PID_UNDEF;
 

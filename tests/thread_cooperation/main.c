@@ -31,7 +31,7 @@
 
 mutex_t mtx = MUTEX_INIT;
 volatile uint32_t storage = 1;
-char stacks[PROBLEM][THREAD_STACKSIZE_DEFAULT];
+char stacks[PROBLEM][CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 void *run(void *arg)
 {

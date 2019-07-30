@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "thread.h"
 
-char snd_thread_stack[THREAD_STACKSIZE_MAIN];
+char snd_thread_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 void *snd_thread(void *unused)
 {

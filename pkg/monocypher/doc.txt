@@ -18,12 +18,12 @@
  *
  * Monocypher requires around 4K of stack space depending slightly on the
  * platform, so beware that you're allocating at
- * least `THREAD_STACKSIZE_DEFAULT + 4096` bytes.
+ * least `CONFIG_THREAD_STACKSIZE_DEFAULT + 4096` bytes.
  *
  * You can do it easily by adding:
  *
  * ```makefile
- * CFLAGS += '-DTHREAD_STACKSIZE_MAIN=(THREAD_STACKSIZE_DEFAULT + 4096)'
+ * CFLAGS += '-DCONFIG_THREAD_STACKSIZE_MAIN=(CONFIG_THREAD_STACKSIZE_DEFAULT + 4096)'
  * ```
  *
  * to your makefile.

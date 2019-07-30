@@ -44,7 +44,7 @@
 #include "fmt.h"
 
 #define SX127X_LORA_MSG_QUEUE   (16U)
-#define SX127X_STACKSIZE        (THREAD_STACKSIZE_DEFAULT)
+#define SX127X_STACKSIZE        (CONFIG_THREAD_STACKSIZE_DEFAULT)
 
 #define MSG_TYPE_ISR            (0x3456)
 

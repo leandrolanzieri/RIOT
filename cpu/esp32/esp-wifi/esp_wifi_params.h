@@ -31,7 +31,7 @@
  * @brief   The size of the stack used for the ESP WIFI netdev driver thread.
  */
 #ifndef ESP_WIFI_STACKSIZE
-#define ESP_WIFI_STACKSIZE  (THREAD_STACKSIZE_DEFAULT)
+#define ESP_WIFI_STACKSIZE  (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 /**

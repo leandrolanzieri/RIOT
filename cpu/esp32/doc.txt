@@ -934,7 +934,7 @@ Parameter          | Default                   | Description
 :------------------|:--------------------------|:------------
 ESP_WIFI_SSID      | "RIOT_AP"                 | SSID of the AP to be used.
 ESP_WIFI_PASS      | "ThisistheRIOTporttoESP"  | Passphrase used for the AP as clear text (max. 64 chars).
-ESP_WIFI_STACKSIZE | #THREAD_STACKSIZE_DEFAULT |Stack size used for the WiFi netdev driver thread.
+ESP_WIFI_STACKSIZE | #CONFIG_THREAD_STACKSIZE_DEFAULT |Stack size used for the WiFi netdev driver thread.
 
 </center>
 

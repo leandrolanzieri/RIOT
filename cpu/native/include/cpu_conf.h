@@ -28,21 +28,38 @@ extern "C" {
  * @{
  */
 #ifdef __MACH__ /* OSX */
-#define THREAD_STACKSIZE_DEFAULT            (163840)
-#define THREAD_STACKSIZE_IDLE               (163840)
-#define THREAD_EXTRA_STACKSIZE_PRINTF       (81920)
-#define THREAD_EXTRA_STACKSIZE_PRINTF_FLOAT (81920)
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT            (163840)
+#endif
+
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE               (163840)
+#endif
+
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF       (81920)
+#endif
+
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF_FLOAT (81920)
 /* for core/include/thread.h */
 #define THREAD_STACKSIZE_MINIMUM            (163840)
 /* native internal */
-#define THREAD_STACKSIZE_MINIMUM            (163840)
 #define ISR_STACKSIZE                       (163840)
 
 #else /* Linux etc. */
-#define THREAD_STACKSIZE_DEFAULT            (8192)
-#define THREAD_STACKSIZE_IDLE               (8192)
-#define THREAD_EXTRA_STACKSIZE_PRINTF       (4096)
-#define THREAD_EXTRA_STACKSIZE_PRINTF_FLOAT (4096)
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT            (8192)
+#endif
+
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE               (8192)
+#endif
+
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF       (4096)
+#endif
+
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF_FLOAT (4096)
 /* for core/include/thread.h */
 #define THREAD_STACKSIZE_MINIMUM            (8192)
 /* native internal */

@@ -44,7 +44,7 @@
         0x02, 0x00, 0x00, 0xFF, 0xFE, 0x00, 0x00, 0x02 \
     }
 
-static char _netif_stack[THREAD_STACKSIZE_DEFAULT];
+static char _netif_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static netdev_test_t _ieee802154_dev;
 static const uint8_t _ieee802154_local_eui64[] = IEEE802154_LOCAL_EUI64;
 
@@ -109,7 +109,7 @@ static void _init_interface(void)
     netdev_test_set_get_cb(&_ieee802154_dev, NETOPT_ADDRESS_LONG,
                            _get_netdev_addr_long);
     netif = gnrc_netif_ieee802154_create(
-            _netif_stack, THREAD_STACKSIZE_DEFAULT, GNRC_NETIF_PRIO,
+            _netif_stack, CONFIG_THREAD_STACKSIZE_DEFAULT, GNRC_NETIF_PRIO,
             "dummy_netif", (netdev_t *)&_ieee802154_dev);
     ipv6_addr_t addr = IPV6_ADDR_UNSPECIFIED;
 

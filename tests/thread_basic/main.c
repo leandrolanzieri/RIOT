@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include "thread.h"
 
-char t2_stack[THREAD_STACKSIZE_MAIN];
+char t2_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 void *second_thread(void *arg)
 {

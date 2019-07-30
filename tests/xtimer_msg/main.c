@@ -28,8 +28,8 @@
 #include "thread.h"
 #include "msg.h"
 
-char timer_stack[THREAD_STACKSIZE_DEFAULT];
-char timer_stack_local[THREAD_STACKSIZE_DEFAULT];
+char timer_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
+char timer_stack_local[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 struct timer_msg {
     xtimer_t timer;

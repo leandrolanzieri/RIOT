@@ -23,7 +23,7 @@
 #include "thread.h"
 #include "xtimer.h"
 
-static char stack[THREAD_STACKSIZE_MAIN];
+static char stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 volatile unsigned done;
 

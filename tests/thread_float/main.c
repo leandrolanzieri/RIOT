@@ -25,9 +25,9 @@
 #include "xtimer.h"
 #include "timex.h"
 
-static char t1_stack[THREAD_STACKSIZE_MAIN];
-static char t2_stack[THREAD_STACKSIZE_MAIN];
-static char t3_stack[THREAD_STACKSIZE_MAIN];
+static char t1_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char t2_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char t3_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 static kernel_pid_t p1, p2, p3;
 

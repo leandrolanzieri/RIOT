@@ -30,7 +30,7 @@
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
 
 #if ENABLE_DEBUG
-static char _stack[GNRC_SIXLOWPAN_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static char _stack[GNRC_SIXLOWPAN_STACK_SIZE + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF];
 #else
 static char _stack[GNRC_SIXLOWPAN_STACK_SIZE];
 #endif

@@ -56,7 +56,7 @@ TINYDTLS_LOG ?= 0
 
 # FIXME: This is a temporary patch
 # TinyDTLS <= 0.8.6 requires around 426 bytes in RAM.
-CFLAGS += -DTHREAD_STACKSIZE_MAIN=\(3*THREAD_STACKSIZE_DEFAULT\)
+CFLAGS += -DCONFIG_THREAD_STACKSIZE_MAIN=\(3*CONFIG_THREAD_STACKSIZE_DEFAULT\)
 # TINYDTLS_EXTRA_BUFF can be used for increasing the server stack memory.
 # CFLAGS += -DTINYDTLS_EXTRA_BUFF=\(512\)
 

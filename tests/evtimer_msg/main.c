@@ -25,7 +25,7 @@
 #include "msg.h"
 #include "xtimer.h"
 
-static char worker_stack[THREAD_STACKSIZE_MAIN];
+static char worker_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 static evtimer_t evtimer;
 static evtimer_msg_event_t events[] = {
     { .event = { .offset = 1000 }, .msg = { .content = { .ptr = "supposed to be 1000" } } },

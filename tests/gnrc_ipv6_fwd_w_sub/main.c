@@ -65,7 +65,7 @@ static const ipv6_addr_t _dst = { .u8 = DST };
 static const uint8_t _l2_payload[] = L2_PAYLOAD;
 static gnrc_netreg_entry_t _dumper;
 static msg_t _dumper_queue[DUMPER_QUEUE_SIZE];
-static char _dumper_stack[THREAD_STACKSIZE_MAIN];
+static char _dumper_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 static int _run_test(int argc, char **argv);
 

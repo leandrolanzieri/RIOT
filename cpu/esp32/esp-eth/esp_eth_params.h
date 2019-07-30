@@ -27,7 +27,7 @@
  */
 #ifndef ESP_ETH_STACKSIZE
 /** The size of the stack used for the ESP-ETH netdev driver thread */
-#define ESP_ETH_STACKSIZE    THREAD_STACKSIZE_DEFAULT
+#define ESP_ETH_STACKSIZE    CONFIG_THREAD_STACKSIZE_DEFAULT
 #endif
 
 #ifndef ESP_ETH_PRIO

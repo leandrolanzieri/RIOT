@@ -28,7 +28,7 @@
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define MAC_STACKSIZE   (THREAD_STACKSIZE_DEFAULT)
+#define MAC_STACKSIZE   (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #define MAC_PRIO        (GNRC_NETIF_PRIO)
 /*** @} */
 

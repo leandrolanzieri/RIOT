@@ -53,8 +53,8 @@
 
 static uint8_t _test_buffer[_TEST_BUFFER_SIZE];
 
-static char _client_stack[THREAD_STACKSIZE_DEFAULT];
-static char _server_stack[THREAD_STACKSIZE_DEFAULT];
+static char _client_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
+static char _server_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static uint8_t _client_buf[_CLIENT_BUF_SIZE];
 static uint8_t _server_buf[_SERVER_BUF_SIZE];
 static msg_t _client_msg_queue[_MSG_QUEUE_SIZE];

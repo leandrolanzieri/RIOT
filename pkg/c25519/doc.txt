@@ -14,12 +14,12 @@
  * ## Requirements
  *
  * C25519 requires around 1K of stack, so beware that you're allocating at
- * least `THREAD_STACKSIZE_DEFAULT + 1K` bytes.
+ * least `CONFIG_THREAD_STACKSIZE_DEFAULT + 1K` bytes.
  *
  * You can do it easily by adding:
  *
  * ```makefile
- * CFLAGS += '-DTHREAD_STACKSIZE_MAIN=(THREAD_STACKSIZE_DEFAULT + 1024)'
+ * CFLAGS += '-DCONFIG_THREAD_STACKSIZE_MAIN=(CONFIG_THREAD_STACKSIZE_DEFAULT + 1024)'
  * ```
  *
  * to your makefile.

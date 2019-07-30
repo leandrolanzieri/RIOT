@@ -108,7 +108,7 @@ void print_register(char reg, int num_bytes)
     }
 }
 
-char rx_handler_stack[THREAD_STACKSIZE_MAIN];
+char rx_handler_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 /* RX handler that waits for a message from the ISR */
 void *nrf24l01p_rx_handler(void *arg)

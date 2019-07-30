@@ -27,7 +27,7 @@
 
 static struct {
     unsigned int canary;
-    char stack[THREAD_STACKSIZE_MAIN];
+    char stack[CONFIG_THREAD_STACKSIZE_MAIN];
 } buf;
 
 static int recurse(int counter)

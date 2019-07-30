@@ -43,7 +43,7 @@
  * #include "thread.h"
  *
  * static kernel_pid_t rcv_pid;
- * static char rcv_stack[THREAD_STACKSIZE_DEFAULT];
+ * static char rcv_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
  *
  * static void *rcv(void *arg)
  * {
@@ -114,7 +114,7 @@
  * #define RCV_QUEUE_SIZE  (8)
  *
  * static kernel_pid_t rcv_pid;
- * static char rcv_stack[THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF];
+ * static char rcv_stack[CONFIG_THREAD_STACKSIZE_DEFAULT + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF];
  * static msg_t rcv_queue[RCV_QUEUE_SIZE];
  *
  * static void *rcv(void *arg)

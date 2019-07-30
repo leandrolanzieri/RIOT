@@ -51,7 +51,7 @@ typedef struct {
 static uart_ctx_t ctx[UART_NUMOF];
 
 static kernel_pid_t printer_pid;
-static char printer_stack[THREAD_STACKSIZE_MAIN];
+static char printer_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 #ifdef MODULE_PERIPH_UART_MODECFG
 static uart_data_bits_t data_bits_lut[] = { UART_DATA_BITS_5, UART_DATA_BITS_6,

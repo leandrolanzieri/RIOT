@@ -29,7 +29,7 @@ static pipe_t communication_pipe;
 static ringbuffer_t pipe_rb;
 static char pipe_buffer[16];
 
-static char receiver_stack[THREAD_STACKSIZE_DEFAULT];
+static char receiver_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 typedef struct {
     void (*run)(void);

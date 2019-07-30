@@ -42,7 +42,7 @@
  * @brief Allocate memory for GNRC TCP thread stack.
  */
 #if ENABLE_DEBUG
-static char _stack[TCP_EVENTLOOP_STACK_SIZE + THREAD_EXTRA_STACKSIZE_PRINTF];
+static char _stack[TCP_EVENTLOOP_STACK_SIZE + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF];
 #else
 static char _stack[TCP_EVENTLOOP_STACK_SIZE];
 #endif

@@ -34,7 +34,7 @@
 static char sock_inbuf[SOCK_INBUF_SIZE];
 static bool server_running;
 static sock_udp_t server_sock;
-static char server_stack[THREAD_STACKSIZE_DEFAULT];
+static char server_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 static void *_server_thread(void *args)
 {

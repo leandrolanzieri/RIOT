@@ -34,7 +34,7 @@ ethos_t ethos;
  * @brief   Define stack parameters for the MAC layer thread
  * @{
  */
-#define ETHOS_MAC_STACKSIZE (THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
+#define ETHOS_MAC_STACKSIZE (CONFIG_THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE)
 #ifndef ETHOS_MAC_PRIO
 #define ETHOS_MAC_PRIO      (GNRC_NETIF_PRIO)
 #endif

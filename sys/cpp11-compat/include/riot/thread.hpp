@@ -53,7 +53,7 @@ constexpr kernel_pid_t thread_uninitialized = -1;
 /**
  * @brief The stack size for new threads.
  */
-constexpr size_t stack_size = THREAD_STACKSIZE_MAIN;
+constexpr size_t stack_size = CONFIG_THREAD_STACKSIZE_MAIN;
 }
 
 /**

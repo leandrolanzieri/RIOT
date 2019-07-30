@@ -29,9 +29,9 @@
 
 mutex_t res_mtx;
 
-char stack_high[THREAD_STACKSIZE_DEFAULT];
-char stack_mid[THREAD_STACKSIZE_DEFAULT];
-char stack_low[THREAD_STACKSIZE_DEFAULT];
+char stack_high[CONFIG_THREAD_STACKSIZE_DEFAULT];
+char stack_mid[CONFIG_THREAD_STACKSIZE_DEFAULT];
+char stack_low[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 void *t_low_handler(void *arg)
 {

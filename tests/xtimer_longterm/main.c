@@ -46,9 +46,9 @@
 static msg_t mq[MSG_Q_SIZE];
 
 /* allocate some stacks */
-static char long_stack[THREAD_STACKSIZE_MAIN];
-static char mid_stack[THREAD_STACKSIZE_MAIN];
-static char short_stack[THREAD_STACKSIZE_MAIN];
+static char long_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char mid_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+static char short_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 /* the main threads PID */
 static kernel_pid_t print_pid;

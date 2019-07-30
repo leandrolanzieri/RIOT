@@ -29,7 +29,7 @@
 #endif
 
 volatile unsigned _flag = 0;
-static char _stack[THREAD_STACKSIZE_MAIN];
+static char _stack[CONFIG_THREAD_STACKSIZE_MAIN];
 static mutex_t _mutex = MUTEX_INIT;
 
 static void _timer_callback(void*arg)

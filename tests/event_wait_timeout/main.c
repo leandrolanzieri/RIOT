@@ -27,7 +27,7 @@
 
 #define TIMEOUT         (50U * US_PER_MS)       /* 50ms */
 #define PRIO            (THREAD_PRIORITY_MAIN - 5)
-#define STACKSIZE       (THREAD_STACKSIZE_DEFAULT)
+#define STACKSIZE       (CONFIG_THREAD_STACKSIZE_DEFAULT)
 
 #define FLAG_SYNC       (0x0040)
 

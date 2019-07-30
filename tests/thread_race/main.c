@@ -26,7 +26,7 @@
 #include "sched.h"
 #include "thread.h"
 
-char iqr_check_stack[THREAD_STACKSIZE_DEFAULT];
+char iqr_check_stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 static volatile uint8_t irq_occurred;
 

@@ -68,8 +68,8 @@ static kernel_pid_t _dtls_server_pid = KERNEL_PID_UNDEF;
 #define TINYDTLS_EXTRA_BUFF (0U)
 #endif
 
-char _dtls_server_stack[THREAD_STACKSIZE_MAIN +
-                        THREAD_EXTRA_STACKSIZE_PRINTF +
+char _dtls_server_stack[CONFIG_THREAD_STACKSIZE_MAIN +
+                        CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF +
                         TINYDTLS_EXTRA_BUFF];
 
 /*

@@ -35,7 +35,7 @@
 #define NUMOFSUBS           (16U)
 #define TOPIC_MAXLEN        (64U)
 
-static char stack[THREAD_STACKSIZE_DEFAULT];
+static char stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 static msg_t queue[8];
 
 static emcute_sub_t subscriptions[NUMOFSUBS];

@@ -76,7 +76,7 @@ extern "C" {
 /**
  * @brief   Default stack size for Asymcute's handler thread
  */
-#define ASYMCUTE_HANDLER_STACKSIZE  (THREAD_STACKSIZE_DEFAULT)
+#define ASYMCUTE_HANDLER_STACKSIZE  (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 #ifndef ASYMCUTE_LISTENER_PRIO
@@ -92,7 +92,7 @@ extern "C" {
 /**
  * @brief   Default stack size for an Asymcute listener thread
  */
-#define ASYMCUTE_LISTENER_STACKSIZE (THREAD_STACKSIZE_DEFAULT)
+#define ASYMCUTE_LISTENER_STACKSIZE (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 #ifndef ASYMCUTE_TOPIC_MAXLEN

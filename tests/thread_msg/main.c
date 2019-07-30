@@ -24,9 +24,9 @@
 #include "thread.h"
 #include "msg.h"
 
-char t1_stack[THREAD_STACKSIZE_MAIN];
-char t2_stack[THREAD_STACKSIZE_MAIN];
-char t3_stack[THREAD_STACKSIZE_MAIN];
+char t1_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+char t2_stack[CONFIG_THREAD_STACKSIZE_MAIN];
+char t3_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 kernel_pid_t p_main, p1, p2, p3;
 

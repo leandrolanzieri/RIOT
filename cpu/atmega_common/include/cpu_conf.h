@@ -31,7 +31,9 @@
 extern "C" {
 #endif
 
-#define THREAD_EXTRA_STACKSIZE_PRINTF    (128)
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF    (128)
+#endif
 
 /**
  * @name           Kernel configuration
@@ -41,14 +43,16 @@ extern "C" {
  *                 even with pretty small stacks.
  * @{
  */
-#ifndef THREAD_STACKSIZE_DEFAULT
-#define THREAD_STACKSIZE_DEFAULT   (512)
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT   (512)
 #endif
 
-/* keep THREAD_STACKSIZE_IDLE > THREAD_EXTRA_STACKSIZE_PRINTF
+/* keep CONFIG_THREAD_STACKSIZE_IDLE > CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
  * to avoid not printing of debug in interrupts
  */
-#define THREAD_STACKSIZE_IDLE      (128)
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE      (128)
+#endif
 /** @} */
 
 /**

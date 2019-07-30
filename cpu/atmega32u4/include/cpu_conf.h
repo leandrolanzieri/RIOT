@@ -33,13 +33,17 @@ extern "C" {
  * size tested successfully even with pretty small stacks.k
  * @{
  */
-#define THREAD_EXTRA_STACKSIZE_PRINTF    (128)
-
-#ifndef THREAD_STACKSIZE_DEFAULT
-#define THREAD_STACKSIZE_DEFAULT   (256)
+#ifndef CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF
+#define CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF    (128)
 #endif
 
-#define THREAD_STACKSIZE_IDLE      (128)
+#ifndef CONFIG_THREAD_STACKSIZE_DEFAULT
+#define CONFIG_THREAD_STACKSIZE_DEFAULT   (256)
+#endif
+
+#ifndef CONFIG_THREAD_STACKSIZE_IDLE
+#define CONFIG_THREAD_STACKSIZE_IDLE      (128)
+#endif
 /** @} */
 
 #ifdef __cplusplus

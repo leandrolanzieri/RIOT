@@ -33,7 +33,7 @@
 #define TIMER_TIMEOUT_MIN   (1U)
 #define TIMER_TIMEOUT_MAX   (100U)
 
-static char _stack[THREAD_STACKSIZE_DEFAULT];
+static char _stack[CONFIG_THREAD_STACKSIZE_DEFAULT];
 
 static kernel_pid_t _pid_main = KERNEL_PID_UNDEF;
 

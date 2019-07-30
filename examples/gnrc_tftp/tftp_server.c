@@ -31,7 +31,7 @@
 static msg_t _tftp_msg_queue[TFTP_QUEUE_SIZE];
 
 /* allocate the stack */
-char _tftp_stack[THREAD_STACKSIZE_MAIN + THREAD_EXTRA_STACKSIZE_PRINTF];
+char _tftp_stack[CONFIG_THREAD_STACKSIZE_MAIN + CONFIG_THREAD_EXTRA_STACKSIZE_PRINTF];
 
 /* default server text which can be received */
 static const char _tftp_server_hello[] = "Hello world,\n"

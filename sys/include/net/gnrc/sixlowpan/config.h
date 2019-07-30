@@ -31,7 +31,7 @@ extern "C" {
  * @brief   Default stack size to use for the 6LoWPAN thread.
  */
 #ifndef GNRC_SIXLOWPAN_STACK_SIZE
-#define GNRC_SIXLOWPAN_STACK_SIZE           (THREAD_STACKSIZE_DEFAULT)
+#define GNRC_SIXLOWPAN_STACK_SIZE           (CONFIG_THREAD_STACKSIZE_DEFAULT)
 #endif
 
 /**

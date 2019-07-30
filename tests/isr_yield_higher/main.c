@@ -26,7 +26,7 @@
 
 #define TEST_TIME (200000U)
 
-static char t2_stack[THREAD_STACKSIZE_MAIN];
+static char t2_stack[CONFIG_THREAD_STACKSIZE_MAIN];
 
 static void *second_thread(void *arg)
 {
