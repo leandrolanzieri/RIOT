@@ -1,0 +1,5 @@
+menu "Core configuration"
+
+rsource "Kconfig.thread"
+
+endmenu # Core configuration

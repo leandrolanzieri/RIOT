@@ -1,0 +1,26 @@
+menuconfig KCONFIG_THREAD
+    bool "Configure Threads"
+    help
+        Enable this to configure Threads using Kconfig.
+
+if KCONFIG_THREAD
+
+config THREAD_STACKSIZE_DEFAULT
+    int "Default stack size in bytes"
+    help
+        A reasonable default stack size that will suffice most smaller tasks.
+
+config THREAD_STACKSIZE_MAIN
+    int "Main task's stack size in bytes"
+
+config THREAD_STACKSIZE_IDLE
+    int "Idle task stack size in bytes"
+    help
+        Size of the idle task's stack.
+
+config THREAD_EXTRA_STACKSIZE_PRINTF
+    int "printf stack size in bytes"
+    help
+        Size of the task's printf stack.
+
+endif # KCONFIG_THREAD
