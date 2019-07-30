@@ -1,0 +1,13 @@
+# Thread stack sizes defaults
+config THREAD_STACKSIZE_DEFAULT
+    default 1024
+
+config THREAD_EXTRA_STACKSIZE_PRINTF
+    default 256
+
+# By default THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF
+config THREAD_STACKSIZE_MAIN
+    default 1280
+
+config THREAD_STACKSIZE_IDLE
+    default 256

@@ -2,4 +2,5 @@ mainmenu "RIOT Kernel Configuration"
 
 osource "$(KCONFIG_GENERATED_DEPENDENCIES)"
 rsource "core/Kconfig"
+rsource "cpu/Kconfig"
 rsource "sys/Kconfig"

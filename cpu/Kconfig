@@ -1,0 +1,2 @@
+orsource "$(CPU)/Kconfig"
+orsource "*[_common]/Kconfig"

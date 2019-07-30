@@ -1,0 +1,21 @@
+# Capture environmental variable for OS
+config OS
+    option env = "OS"
+
+# Thread stack sizes defaults
+config THREAD_STACKSIZE_DEFAULT
+    default 163840 if OS = "Darwin"
+    default 8192
+
+config THREAD_EXTRA_STACKSIZE_PRINTF
+    default 81920 if OS = "Darwin"
+    default 4096
+
+# By default THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF
+config THREAD_STACKSIZE_MAIN
+    default 245760 if OS = "Darwin"
+    default 12288
+
+config THREAD_STACKSIZE_IDLE
+    default 163840 if OS = "Darwin"
+    default 8192
