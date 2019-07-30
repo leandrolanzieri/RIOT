@@ -46,6 +46,17 @@ $(KCONFIG_GENERATED_DEPENDENCIES): FORCE
 menuconfig: $(KCONFIG_CONFIG) $(MENUCONFIG)
 	$(Q)KCONFIG_CONFIG=$(KCONFIG_CONFIG) $(MENUCONFIG) $(KCONFIG)
 
+
+# Opens the guiconfig interface for configuration of modules using the Kconfig
+# system.
+# NOTE: This depends on Tkinter, to install it in Ubuntu run:
+# - For Python 2:
+#   sudo apt install python-tk
+# - For Python 3:
+#   sudo apt install python3-tk
+guiconfig: $(KCONFIG_CONFIG) $(GUICONFIG)
+	$(Q)KCONFIG_CONFIG=$(KCONFIG_CONFIG) $(GUICONFIG) $(KCONFIG)
+
 # Generates a merged configuration file from the given sources
 $(KCONFIG_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) FORCE
 	$(Q)\
