@@ -1,0 +1,8 @@
+#define {{conf.device}}_MOSI_{{conf.pinmux.mosi_pin[0]}}_{{conf.pinmux.mosi_pin[1]}}_MISO_{{conf.pinmux.miso_pin[0]}}_{{conf.pinmux.miso_pin[1]}}(CS_PIN) \
+{   .dev       = {{conf.device}}, \
+    .rccmask   = {{conf.rcc}},    \
+    .apbbus    = {{conf.bus}},    \
+    .mosi_pin  = GPIO_PIN(PORT_{{conf.pinmux.mosi_pin[0]}}, {{conf.pinmux.mosi_pin[1]}}),  \
+    .miso_pin  = GPIO_PIN(PORT_{{conf.pinmux.miso_pin[0]}}, {{conf.pinmux.miso_pin[1]}}),  \
+    .cs_pin    = CS_PIN,                \
+    .af        = {{conf.af}} }

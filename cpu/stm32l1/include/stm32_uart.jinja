@@ -1,0 +1,9 @@
+#define {{conf.device}}_RX_{{conf.pinmux.rx_pin[0]}}_{{conf.pinmux.rx_pin[1]}}_TX_{{conf.pinmux.tx_pin[0]}}_{{conf.pinmux.tx_pin[1]}} \
+{   .dev      = {{conf.device}}, \
+    .rcc_mask = {{conf.rcc}},    \
+    .bus      = {{conf.bus}},    \
+    .irqn     = {{conf.irqn}},   \
+    .tx_pin   = GPIO_PIN(PORT_{{conf.pinmux.tx_pin[0]}}, {{conf.pinmux.tx_pin[1]}}),  \
+    .rx_pin   = GPIO_PIN(PORT_{{conf.pinmux.rx_pin[0]}}, {{conf.pinmux.rx_pin[1]}}),  \
+    .tx_af    = {{conf.pinmux.tx_af}}, \
+    .rx_af    = {{conf.pinmux.rx_af}} }

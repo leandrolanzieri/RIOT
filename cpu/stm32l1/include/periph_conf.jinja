@@ -1,0 +1,17 @@
+#define UART_CONFIG { \
+{% for u in conf.uart %}
+    {{u.device}}_RX_{{u.pinmux.rx_pin[0]}}_{{u.pinmux.rx_pin[1]}}_TX_{{u.pinmux.tx_pin[0]}}_{{u.pinmux.tx_pin[1]}}, \
+{% endfor %}
+}
+
+#define SPI_CONFIG { \
+{% for s in conf.spi %}
+    {{s.device}}_MOSI_{{s.pinmux.mosi_pin[0]}}_{{s.pinmux.mosi_pin[1]}}_MISO_{{s.pinmux.miso_pin[0]}}_{{s.pinmux.miso_pin[1]}}({%- if s.cs_pin -%}GPIO_PIN(PORT_{{s.cs_pin[0]}}, {{s.cs_pin[1]}}){%- else -%}GPIO_UNDEF{%- endif -%}),    \
+{% endfor %}
+}
+
+#define I2C_CONFIG { \
+{% for i in conf.i2c %}
+    {{i.device}}_SCL_{{i.pinmux.scl_pin[0]}}_{{i.pinmux.scl_pin[1]}}_SDA_{{i.pinmux.sda_pin[0]}}_{{i.pinmux.sda_pin[1]}}({{i.speed}}),    \
+{% endfor %}
+}

@@ -1,0 +1,13 @@
+---
+periph_conf:
+  uart:
+    - pinmux: *usart2_tx_a_2_rx_a_3
+    - pinmux: *usart1_tx_a_10_rx_a_9
+    - pinmux: *usart3_tx_c_10_rx_c_11_tx_c_10
+  spi:
+    - pinmux: *spi1_mosi_a_7_miso_a_6
+  i2c:
+    - pinmux: *i2c1_scl_b_8_sda_b_9
+      speed: 'I2C_SPEED_NORMAL'
+    - pinmux: *i2c2_scl_b_10_sda_b_11
+      speed: 'I2C_SPEED_NORMAL'

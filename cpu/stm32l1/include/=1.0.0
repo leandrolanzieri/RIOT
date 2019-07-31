@@ -1,0 +1,7 @@
+Requirement already satisfied: yaql in /usr/local/lib/python3.7/dist-packages (1.1.3)
+Requirement already satisfied: Babel>=1.3 in /home/leandro/.local/lib/python3.7/site-packages (from yaql) (2.7.0)
+Requirement already satisfied: pbr>=1.8 in /usr/local/lib/python3.7/dist-packages (from yaql) (5.4.1)
+Requirement already satisfied: ply in /home/leandro/.local/lib/python3.7/site-packages (from yaql) (3.10)
+Requirement already satisfied: python-dateutil>=2.4.2 in /home/leandro/.local/lib/python3.7/site-packages (from yaql) (2.8.0)
+Requirement already satisfied: six>=1.9.0 in /home/leandro/.local/lib/python3.7/site-packages (from yaql) (1.12.0)
+Requirement already satisfied: pytz>=2015.7 in /home/leandro/.local/lib/python3.7/site-packages (from Babel>=1.3->yaql) (2019.1)

@@ -1,0 +1,12 @@
+chosen:
+  uart:
+    - pinmux: *usart2_tx_a_2_rx_a_3
+    - pinmux: *usart1_tx_a_9_rx_a_10
+  spi:
+    - pinmux: *spi1_mosi_a_7_miso_a_6
+      cs_pin: ['B', 0]
+    - pinmux: *spi1_mosi_b_14_miso_b_15
+      cs_pin: ['B', 12]
+  i2c:
+    - pinmux: *i2c1_scl_b_8_sda_b_9
+      speed: 'I2C_SPEED_NORMAL'

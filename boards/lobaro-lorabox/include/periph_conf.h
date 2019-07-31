@@ -100,28 +100,12 @@ static const timer_conf_t timer_config[] = {
  * @name   UART configuration
  * @{
  */
-static const uart_conf_t uart_config[] = {
-    {
-        .dev      = USART1,
-        .rcc_mask = RCC_APB2ENR_USART1EN,
-        .rx_pin   = GPIO_PIN(PORT_A, 10),
-        .tx_pin   = GPIO_PIN(PORT_A, 9),
-        .rx_af    = GPIO_AF7,
-        .tx_af    = GPIO_AF7,
-        .bus      = APB2,
-        .irqn     = USART1_IRQn
-    },
-    {
-        .dev      = USART2,
-        .rcc_mask = RCC_APB1ENR_USART2EN,
-        .rx_pin   = GPIO_PIN(PORT_A, 3),
-        .tx_pin   = GPIO_PIN(PORT_A, 2),
-        .rx_af    = GPIO_AF7,
-        .tx_af    = GPIO_AF7,
-        .bus      = APB1,
-        .irqn     = USART2_IRQn
-    }
-};
+#define UART_CONFIG {       \
+    UART_1_RX_A_10_TX_A_9,    \
+    UART_2_RX_A_3_TX_A_2      \
+}
+
+static const uart_conf_t uart_config[] = UART_CONFIG;
 
 #define UART_0_ISR          (isr_usart1)
 #define UART_1_ISR          (isr_usart2)

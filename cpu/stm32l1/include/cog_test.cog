@@ -1,0 +1,30 @@
+[[[cog
+import cog
+import yaml
+
+def output_uart(conf):
+    periph = conf['periph']
+    cog.outl('#define {}_RX_{}_{}_TX_{}_{} \\' \
+        .format(periph['device'], conf['rx_pin'][0], conf['rx_pin'][1], \
+                conf['tx_pin'][0], conf['tx_pin'][1]))
+
+    cog.outl('{{    .dev = {}, \\'.format(periph['device']))
+    cog.outl('     .rcc_mask = {}, \\'.format(periph['rcc']))
+    cog.outl('     .bus = {}, \\'.format(periph['bus']))
+    cog.outl('     .irqn = {}, \\'.format(periph['irqn']))
+    cog.outl('     .tx_pin = GPIO_PIN(PORT_{},{}), \\'.format(conf['tx_pin'][0], conf['tx_pin'][1]))
+    cog.outl('     .rx_pin = GPIO_PIN(PORT_{},{}), \\'.format(conf['rx_pin'][0], conf['rx_pin'][1]))
+    cog.outl('     .tx_af = {}, \\'.format(conf['tx_af']))
+    cog.outl('     .rx_af = {} }}\n'.format(conf['rx_af']))
+
+with open('stm32l151x6.yml') as stream:
+    try:
+        af = yaml.safe_load(stream)['alternate_function_io']
+        for conf in af:
+            if conf['periph']['type'] == 'uart':
+                output_uart(conf)
+    except yaml.YAMLError as exc:
+        print(exc)
+]]]
+
+[[[end]]]

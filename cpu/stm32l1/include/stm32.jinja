@@ -1,0 +1,17 @@
+{% for conf in af %}
+{% if conf.periph.type == 'uart'%}
+{% include 'stm32_uart.jinja'%}
+
+
+{% endif %}
+{% if conf.periph.type == 'spi'%}
+{% include 'stm32_spi.jinja'%}
+
+
+{% endif %}
+{% if conf.periph.type == 'i2c'%}
+{% include 'stm32_i2c.jinja'%}
+
+
+{% endif %}
+{% endfor %}

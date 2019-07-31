@@ -1,0 +1,11 @@
+#define {{conf.device}}_SCL_{{conf.pinmux.scl_pin[0]}}_{{conf.pinmux.scl_pin[1]}}_SDA_{{conf.pinmux.sda_pin[0]}}_{{conf.pinmux.sda_pin[1]}}(SPEED) \
+{   .dev        = {{conf.device}},  \
+    .speed      = SPEED,                   \
+    .scl_pin    = GPIO_PIN(PORT_{{conf.pinmux.scl_pin[0]}}, {{conf.pinmux.scl_pin[1]}}),  \
+    .sda_pin    = GPIO_PIN(PORT_{{conf.pinmux.sda_pin[0]}}, {{conf.pinmux.sda_pin[1]}}),  \
+    .scl_af     = {{conf.pinmux.scl_af}},         \
+    .sda_af     = {{conf.pinmux.sda_af}},         \
+    .bus        = {{conf.bus}},     \
+    .rcc_mask   = {{conf.rcc}},     \
+    .clk        = {{conf.clk}},      \
+    .irqn       = {{conf.irqn}} }

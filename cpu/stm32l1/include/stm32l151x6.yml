@@ -1,0 +1,184 @@
+peripherals:
+  - &usart1
+    _label: 'usart1'
+    type: 'uart'
+    device: 'USART1'
+    bus: 'APB2'
+    rcc: 'RCC_APB2ENR_USART1EN'
+    irqn: 'USART1_IRQn'
+    isr: 'isr_usart1'
+
+  - &usart2
+    _label: 'usart2'
+    type: 'uart'
+    device: 'USART2'
+    bus: 'APB1'
+    rcc: 'RCC_APB1ENR_USART2EN'
+    irqn: 'USART2_IRQn'
+    isr: 'isr_usart2'
+
+  - &usart3
+    _label: 'usart3'
+    type: 'uart'
+    device: 'USART3'
+    bus: 'APB1'
+    rcc: 'RCC_APB1ENR_USART3EN'
+    irqn: 'USART3_IRQn'
+    isr: 'isr_usart3'
+
+  - &spi1
+    _label: 'spi1'
+    type: 'spi'
+    device: 'SPI1'
+    bus: 'APB2'
+    rcc: 'RCC_APB2ENR_SPI1EN'
+
+  - &spi2
+    _label: 'spi2'
+    type: 'spi'
+    device: 'SPI2'
+    bus: 'APB1'
+    rcc: 'RCC_APB1ENR_SPI2EN'
+
+  - &i2c1
+    _label: 'i2c1'
+    type: 'i2c'
+    device: 'I2C1'
+    bus: 'APB1'
+    rcc: 'RCC_APB1ENR_I2C1EN'
+    clk: 'CLOCK_APB1'
+    irqn: 'I2C1_EV_IRQn'
+    isr: 'isr_i2c1_ev'
+
+  - &i2c2
+    _label: 'i2c2'
+    type: 'i2c'
+    device: 'I2C2'
+    bus: 'APB1'
+    rcc: 'RCC_APB1ENR_I2C2EN'
+    clk: 'CLOCK_APB1'
+    irqn: 'I2C2_EV_IRQn'
+    isr: 'isr_i2c2_ev'
+
+pinmux_table:
+  - periph: *usart2
+    pinmux: &usart2_tx_a_2_rx_a_3
+      _label: 'usart2_tx_a_2_rx_a_3'
+      tx_pin: ['A', 2]
+      rx_pin: ['A', 3]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart1
+    pinmux: &usart1_tx_a_9_rx_a_10
+      _label: 'usart1_tx_a_9_rx_a_10'
+      tx_pin: ['A', 9]
+      rx_pin: ['A', 10]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart1
+    pinmux: &usart1_tx_b_6_rx_b_7
+      _label: 'usart1_tx_b_6_rx_b_7'
+      tx_pin: ['B', 6]
+      rx_pin: ['B', 7]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart3
+    pinmux: &usart3_tx_b_10_rx_b_11
+      _label: 'usart3_tx_b_10_rx_b_11'
+      tx_pin: ['B', 10]
+      rx_pin: ['B', 11]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart3
+    pinmux: &usart3_tx_c_10_rx_c_11
+      _label: 'usart3_tx_c_10_rx_c_11'
+      tx_pin: ['C', 10]
+      rx_pin: ['C', 11]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart2
+    pinmux: &usart2_tx_d_5_rx_d_6
+      _label: 'usart2_tx_d_5_rx_d_6'
+      tx_pin: ['D', 5]
+      rx_pin: ['D', 6]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+
+  - periph: *usart3
+    pinmux: &usart3_tx_d_8_rx_d_9
+      _label: 'usart3_tx_d_8_rx_d_9'
+      tx_pin: ['D', 8]
+      rx_pin: ['D', 9]
+      tx_af: 'GPIO_AF7'
+      rx_af: 'GPIO_AF7'
+  
+  - periph: *spi1
+    pinmux: &spi1_mosi_a_7_miso_a_6
+      _label: 'spi1_mosi_a_7_miso_a_6'
+      mosi_pin: ['A', 7]
+      miso_pin: ['A', 6]
+      af: 'GPIO_AF5'
+
+  - periph: *spi1
+    pinmux: &spi1_mosi_a_12_miso_a_11
+      _label: 'spi1_mosi_a_12_miso_a_11'
+      mosi_pin: ['A', 12]
+      miso_pin: ['A', 11]
+      af: 'GPIO_AF5'
+
+  - periph: *spi1
+    pinmux: &spi1_mosi_b_5_miso_b_4
+      _label: 'spi1_mosi_b_5_miso_b_4'
+      mosi_pin: ['B', 5]
+      miso_pin: ['B', 4]
+      af: 'GPIO_AF5'
+
+  - periph: *spi1
+    pinmux: &spi1_mosi_e_15_miso_e_14
+      _label: 'spi1_mosi_e_15_miso_e_14'
+      mosi_pin: ['E', 15]
+      miso_pin: ['E', 14]
+      af: 'GPIO_AF5'
+
+  - periph: *spi2
+    pinmux: &spi2_mosi_b_15_miso_b_14
+      _label: 'spi2_mosi_b_15_miso_b_14'
+      mosi_pin: ['B', 15]
+      miso_pin: ['B', 14]
+      af: 'GPIO_AF5'
+
+  - periph: *spi2
+    pinmux: &spi2_mosi_d_4_miso_d_3
+      _label: 'spi2_mosi_d_4_miso_d_3'
+      mosi_pin: ['D', 3]
+      miso_pin: ['D', 4]
+      af: 'GPIO_AF5'
+
+  - periph: *i2c1
+    pinmux: &i2c1_scl_b_6_sda_b_7
+      _label: 'i2c1_scl_b_6_sda_b_7'
+      scl_pin: ['B', 6]
+      sda_pin: ['B', 7]
+      scl_af: 'GPIO_AF4'
+      sda_af: 'GPIO_AF4'
+
+  - periph: *i2c1
+    pinmux: &i2c1_scl_b_8_sda_b_9
+      _label: 'i2c1_scl_b_8_sda_b_9'
+      scl_pin: ['B', 8]
+      sda_pin: ['B', 9]
+      scl_af: 'GPIO_AF4'
+      sda_af: 'GPIO_AF4'
+
+  - periph: *i2c2
+    pinmux: &i2c2_scl_b_10_sda_b_11
+      _label: 'i2c2_scl_b_10_sda_b_11'
+      scl_pin: ['B', 10]
+      sda_pin: ['B', 11]
+      scl_af: 'GPIO_AF4'
+      sda_af: 'GPIO_AF4'
