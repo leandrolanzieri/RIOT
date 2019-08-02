@@ -7,6 +7,12 @@ peripherals:
     rcc: 'RCC_APB2ENR_USART1EN'
     irqn: 'USART1_IRQn'
     isr: 'isr_usart1'
+    tx_dma: *dma1
+    tx_dma_stream: 4
+    tx_dma_channel: 2
+    rx_dma: *dma1
+    rx_dma_stream: 5
+    rx_dma_channel: 2
 
   - &usart2
     _label: 'usart2'
@@ -16,6 +22,13 @@ peripherals:
     rcc: 'RCC_APB1ENR_USART2EN'
     irqn: 'USART2_IRQn'
     isr: 'isr_usart2'
+    tx_dma: *dma1
+    tx_dma_stream: 7
+    tx_dma_channel: 2
+    rx_dma: *dma1
+    rx_dma_stream: 6
+    rx_dma_channel: 2
+
 
   - &usart3
     _label: 'usart3'
@@ -25,6 +38,12 @@ peripherals:
     rcc: 'RCC_APB1ENR_USART3EN'
     irqn: 'USART3_IRQn'
     isr: 'isr_usart3'
+    tx_dma: *dma1
+    tx_dma_stream: 2
+    tx_dma_channel: 2
+    rx_dma: *dma1
+    rx_dma_stream: 3
+    tx_dma_channel: 2
 
   - &spi1
     _label: 'spi1'
@@ -32,6 +51,12 @@ peripherals:
     device: 'SPI1'
     bus: 'APB2'
     rcc: 'RCC_APB2ENR_SPI1EN'
+    tx_dma: *dma1
+    tx_dma_stream: 3
+    tx_dma_channel: 1
+    rx_dma: *dma1
+    rx_dma_stream: 2
+    tx_dma_channel: 1
 
   - &spi2
     _label: 'spi2'
@@ -39,6 +64,12 @@ peripherals:
     device: 'SPI2'
     bus: 'APB1'
     rcc: 'RCC_APB1ENR_SPI2EN'
+    tx_dma: *dma1
+    tx_dma_stream: 5
+    tx_dma_channel: 1
+    rx_dma: *dma1
+    rx_dma_stream: 4
+    tx_dma_channel: 1
 
   - &i2c1
     _label: 'i2c1'
@@ -49,6 +80,12 @@ peripherals:
     clk: 'CLOCK_APB1'
     irqn: 'I2C1_EV_IRQn'
     isr: 'isr_i2c1_ev'
+    tx_dma: *dma1
+    tx_dma_stream: 6
+    tx_dma_channel: 3
+    rx_dma: *dma1
+    rx_dma_stream: 7
+    rx_dma_channel: 3
 
   - &i2c2
     _label: 'i2c2'
@@ -59,6 +96,22 @@ peripherals:
     clk: 'CLOCK_APB1'
     irqn: 'I2C2_EV_IRQn'
     isr: 'isr_i2c2_ev'
+    tx_dma: *dma1
+    tx_dma_stream: 4
+    rx_dma_channel: 3
+    rx_dma: *dma1
+    rx_dma_stream: 5
+    rx_dma_channel: 3
+
+  - &dma1
+    _label: 'dma1'
+    type: 'dma'
+    device: 'DMA1'
+
+  - &dma2
+    _label: 'dma2'
+    type: 'dma'
+    device: 'DMA2'
 
 pinmux_table:
   - periph: *usart2
