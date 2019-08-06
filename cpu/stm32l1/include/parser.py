@@ -287,9 +287,9 @@ if __name__ == "__main__":
     for pin in used_pins:
         Pinout.create(**pin)
 
-    q = Pinmap.select(Pinmap.label, Pinmap.pin, Pinmap.connector,
+    q = Pinmap.select(Pinmap.label.alias('L'), Pinmap.pin, Pinmap.connector,
                       format_function(Pinout.function, Pinout.config_group) \
-                      .alias('function')) \
+                      .alias('F')) \
               .join(Pinout, JOIN.LEFT_OUTER, on=(Pinmap.pin == Pinout.pin)).dicts()
 
     for el in q:
