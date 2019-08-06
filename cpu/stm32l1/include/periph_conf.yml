@@ -4,12 +4,18 @@ board:
   description: 'A special "El Miguel" nucleo edition'
   periph_conf:
     spi:
-      - pinmux_base: "spi1_mosi_a_7_miso_a_6"
-        pinmux:
-          miso_pin: "PA15"
-          mosi_pin: "PA2"
+      - pinmux: 
+          id: "spi1_mosi_a_7_miso_a_6"
         cs_pin: "PC7"  
-
+    uart: 
+      - pinmux:
+          id: "usart2_tx_a_2_rx_a_3"
+      - pinmux:
+          id: "usart3_tx_b_10_rx_b_11"
+    i2c:
+      - pinmux:
+          id: "i2c1_scl_b_8_sda_b_9"
+        speed: "I2C_SPEED_NORMAL"
   pin_map:
     CN5:
       - null

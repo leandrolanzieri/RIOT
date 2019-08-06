@@ -35,13 +35,18 @@ class BaseModel(Model):
     @classmethod
     def create(cls, *args, **kwargs):
         o = cls(**kwargs)
-
         if "id" not in kwargs:
             o.id = o.get_label()
+        o.save(force_insert=True)
 
-        o.save()
 
-class Pin(BaseModel):
+class AlternateFunction(CharField):
+    pass
+
+class Periph(ForeignKeyField):
+    pass
+
+class CpuPin(BaseModel):
     port = CharField()
     num = IntegerField()
 
@@ -63,16 +68,16 @@ class Usart(BaseModel):
     rx_dma_stream = CharField()
     rx_dma_channel = CharField()
 
-class Pinout(ForeignKeyField):
+class Pin(ForeignKeyField):
     def __init__(self, **kwargs):
-        super().__init__(Pin, **kwargs)
+        super().__init__(CpuPin, **kwargs)
 
 class UsartPinmux(BaseModel):
-    periph = ForeignKeyField(Usart, backref='relation')
-    tx_pin = Pinout()
-    rx_pin = Pinout()
-    tx_af = CharField()
-    rx_af = CharField()
+    periph = Periph(Usart, backref='relation')
+    tx_pin = Pin()
+    rx_pin = Pin()
+    tx_af = AlternateFunction()
+    rx_af = AlternateFunction()
 
     def get_pins(self):
         return {"tx_pin": self.tx_pin, "rx_pin": self.rx_pin}
@@ -91,8 +96,8 @@ class Spi(BaseModel):
 
 class SpiPinmux(BaseModel):
     periph = ForeignKeyField(Spi)
-    mosi_pin = Pinout()
-    miso_pin = Pinout()
+    mosi_pin = Pin()
+    miso_pin = Pin()
     af = CharField()
 
     def get_pins(self):
@@ -102,7 +107,7 @@ class SpiPinmux(BaseModel):
         return "{}_mosi_{}_{}_miso_{}_{}".format(
                 self.periph,
                 self.mosi_pin.port, self.mosi_pin.num,
-                self.miso_pin.port, self.miso_pin.num)
+                self.miso_pin.port, self.miso_pin.num).lower()
 
 class I2C(BaseModel):
     type = CharField()
@@ -121,8 +126,8 @@ class I2C(BaseModel):
 
 class I2CPinmux(BaseModel):
     periph = ForeignKeyField(I2C)
-    scl_pin = Pinout()
-    sda_pin = Pinout()
+    scl_pin = Pin()
+    sda_pin = Pin()
     scl_af = CharField()
     sda_af = CharField()
 
@@ -132,97 +137,75 @@ class I2CPinmux(BaseModel):
                 self.scl_pin.port, self.scl_pin.num,
                 self.sda_pin.port, self.sda_pin.num)
 
-class PeriphConfig(BaseModel):
-    uart = ForeignKeyField(UsartPinmux)
-    spi = ForeignKeyField(SpiPinmux)
-    i2c = ForeignKeyField(I2CPinmux)
-
-class I2CConfig(Model):
-    pinmux = ForeignKeyField(I2CPinmux)
-    speed = CharField()
-    class Meta:
-        database = db
-
-    @classmethod
-    def create_conf(*args, **kwargs):
-        pinmux_data = kwargs["pinmux"]
-        if(pinmux_data.get("base")):
-            pinmux = I2CPinmux.select().where(I2CPinmux.id==pinmux_data["base"]).get()
-            pinmux_data.pop("base")
-            pinmux.update(**pinmux_data).execute()
-        else:
-            pinmux = I2CPinmux(**pinmux_data)
-            pinmux.id = pinmux.get_label()
-            pinmux.save()
-
-        kwargs.pop("pinmux")
-
-        I2CConfig.create(pinmux=pinmux, **kwargs)
-
-class UsartConfig(Model):
-    pinmux = ForeignKeyField(UsartPinmux)
-    class Meta:
-        database = db
-
     def get_pins(self):
-        return self.pinmux.get_pins()
-
-    @classmethod
-    def create_conf(*args, **kwargs):
-        if(kwargs.get("base")):
-            pinmux = UsartPinmux.select().where(UsartPinmux.id==kwargs["base"]).get()
-            kwargs.pop("base")
-            pinmux.update(**kwargs).execute()
-        else:
-            pinmux = UsartPinmux(**kwargs)
-            pinmux.id = pinmux.get_label()
-            pinmux.save()
-
-        SpiConfig.create(cs_pin=cs_pin, pinmux=pinmux)
+        l = {"scl_pin": self.scl_pin}
+        l.update(self.pinmux.get_pins())
+        return l
 
 class BasePinmuxConfig(Model):
+    class Meta:
+        database = db
+
     @classmethod
     def create(cls, **kwargs):
-        base = kwargs.pop("pinmux_base", None)
         pinmux_class = cls.pinmux.rel_model
-        pinmux_data = kwargs.pop("pinmux", None)
+        pinmux_data = kwargs.pop("pinmux")
 
-        if(base):
-            pinmux = pinmux_class.select().where(pinmux_class.id==base).get()
-            if(pinmux_data):
+        # Check if pinmux exists. Create if not
+        pinmux_id = pinmux_data.pop("id", None)
+
+        if (pinmux_id):
+            pinmux = pinmux_class.select().where(pinmux_class.id==pinmux_id).get()
+            if pinmux_data:
                 pinmux.update(**pinmux_data).execute()
         else:
             pinmux = pinmux_class(**pinmux_data)
             pinmux.id = pinmux.get_label()
-            pinmux.save()
+            pinmux.save(force_insert=True)
 
         sp = cls(pinmux=pinmux, **kwargs)
-        sp.save()
-        print(sp.pinmux)
+        sp.save(force_insert=True)
+        return sp
 
+    def get_pins(self):
+        raise NotImplemented()
+
+class I2CConfig(BasePinmuxConfig):
+    pinmux = ForeignKeyField(I2CPinmux)
+    speed = CharField()
+
+class UsartConfig(BasePinmuxConfig):
+    pinmux = ForeignKeyField(UsartPinmux)
+
+    def get_pins(self):
+        return self.pinmux.get_pins()
 
 class SpiConfig(BasePinmuxConfig):
     id = AutoField()
     pinmux = ForeignKeyField(SpiPinmux)
-    cs_pin = Pinout()
-    class Meta:
-        database = db
+    cs_pin = Pin()
 
     def get_pins(self):
         l = {"cs_pin": self.cs_pin}
         l.update(self.pinmux.get_pins())
         return l
     
-        
+class Pinout(Model):
+    pin = Pin(primary_key=True)
+    function = CharField()
+
+    class Meta:
+        db = database
+
 db.create_tables([UsartPinmux, Usart])
 db.create_tables([SpiPinmux, Spi])
 db.create_tables([I2CPinmux, I2C])
 db.create_tables([Dma])
-db.create_tables([Pin])
+db.create_tables([CpuPin])
 db.create_tables([UsartConfig, SpiConfig, I2CConfig])
 
 for el in af['pins']:
-    Pin.create(**el)
+    CpuPin.create(**el)
 
 for el in af["usart"]:
     Usart.create(**el)
@@ -242,32 +225,25 @@ for el in af['spi_pinmux']:
 for el in af['usart_pinmux']:
     UsartPinmux.create(**el)
 
-#for el in pc['board']['periph_conf']['i2c']:
-#    I2CConfig.create(**el)
+for el in pc['board']['periph_conf']['i2c']:
+    I2CConfig.create(**el)
 
 for el in pc['board']['periph_conf']['spi']:
     SpiConfig.create(**el)
-    #sp = SpiConfig.create(**el)
 
-#for el in pc['board']['periph_conf']['uart']:
-#    UsartConfig.create(**el)
+for el in pc['board']['periph_conf']['uart']:
+    UsartConfig.create(**el)
 
 used_pins = []
-def get_pins(model):
-    l = []
-    for k, v in model.__class__.__dict__.items():
-        if isinstance(v, peewee.ForeignKeyAccessor) and v.rel_model == Pin:
-            l.append(getattr(model, k))
-    return l
-
 for conf in SpiConfig.select():
-    print(conf.pinmux.miso_pin)
-    print(conf.pinmux.mosi_pin)
+    used_pins.extend(conf.get_pins().values())
 
-for c in I2CConfig.select():
-    used_pins.extend(get_pins(c))
+for conf in I2CConfig.select():
+    used_pins.extend(conf.get_pins().values())
+
 
 for c in UsartConfig.select():
-    used_pins.extend(get_pins(c))
+    pass
+    #used_pins.extend(get_pins(c))
 
 
