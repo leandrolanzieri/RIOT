@@ -109,49 +109,42 @@ i2c:
 
 usart_pinmux:
   - periph: "usart2"
-    id: 'usart2_tx_a_2_rx_a_3'
     tx_pin: "PA2"
     rx_pin: "PA3"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart1"
-    id: 'usart1_tx_a_9_rx_a_10'
     tx_pin: "PA9"
     rx_pin: "PA10"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart1"
-    id: 'usart1_tx_b_6_rx_b_7'
     tx_pin: "PB6"
     rx_pin: "PB7"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart3"
-    id: 'usart3_tx_b_10_rx_b_11'
     tx_pin: "PB10"
     rx_pin: "PB11"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart3"
-    id: 'usart3_tx_c_10_rx_c_11'
     tx_pin: "PC10"
     rx_pin: "PC11"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart2"
-    id: 'usart2_tx_d_5_rx_d_6'
     tx_pin: "PD5"
     rx_pin: "PD6"
     tx_af: 'GPIO_AF7'
     rx_af: 'GPIO_AF7'
 
   - periph: "usart3"
-    id: 'usart3_tx_d_8_rx_d_9'
     tx_pin: "PD8"
     rx_pin: "PD9"
     tx_af: 'GPIO_AF7'
@@ -190,273 +183,187 @@ spi_pinmux:
 
 i2c_pinmux:
   - periph: "i2c1"
-    id: 'i2c1_scl_b_6_sda_b_7'
     scl_pin: "PB6"
     sda_pin: "PB7"
     scl_af: 'GPIO_AF4'
     sda_af: 'GPIO_AF4'
 
   - periph: "i2c1"
-    id: 'i2c1_scl_b_8_sda_b_9'
     scl_pin: "PB8"
     sda_pin: "PB9"
     scl_af: 'GPIO_AF4'
     sda_af: 'GPIO_AF4'
 
   - periph: "i2c2"
-    id: 'i2c2_scl_b_10_sda_b_11'
     scl_pin: "PB10"
     sda_pin: "PB11"
     scl_af: 'GPIO_AF4'
     sda_af: 'GPIO_AF4'
 
 pins:
-    - id: "PA0"
-      port: "A"
+    - port: "A"
       num: 0
-    - id: "PA1"
-      port: "A"
+    - port: "A"
       num: 1
-    - id: "PA2"
-      port: "A"
+    - port: "A"
       num: 2
-    - id: "PA3"
-      port: "A"
+    - port: "A"
       num: 3
-    - id: "PA4"
-      port: "A"
+    - port: "A"
       num: 4
-    - id: "PA5"
-      port: "A"
+    - port: "A"
       num: 5
-    - id: "PA6"
-      port: "A"
+    - port: "A"
       num: 6
-    - id: "PA7"
-      port: "A"
+    - port: "A"
       num: 7
-    - id: "PA8"
-      port: "A"
+    - port: "A"
       num: 8
-    - id: "PA9"
-      port: "A"
+    - port: "A"
       num: 9
-    - id: "PA10"
-      port: "A"
+    - port: "A"
       num: 10
-    - id: "PA11"
-      port: "A"
+    - port: "A"
       num: 11
-    - id: "PA12"
-      port: "A"
+    - port: "A"
       num: 12
-    - id: "PA13"
-      port: "A"
+    - port: "A"
       num: 13
-    - id: "PA14"
-      port: "A"
+    - port: "A"
       num: 14
-    - id: "PA15"
-      port: "A"
+    - port: "A"
       num: 15
-    - id: "PB0"
-      port: "B"
+    - port: "B"
       num: 0
-    - id: "PB1"
-      port: "B"
+    - port: "B"
       num: 1
-    - id: "PB2"
-      port: "B"
+    - port: "B"
       num: 2
-    - id: "PB3"
-      port: "B"
+    - port: "B"
       num: 3
-    - id: "PB4"
-      port: "B"
+    - port: "B"
       num: 4
-    - id: "PB5"
-      port: "B"
+    - port: "B"
       num: 5
-    - id: "PB6"
-      port: "B"
+    - port: "B"
       num: 6
-    - id: "PB7"
-      port: "B"
+    - port: "B"
       num: 7
-    - id: "PB8"
-      port: "B"
+    - port: "B"
       num: 8
-    - id: "PB9"
-      port: "B"
+    - port: "B"
       num: 9
-    - id: "PB10"
-      port: "B"
+    - port: "B"
       num: 10
-    - id: "PB11"
-      port: "B"
+    - port: "B"
       num: 11
-    - id: "PB12"
-      port: "B"
+    - port: "B"
       num: 12
-    - id: "PB13"
-      port: "B"
+    - port: "B"
       num: 13
-    - id: "PB14"
-      port: "B"
+    - port: "B"
       num: 14
-    - id: "PB15"
-      port: "B"
+    - port: "B"
       num: 15
-    - id: "PC0"
-      port: "C"
+    - port: "C"
       num: 0
-    - id: "PC1"
-      port: "C"
+    - port: "C"
       num: 1
-    - id: "PC2"
-      port: "C"
+    - port: "C"
       num: 2
-    - id: "PC3"
-      port: "C"
+    - port: "C"
       num: 3
-    - id: "PC4"
-      port: "C"
+    - port: "C"
       num: 4
-    - id: "PC5"
-      port: "C"
+    - port: "C"
       num: 5
-    - id: "PC6"
-      port: "C"
+    - port: "C"
       num: 6
-    - id: "PC7"
-      port: "C"
+    - port: "C"
       num: 7
-    - id: "PC8"
-      port: "C"
+    - port: "C"
       num: 8
-    - id: "PC9"
-      port: "C"
+    - port: "C"
       num: 9
-    - id: "PC10"
-      port: "C"
+    - port: "C"
       num: 10
-    - id: "PC11"
-      port: "C"
+    - port: "C"
       num: 11
-    - id: "PC12"
-      port: "C"
+    - port: "C"
       num: 12
-    - id: "PC13"
-      port: "C"
+    - port: "C"
       num: 13
-    - id: "PC14"
-      port: "C"
+    - port: "C"
       num: 14
-    - id: "PC15"
-      port: "C"
+    - port: "C"
       num: 15
-    - id: "PD0"
-      port: "D"
+    - port: "D"
       num: 0
-    - id: "PD1"
-      port: "D"
+    - port: "D"
       num: 1
-    - id: "PD2"
-      port: "D"
+    - port: "D"
       num: 2
-    - id: "PD3"
-      port: "D"
+    - port: "D"
       num: 3
-    - id: "PD4"
-      port: "D"
+    - port: "D"
       num: 4
-    - id: "PD5"
-      port: "D"
+    - port: "D"
       num: 5
-    - id: "PD6"
-      port: "D"
+    - port: "D"
       num: 6
-    - id: "PD7"
-      port: "D"
+    - port: "D"
       num: 7
-    - id: "PD8"
-      port: "D"
+    - port: "D"
       num: 8
-    - id: "PD9"
-      port: "D"
+    - port: "D"
       num: 9
-    - id: "PD10"
-      port: "D"
+    - port: "D"
       num: 10
-    - id: "PD11"
-      port: "D"
+    - port: "D"
       num: 11
-    - id: "PD12"
-      port: "D"
+    - port: "D"
       num: 12
-    - id: "PD13"
-      port: "D"
+    - port: "D"
       num: 13
-    - id: "PD14"
-      port: "D"
+    - port: "D"
       num: 14
-    - id: "PD15"
-      port: "D"
+    - port: "D"
       num: 15
-    - id: "PE0"
-      port: "E"
+    - port: "E"
       num: 0
-    - id: "PE1"
-      port: "E"
+    - port: "E"
       num: 1
-    - id: "PE2"
-      port: "E"
+    - port: "E"
       num: 2
-    - id: "PE3"
-      port: "E"
+    - port: "E"
       num: 3
-    - id: "PE4"
-      port: "E"
+    - port: "E"
       num: 4
-    - id: "PE5"
-      port: "E"
+    - port: "E"
       num: 5
-    - id: "PE6"
-      port: "E"
+    - port: "E"
       num: 6
-    - id: "PE7"
-      port: "E"
+    - port: "E"
       num: 7
-    - id: "PE8"
-      port: "E"
+    - port: "E"
       num: 8
-    - id: "PE9"
-      port: "E"
+    - port: "E"
       num: 9
-    - id: "PE10"
-      port: "E"
+    - port: "E"
       num: 10
-    - id: "PE11"
-      port: "E"
+    - port: "E"
       num: 11
-    - id: "PE12"
-      port: "E"
+    - port: "E"
       num: 12
-    - id: "PE13"
-      port: "E"
+    - port: "E"
       num: 13
-    - id: "PE14"
-      port: "E"
+    - port: "E"
       num: 14
-    - id: "PE15"
-      port: "E"
+    - port: "E"
       num: 15
-    - id: "PH0"
-      port: "H"
+    - port: "H"
       num: 0
-    - id: "PH1"
-      port: "H"
+    - port: "H"
       num: 1
-    - id: "PH2"
-      port: "H"
+    - port: "H"
       num: 2
