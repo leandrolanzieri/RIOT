@@ -1,0 +1,229 @@
+cpu:
+  information:
+    model: 'stm32l152ve'
+    compatible:
+      - 'stm32l152re'
+      - 'stm32l151re'
+      - 'stm32l151ve'
+    series: 'stm32l1'
+    family: 'stm32'
+    vendor: 'st'
+
+  peripherals:
+    usart:
+      - id: 'usart1'
+        type: 'uart'
+        device: 'USART1'
+        bus: 'APB2'
+        rcc: 'RCC_APB2ENR_USART1EN'
+        irqn: 'USART1_IRQn'
+        isr: 'isr_usart1'
+        tx_dma: 'dma1'
+        tx_dma_stream: 4
+        tx_dma_channel: 2
+        rx_dma: 'dma1'
+        rx_dma_stream: 5
+        rx_dma_channel: 2
+
+      - id: 'usart2'
+        type: 'uart'
+        device: 'USART2'
+        bus: 'APB1'
+        rcc: 'RCC_APB1ENR_USART2EN'
+        irqn: 'USART2_IRQn'
+        isr: 'isr_usart2'
+        tx_dma: 'dma1'
+        tx_dma_stream: 7
+        tx_dma_channel: 2
+        rx_dma: 'dma1'
+        rx_dma_stream: 6
+        rx_dma_channel: 2
+
+
+      - id: 'usart3'
+        type: 'uart'
+        device: 'USART3'
+        bus: 'APB1'
+        rcc: 'RCC_APB1ENR_USART3EN'
+        irqn: 'USART3_IRQn'
+        isr: 'isr_usart3'
+        tx_dma: 'dma1'
+        tx_dma_stream: 2
+        tx_dma_channel: 2
+        rx_dma: 'dma1'
+        rx_dma_stream: 3
+        rx_dma_channel: 2
+
+    dma:
+      - id: 'dma1'
+        type: 'dma'
+        device: 'DMA1'
+
+      - id: 'dma2'
+        type: 'dma'
+        device: 'DMA2'
+
+    spi:
+      - id: 'spi1'
+        type: 'spi'
+        device: 'SPI1'
+        bus: 'APB2'
+        rcc: 'RCC_APB2ENR_SPI1EN'
+        tx_dma: 'dma1'
+        tx_dma_stream: 3
+        tx_dma_channel: 1
+        rx_dma: 'dma1'
+        rx_dma_stream: 2
+        rx_dma_channel: 1
+
+      - id: 'spi2'
+        type: 'spi'
+        device: 'SPI2'
+        bus: 'APB1'
+        rcc: 'RCC_APB1ENR_SPI2EN'
+        tx_dma: 'dma1'
+        tx_dma_stream: 5
+        tx_dma_channel: 1
+        rx_dma: 'dma1'
+        rx_dma_stream: 4
+        rx_dma_channel: 1
+
+    i2c:
+      - id: 'i2c1'
+        type: 'i2c'
+        device: 'I2C1'
+        bus: 'APB1'
+        rcc: 'RCC_APB1ENR_I2C1EN'
+        clk: 'CLOCK_APB1'
+        irqn: 'I2C1_EV_IRQn'
+        isr: 'isr_i2c1_ev'
+        tx_dma: 'dma1'
+        tx_dma_stream: 6
+        tx_dma_channel: 3
+        rx_dma: 'dma1'
+        rx_dma_stream: 7
+        rx_dma_channel: 3
+
+      - id: 'i2c2'
+        type: 'i2c'
+        device: 'I2C2'
+        bus: 'APB1'
+        rcc: 'RCC_APB1ENR_I2C2EN'
+        clk: 'CLOCK_APB1'
+        irqn: 'I2C2_EV_IRQn'
+        isr: 'isr_i2c2_ev'
+        tx_dma: 'dma1'
+        tx_dma_stream: 4
+        tx_dma_channel: 3
+        rx_dma: 'dma1'
+        rx_dma_stream: 5
+        rx_dma_channel: 3
+
+    pinmuxes:
+      usart_pinmux:
+        - periph: 'usart2'
+          tx_pin: 'PA2'
+          rx_pin: 'PA3'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart1'
+          tx_pin: 'PA9'
+          rx_pin: 'PA10'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart1'
+          tx_pin: 'PB6'
+          rx_pin: 'PB7'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart3'
+          tx_pin: 'PB10'
+          rx_pin: 'PB11'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart3'
+          tx_pin: 'PC10'
+          rx_pin: 'PC11'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart2'
+          tx_pin: 'PD5'
+          rx_pin: 'PD6'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+
+        - periph: 'usart3'
+          tx_pin: 'PD8'
+          rx_pin: 'PD9'
+          tx_af: 'GPIO_AF7'
+          rx_af: 'GPIO_AF7'
+        
+      spi_pinmux:
+        - periph: 'spi1'
+          mosi_pin: 'PA7'
+          miso_pin: 'PA6'
+          af: 'GPIO_AF5'
+
+        - periph: 'spi1'
+          mosi_pin: 'PA12'
+          miso_pin: 'PA11'
+          af: 'GPIO_AF5'
+
+        - periph: 'spi1'
+          mosi_pin: 'PB5'
+          miso_pin: 'PB4'
+          af: 'GPIO_AF5'
+
+        - periph: 'spi1'
+          mosi_pin: 'PE15'
+          miso_pin: 'PE14'
+          af: 'GPIO_AF5'
+
+        - periph: 'spi2'
+          mosi_pin: 'PB15'
+          miso_pin: 'PB14'
+          af: 'GPIO_AF5'
+
+        - periph: 'spi2'
+          mosi_pin: 'PD3'
+          miso_pin: 'PD4'
+          af: 'GPIO_AF5'
+
+      i2c_pinmux:
+        - periph: 'i2c1'
+          scl_pin: 'PB6'
+          sda_pin: 'PB7'
+          scl_af: 'GPIO_AF4'
+          sda_af: 'GPIO_AF4'
+
+        - periph: 'i2c1'
+          scl_pin: 'PB8'
+          sda_pin: 'PB9'
+          scl_af: 'GPIO_AF4'
+          sda_af: 'GPIO_AF4'
+
+        - periph: 'i2c2'
+          scl_pin: 'PB10'
+          sda_pin: 'PB11'
+          scl_af: 'GPIO_AF4'
+          sda_af: 'GPIO_AF4'
+
+  pins:
+    {% for port in ['A', 'B', 'C', 'D', 'E'] %}
+    {% for num in range(16) %}
+      - port: '{{ port }}'
+        num: {{ num }}
+    {% endfor %}
+    {% endfor %}
+      - port: 'H'
+        num: 0
+      - port: 'H'
+        num: 1
+      - port: 'H'
+        num: 2
+

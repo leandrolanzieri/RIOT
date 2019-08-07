@@ -64,7 +64,7 @@ class BasePinmux(BaseModel):
         return l
 
 class UsartPinmux(BasePinmux):
-    periph = Periph(Usart, backref='relation')
+    periph = Periph(Usart, backref='pinmux')
     tx_pin = Pin()
     rx_pin = Pin()
     tx_af = AlternateFunction()
@@ -223,22 +223,22 @@ def create_elements(cpu, board):
     for el in cpu['pins']:
         CpuPin.create(**el)
 
-    for el in cpu["usart"]:
+    for el in cpu["peripherals"]["usart"]:
         Usart.create(**el)
 
-    for el in cpu["spi"]:
+    for el in cpu["peripherals"]["spi"]:
         Spi.create(**el)
 
-    for el in cpu["i2c"]:
+    for el in cpu["peripherals"]["i2c"]:
         I2C.create(**el)
 
-    for el in cpu['i2c_pinmux']:
+    for el in cpu["peripherals"]['pinmuxes']['i2c_pinmux']:
         I2CPinmux.create(**el)
 
-    for el in cpu['spi_pinmux']:
+    for el in cpu["peripherals"]['pinmuxes']['spi_pinmux']:
         SpiPinmux.create(**el)
 
-    for el in cpu['usart_pinmux']:
+    for el in cpu["peripherals"]['pinmuxes']['usart_pinmux']:
         UsartPinmux.create(**el)
 
     for el in board['board']['periph_conf']['i2c']:
@@ -250,27 +250,24 @@ def create_elements(cpu, board):
     for el in board['board']['periph_conf']['uart']:
         UsartConfig.create(**el)
     
-    for k, v in board['board']['pin_map'].items():
+    for k, v in board['board']['pinmap'].items():
         for el in v:
             el['connector'] = k
             Pinmap.create(**el)
 
 if __name__ == "__main__":
 
-    with open('stm32l151x6.yml') as stream:
-        try:
-            cpu = yaml.safe_load(stream)
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        lstrip_blocks=True,
+        trim_blocks=True
+    )
+    
+    with open('nucleo-l152re.yml') as stream:
+        board = yaml.safe_load(stream)
 
-        except yaml.YAMLError as exc:
-            print(exc)
-
-    with open('periph_conf.yml') as stream:
-        try:
-            board = yaml.safe_load(stream)
-
-        except yaml.YAMLError as exc:
-            print(exc)
-
+    template_cpu = env.get_template(board['board']['cpu'] + '.yml')
+    cpu = yaml.safe_load(template_cpu.render())['cpu']
     create_tables()
     create_elements(cpu, board)
 
@@ -293,18 +290,15 @@ if __name__ == "__main__":
               .join(Pinout, JOIN.LEFT_OUTER, on=(Pinmap.pin == Pinout.pin)).dicts()
 
     for el in q:
+        # remove None values so they don't get printed
+        if el['F'] is None:
+            del el['F']
+
         if not board.get(el['connector']):
             # Connector numbering starts with 1 in boards, so we add padding
             board[el['connector']] = [None, el]
         else:
             board[el['connector']].append(el)
-
-    env = Environment(
-        loader=FileSystemLoader('.'),
-        lstrip_blocks=True,
-        trim_blocks=True,
-        autoescape=select_autoescape(['xml', 'html'])
-    )
 
     template_board = env.get_template('Nucleo-64_nv_plain.svg')
 
