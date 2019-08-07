@@ -5,6 +5,7 @@ import yaml
 from peewee import *
 import peewee
 from playhouse.shortcuts import *
+from dts.stm32.stm32l1 import *
 
 
 db = SqliteDatabase(':memory:')
@@ -161,7 +162,7 @@ if __name__ == "__main__":
         trim_blocks=True
     )
 
-    with open('board.yml') as stream:
+    with open(os.environ['RIOTBOARD'] + 'board.yml') as stream:
         board = yaml.safe_load(stream)
 
     template_cpu = env.get_template(board['board']['cpu'])

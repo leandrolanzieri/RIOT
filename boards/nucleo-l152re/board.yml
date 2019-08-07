@@ -1,6 +1,6 @@
 board:
   name: 'Nucleo L152RE'
-  cpu: 'stm32l152re'
+  cpu: 'stm32/stm32l1/stm32l152re/stm32l152re.yml'
   description: >
     STM32 Nucleo-64 development board with STM32L152RE MCU, supports Arduino
     and ST morpho connectivity
