@@ -1,8 +1,7 @@
-from lwd import *
+from dts import base
 from peewee import *
-import peewee
 
-class Usart(BaseModel):
+class Usart(base.BaseModel):
     type = CharField()
     device = CharField()
     bus = CharField()
@@ -16,20 +15,14 @@ class Usart(BaseModel):
     rx_dma_stream = CharField()
     rx_dma_channel = CharField()
 
-class UsartPinmux(BasePinmux):
-    periph = Periph(Usart, backref='pinmux')
-    tx_pin = Pin()
-    rx_pin = Pin()
-    tx_af = AlternateFunction()
-    rx_af = AlternateFunction()
+class UsartPinmux(base.BasePinmux):
+    periph = base.Periph(Usart)
+    tx = base.Pin()
+    rx = base.Pin()
+    tx_af = base.AlternateFunction()
+    rx_af = base.AlternateFunction()
 
-    def get_label(self):
-        return "{}_tx_{}_{}_rx_{}_{}".format(
-                self.periph,
-                self.tx_pin.port, self.tx_pin.num,
-                self.rx_pin.port, self.rx_pin.num).lower()
-
-class Spi(BaseModel):
+class Spi(base.BaseModel):
     type = CharField()
     device = CharField()
     bus = CharField()
@@ -41,19 +34,14 @@ class Spi(BaseModel):
     rx_dma_stream = CharField()
     tx_dma_channel = CharField()
 
-class SpiPinmux(BasePinmux):
+class SpiPinmux(base.BasePinmux):
     periph = ForeignKeyField(Spi)
-    mosi_pin = Pin()
-    miso_pin = Pin()
+    mosi = base.Pin()
+    miso = base.Pin()
+    sck = base.Pin()
     af = CharField()
 
-    def get_label(self):
-        return "{}_mosi_{}_{}_miso_{}_{}".format(
-                self.periph,
-                self.mosi_pin.port, self.mosi_pin.num,
-                self.miso_pin.port, self.miso_pin.num).lower()
-
-class I2C(BaseModel):
+class I2C(base.BaseModel):
     type = CharField()
     device = CharField()
     bus = CharField()
@@ -68,36 +56,30 @@ class I2C(BaseModel):
     rx_dma_stream = CharField()
     rx_dma_channel = CharField()
 
-class I2CPinmux(BasePinmux):
+class I2CPinmux(base.BasePinmux):
     periph = ForeignKeyField(I2C)
-    scl_pin = Pin()
-    sda_pin = Pin()
+    scl = base.Pin()
+    sda = base.Pin()
     scl_af = CharField()
     sda_af = CharField()
 
-    def get_label(self):
-        return "{}_scl_{}_{}_sda_{}_{}".format(
-                self.periph,
-                self.scl_pin.port, self.scl_pin.num,
-                self.sda_pin.port, self.sda_pin.num).lower()
-
-class Dma(BaseModel):
+class Dma(base.BaseModel):
     type = CharField()
     device = CharField()
 
-class I2CConfig(BasePinmuxConfig):
+class I2CConfig(base.BasePinmuxConfig):
     pinmux = ForeignKeyField(I2CPinmux)
     speed = CharField()
 
-class UsartConfig(BasePinmuxConfig):
+class UsartConfig(base.BasePinmuxConfig):
     pinmux = ForeignKeyField(UsartPinmux)
 
-class SpiConfig(BasePinmuxConfig):
+class SpiConfig(base.BasePinmuxConfig):
     pinmux = ForeignKeyField(SpiPinmux)
-    cs_pin = Pin()
+    cs = base.Pin()
 
     def get_pins(self):
-        l = [{'pin':self.cs_pin, 'function':'cs_pin'}]
+        l = [{'pin':self.cs, 'function':'cs'}]
         l.extend(self.pinmux.get_pins())
         for p in l:
             p['config_group'] = self.config_group

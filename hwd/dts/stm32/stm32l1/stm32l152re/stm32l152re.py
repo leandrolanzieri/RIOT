@@ -1,1 +1,1 @@
-from ...Periph import *
+from dts.stm32.Periph import *

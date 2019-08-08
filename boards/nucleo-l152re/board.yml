@@ -7,13 +7,13 @@ board:
   periph_conf:
     spi:
       - pinmux: 
-          id: 'spi1_mosi_a_7_miso_a_6'
-        cs_pin: 'PC7'
+          id: 'spi1_miso_a_6_mosi_a_7'
+        cs: 'PC7'
     uart: 
       - pinmux:
-          id: 'usart2_tx_a_2_rx_a_3'
+          id: 'usart2_rx_a_3_tx_a_2'
       - pinmux:
-          id: 'usart3_tx_b_10_rx_b_11'
+          id: 'usart3_rx_b_11_tx_b_10'
     i2c:
       - pinmux:
           id: 'i2c1_scl_b_8_sda_b_9'
