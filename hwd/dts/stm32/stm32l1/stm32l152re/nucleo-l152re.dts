@@ -1,0 +1,21 @@
+/dts-v1/;
+#include "stm32l152re.dtsi"
+
+/ {
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        cpu0: cpu@0 {
+            reg = <0>;
+            shell = <&usart1>;
+        };
+    };
+};
+
+&usart1 {
+    status = "okay";
+    rx = <&gpioa 9>;
+    tx = <&gpioa 10>;
+    tx_af = "GPIO_AF7";
+    rx_af = "GPIO_AF7";
+};

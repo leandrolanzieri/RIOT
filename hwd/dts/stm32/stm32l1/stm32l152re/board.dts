@@ -1,0 +1,68 @@
+/dts-v1/;
+/ {
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        usart1: usart@40013800 {
+            reg = <0x40013800 0x400>;
+            device = "USART1";
+            bus = "APB2";
+            rcc = "RCC_APB2ENR_USART1EN";
+            interrupts = <37>;
+            isr = "isr_usart1";
+            dmas = <&dma1 4 2>,
+                   <&dma1 5 2>;
+            dma-names = "tx", "rx";
+            status = "disabled";
+        };
+        usart2: usart@40004400 {
+            reg = <0x40004400 0x400>;
+            device = "USART2";
+            bus = "APB1";
+            rcc = "RCC_APB1ENR_USART2EN";
+            interrupts = <38>;
+            isr = "isr_usart2";
+            tx_dma = <&dma1 7 2>;
+            rx_dma = <&dma1 6 2>;
+            status = "disabled";
+        };
+        pinctrl: pin-controller@40020000 {
+            #address-cells = <1>;
+            #size-cells = <1>;
+            reg = <0x40020000 0x2000>;
+            gpioa: gpio@40020000 {
+                reg = <0x40020000 0x400>;
+                gpio-controller;
+                #gpio-cells = <1>;
+                label = "PA";
+            };
+        };
+        dma1: dma@40026000 {
+            reg = <0x40026000 0x400>;
+            device = "DMA1";
+            #dma-cells = <2>;
+        };
+        dma2: dma@40026400 {
+            reg = <0x40026400 0x400>;
+            device = "DMA2";
+            #dma-cells = <2>;
+        };
+    };
+};
+/ {
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        cpu0: cpu@0 {
+            reg = <0>;
+            shell = <&usart1>;
+        };
+    };
+};
+&usart1 {
+    status = "okay";
+    rx = <&gpioa 9>;
+    tx = <&gpioa 10>;
+    tx_af = "GPIO_AF7";
+    rx_af = "GPIO_AF7";
+};
