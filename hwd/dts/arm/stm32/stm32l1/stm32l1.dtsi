@@ -1,0 +1,145 @@
+#include "../../armv7-m.dtsi"
+
+/ {
+    soc {
+#ifdef HAS_SPI2
+        spi2: spi@40003800 {
+            reg = <0x40003800 0x400>;
+            device = "SPI2";
+            rcc = <&rcc 1 (1<<14)>;
+            interrupts = <36>;
+            tx-dma = <&dma1 5 1>;
+            rx-dma = <&dma1 4 1>;
+            status = "disabled";
+        };
+#endif /* HAS_SPI2 */
+
+#ifdef HAS_SPI3
+        spi3: spi@40003c00 {
+            reg = <0x4000c00 0x400>;
+            device = "SPI3";
+            rcc = <&rcc 1 (1<<15)>;
+            interrupts = <46>;
+            tx-dma = <&dma2 2 0>;
+            rx-dma = <&dma2 1 0>;
+            status = "disabled";
+        };
+#endif /* HAS_SPI3 */
+
+#ifdef HAS_USART2
+        usart2: usart@40004400 {
+            reg = <0x40004400 0x400>;
+            device = "USART2";
+            rcc =  <&rcc 1 (1<<17)>;
+            interrupts =  <38>;
+            isr =  "isr_usart2";
+            tx-dma = <&dma1 7 2>;
+            rx-dma = <&dma1 6 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART2 */
+
+#ifdef HAS_USART3
+        usart3: usart@40004800 {
+            reg = <0x40004800 0x400>;
+            device = "UART3";
+            rcc =  <&rcc 1 (1<<18)>;
+            interrupts = <39>;
+            isr = "isr_usart3";
+            tx-dma = <&dma1 2 2>;
+            rx-dma = <&dma1 3 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART3 */
+
+#ifdef HAS_USART4
+        usart4: usart@40004c00 {
+            reg = <0x40004c00 0x400>;
+            device = "UART4";
+            rcc =  <&rcc 1 (1<<19)>;
+            interrupts = <48>;
+            isr = "isr_usart4";
+            tx-dma = <&dma2 5 1>;
+            rx-dma = <&dma2 3 1>;
+            status = "disabled";
+        };
+#endif /* HAS_USART4 */
+
+#ifdef HAS_USART5
+        usart5: usart@40005000 {
+            reg = <0x40005000 0x400>;
+            device = "UART5";
+            rcc =  <&rcc 1 (1<<20)>;
+            interrupts = <49>;
+            isr = "isr_usart5";
+            tx-dma = <&dma1 1 2>;
+            rx-dma = <&dma1 2 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART5 */
+
+#ifdef HAS_SPI1
+        spi1: spi@40013000 {
+            reg = <0x40013000 0x400>;
+            device = "SPI1";
+            rcc = <&rcc 2 (1<<12)>;
+            interrupts = <35>;
+            tx-dma = <&dma1 3 1>;
+            rx-dma = <&dma1 2 1>;
+            status = "disabled";
+        };
+#endif /* HAS_SPI1 */
+
+#ifdef HAS_USART1
+        usart1: usart@40013800 {
+            reg = <0x40013800 0x400>;
+            device = "USART1";
+            rcc = <&rcc 2 (1<<14)>;
+            interrupts =  <37>;
+            isr = "isr_usart1";
+            tx-dma = <&dma1 4 2>;
+            rx-dma = <&dma1 5 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART1 */
+
+        pinctrl: pin-controller@40020000 {
+            #address-cells = <1>;
+            #size-cells = <1>;
+            reg = <0x40020000 0x2000>;
+
+            gpioa: gpio@40020000 {
+                reg = <0x40020000 0x400>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                label = "PA";
+            };
+
+        };
+
+        rcc: rcc@40023800 {
+            reg = <0x40023800 0x400>;
+            /* bus, bit */
+            #clock-cells = <2>;
+        };
+
+#ifdef HAS_DMA1
+        dma1: dma@40026000 {
+            reg = <0x40026000 0x400>;
+            device = "DMA1";
+            /* stream, channel */
+            #dma-cells = <2>;
+        };
+#endif /* HAS_DMA1 */
+
+#ifdef HAS_DMA2
+        dma2: dma@40026400 {
+            reg = <0x40026400 0x400>;
+            device = "DMA2";
+            /* stream, channel */
+            #dma-cells = <2>;
+        };
+#endif /* HAS_DMA2 */
+
+    };
+};

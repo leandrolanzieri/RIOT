@@ -1,0 +1,12 @@
+#define HAS_USART1
+#define HAS_USART2
+#define HAS_USART3
+
+#define HAS_SPI1
+#define HAS_SPI2
+#define HAS_SPI3
+
+#define HAS_DMA1
+#define HAS_DMA2
+
+#include "../stm32l1.dtsi"

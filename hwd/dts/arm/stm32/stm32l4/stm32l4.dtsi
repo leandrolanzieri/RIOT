@@ -1,0 +1,108 @@
+#include "../../armv7-m.dtsi"
+
+/ {
+    soc {
+
+#ifdef HAS_SPI2
+        spi2: spi@40003800 {
+            reg = <0x40003800 0x400>;
+            device = "SPI2";
+            rcc = <&rcc 1 (1<<14)>;
+            interrupts = <36>;
+            tx-dma = <&dma1 5 1>;
+            rx-dma = <&dma1 4 1>;
+            status = "disabled";
+        };
+#endif /* HAS_SPI2 */
+
+#ifdef HAS_SPI3
+        spi3: spi@40003c00 {
+            reg = <0x40003c00 0x400>;
+            device = "SPI3";
+            rcc = <&rcc 1 (1<<15)>;
+            interrupts = <51>;
+            tx-dma = <&dma2 2 3>;
+            rx-dma = <&dma1 1 3>;
+            status = "disabled";
+        };
+#endif /* HAS_SPI3 */
+
+
+#ifdef HAS_USART2
+        usart2: usart@40004400 {
+            reg = <0x40004400 0x400>;
+            device = "USART2";
+            rcc =  <&rcc 1 (1<<17)>;
+            interrupts =  <38>;
+            isr =  "isr_usart2";
+            tx-dma = <&dma1 7 2>;
+            rx-dma = <&dma1 6 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART2 */
+
+#ifdef HAS_USART3
+        usart3: usart@40004800 {
+            reg = <0x40004800 0x400>;
+            device = "UART3";
+            bus = "APB1";
+            rcc =  <&rcc 1 (1<<18)>;
+            interrupts = <39>;
+            isr = "isr_usart3";
+            tx-dma = <&dma1 2 2>;
+            rx-dma = <&dma1 3 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART3 */
+
+
+#ifdef HAS_USART4
+        usart4: usart@40004c00 {
+            reg = <0x40004c00 0x400>;
+            device = "UART4";
+            rcc =  <&rcc 1 (1<<19)>;
+            interrupts = <52>;
+            isr = "isr_usart4";
+            tx-dma = <&dma2 3 2>;
+            rx-dma = <&dma2 5 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART4 */
+
+#ifdef HAS_USART5
+        usart5: usart@40005000 {
+            reg = <0x40005000 0x400>;
+            device = "UART5";
+            rcc =  <&rcc 1 (1<<20)>;
+            interrupts = <53>;
+            isr = "isr_usart5";
+            tx-dma = <&dma1 1 2>;
+            rx-dma = <&dma1 2 2>;
+            status = "disabled";
+        };
+#endif /* HAS_USART5 */
+
+#ifdef HAS_I2C1
+        i2c1: i2c@40005400 {
+            reg = <0x40005400 0x400>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            device = "I2C1";
+            rcc = <&rcc 1 (1<<21)>;
+            interrupts = <31>;
+            isr = "i2c_i2c1_ev";
+            tx-dma = <&dma1 6 3>;
+            rx-dma = <&dma1 7 3>;
+            // NOTE: does this go here??
+            speed = "I2C_SPEED_NORMAL";
+            status = "disabled";
+        };
+#endif /* HAS_I2C1 */
+
+        rcc: rcc@40021000 {
+            reg = <0x40021000 0x400>;
+            /* bus, bit */
+            #clock-cells = <2>;
+        };
+    };
+};

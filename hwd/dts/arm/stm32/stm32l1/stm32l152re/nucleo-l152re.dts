@@ -7,15 +7,18 @@
         #size-cells = <0>;
         cpu0: cpu@0 {
             reg = <0>;
-            shell = <&usart1>;
         };
+    };
+};
+
+&pinctrl {
+    usart1_rx_a_10_tx_a_9: usart1-rx-a-10-tx-a-9 {
+        rx = <&gpioa 10 7>;
+        tx = <&gpioa 9 7>;
     };
 };
 
 &usart1 {
     status = "okay";
-    rx = <&gpioa 9>;
-    tx = <&gpioa 10>;
-    tx_af = "GPIO_AF7";
-    rx_af = "GPIO_AF7";
+    pinctrl = <&usart1_rx_a_10_tx_a_9>;
 };

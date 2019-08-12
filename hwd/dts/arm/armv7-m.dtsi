@@ -1,0 +1,14 @@
+/ {
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        interrupt-parent = <&nvic>;
+
+        nvic: interrupt-controller@e000e100  {
+            reg = <0xe000e100 0xc00>;
+            interrupt-controller;
+            #interrupt-cells = <1>;
+        };
+
+    };
+};

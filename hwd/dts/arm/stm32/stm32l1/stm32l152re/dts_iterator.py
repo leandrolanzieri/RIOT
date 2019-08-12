@@ -4,11 +4,8 @@ import peewee
 
 db = SqliteDatabase(':memory:')
 
-classes = {'usart', Usart}
-
 class Usart(Model):
     device = CharField()
-    bus = CharField()
     rcc = CharField()
     interrupts = CharField()
     isr = CharField()
