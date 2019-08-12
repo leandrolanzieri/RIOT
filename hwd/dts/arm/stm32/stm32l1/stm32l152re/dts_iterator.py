@@ -2,6 +2,7 @@ import fdt
 from peewee import *
 import peewee
 import re
+import ruamel.yaml as yaml
 
 db = SqliteDatabase(':memory:')
 
@@ -24,6 +25,25 @@ def node(cells=[]):
 class BaseModel(Model):
     class Meta:
         database = db
+
+class NodeModel(BaseModel):
+    id = CharField(primary_key=True)
+
+    class Meta:
+        database = db
+
+    @property
+    def pins(self):
+        if not getattr(self, 'pinctrl', None):
+            return {}
+
+        l = {}
+        for k,v in self.pinctrl.parent._meta.fields.items():
+            if isinstance(v, Cell):
+                l[k] = getattr(self.pinctrl.parent, k)
+
+        return l
+            
 
 class Cell(ForeignKeyField):
     def __init__(self, model, **kwargs):
@@ -59,13 +79,14 @@ class Gpio(BaseModel):
     label = CharField()
 
 @node()
-class UsartPinctrl(BaseModel):
-    id = CharField(primary_key=True)
+class UsartPinctrl(NodeModel):
+    class Node:
+        pass
     tx = Cell(Gpio)
     rx = Cell(Gpio)
 
 @node()
-class Usart(BaseModel):
+class Usart(NodeModel):
     id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
@@ -77,7 +98,7 @@ class Usart(BaseModel):
     pinctrl = Cell(UsartPinctrl, null=True)
 
 @node()
-class SpiPinctrl(BaseModel):
+class SpiPinctrl(NodeModel):
     id = CharField(primary_key=True)
     miso = Cell(Gpio)
     mosi = Cell(Gpio)
@@ -85,7 +106,7 @@ class SpiPinctrl(BaseModel):
     cs = Cell(Gpio, null=True)
 
 @node()
-class Spi(BaseModel):
+class Spi(NodeModel):
     id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
@@ -96,13 +117,13 @@ class Spi(BaseModel):
     pinctrl = Cell(SpiPinctrl, null=True)
 
 @node()
-class I2CPinctrl(BaseModel):
+class I2CPinctrl(NodeModel):
     id = CharField(primary_key=True)
     sda = Cell(Gpio)
     scl = Cell(Gpio)
 
 @node()
-class I2C(BaseModel):
+class I2C(NodeModel):
     id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
@@ -150,6 +171,26 @@ class Entry:
 phandles = tree.search('phandle')
 
 db.create_tables([Phandle])
+class Pinmap(Model):
+    id = AutoField()
+    label = CharField()
+    pin = CharField()
+    connector = CharField()
+
+    @property
+    def L(self):
+        return self.label
+
+    class Meta:
+        database = db
+
+db.create_tables([Pinmap])
+with open('board.yml') as stream:
+    board = yaml.safe_load(stream)
+for k, v in board['board']['pinmap'].items():
+    for el in v:
+        el['connector'] = k
+        Pinmap.create(**el)
 
 phs = {}
 for p in phandles:
@@ -163,23 +204,35 @@ for w in tree.walk():
     path = w[0]
     Entry.get_model(path)
 
-print(db.get_tables())
-print("== All USARTs ==")
-for u in Usart.select():
-    print(u.device)
-    print(u.interrupts)
+#print(db.get_tables())
+#print("== All USARTs ==")
+#for u in Usart.select():
+#    print(u.device)
+#    print(u.interrupts)
+#
+#print("\n== All active USARTs ==")
+#for u in Usart.select().where(Usart.status == 'okay'):
+#    print(u.device)
+#    print(u.status)
+#    print(u.pins)
+#
+#for u in Spi.select().where(Spi.status == 'okay'):
+#    print(u.device)
+#    print(u.status)
+#    print(u.pins)
+#
+#for u in I2C.select().where(I2C.status == 'okay'):
+#    print(u.device)
+#    print(u.status)
+#    print(u.pins)
 
-print("\n== All active USARTs ==")
-for u in Usart.select().where(Usart.status == 'okay'):
-    print(u.device)
-    print(u.status)
-    print(u.pinctrl.parent.tx)
+def get_pin_label(gpio_cell):
+    return "{}{}".format(gpio_cell.parent.label, gpio_cell.num)
 
-for u in Spi.select().where(Spi.status == 'okay'):
-    print(u.device)
-    print(u.status)
-
-for u in I2C.select().where(I2C.status == 'okay'):
-    print(u.device)
-    print(u.status)
+for p in tree.get_node("/chosen").props:
+    config_group = p.name.split(",")[1].upper()
+    path = Phandle.get(id=p.data[0]).url
+    model = Entry.get_model(path)
+    for k,v in model.pins.items():
+        print("{}.{}={}".format(config_group, k, get_pin_label(v)))
 

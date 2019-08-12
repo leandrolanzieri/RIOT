@@ -9,6 +9,11 @@
             reg = <0>;
         };
     };
+
+    chosen {
+        riot,uart0 = <&usart1>;
+        riot,uart1 = <&usart2>;
+    };
 };
 
 &pinctrl {
@@ -23,8 +28,17 @@
     pinctrl = <&usart1_rx_a_10_tx_a_9>;
 };
 
+&pinctrl {
+    spi1_miso_a1_mosi_a2_sck_a3: spipinctrl@a1a2a3 {
+        miso = <&gpioa 1 5>;
+        mosi = <&gpioa 2 5>;
+        sck = <&gpioa 3 5>;
+        cs = <&gpioa 4 5>;
+    };
+};
 &spi1 {
     status = "okay";
+    pinctrl = <&spi1_miso_a1_mosi_a2_sck_a3>;
 };
 
 &i2c1 {
