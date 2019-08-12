@@ -1,6 +1,8 @@
 #define HAS_USART1
 #define HAS_USART2
 #define HAS_USART3
+#define HAS_USART4
+#define HAS_USART5
 
 #define HAS_SPI1
 #define HAS_SPI2

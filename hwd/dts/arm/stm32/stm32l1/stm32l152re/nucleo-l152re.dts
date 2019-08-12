@@ -12,7 +12,7 @@
 };
 
 &pinctrl {
-    usart1_rx_a_10_tx_a_9: usart1-rx-a-10-tx-a-9 {
+    usart1_rx_a_10_tx_a_9: usartpinctrl@a9a10 {
         rx = <&gpioa 10 7>;
         tx = <&gpioa 9 7>;
     };
@@ -21,4 +21,12 @@
 &usart1 {
     status = "okay";
     pinctrl = <&usart1_rx_a_10_tx_a_9>;
+};
+
+&spi1 {
+    status = "okay";
+};
+
+&i2c1 {
+    status = "okay";
 };

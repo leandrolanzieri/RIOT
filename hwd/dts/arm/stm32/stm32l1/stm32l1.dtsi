@@ -102,6 +102,20 @@
             status = "disabled";
         };
 #endif /* HAS_USART1 */
+        i2c1: i2c@40005400 {
+            reg = <0x40005400 0x400>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            device = "I2C1";
+            rcc = <&rcc 1 (1<<21)>;
+            interrupts = <31>;
+            isr = "i2c_i2c1_ev";
+            tx-dma = <&dma1 6 3>;
+            rx-dma = <&dma1 7 3>;
+            // NOTE: does this go here??
+            speed = "I2C_SPEED_NORMAL";
+            status = "disabled";
+        };
 
         pinctrl: pin-controller@40020000 {
             #address-cells = <1>;
