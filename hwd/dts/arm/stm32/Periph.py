@@ -1,86 +1,81 @@
 from dts import base
+from dts.base import pinmux
 from peewee import *
 
 class Usart(base.BaseModel):
-    type = CharField()
-    device = CharField()
-    bus = CharField()
-    rcc = CharField()
-    irqn = CharField()
-    isr = CharField()
-    tx_dma = CharField()
-    tx_dma_stream = CharField()
-    tx_dma_channel = CharField()
-    rx_dma = CharField()
-    rx_dma_stream = CharField()
-    rx_dma_channel = CharField()
+    type = base.Macro()
+    device = base.Macro()
+    bus = base.Macro()
+    rcc = base.Macro()
+    irqn = base.Macro()
+    isr = base.Macro()
+    tx_dma = base.Macro()
+    tx_dma_stream = base.Macro()
+    tx_dma_channel = base.Macro()
+    rx_dma = base.Macro()
+    rx_dma_stream = base.Macro()
+    rx_dma_channel = base.Macro()
 
+@pinmux(Usart)
 class UsartPinmux(base.BasePinmux):
-    periph = base.Periph(Usart)
     tx = base.Pin()
     rx = base.Pin()
     tx_af = base.AlternateFunction()
     rx_af = base.AlternateFunction()
 
 class Spi(base.BaseModel):
-    type = CharField()
-    device = CharField()
-    bus = CharField()
-    rcc = CharField()
-    tx_dma = CharField()
-    tx_dma_stream = CharField()
-    tx_dma_channel = CharField()
-    rx_dma = CharField()
-    rx_dma_stream = CharField()
-    tx_dma_channel = CharField()
+    type = base.Macro()
+    device = base.Macro()
+    bus = base.Macro()
+    rcc = base.Macro()
+    tx_dma = base.Macro()
+    tx_dma_stream = base.Macro()
+    tx_dma_channel = base.Macro()
+    rx_dma = base.Macro()
+    rx_dma_stream = base.Macro()
+    tx_dma_channel = base.Macro()
 
+@pinmux(Spi)
 class SpiPinmux(base.BasePinmux):
-    periph = ForeignKeyField(Spi)
     mosi = base.Pin()
     miso = base.Pin()
-    sck = base.Pin()
-    af = CharField()
+    #sck = base.Pin()
+    af = base.Macro()
 
 class I2C(base.BaseModel):
-    type = CharField()
-    device = CharField()
-    bus = CharField()
-    rcc = CharField()
-    clk = CharField()
-    irqn = CharField()
-    isr = CharField()
-    tx_dma = CharField()
-    tx_dma_stream = CharField()
-    tx_dma_channel = CharField()
-    rx_dma = CharField()
-    rx_dma_stream = CharField()
-    rx_dma_channel = CharField()
+    type = base.Macro()
+    device = base.Macro()
+    bus = base.Macro()
+    rcc = base.Macro()
+    clk = base.Macro()
+    irqn = base.Macro()
+    isr = base.Macro()
+    tx_dma = base.Macro()
+    tx_dma_stream = base.Macro()
+    tx_dma_channel = base.Macro()
+    rx_dma = base.Macro()
+    rx_dma_stream = base.Macro()
+    rx_dma_channel = base.Macro()
 
+@pinmux(I2C)
 class I2CPinmux(base.BasePinmux):
-    periph = ForeignKeyField(I2C)
     scl = base.Pin()
     sda = base.Pin()
-    scl_af = CharField()
-    sda_af = CharField()
+    scl_af = base.Macro()
+    sda_af = base.Macro()
 
 class Dma(base.BaseModel):
-    type = CharField()
-    device = CharField()
+    type = base.Macro()
+    device = base.Macro()
 
 class I2CConfig(base.BasePinmuxConfig):
-    pinmux = ForeignKeyField(I2CPinmux)
-    speed = CharField()
+    pinmux = base.Pinmux(I2CPinmux)
+    speed = base.Macro()
 
 class UsartConfig(base.BasePinmuxConfig):
-    pinmux = ForeignKeyField(UsartPinmux)
+    pinmux = base.Pinmux(UsartPinmux)
 
 class SpiConfig(base.BasePinmuxConfig):
-    pinmux = ForeignKeyField(SpiPinmux)
+    pinmux = base.Pinmux(SpiPinmux)
     cs = base.Pin()
 
-    def get_pins(self):
-        l = [{'pin':self.cs, 'function':'cs'}]
-        l.extend(self.pinmux.get_pins())
-        for p in l:
-            p['config_group'] = self.config_group
-        return l

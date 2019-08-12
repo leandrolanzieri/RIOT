@@ -164,7 +164,6 @@ cpu:
         - periph: 'spi1'
           mosi: 'PA7'
           miso: 'PA6'
-          sck: 'PA5'
           af: 'GPIO_AF5'
 
         - periph: 'spi1'
@@ -175,7 +174,6 @@ cpu:
         - periph: 'spi1'
           mosi: 'PB5'
           miso: 'PB4'
-          sck: 'PB3'
           af: 'GPIO_AF5'
 
         - periph: 'spi1'
@@ -186,7 +184,6 @@ cpu:
         - periph: 'spi2'
           mosi: 'PB15'
           miso: 'PB14'
-          sck: 'PB13'
           af: 'GPIO_AF5'
 
         - periph: 'spi2'
