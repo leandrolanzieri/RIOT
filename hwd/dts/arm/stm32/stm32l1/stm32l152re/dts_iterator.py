@@ -3,10 +3,11 @@ from peewee import *
 import peewee
 import re
 import ruamel.yaml as yaml
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 db = SqliteDatabase(':memory:')
 
-_periphs = {}
+_nodes = {}
 def node(cells=[]):
     def inner(cls):
         d = {"CELLS": cells, "parent":ForeignKeyField(cls)}
@@ -18,8 +19,39 @@ def node(cells=[]):
 
         db.create_tables([__cls])
         setattr(cls, __cls.__name__, __cls)
-        _periphs[cls.__name__.lower()] = cls
+        _nodes[cls.__name__.lower()] = cls
         return cls
+    return inner
+
+def has_pinctrl(pins=[]):
+    @property
+    def _pins(self):
+        l = []
+        for k,v in self.pinctrl.parent._meta.fields.items():
+            if isinstance(v, Cell):
+                cell = getattr(self.pinctrl.parent, k)
+                l.append({'pin': "{}{}" .format(cell.parent.label, cell.num), 'function': k})
+        return l
+
+    def inner(cls):
+        d = {}
+        for p in pins:
+            d[p] = Cell(Gpio)
+        __cls = type("{}Pinctrl".format(cls.__name__), (NodeModel,), d)
+
+        # decorate the pinctrl class so that it has a cell type
+        decorator = node([])
+        __cls = decorator(__cls)
+
+        db.create_tables([__cls])
+
+        setattr(cls, __cls.__name__, __cls)
+        setattr(cls, 'pins', _pins)
+        cell = Cell(__cls, null=True)
+        cls._meta.add_field('pinctrl', cell)
+
+        return cls
+
     return inner
 
 class BaseModel(Model):
@@ -28,22 +60,6 @@ class BaseModel(Model):
 
 class NodeModel(BaseModel):
     id = CharField(primary_key=True)
-
-    class Meta:
-        database = db
-
-    @property
-    def pins(self):
-        if not getattr(self, 'pinctrl', None):
-            return {}
-
-        l = {}
-        for k,v in self.pinctrl.parent._meta.fields.items():
-            if isinstance(v, Cell):
-                l[k] = getattr(self.pinctrl.parent, k)
-
-        return l
-            
 
 class Cell(ForeignKeyField):
     def __init__(self, model, **kwargs):
@@ -54,22 +70,19 @@ class Cell(ForeignKeyField):
             val = value[0]
         except:
             value = [value]
-        path = Phandle.get(id=value[0]).url
+        path = Phandle.get(id=value[0]).path
         model = Entry.get_model(path)
         args = dict(zip(self.rel_model.CELLS, value[1:]))
         return super().db_value(self.rel_model.create(parent=model, **args).id)
 
-class Phandle(Model):
+class Phandle(BaseModel):
     id = CharField(primary_key=True)
-    url = CharField()
-    class Meta:
-        database = db
+    path = CharField()
 
 ###############################################################################
 
 @node(cells=['stream', 'channel'])
-class Dma(Model):
-    id = CharField(primary_key=True)
+class Dma(NodeModel):
     device = CharField()
     class Meta:
         database = db
@@ -79,15 +92,8 @@ class Gpio(BaseModel):
     label = CharField()
 
 @node()
-class UsartPinctrl(NodeModel):
-    class Node:
-        pass
-    tx = Cell(Gpio)
-    rx = Cell(Gpio)
-
-@node()
+@has_pinctrl(['tx', 'rx'])
 class Usart(NodeModel):
-    id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
     interrupts = CharField()
@@ -95,36 +101,20 @@ class Usart(NodeModel):
     status = CharField()
     tx_dma = Cell(Dma, column_name="tx-dma")
     rx_dma = Cell(Dma, column_name="rx-dma")
-    pinctrl = Cell(UsartPinctrl, null=True)
 
 @node()
-class SpiPinctrl(NodeModel):
-    id = CharField(primary_key=True)
-    miso = Cell(Gpio)
-    mosi = Cell(Gpio)
-    sck = Cell(Gpio)
-    cs = Cell(Gpio, null=True)
-
-@node()
+@has_pinctrl(['miso', 'mosi', 'sck', 'cs'])
 class Spi(NodeModel):
-    id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
     interrupts = CharField()
     status = CharField()
     tx_dma = Cell(Dma, column_name="tx-dma")
     rx_dma = Cell(Dma, column_name="rx-dma")
-    pinctrl = Cell(SpiPinctrl, null=True)
 
 @node()
-class I2CPinctrl(NodeModel):
-    id = CharField(primary_key=True)
-    sda = Cell(Gpio)
-    scl = Cell(Gpio)
-
-@node()
+@has_pinctrl(['sda', 'scl'])
 class I2C(NodeModel):
-    id = CharField(primary_key=True)
     device = CharField()
     rcc = CharField()
     interrupts = CharField()
@@ -132,9 +122,9 @@ class I2C(NodeModel):
     status = CharField()
     tx_dma = Cell(Dma, column_name="tx-dma")
     rx_dma = Cell(Dma, column_name="rx-dma")
-    pinctrl = Cell(I2CPinctrl, null=True)
     speed = CharField()
 
+###############################################################################
 
 dtb_data = open('board.dtb', 'rb').read()
 tree = fdt.parse_dtb(dtb_data)
@@ -149,7 +139,7 @@ class Entry:
 
         model_type = m[1]
         model_id = m[2]
-        model_class = _periphs.get(model_type, None)
+        model_class = _nodes.get(model_type, None)
 
         if not model_class:
             return None
@@ -175,7 +165,7 @@ class Pinmap(Model):
     id = AutoField()
     label = CharField()
     pin = CharField()
-    connector = CharField()
+    group = CharField()
 
     @property
     def L(self):
@@ -184,55 +174,79 @@ class Pinmap(Model):
     class Meta:
         database = db
 
+class Pinout(Model):
+    pin = CharField(primary_key=True)
+    function = CharField()
+    config_group = CharField()
+
+    class Meta:
+        database = db
+
+    @classmethod
+    def bulk_from_dict(cls, dictionary):
+        cls._meta.database.create_tables([cls])
+        for el in dictionary:
+            cls.create(**el)
+
 db.create_tables([Pinmap])
+db.create_tables([Pinout])
+
 with open('board.yml') as stream:
     board = yaml.safe_load(stream)
 for k, v in board['board']['pinmap'].items():
     for el in v:
-        el['connector'] = k
+        el['group'] = k
         Pinmap.create(**el)
 
 phs = {}
 for p in phandles:
-    Phandle.create(id=p.data[0], url=p.path)
+    Phandle.create(id=p.data[0], path=p.path)
     phs[p.data[0]] = p.path
 
-for p in _periphs.values():
+for p in _nodes.values():
     p.create_table()
 
 for w in tree.walk():
     path = w[0]
     Entry.get_model(path)
 
-#print(db.get_tables())
-#print("== All USARTs ==")
-#for u in Usart.select():
-#    print(u.device)
-#    print(u.interrupts)
-#
-#print("\n== All active USARTs ==")
-#for u in Usart.select().where(Usart.status == 'okay'):
-#    print(u.device)
-#    print(u.status)
-#    print(u.pins)
-#
-#for u in Spi.select().where(Spi.status == 'okay'):
-#    print(u.device)
-#    print(u.status)
-#    print(u.pins)
-#
-#for u in I2C.select().where(I2C.status == 'okay'):
-#    print(u.device)
-#    print(u.status)
-#    print(u.pins)
-
-def get_pin_label(gpio_cell):
-    return "{}{}".format(gpio_cell.parent.label, gpio_cell.num)
-
 for p in tree.get_node("/chosen").props:
     config_group = p.name.split(",")[1].upper()
-    path = Phandle.get(id=p.data[0]).url
+    path = Phandle.get(id=p.data[0]).path
     model = Entry.get_model(path)
-    for k,v in model.pins.items():
-        print("{}.{}={}".format(config_group, k, get_pin_label(v)))
+    if model.status != 'okay':
+        raise NotImplementedError
+    for p in model.pins:
+        el = {'pin': p['pin'], 'function': p['function'], 'config_group': config_group}
+        Pinout.create(**el)
 
+def format_function(function, config_group):
+    return config_group + '.' + function
+
+q = Pinmap.select(Pinmap.label.alias('L'), Pinmap.pin, Pinmap.group,
+format_function(Pinout.function, Pinout.config_group) \
+.alias('F')) \
+.join(Pinout, JOIN.LEFT_OUTER, on=(Pinmap.pin == Pinout.pin)).dicts()
+
+ctx = {}
+for el in q:
+    # remove None values so they don't get printed
+    if el['F'] is None:
+        del el['F']
+
+    if not ctx.get(el['group']):
+        # Connector numbering starts with 1 in boards, so we add padding
+        ctx[el['group']] = [None, el]
+    else:
+        ctx[el['group']].append(el)
+
+env = Environment(
+    loader=FileSystemLoader(['.']),
+    lstrip_blocks=True,
+    trim_blocks=True
+)
+
+template_board = env.get_template('board.svg')
+#board['board']['cpu_model'] = cpu['information']['model'].upper()
+ctx['board'] = board
+print(template_board.render(ctx))

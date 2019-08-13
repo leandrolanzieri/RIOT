@@ -2,45 +2,51 @@
 #include "stm32l152re.dtsi"
 
 / {
-    cpus {
-        #address-cells = <1>;
-        #size-cells = <0>;
-        cpu0: cpu@0 {
-            reg = <0>;
-        };
-    };
-
     chosen {
         riot,uart0 = <&usart1>;
         riot,uart1 = <&usart2>;
+        riot,spi0 = <&spi1>;
+        riot,i2c0 = <&i2c1>;
     };
 };
 
 &pinctrl {
-    usart1_rx_a_10_tx_a_9: usartpinctrl@a9a10 {
+    my_usart1_pinctrl: usartpinctrl@a10a9 {
         rx = <&gpioa 10 7>;
         tx = <&gpioa 9 7>;
+    };
+    my_usart2_pinctrl: usartpinctrl@a3a2 {
+        rx = <&gpioa 3 7>;
+        tx = <&gpioa 2 7>;
+    };
+    my_spi1_pinctrl: spipinctrl@a4a5a6a7 {
+        cs =   <&gpioa 4 5>;
+        sck =  <&gpioa 5 5>;
+        miso = <&gpioa 6 5>;
+        mosi = <&gpioa 7 5>;
+    };
+    my_i2c1_pinctrl: i2cpinctrl@b7b6 {
+        sda =   <&gpiob 9 4>;
+        scl =  <&gpiob 8 4>;
     };
 };
 
 &usart1 {
     status = "okay";
-    pinctrl = <&usart1_rx_a_10_tx_a_9>;
+    pinctrl = <&my_usart1_pinctrl>;
 };
 
-&pinctrl {
-    spi1_miso_a1_mosi_a2_sck_a3: spipinctrl@a1a2a3 {
-        miso = <&gpioa 1 5>;
-        mosi = <&gpioa 2 5>;
-        sck = <&gpioa 3 5>;
-        cs = <&gpioa 4 5>;
-    };
+&usart2 {
+    status = "okay";
+    pinctrl = <&my_usart2_pinctrl>;
 };
+
 &spi1 {
     status = "okay";
-    pinctrl = <&spi1_miso_a1_mosi_a2_sck_a3>;
+    pinctrl = <&my_spi1_pinctrl>;
 };
 
 &i2c1 {
     status = "okay";
+    pinctrl = <&my_i2c1_pinctrl>;
 };
