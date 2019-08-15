@@ -271,6 +271,7 @@ include $(RIOTBASE)/Makefile.features
 # mandatory includes!
 include $(RIOTMAKE)/pseudomodules.inc.mk
 include $(RIOTMAKE)/defaultmodules.inc.mk
+include $(RIOTMAKE)/dts.inc.mk
 
 # Include Board and CPU configuration
 INCLUDES += $(addprefix -I,$(wildcard $(RIOTBOARD)/$(BOARD)/include))

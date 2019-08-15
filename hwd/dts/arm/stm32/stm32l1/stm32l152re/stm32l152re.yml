@@ -1,2 +1,0 @@
-{%extends 'stm32/stm32l1/stm32l15xxe.yml' %}
-{% block cpu_model %} 'stm32l152re' {% endblock %}

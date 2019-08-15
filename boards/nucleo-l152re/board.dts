@@ -1,5 +1,5 @@
 /dts-v1/;
-#include "stm32l152re.dtsi"
+#include "dts/arm/stm32/stm32l1/stm32l152re/stm32l152re.dtsi"
 
 / {
     chosen {
@@ -12,7 +12,7 @@
 
 &pinctrl {
     my_usart1_pinctrl: usartpinctrl@a10a9 {
-        rx = <&gpioa 10 7>;
+        rx = <&gpioa 15 7>;
         tx = <&gpioa 9 7>;
     };
     my_usart2_pinctrl: usartpinctrl@a3a2 {

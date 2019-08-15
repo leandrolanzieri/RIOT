@@ -1,43 +1,17 @@
 import fdt
 from peewee import *
-import re
+from hwd.dts.common import db
+from hwd.dts.common import _nodes
+from hwd.dts.common import DTBParser
+from hwd.dts.common import DTBTree
+
 import ruamel.yaml as yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-dtb_data = open('board.dtb', 'rb').read()
-tree = fdt.parse_dtb(dtb_data)
-root = tree.root_node
+import os
 
-class Entry:
-    @staticmethod
-    def get_model(path):
-        m = re.search("\/([\w]*)@(.*)$", path)
-        if not m:
-            return None
-
-        model_type = m[1]
-        model_id = m[2]
-        model_class = _nodes.get(model_type, None)
-
-        if not model_class:
-            return None
-
-        # Check if model exists. Create if not
-        if(len(model_class.select().where(model_class.id == model_id)) > 0):
-            return model_class.get(model_class.id == model_id)
-
-        node = {"id": model_id}
-
-        for p in tree.get_node(path).props:
-            if hasattr(p, 'data'):
-                node[p.name] = p.data[0] if len(p.data) == 1 else p.data
-            else:
-                node[p.name] = True
-
-        return model_class.create(**node)
-
-phandles = tree.search('phandle')
-db.create_tables([Phandle])
+import hwd
+from hwd import dts
 
 class Pinmap(Model):
     id = AutoField()
@@ -69,34 +43,33 @@ class Pinout(Model):
 db.create_tables([Pinmap])
 db.create_tables([Pinout])
 
-with open('board.yml') as stream:
+with open(os.environ['BOARD_YML']) as stream:
     board = yaml.safe_load(stream)
+
 for k, v in board['board']['pinmap'].items():
     for el in v:
         el['group'] = k
         Pinmap.create(**el)
 
-phs = {}
-for p in phandles:
-    Phandle.create(id=p.data[0], path=p.path)
-    phs[p.data[0]] = p.path
+parser = DTBParser('stm32l152re')
 
-for p in _nodes.values():
-    p.create_table()
+for n, v in _nodes.items():
+    db.create_tables([v.cell_class()])
 
-for w in tree.walk():
-    path = w[0]
-    Entry.get_model(path)
+parser.load(os.environ['DTB'])
 
-for p in tree.get_node("/chosen").props:
+for p in parser.tree.get_node("/chosen").props:
     config_group = p.name.split(",")[1].upper()
-    path = Phandle.get(id=p.data[0]).path
-    model = Entry.get_model(path)
+    path = DTBTree.get(key="phandle", value=p.data[0]).path
+    model = parser.get_model(path)
     if model.status != 'okay':
         raise NotImplementedError
-    for p in model.pins:
-        el = {'pin': p['pin'], 'function': p['function'], 'config_group': config_group}
-        Pinout.create(**el)
+
+    if hasattr(model, 'pinctrl'):
+        for k,v in model.pinctrl.target.cells.items():
+            pin_label = "{}{}".format(v.target.label, v.num)
+            el = {'pin': pin_label, 'function': k, 'config_group': config_group}
+            Pinout.create(**el)
 
 def format_function(function, config_group):
     return config_group + '.' + function
@@ -118,13 +91,17 @@ for el in q:
     else:
         ctx[el['group']].append(el)
 
+svg_file = os.environ['BOARD_SVG']
+template_dir = os.path.dirname(svg_file)
+template_base = os.path.basename(svg_file)
+
 env = Environment(
-    loader=FileSystemLoader(['.']),
+    loader=FileSystemLoader([template_dir]),
     lstrip_blocks=True,
     trim_blocks=True
 )
 
-template_board = env.get_template('board.svg')
+template_board = env.get_template(template_base)
 #board['board']['cpu_model'] = cpu['information']['model'].upper()
 ctx['board'] = board
 print(template_board.render(ctx))
