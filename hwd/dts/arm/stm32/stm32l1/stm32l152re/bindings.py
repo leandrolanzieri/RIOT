@@ -2,22 +2,26 @@ from peewee import *
 from hwd.dts.common import node, NodeModel, db, BaseModel, Cell
 from hwd.dts.common import Pinctrl
 
-@node(cells=['stream', 'channel'])
+@node
 class Dma(NodeModel):
     device = CharField()
-    class Meta:
-        database = db
 
-@node(cells=['num', 'flags'])
+    class CellData:
+        cells = ['stream', 'channel']
+
+@node
 class Gpio(NodeModel):
     label = CharField()
 
-@node()
+    class CellData:
+        cells = ['num', 'flags']
+
+@node
 class UsartPinctrl(Pinctrl):
     tx = Cell(Gpio.cell_class())
     rx = Cell(Gpio.cell_class())
 
-@node()
+@node
 class Usart(NodeModel):
     device = CharField()
     rcc = CharField()
@@ -28,14 +32,14 @@ class Usart(NodeModel):
     rx_dma = Cell(Dma.cell_class(), column_name="rx-dma")
     pinctrl = Cell(UsartPinctrl.cell_class(), null=True)
 
-@node()
+@node
 class SpiPinctrl(Pinctrl):
     miso = Cell(Gpio.cell_class())
     mosi = Cell(Gpio.cell_class())
     sck = Cell(Gpio.cell_class())
     cs = Cell(Gpio.cell_class())
 
-@node()
+@node
 class Spi(NodeModel):
     device = CharField()
     rcc = CharField()
@@ -45,12 +49,12 @@ class Spi(NodeModel):
     rx_dma = Cell(Dma.cell_class(), column_name="rx-dma")
     pinctrl = Cell(SpiPinctrl.cell_class(), null=True)
 
-@node()
+@node
 class I2CPinctrl(Pinctrl):
     sda = Cell(Gpio.cell_class())
     scl = Cell(Gpio.cell_class())
 
-@node()
+@node
 class I2C(NodeModel):
     device = CharField()
     rcc = CharField()

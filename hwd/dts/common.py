@@ -8,12 +8,10 @@ import importlib
 db = SqliteDatabase(':memory:')
 
 _nodes = {}
-def node(cells=[]):
-    def inner(cls):
-        cls.CELLS=cells
-        _nodes[cls.__name__.lower()] = cls
-        return cls
-    return inner
+def node(cls):
+    _nodes[cls.__name__.lower()] = cls
+    return cls
+
 
 class BaseModel(Model):
     class Meta:
@@ -48,7 +46,7 @@ class NodeModel(BaseModel):
 
     @classmethod
     def cell_class(cls):
-        cells = cls.CELLS
+        cells = cls.CellData.cells
 
         d = {"parent_class": cls }
         for c in cells:
@@ -66,26 +64,48 @@ class NodeModel(BaseModel):
                 d[k] = getattr(self, k)
         return d
 
+    @staticmethod
+    def get_from_path(path):
+        m = re.search("\/([\w]*)@(.*)$", path)
+        if not m:
+            return None
 
-class CellArray(BaseModel):
-    parent_phandle = IntegerField()
+        model_type = m[1]
+        model_id = m[2]
+        model_class = _nodes.get(model_type, None)
 
-    def get_values(self):
-        cell_array = self
-        d = {}
-        for c in CellEntry.select().where(CellEntry.cell_array==cell_array):
-            d[c.key] = c.value
-        model_phandle = cell_array.parent_phandle
-        rel_model = self.rel_model
+        if not model_class:
+            return None
 
-        model = rel_model.get(phandle=model_phandle)
-        d["node"] = model
-        return d
+        return model_class.get(model_class.id == model_id)
 
-class CellEntry(BaseModel):
-    cell_array = ForeignKeyField(CellArray)
-    key = CharField()
-    value = IntegerField()
+    class CellData:
+        cells = []
+
+    @staticmethod
+    def create_from_node(node):
+        path = node[0]
+        m = re.search("\/([\w]*)@(.*)$", path)
+        if not m:
+            return None
+
+        model_type = m[1]
+        model_id = m[2]
+        model_class = _nodes.get(model_type, None)
+
+        if not model_class:
+            return None
+
+        d = {"id": model_id}
+
+        for p in node[2]:
+            if hasattr(p, 'data'):
+                d[p.name] = p.data[0] if len(p.data) == 1 else p.data
+            else:
+                d[p.name] = True
+
+        return model_class.create(**d)
+
 
 class Cell(ForeignKeyField):
     def db_value(self, value):
@@ -94,7 +114,7 @@ class Cell(ForeignKeyField):
 
         phandle = value[0]
         parent_model = self.rel_model.parent_class
-        cells = parent_model.CELLS
+        cells = parent_model.CellData.cells
         args = dict(zip(cells, value[1:]))
         return super().db_value(self.rel_model.create(phandle=phandle, **args).id)
 
@@ -103,40 +123,63 @@ class Pinctrl(NodeModel):
     def pins(self):
         return [(k,v) for k,v in self._meta.fields.items() if isinstance(v, Cell)]
 
-class DTBTree(BaseModel):
+class Phandle(BaseModel):
+    phandle = IntegerField()
     path = CharField()
-    key = CharField()
-    value = CharField(null=True)
+
+class Pinmap(Model):
+    id = AutoField()
+    label = CharField()
+    pin = CharField()
+    group = CharField()
+
+    @property
+    def L(self):
+        return self.label
+
+    class Meta:
+        database = db
+
+class Pinout(Model):
+    pin = CharField(primary_key=True)
+    function = CharField()
+    config_group = CharField()
+
+    class Meta:
+        database = db
+
+    @classmethod
+    def bulk_from_dict(cls, dictionary):
+        cls._meta.database.create_tables([cls])
+        for el in dictionary:
+            cls.create(**el)
 
 class DTBParser:
     def __init__(self, cpu_name):
         self.bindings = self.get_cpu_bindings(cpu_name)
+        for n, v in _nodes.items():
+            db.create_tables([v.cell_class()])
+        db.create_tables([Pinmap])
+        db.create_tables([Pinout])
+
         self.tree = None
 
     def load(self, filename):
         dtb_data = open(os.environ['DTB'], 'rb').read()
         self.tree = fdt.parse_dtb(dtb_data)
-        db.create_tables([CellArray, CellEntry])
+        db.create_tables([Phandle])
         phandles = self.tree.search('phandle')
 
-        db.create_tables([DTBTree])
+        for p in phandles:
+            Phandle.create(phandle=p.data[0], path=p.path)
+
+        db.create_tables([Phandle])
 
         for p in _nodes.values():
             p.create_table()
 
         for w in self.tree.walk():
-            path = w[0]
-            for p in self.tree.get_node(path).props:
-                key = p.name
-                if hasattr(p, 'data'):
-                    value = p.data[0] if len(p.data) == 1 else p.data
-                else:
-                    value = None
-                DTBTree.create(path=path, key=key, value=value)
-
-        for w in self.tree.walk():
-            path = w[0]
-            self.get_model(path)
+            NodeModel.create_from_node(w)
 
     def get_cpu_bindings(self, cpu_name):
         for root, subdirs, files in os.walk(os.path.dirname(hwd.__file__)):
@@ -172,5 +215,21 @@ class DTBParser:
                 node[p.name] = True
 
         return model_class.create(**node)
+
+    def gen_pinout(self):
+        for p in self.tree.get_node("/chosen").props:
+            config_group = p.name.split(",")[1].upper()
+            path = Phandle.get(phandle=p.data[0]).path
+            model = NodeModel.get_from_path(path)
+            if model.status != 'okay':
+                raise NotImplementedError
+
+            if hasattr(model, 'pinctrl'):
+                for k,v in model.pinctrl.target.cells.items():
+                    pin_label = "{}{}".format(v.target.label, v.num)
+                    el = {'pin': pin_label, 'function': k, 'config_group': config_group}
+                    Pinout.create(**el)
+
+
 
 

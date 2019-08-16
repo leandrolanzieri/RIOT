@@ -3,7 +3,7 @@ from peewee import *
 from hwd.dts.common import db
 from hwd.dts.common import _nodes
 from hwd.dts.common import DTBParser
-from hwd.dts.common import DTBTree
+from hwd.dts.common import NodeModel
 
 import ruamel.yaml as yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -52,24 +52,8 @@ for k, v in board['board']['pinmap'].items():
         Pinmap.create(**el)
 
 parser = DTBParser('stm32l152re')
-
-for n, v in _nodes.items():
-    db.create_tables([v.cell_class()])
-
 parser.load(os.environ['DTB'])
-
-for p in parser.tree.get_node("/chosen").props:
-    config_group = p.name.split(",")[1].upper()
-    path = DTBTree.get(key="phandle", value=p.data[0]).path
-    model = parser.get_model(path)
-    if model.status != 'okay':
-        raise NotImplementedError
-
-    if hasattr(model, 'pinctrl'):
-        for k,v in model.pinctrl.target.cells.items():
-            pin_label = "{}{}".format(v.target.label, v.num)
-            el = {'pin': pin_label, 'function': k, 'config_group': config_group}
-            Pinout.create(**el)
+parser.gen_pinout()
 
 def format_function(function, config_group):
     return config_group + '.' + function
