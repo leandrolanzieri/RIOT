@@ -36,8 +36,17 @@ class DTBNode(BaseModel):
             return self.model_class.get(id=self.model_id)
         return None
 
+    @property
+    def props(self):
+        d = {}
+        for p in DTBProp.select().where(DTBProp.node==self):
+            elems = DTBPropCell.select().where(DTBPropCell.prop==p)
+            value = elems[0].value if len(elems)==1 else [el.value for el in elems]
+            d[p.key] = value
+        return d
+
     @staticmethod
-    def create_from_node(node):
+    def create_node(node):
         path = node[0]
         m = re.search("\/([a-zA-Z0-9_-]*)@([\w]*)$", path)
         model_type = m and m[1]
@@ -50,21 +59,24 @@ class DTBNode(BaseModel):
            
         dtb_node = DTBNode.create(phandle=phandle, path=path, model_name=model_type, model_id=model_id)
 
-        if not m:
-            return None
 
-        model_class = _nodes.get(model_type, None)
+        for p in node[2]:
+            prop = DTBProp.create(node=dtb_node, key=p.name)
+            if hasattr(p, 'data'):
+                for entry in p.data:
+                    DTBPropCell.create(prop=prop, value=entry)
+
+
+
+    @staticmethod
+    def create_model(dtb_node):
+        model_class = _nodes.get(dtb_node.model_name, None)
 
         if not model_class:
             return None
 
-        d = {"id": model_id, "node": dtb_node}
-
-        for p in node[2]:
-            if hasattr(p, 'data'):
-                d[p.name] = p.data[0] if len(p.data) == 1 else p.data
-            else:
-                d[p.name] = True
+        d = {"id": dtb_node.model_id, "node": dtb_node}
+        d.update(dtb_node.props)
 
         try:
             model_class.create(**d)
@@ -72,7 +84,13 @@ class DTBNode(BaseModel):
             exp = re.search("NOT NULL.*: ([\w]*\.[\w]*)$", e.args[0])
             raise MissingDBTAttributeException("{} not present in '{}'".format(exp[1], path))
 
+class DTBProp(BaseModel):
+    node = ForeignKeyField(DTBNode)
+    key = CharField()
 
+class DTBPropCell(BaseModel):
+    prop = ForeignKeyField(DTBProp)
+    value = CharField(null=True)
 
 class CellAttr(IntegerField):
     pass
@@ -167,19 +185,20 @@ class DTBParser:
         for n, v in _nodes.items():
             db.create_tables([v.cell_class()])
 
-        self.tree = None
-
     def load(self, filename):
         dtb_data = open(os.environ['DTB'], 'rb').read()
-        self.tree = fdt.parse_dtb(dtb_data)
-        db.create_tables([DTBNode])
-        phandles = self.tree.search('phandle')
+        tree = fdt.parse_dtb(dtb_data)
+        db.create_tables([DTBNode, DTBProp, DTBPropCell])
+        phandles = tree.search('phandle')
 
         for p in _nodes.values():
             p.create_table()
 
-        for w in self.tree.walk():
-            DTBNode.create_from_node(w)
+        for w in tree.walk():
+            DTBNode.create_node(w)
+
+        for n in DTBNode.select().where(DTBNode.model_name != None):
+                DTBNode.create_model(n)
 
 
     def get_cpu_bindings(self, cpu_name):
@@ -192,9 +211,9 @@ class DTBParser:
 
 
     def create_pinout(self):
-        for p in self.tree.get_node("/chosen").props:
-            config_group = p.name.split(",")[1].upper()
-            model = DTBNode.get(phandle=p.data[0]).model
+        for k,v  in DTBNode.get(path="/chosen").props.items():
+            config_group = k.split(",")[1].upper()
+            model = DTBNode.get(phandle=v).model
             if model.status != 'okay':
                 raise NotImplementedError
 
@@ -207,6 +226,7 @@ class DTBParser:
                     except IntegrityError as e:
                         dp = Pinout.get(pin=pin_label)
                         raise DuplicatePinException("Both {} and {} are trying to assign the same pin: {}".format("{}.{}".format(dp.config_group, dp.function), "{}.{}".format(config_group, k), pin_label))
+
 
 
 
