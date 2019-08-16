@@ -20,6 +20,9 @@ class BaseModel(Model):
 class MissingDBTAttributeException(Exception):
     pass
 
+class InvalidCellReference(Exception):
+    pass
+
 class DTBNode(BaseModel):
     phandle = IntegerField(null=True)
     path = CharField()
@@ -83,6 +86,9 @@ class DTBNode(BaseModel):
         except IntegrityError as e:
             exp = re.search("NOT NULL.*: ([\w]*\.[\w]*)$", e.args[0])
             raise MissingDBTAttributeException("{} not present in '{}'".format(exp[1], path))
+        except InvalidCellReference as e:
+            e.args= ["Failed creating {}: {}".format(dtb_node.path, e.args[0])]
+            raise
 
 class DTBProp(BaseModel):
     node = ForeignKeyField(DTBNode)
@@ -101,8 +107,6 @@ class CellClass(BaseModel):
     @property
     def target(self):
         node = DTBNode.get(phandle=self.phandle)
-
-        assert node.model_class == self.parent_class
 
         parent_obj = node.model
         return parent_obj
@@ -142,7 +146,13 @@ class Cell(ForeignKeyField):
 
         phandle = value[0]
         parent_model = self.rel_model.parent_class
+        pm = DTBNode.get(phandle=phandle).model_class
+        if pm != parent_model:
+            raise InvalidCellReference("Expected {} for {}, not {}".format(parent_model.__name__, self.name, pm.__name__))
+
         cells = parent_model.CellData.cells
+        if(len(cells) != len(value[1:])):
+            raise InvalidCellReference("{} expects {} cells, not {}".format(self.name, len(cells), len(value[1:])))
         args = dict(zip(cells, value[1:]))
         return super().db_value(self.rel_model.create(phandle=phandle, **args).id)
 
