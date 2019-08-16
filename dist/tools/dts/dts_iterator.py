@@ -28,7 +28,7 @@ for k, v in board['board']['pinmap'].items():
 
 parser = DTBParser('stm32l152re')
 parser.load(os.environ['DTB'])
-parser.gen_pinout()
+parser.create_pinout()
 
 def format_function(function, config_group):
     return config_group + '.' + function
@@ -63,4 +63,4 @@ env = Environment(
 template_board = env.get_template(template_base)
 #board['board']['cpu_model'] = cpu['information']['model'].upper()
 ctx['board'] = board
-print(template_board.render(ctx))
+#print(template_board.render(ctx))

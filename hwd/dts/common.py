@@ -17,6 +17,9 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+class MissingDBTAttributeException(Exception):
+    pass
+
 class DTBNode(BaseModel):
     phandle = IntegerField(null=True)
     path = CharField()
@@ -63,7 +66,11 @@ class DTBNode(BaseModel):
             else:
                 d[p.name] = True
 
-        return model_class.create(**d)
+        try:
+            model_class.create(**d)
+        except IntegrityError as e:
+            exp = re.search("NOT NULL.*: ([\w]*\.[\w]*)$", e.args[0])
+            raise MissingDBTAttributeException("{} not present in '{}'".format(exp[1], path))
 
 
 
@@ -151,6 +158,9 @@ class Pinout(Model):
         for el in dictionary:
             cls.create(**el)
 
+class DuplicatePinException(Exception):
+    pass
+
 class DTBParser:
     def __init__(self, cpu_name):
         self.bindings = self.get_cpu_bindings(cpu_name)
@@ -181,7 +191,7 @@ class DTBParser:
         return None
 
 
-    def gen_pinout(self):
+    def create_pinout(self):
         for p in self.tree.get_node("/chosen").props:
             config_group = p.name.split(",")[1].upper()
             model = DTBNode.get(phandle=p.data[0]).model
@@ -192,7 +202,12 @@ class DTBParser:
                 for k,v in model.pinctrl.target.cells.items():
                     pin_label = "{}{}".format(v.target.label, v.num)
                     el = {'pin': pin_label, 'function': k, 'config_group': config_group}
-                    Pinout.create(**el)
+                    try:
+                        Pinout.create(**el)
+                    except IntegrityError as e:
+                        dp = Pinout.get(pin=pin_label)
+                        raise DuplicatePinException("Both {} and {} are trying to assign the same pin: {}".format("{}.{}".format(dp.config_group, dp.function), "{}.{}".format(config_group, k), pin_label))
+
 
 
 
