@@ -4,6 +4,8 @@ from hwd.dts.common import db
 from hwd.dts.common import _nodes
 from hwd.dts.common import DTBParser
 from hwd.dts.common import NodeModel
+from hwd.dts.common import Pinmap
+from hwd.dts.common import Pinout
 
 import ruamel.yaml as yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -12,33 +14,6 @@ import os
 
 import hwd
 from hwd import dts
-
-class Pinmap(Model):
-    id = AutoField()
-    label = CharField()
-    pin = CharField()
-    group = CharField()
-
-    @property
-    def L(self):
-        return self.label
-
-    class Meta:
-        database = db
-
-class Pinout(Model):
-    pin = CharField(primary_key=True)
-    function = CharField()
-    config_group = CharField()
-
-    class Meta:
-        database = db
-
-    @classmethod
-    def bulk_from_dict(cls, dictionary):
-        cls._meta.database.create_tables([cls])
-        for el in dictionary:
-            cls.create(**el)
 
 db.create_tables([Pinmap])
 db.create_tables([Pinout])

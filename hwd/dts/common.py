@@ -17,32 +17,78 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+class DTBNode(BaseModel):
+    phandle = IntegerField(null=True)
+    path = CharField()
+    model_name = CharField(null=True)
+    model_id = CharField(null=True)
+
+    @property
+    def model_class(self):
+        return _nodes.get(self.model_name, None)
+
+    @property
+    def model(self):
+        if(self.model_class):
+            return self.model_class.get(id=self.model_id)
+        return None
+
+    @staticmethod
+    def create_from_node(node):
+        path = node[0]
+        m = re.search("\/([a-zA-Z0-9_-]*)@([\w]*)$", path)
+        model_type = m and m[1]
+        model_id = m and m[2]
+        phandle = None
+
+        for p in node[2]:
+            if(p.name == "phandle"):
+                phandle = p.data[0]
+           
+        dtb_node = DTBNode.create(phandle=phandle, path=path, model_name=model_type, model_id=model_id)
+
+        if not m:
+            return None
+
+        model_class = _nodes.get(model_type, None)
+
+        if not model_class:
+            return None
+
+        d = {"id": model_id, "node": dtb_node}
+
+        for p in node[2]:
+            if hasattr(p, 'data'):
+                d[p.name] = p.data[0] if len(p.data) == 1 else p.data
+            else:
+                d[p.name] = True
+
+        return model_class.create(**d)
+
+
+
 class CellAttr(IntegerField):
     pass
 
 class CellClass(BaseModel):
     phandle = IntegerField()
 
-    def resolve_cell(self):
-        parent_obj = self.parent_class.get(phandle=self.phandle)
-
-        d = {}
-        for k, p in parent_obj._meta.fields.items():
-            d[k] = getattr(parent_obj, k)
-
-        for k, p in self._meta.fields.items():
-            if isinstance(p, CellAttr):
-                d[k] = getattr(self, k)
-
     @property
     def target(self):
-        parent_obj = self.parent_class.get(phandle=self.phandle)
+        node = DTBNode.get(phandle=self.phandle)
+
+        assert node.model_class == self.parent_class
+
+        parent_obj = node.model
         return parent_obj
 
 
 class NodeModel(BaseModel):
     id = CharField(primary_key=True)
-    phandle = IntegerField(null=True)
+    node = ForeignKeyField(DTBNode)
+
+    class CellData:
+        cells = []
 
     @classmethod
     def cell_class(cls):
@@ -64,49 +110,6 @@ class NodeModel(BaseModel):
                 d[k] = getattr(self, k)
         return d
 
-    @staticmethod
-    def get_from_path(path):
-        m = re.search("\/([\w]*)@(.*)$", path)
-        if not m:
-            return None
-
-        model_type = m[1]
-        model_id = m[2]
-        model_class = _nodes.get(model_type, None)
-
-        if not model_class:
-            return None
-
-        return model_class.get(model_class.id == model_id)
-
-    class CellData:
-        cells = []
-
-    @staticmethod
-    def create_from_node(node):
-        path = node[0]
-        m = re.search("\/([\w]*)@(.*)$", path)
-        if not m:
-            return None
-
-        model_type = m[1]
-        model_id = m[2]
-        model_class = _nodes.get(model_type, None)
-
-        if not model_class:
-            return None
-
-        d = {"id": model_id}
-
-        for p in node[2]:
-            if hasattr(p, 'data'):
-                d[p.name] = p.data[0] if len(p.data) == 1 else p.data
-            else:
-                d[p.name] = True
-
-        return model_class.create(**d)
-
-
 class Cell(ForeignKeyField):
     def db_value(self, value):
         if isinstance(value, int):
@@ -119,13 +122,7 @@ class Cell(ForeignKeyField):
         return super().db_value(self.rel_model.create(phandle=phandle, **args).id)
 
 class Pinctrl(NodeModel):
-    @property
-    def pins(self):
-        return [(k,v) for k,v in self._meta.fields.items() if isinstance(v, Cell)]
-
-class Phandle(BaseModel):
-    phandle = IntegerField()
-    path = CharField()
+    pass
 
 class Pinmap(Model):
     id = AutoField()
@@ -159,27 +156,21 @@ class DTBParser:
         self.bindings = self.get_cpu_bindings(cpu_name)
         for n, v in _nodes.items():
             db.create_tables([v.cell_class()])
-        db.create_tables([Pinmap])
-        db.create_tables([Pinout])
 
         self.tree = None
 
     def load(self, filename):
         dtb_data = open(os.environ['DTB'], 'rb').read()
         self.tree = fdt.parse_dtb(dtb_data)
-        db.create_tables([Phandle])
+        db.create_tables([DTBNode])
         phandles = self.tree.search('phandle')
-
-        for p in phandles:
-            Phandle.create(phandle=p.data[0], path=p.path)
-
-        db.create_tables([Phandle])
 
         for p in _nodes.values():
             p.create_table()
 
         for w in self.tree.walk():
-            NodeModel.create_from_node(w)
+            DTBNode.create_from_node(w)
+
 
     def get_cpu_bindings(self, cpu_name):
         for root, subdirs, files in os.walk(os.path.dirname(hwd.__file__)):
@@ -190,37 +181,10 @@ class DTBParser:
         return None
 
 
-    def get_model(self, path):
-        m = re.search("\/([\w]*)@(.*)$", path)
-        if not m:
-            return None
-
-        model_type = m[1]
-        model_id = m[2]
-        model_class = _nodes.get(model_type, None)
-
-        if not model_class:
-            return None
-
-        # Check if model exists. Create if not
-        if(len(model_class.select().where(model_class.id == model_id)) > 0):
-            return model_class.get(model_class.id == model_id)
-
-        node = {"id": model_id}
-
-        for p in self.tree.get_node(path).props:
-            if hasattr(p, 'data'):
-                node[p.name] = p.data[0] if len(p.data) == 1 else p.data
-            else:
-                node[p.name] = True
-
-        return model_class.create(**node)
-
     def gen_pinout(self):
         for p in self.tree.get_node("/chosen").props:
             config_group = p.name.split(",")[1].upper()
-            path = Phandle.get(phandle=p.data[0]).path
-            model = NodeModel.get_from_path(path)
+            model = DTBNode.get(phandle=p.data[0]).model
             if model.status != 'okay':
                 raise NotImplementedError
 
