@@ -26,8 +26,8 @@
         mosi = <&gpioa 7 5>;
     };
     my_i2c1_pinctrl: i2cpinctrl@b7b6 {
-        sda =   <&gpiob 9 4>;
-        scl =  <&gpiob 8 4>;
+        sda = <&gpiob 9 4>;
+        scl = <&gpiob 8 4>;
     };
 };
 

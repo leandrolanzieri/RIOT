@@ -3,6 +3,7 @@ from peewee import *
 import re
 import ruamel.yaml as yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+import os
 
 dtb_data = open('board.dtb', 'rb').read()
 tree = fdt.parse_dtb(dtb_data)
@@ -127,4 +128,8 @@ env = Environment(
 template_board = env.get_template('board.svg')
 #board['board']['cpu_model'] = cpu['information']['model'].upper()
 ctx['board'] = board
-print(template_board.render(ctx))
+
+dirpath = os.getcwd()
+
+file = open(dirpath + 'board.svg', 'w')
+file.write(template_board.render(ctx))

@@ -7,6 +7,6 @@ dbt-prepare:
 	dtc -o $(DTB) $(BINDIR)/board.dts
 
 board-doc: dbt-prepare
-	PYTHONPATH=$(RIOTBASE) python $(RIOTTOOLS)/dts/dts_iterator.py
+	PYTHONPATH=$(RIOTBASE) python3 $(RIOTTOOLS)/dts/dts_iterator.py
 
 board-pinout: board-doc
