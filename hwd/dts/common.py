@@ -186,9 +186,6 @@ class Pinout(Model):
         for el in dictionary:
             cls.create(**el)
 
-    def format(self):
-        return "{}.{} -> {}".format(self.config_group, self.function, self.pin)
-
 class DuplicatePinException(Exception):
     pass
 
@@ -240,6 +237,8 @@ class DTBParser:
                         dp = Pinout.get(pin=pin_label)
                         raise DuplicatePinException("Both {} and {} are trying to assign the same pin: {}".format("{}.{}".format(dp.config_group, dp.function), "{}.{}".format(config_group, k), pin_label))
 
-    def print_pinout(self):
-        for p in Pinout.select():
-            print(p.format())
+
+
+
+
+

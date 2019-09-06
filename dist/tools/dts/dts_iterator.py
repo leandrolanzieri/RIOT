@@ -64,4 +64,3 @@ template_board = env.get_template(template_base)
 #board['board']['cpu_model'] = cpu['information']['model'].upper()
 ctx['board'] = board
 print(template_board.render(ctx))
-parser.print_pinout()
