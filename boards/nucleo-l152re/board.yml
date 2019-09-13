@@ -1,23 +1,9 @@
 board:
   name: 'Nucleo L152RE'
-  cpu: 'stm32/stm32l1/stm32l152re/stm32l152re.yml'
+  cpu: 'stm32l152re'
   description: >
     STM32 Nucleo-64 development board with STM32L152RE MCU, supports Arduino
-    and ST morpho connectivity
-  periph_conf:
-    spi:
-      - pinmux: 
-          id: 'spi1_miso_a_6_mosi_a_7'
-        cs: 'PC7'
-    uart: 
-      - pinmux:
-          id: 'usart2_rx_a_3_tx_a_2'
-      - pinmux:
-          id: 'usart3_rx_b_11_tx_b_10'
-    i2c:
-      - pinmux:
-          id: 'i2c1_scl_b_8_sda_b_9'
-        speed: 'I2C_SPEED_NORMAL'
+    and ST morpho connectivity.
   pinmap:
     CN5:
       - label: 'D8'
