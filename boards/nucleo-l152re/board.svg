@@ -861,7 +861,7 @@
          id="tspan21342"
          x="-25.977825"
          y="-46.775429"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">{{board.name}}</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332"></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -872,7 +872,7 @@
          id="tspan21346"
          x="-25.949575"
          y="-39.559155"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:monospace;-inkscape-font-specification:monospace;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">{{board.description}}</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:monospace;-inkscape-font-specification:monospace;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332"></tspan></text>
     <flowRoot
        transform="matrix(0.69696969,0,0,0.69696969,73.605793,17.153467)"
        xml:space="preserve"
@@ -1314,7 +1314,7 @@
            x="24.2693"
            y="-1.4954983"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332"
-           id="tspan25511">{{CN7[1].L}} :1</tspan></tspan><tspan
+           id="tspan25511">PC10 :1</tspan></tspan><tspan
          sodipodi:role="line"
          x="24.2693"
          y="3.9972541"
@@ -1323,7 +1323,7 @@
            x="24.2693"
            y="3.9972541"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332"
-           id="tspan25517">{{CN7[3].L}} :3</tspan></tspan><tspan
+           id="tspan25517">PC12 :3</tspan></tspan><tspan
          sodipodi:role="line"
          x="24.2693"
          y="9.4900064"
@@ -1332,7 +1332,7 @@
            x="24.2693"
            y="9.4900064"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25523">{{CN7[5].L}} :5</tspan></tspan><tspan
+           id="tspan25523">VDD :5</tspan></tspan><tspan
          sodipodi:role="line"
          x="24.2693"
          y="14.982759"
@@ -1341,7 +1341,7 @@
            x="24.2693"
            y="14.982759"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25529">{{CN7[7].L}} :7</tspan></tspan><tspan
+           id="tspan25529">BOOT0 :7</tspan></tspan><tspan
          sodipodi:role="line"
          x="24.2693"
          y="20.475512"
@@ -1350,7 +1350,7 @@
            x="24.2693"
            y="20.475512"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25535">{{CN7[9].L}} :9</tspan></tspan><tspan
+           id="tspan25535">NC :9</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="25.968264"
@@ -1359,7 +1359,7 @@
            x="22.359339"
            y="25.968264"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25541">{{CN7[11].L}} :11</tspan></tspan><tspan
+           id="tspan25541">NC :11</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="31.461018"
@@ -1368,7 +1368,7 @@
            x="22.359339"
            y="31.461018"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25547">{{CN7[13].L}} :13</tspan></tspan><tspan
+           id="tspan25547">PA13 :13</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="36.95377"
@@ -1377,7 +1377,7 @@
            x="22.359339"
            y="36.95377"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25553">{{CN7[15].L}} :15</tspan></tspan><tspan
+           id="tspan25553">PA14 :15</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="42.446522"
@@ -1386,7 +1386,7 @@
            x="22.359339"
            y="42.446522"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25559">{{CN7[17].L}} :17</tspan></tspan><tspan
+           id="tspan25559">PA15 :17</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="47.939274"
@@ -1395,7 +1395,7 @@
            x="22.359339"
            y="47.939274"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25565">{{CN7[19].L}} :19</tspan></tspan><tspan
+           id="tspan25565">GND :19</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="53.432026"
@@ -1404,7 +1404,7 @@
            x="22.359339"
            y="53.432026"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25571">{{CN7[21].L}} :21</tspan></tspan><tspan
+           id="tspan25571">PB7 :21</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="58.924778"
@@ -1413,7 +1413,7 @@
            x="22.359339"
            y="58.924778"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25577">{{CN7[23].L}} :23</tspan></tspan><tspan
+           id="tspan25577">PC13 :23</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="64.417534"
@@ -1422,7 +1422,7 @@
            x="22.359339"
            y="64.417534"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25583">{{CN7[25].L}} :25</tspan></tspan><tspan
+           id="tspan25583">PC14 :25</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="69.910286"
@@ -1431,7 +1431,7 @@
            x="22.359339"
            y="69.910286"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25589">{{CN7[27].L}} :27</tspan></tspan><tspan
+           id="tspan25589">PC15 :27</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="75.403038"
@@ -1440,7 +1440,7 @@
            x="22.359339"
            y="75.403038"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25595">{{CN7[29].L}} :29</tspan></tspan><tspan
+           id="tspan25595">PH0 :29</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="80.89579"
@@ -1449,7 +1449,7 @@
            x="22.359339"
            y="80.89579"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25601">{{CN7[31].L}} :31</tspan></tspan><tspan
+           id="tspan25601">PH1 :31</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="86.388542"
@@ -1458,7 +1458,7 @@
            x="22.359339"
            y="86.388542"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25607">{{CN7[33].L}} :33</tspan></tspan><tspan
+           id="tspan25607">VBAT :33</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="91.881294"
@@ -1467,7 +1467,7 @@
            x="22.359339"
            y="91.881294"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25613">{{CN7[35].L}} :35</tspan></tspan><tspan
+           id="tspan25613">PC2 :35</tspan></tspan><tspan
          sodipodi:role="line"
          x="22.359337"
          y="97.374046"
@@ -1476,7 +1476,7 @@
            x="22.359339"
            y="97.374046"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25619">{{CN7[37].L}} :37</tspan></tspan></text>
+           id="tspan25619">PC3 :37</tspan></tspan></text>
     <g
        id="g25434"
        transform="translate(4.7911904,-0.17555716)">
@@ -1554,7 +1554,7 @@
            x="41.683594"
            y="-1.4073353"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332"
-           id="tspan25511-7">2: {{CN7[2].L}}</tspan></tspan><tspan
+           id="tspan25511-7">2: PC11</tspan></tspan><tspan
          sodipodi:role="line"
          x="41.683594"
          y="4.0854168"
@@ -1563,7 +1563,7 @@
            x="41.683594"
            y="4.0854168"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332"
-           id="tspan25517-7">4: {{CN7[4].L}}</tspan></tspan><tspan
+           id="tspan25517-7">4: PD2</tspan></tspan><tspan
          sodipodi:role="line"
          x="41.683594"
          y="9.5781689"
@@ -1572,7 +1572,7 @@
            x="41.683594"
            y="9.5781689"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25523-3">6: {{CN7[6].L}}</tspan></tspan><tspan
+           id="tspan25523-3">6: E5V</tspan></tspan><tspan
          sodipodi:role="line"
          x="41.683594"
          y="15.070921"
@@ -1581,7 +1581,7 @@
            x="41.683594"
            y="15.070921"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25529-3">8: {{CN7[8].L}}</tspan></tspan><tspan
+           id="tspan25529-3">8: GND</tspan></tspan><tspan
          sodipodi:role="line"
          x="41.683594"
          y="20.563671"
@@ -1590,7 +1590,7 @@
            x="41.683594"
            y="20.563671"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25535-3">10: {{CN7[10].L}}</tspan></tspan><tspan
+           id="tspan25535-3">10: NC</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="26.056425"
@@ -1599,7 +1599,7 @@
            x="39.773628"
            y="26.056425"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25541-7">12: {{CN7[12].L}}</tspan></tspan><tspan
+           id="tspan25541-7">12: IOREF</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="31.549179"
@@ -1608,7 +1608,7 @@
            x="39.773628"
            y="31.549179"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25547-9">14: {{CN7[14].L}}</tspan></tspan><tspan
+           id="tspan25547-9">14: RESET</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="37.041931"
@@ -1617,7 +1617,7 @@
            x="39.773628"
            y="37.041931"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25553-8">16: {{CN7[16].L}}</tspan></tspan><tspan
+           id="tspan25553-8">16: +3V3</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="42.534683"
@@ -1626,7 +1626,7 @@
            x="39.773628"
            y="42.534683"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25559-8">18: {{CN7[18].L}}</tspan></tspan><tspan
+           id="tspan25559-8">18: +5V</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="48.027439"
@@ -1635,7 +1635,7 @@
            x="39.773628"
            y="48.027439"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25565-7">20: {{CN7[20].L}}</tspan></tspan><tspan
+           id="tspan25565-7">20: GND</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="53.520191"
@@ -1644,7 +1644,7 @@
            x="39.773628"
            y="53.520191"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25571-8">22: {{CN7[22].L}}</tspan></tspan><tspan
+           id="tspan25571-8">22: GND</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="59.012943"
@@ -1653,7 +1653,7 @@
            x="39.773628"
            y="59.012943"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25577-7">24: {{CN7[24].L}}</tspan></tspan><tspan
+           id="tspan25577-7">24: VIN</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="64.505692"
@@ -1662,7 +1662,7 @@
            x="39.773628"
            y="64.505692"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25583-3">26: {{CN7[26].L}}</tspan></tspan><tspan
+           id="tspan25583-3">26: NC</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="69.998444"
@@ -1671,7 +1671,7 @@
            x="39.773628"
            y="69.998444"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25589-3">28: {{CN7[28].L}}</tspan></tspan><tspan
+           id="tspan25589-3">28: PA0</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="75.491196"
@@ -1680,7 +1680,7 @@
            x="39.773628"
            y="75.491196"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25595-2">30: {{CN7[30].L}}</tspan></tspan><tspan
+           id="tspan25595-2">30: PA1</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="80.983948"
@@ -1689,7 +1689,7 @@
            x="39.773628"
            y="80.983948"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25601-2">32: {{CN7[32].L}}</tspan></tspan><tspan
+           id="tspan25601-2">32: PA4</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="86.4767"
@@ -1698,7 +1698,7 @@
            x="39.773628"
            y="86.4767"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25607-5">34: {{CN7[34].L}}</tspan></tspan><tspan
+           id="tspan25607-5">34: PB0</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="91.969452"
@@ -1707,7 +1707,7 @@
            x="39.773628"
            y="91.969452"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25613-4">36: {{CN7[36].L}}</tspan></tspan><tspan
+           id="tspan25613-4">36: PC1</tspan></tspan><tspan
          sodipodi:role="line"
          x="39.773628"
          y="97.462204"
@@ -1716,7 +1716,7 @@
            x="39.773628"
            y="97.462204"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.73000002;font-family:sans-serif;-inkscape-font-specification:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-           id="tspan25619-1">38: {{CN7[38].L}}</tspan></tspan></text>
+           id="tspan25619-1">38: PC0</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1727,7 +1727,7 @@
          id="tspan26346"
          x="91.311966"
          y="-17.507313"
-         style="font-size:3.17499995px;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332">{{BTN[1].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332">USER/B1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1738,7 +1738,7 @@
          id="tspan26346-7"
          x="133.17505"
          y="-17.361885"
-         style="font-size:3.17499995px;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332">{{BTN[2].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:end;text-anchor:end;fill:#4d4d4d;stroke-width:0.26458332">RESET/B2</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot26368"
@@ -1763,7 +1763,7 @@
            y="19.926579"
            x="47.936203"
            id="tspan26346-4"
-           sodipodi:role="line">1: {{CN6[1].L}}</tspan></text>
+           sodipodi:role="line">1: NC</tspan></text>
       <text
          id="text26348-0-6"
          y="25.542223"
@@ -1774,7 +1774,7 @@
            y="25.542223"
            x="47.936203"
            id="tspan26346-4-6"
-           sodipodi:role="line">2: {{CN6[2].L}}</tspan></text>
+           sodipodi:role="line">2: IOREF</tspan></text>
       <text
          id="text26348-0-2"
          y="31.157869"
@@ -1785,7 +1785,7 @@
            y="31.157869"
            x="47.936203"
            id="tspan26346-4-1"
-           sodipodi:role="line">3: {{CN6[3].L}}</tspan></text>
+           sodipodi:role="line">3: RESET</tspan></text>
       <text
          id="text26348-0-9"
          y="36.773514"
@@ -1796,7 +1796,7 @@
            y="36.773514"
            x="47.936203"
            id="tspan26346-4-64"
-           sodipodi:role="line">4: {{CN6[4].L}}</tspan></text>
+           sodipodi:role="line">4: +3V3</tspan></text>
       <text
          id="text26348-0-8"
          y="42.38916"
@@ -1807,7 +1807,7 @@
            y="42.38916"
            x="47.936203"
            id="tspan26346-4-0"
-           sodipodi:role="line">5: {{CN6[5].L}}</tspan></text>
+           sodipodi:role="line">5: +5V</tspan></text>
       <text
          id="text26348-0-81"
          y="48.004807"
@@ -1818,7 +1818,7 @@
            y="48.004807"
            x="47.936203"
            id="tspan26346-4-02"
-           sodipodi:role="line">6: {{CN6[6].L}}</tspan></text>
+           sodipodi:role="line">6: GND</tspan></text>
       <text
          id="text26348-0-29"
          y="53.620453"
@@ -1829,7 +1829,7 @@
            y="53.620453"
            x="47.936203"
            id="tspan26346-4-7"
-           sodipodi:role="line">7: {{CN6[7].L}}</tspan></text>
+           sodipodi:role="line">7: GND</tspan></text>
       <text
          id="text26348-0-5"
          y="59.236095"
@@ -1840,7 +1840,7 @@
            y="59.236095"
            x="47.936203"
            id="tspan26346-4-646"
-           sodipodi:role="line">8: {{CN6[8].L}}</tspan></text>
+           sodipodi:role="line">8: VIN</tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -1869,7 +1869,7 @@
              id="tspan26346-4-9"
              x="47.936203"
              y="19.926584"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">1: {{CN8[1].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">1: A0</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1880,7 +1880,7 @@
              id="tspan26346-4-6-7"
              x="47.936203"
              y="25.646173"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">2: {{CN8[2].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">2: A1</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1891,7 +1891,7 @@
              id="tspan26346-4-1-6"
              x="47.936203"
              y="31.365761"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">3: {{CN8[3].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">3: A2</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1902,7 +1902,7 @@
              id="tspan26346-4-64-8"
              x="47.936203"
              y="37.08535"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">4: {{CN8[4].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">4: A3</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1913,7 +1913,7 @@
              id="tspan26346-4-0-3"
              x="47.936203"
              y="42.804935"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">5: {{CN8[5].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">5: A4</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -1924,7 +1924,7 @@
              id="tspan26346-4-02-4"
              x="47.936203"
              y="48.524525"
-             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">6: {{CN8[6].L}}</tspan></text>
+             style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">6: A5</tspan></text>
       </g>
     </g>
     <text
@@ -1962,7 +1962,7 @@
            y="-1.9960375"
            x="152.38063"
            id="tspan26346-4-5"
-           sodipodi:role="line">{{CN5[10].L}} :10</tspan></text>
+           sodipodi:role="line">SCL/D15 :10</tspan></text>
       <text
          id="text26348-0-6-2"
          y="3.619607"
@@ -1973,7 +1973,7 @@
            y="3.619607"
            x="152.38063"
            id="tspan26346-4-6-2"
-           sodipodi:role="line">{{CN5[9].L}} :9</tspan></text>
+           sodipodi:role="line">SDA/D14 :9</tspan></text>
       <text
          id="text26348-0-2-2"
          y="9.2352533"
@@ -1984,7 +1984,7 @@
            y="9.2352533"
            x="152.38063"
            id="tspan26346-4-1-7"
-           sodipodi:role="line">{{CN5[8].L}} :8</tspan></text>
+           sodipodi:role="line">AVDD :8</tspan></text>
       <text
          id="text26348-0-9-03"
          y="14.850898"
@@ -1995,7 +1995,7 @@
            y="14.850898"
            x="152.38063"
            id="tspan26346-4-64-4"
-           sodipodi:role="line">{{CN5[7].L}} :7</tspan></text>
+           sodipodi:role="line">GND :7</tspan></text>
       <text
          id="text26348-0-8-6"
          y="20.466545"
@@ -2006,7 +2006,7 @@
            y="20.466545"
            x="152.38063"
            id="tspan26346-4-0-36"
-           sodipodi:role="line">{{CN5[6].L}} :6</tspan></text>
+           sodipodi:role="line">SCK/D13 :6</tspan></text>
       <text
          id="text26348-0-81-3"
          y="26.082191"
@@ -2017,7 +2017,7 @@
            y="26.082191"
            x="152.38063"
            id="tspan26346-4-02-3"
-           sodipodi:role="line">{{CN5[5].L}} :5</tspan></text>
+           sodipodi:role="line">MISO/D12 :5</tspan></text>
       <text
          id="text26348-0-29-4"
          y="31.697838"
@@ -2028,7 +2028,7 @@
            y="31.697838"
            x="152.38063"
            id="tspan26346-4-7-4"
-           sodipodi:role="line">{{CN5[4].L}} :4</tspan></text>
+           sodipodi:role="line">PWM/MOSI/D11 :4</tspan></text>
       <text
          id="text26348-0-5-3"
          y="37.31348"
@@ -2039,7 +2039,7 @@
            y="37.31348"
            x="152.38063"
            id="tspan26346-4-646-9"
-           sodipodi:role="line">{{CN5[3].L}} :3</tspan></text>
+           sodipodi:role="line">PWM/CS/D10 :3</tspan></text>
       <text
          id="text26348-0-29-4-7"
          y="42.915634"
@@ -2050,7 +2050,7 @@
            y="42.915634"
            x="152.38063"
            id="tspan26346-4-7-4-2"
-           sodipodi:role="line">{{CN5[2].L}} :2</tspan></text>
+           sodipodi:role="line">PWM/D9 :2</tspan></text>
       <text
          id="text26348-0-5-3-5"
          y="48.531277"
@@ -2061,7 +2061,7 @@
            y="48.531277"
            x="152.38063"
            id="tspan26346-4-646-9-8"
-           sodipodi:role="line">{{CN5[1].L}} :1</tspan></text>
+           sodipodi:role="line">D8 :1</tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -2087,7 +2087,7 @@
            y="-1.9960375"
            x="152.38063"
            id="tspan26346-4-5-7"
-           sodipodi:role="line">{{CN9[8].L}} :8</tspan></text>
+           sodipodi:role="line">D7 :8</tspan></text>
       <text
          id="text26348-0-6-2-6"
          y="3.619607"
@@ -2098,7 +2098,7 @@
            y="3.619607"
            x="152.38063"
            id="tspan26346-4-6-2-5"
-           sodipodi:role="line">{{CN9[7].L}} :7</tspan></text>
+           sodipodi:role="line">PWM/D6 :7</tspan></text>
       <text
          id="text26348-0-2-2-7"
          y="9.2352533"
@@ -2109,7 +2109,7 @@
            y="9.2352533"
            x="152.38063"
            id="tspan26346-4-1-7-1"
-           sodipodi:role="line">{{CN9[6].L}} :6</tspan></text>
+           sodipodi:role="line">PWM/D5 :6</tspan></text>
       <text
          id="text26348-0-9-03-3"
          y="14.850898"
@@ -2120,7 +2120,7 @@
            y="14.850898"
            x="152.38063"
            id="tspan26346-4-64-4-3"
-           sodipodi:role="line">{{CN9[5].L}} :5</tspan></text>
+           sodipodi:role="line">D4 :5</tspan></text>
       <text
          id="text26348-0-8-6-3"
          y="20.466545"
@@ -2131,7 +2131,7 @@
            y="20.466545"
            x="152.38063"
            id="tspan26346-4-0-36-8"
-           sodipodi:role="line">{{CN9[4].L}} :4</tspan></text>
+           sodipodi:role="line">PWM/D3 :4</tspan></text>
       <text
          id="text26348-0-81-3-5"
          y="26.082191"
@@ -2142,7 +2142,7 @@
            y="26.082191"
            x="152.38063"
            id="tspan26346-4-02-3-1"
-           sodipodi:role="line">{{CN9[3].L}} :3</tspan></text>
+           sodipodi:role="line">D2 :3</tspan></text>
       <text
          id="text26348-0-29-4-0"
          y="31.697838"
@@ -2153,7 +2153,7 @@
            y="31.697838"
            x="152.38063"
            id="tspan26346-4-7-4-8"
-           sodipodi:role="line">{{CN9[2].L}} :2</tspan></text>
+           sodipodi:role="line">TX/D1 :2</tspan></text>
       <text
          id="text26348-0-5-3-7"
          y="37.31348"
@@ -2164,7 +2164,7 @@
            y="37.31348"
            x="152.38063"
            id="tspan26346-4-646-9-6"
-           sodipodi:role="line">{{CN9[1].L}} :1</tspan></text>
+           sodipodi:role="line">RX/D0 :1</tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -2190,7 +2190,7 @@
            y="-2.0297575"
            x="195.00873"
            id="tspan26346-4-5-3"
-           sodipodi:role="line">{{CN10[1].L}} :1</tspan></text>
+           sodipodi:role="line">PC9 :1</tspan></text>
       <text
          id="text26348-0-6-2-5"
          y="3.585887"
@@ -2201,7 +2201,7 @@
            y="3.585887"
            x="195.00873"
            id="tspan26346-4-6-2-9"
-           sodipodi:role="line">{{CN10[3].L}} :3</tspan></text>
+           sodipodi:role="line">PB8 :3</tspan></text>
       <text
          id="text26348-0-2-2-3"
          y="9.2015333"
@@ -2212,7 +2212,7 @@
            y="9.2015333"
            x="195.00873"
            id="tspan26346-4-1-7-4"
-           sodipodi:role="line">{{CN10[5].L}} :5</tspan></text>
+           sodipodi:role="line">PB9 :5</tspan></text>
       <text
          id="text26348-0-9-03-1"
          y="14.817178"
@@ -2223,7 +2223,7 @@
            y="14.817178"
            x="195.00873"
            id="tspan26346-4-64-4-5"
-           sodipodi:role="line">{{CN10[7].L}} :7</tspan></text>
+           sodipodi:role="line">AVDD :7</tspan></text>
       <text
          id="text26348-0-8-6-0"
          y="20.432825"
@@ -2234,7 +2234,7 @@
            y="20.432825"
            x="195.00873"
            id="tspan26346-4-0-36-83"
-           sodipodi:role="line">{{CN10[9].L}} :9</tspan></text>
+           sodipodi:role="line">GND :9</tspan></text>
       <text
          id="text26348-0-81-3-56"
          y="26.048471"
@@ -2245,7 +2245,7 @@
            y="26.048471"
            x="195.00873"
            id="tspan26346-4-02-3-5"
-           sodipodi:role="line">{{CN10[11].L}} :11</tspan></text>
+           sodipodi:role="line">PA5 :11</tspan></text>
       <text
          id="text26348-0-29-4-9"
          y="31.664118"
@@ -2256,7 +2256,7 @@
            y="31.664118"
            x="195.00873"
            id="tspan26346-4-7-4-9"
-           sodipodi:role="line">{{CN10[13].L}} :13</tspan></text>
+           sodipodi:role="line">PA6 :13</tspan></text>
       <text
          id="text26348-0-5-3-0"
          y="37.279758"
@@ -2267,7 +2267,7 @@
            y="37.279758"
            x="195.00873"
            id="tspan26346-4-646-9-7"
-           sodipodi:role="line">{{CN10[15].L}} :15</tspan></text>
+           sodipodi:role="line">PA7 :15</tspan></text>
       <text
          id="text26348-0-29-4-7-6"
          y="42.881912"
@@ -2278,7 +2278,7 @@
            y="42.881912"
            x="195.00873"
            id="tspan26346-4-7-4-2-3"
-           sodipodi:role="line">{{CN10[17].L}} :17</tspan></text>
+           sodipodi:role="line">PB6 :17</tspan></text>
       <text
          id="text26348-0-5-3-5-7"
          y="48.497555"
@@ -2289,7 +2289,7 @@
            y="48.497555"
            x="195.00873"
            id="tspan26346-4-646-9-8-6"
-           sodipodi:role="line">{{CN10[19].L}} :19</tspan></text>
+           sodipodi:role="line">PC7 :19</tspan></text>
       <text
          id="text26348-0-38-1-5"
          y="54.002712"
@@ -2300,7 +2300,7 @@
            y="54.002712"
            x="195.00873"
            id="tspan26346-4-5-3-0"
-           sodipodi:role="line">{{CN10[21].L}} :21</tspan></text>
+           sodipodi:role="line">PA9 :21</tspan></text>
       <text
          id="text26348-0-6-2-5-6"
          y="59.507866"
@@ -2311,7 +2311,7 @@
            y="59.507866"
            x="195.00873"
            id="tspan26346-4-6-2-9-5"
-           sodipodi:role="line">{{CN10[23].L}} :23</tspan></text>
+           sodipodi:role="line">PA8 :23</tspan></text>
       <text
          id="text26348-0-2-2-3-0"
          y="65.013023"
@@ -2322,7 +2322,7 @@
            y="65.013023"
            x="195.00873"
            id="tspan26346-4-1-7-4-8"
-           sodipodi:role="line">{{CN10[25].L}} :25</tspan></text>
+           sodipodi:role="line">PB10 :25</tspan></text>
       <text
          id="text26348-0-9-03-1-1"
          y="70.518173"
@@ -2333,7 +2333,7 @@
            y="70.518173"
            x="195.00873"
            id="tspan26346-4-64-4-5-2"
-           sodipodi:role="line">{{CN10[27].L}} :27</tspan></text>
+           sodipodi:role="line">PB4 :27</tspan></text>
       <text
          id="text26348-0-8-6-0-2"
          y="76.023331"
@@ -2344,7 +2344,7 @@
            y="76.023331"
            x="195.00873"
            id="tspan26346-4-0-36-83-6"
-           sodipodi:role="line">{{CN10[29].L}} :29</tspan></text>
+           sodipodi:role="line">PB5 :29</tspan></text>
       <text
          id="text26348-0-81-3-56-9"
          y="81.528488"
@@ -2355,7 +2355,7 @@
            y="81.528488"
            x="195.00873"
            id="tspan26346-4-02-3-5-1"
-           sodipodi:role="line">{{CN10[31].L}} :31</tspan></text>
+           sodipodi:role="line">PB3 :31</tspan></text>
       <text
          id="text26348-0-29-4-9-0"
          y="87.033638"
@@ -2366,7 +2366,7 @@
            y="87.033638"
            x="195.00873"
            id="tspan26346-4-7-4-9-4"
-           sodipodi:role="line">{{CN10[33].L}} :33</tspan></text>
+           sodipodi:role="line">PA10 :33</tspan></text>
       <text
          id="text26348-0-5-3-0-2"
          y="92.538795"
@@ -2377,7 +2377,7 @@
            y="92.538795"
            x="195.00873"
            id="tspan26346-4-646-9-7-7"
-           sodipodi:role="line">{{CN10[35].L}} :35</tspan></text>
+           sodipodi:role="line">PA2 :35</tspan></text>
       <text
          id="text26348-0-29-4-7-6-4"
          y="98.043953"
@@ -2388,7 +2388,7 @@
            y="98.043953"
            x="196.01952"
            id="tspan26346-4-7-4-2-3-0"
-           sodipodi:role="line">{{CN10[37].L}} :37 </tspan></text>
+           sodipodi:role="line">PA3 :37 </tspan></text>
     </g>
     <g
        transform="translate(50.384371,-0.26726949)"
@@ -2427,7 +2427,7 @@
          id="tspan26346-7-3"
          x="140.50702"
          y="3.1027031"
-         style="font-size:3.17499995px;text-align:center;text-anchor:middle;fill:#4d4d4d;stroke-width:0.26458332">{{LED[1].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:center;text-anchor:middle;fill:#4d4d4d;stroke-width:0.26458332">LD2</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2438,7 +2438,7 @@
          id="tspan26346-4-5-3-2"
          x="226.61864"
          y="-2.2133851"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">2: {{CN10[2].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">2: PC8</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2449,7 +2449,7 @@
          id="tspan26346-4-6-2-9-4"
          x="226.61864"
          y="3.4022593"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">4: {{CN10[4].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">4: PC6</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2460,7 +2460,7 @@
          id="tspan26346-4-1-7-4-5"
          x="226.61864"
          y="9.0179052"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">6: {{CN10[6].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">6: PC5</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2471,7 +2471,7 @@
          id="tspan26346-4-64-4-5-4"
          x="226.61864"
          y="14.63355"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">8: {{CN10[8].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">8: U5V</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2482,7 +2482,7 @@
          id="tspan26346-4-0-36-83-3"
          x="226.61864"
          y="20.249197"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">10: {{CN10[10].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">10: NC</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2493,7 +2493,7 @@
          id="tspan26346-4-02-3-5-6"
          x="226.61864"
          y="25.864843"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">12: {{CN10[12].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">12: PA12</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2504,7 +2504,7 @@
          id="tspan26346-4-7-4-9-9"
          x="226.61864"
          y="31.48049"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">14: {{CN10[14].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">14: PA11</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2515,7 +2515,7 @@
          id="tspan26346-4-646-9-7-3"
          x="226.61864"
          y="37.09613"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">16: {{CN10[16].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">16: PB12</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2526,7 +2526,7 @@
          id="tspan26346-4-7-4-2-3-8"
          x="226.61864"
          y="42.698284"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">18: {{CN10[18].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">18: PB11</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2537,7 +2537,7 @@
          id="tspan26346-4-646-9-8-6-4"
          x="226.61864"
          y="48.313927"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">20: {{CN10[20].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">20: GND</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2548,7 +2548,7 @@
          id="tspan26346-4-5-3-0-2"
          x="226.61864"
          y="53.819084"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">22: {{CN10[22].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">22: PB2</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2559,7 +2559,7 @@
          id="tspan26346-4-6-2-9-5-5"
          x="226.61864"
          y="59.324238"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">24: {{CN10[24].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">24: PB1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2570,7 +2570,7 @@
          id="tspan26346-4-1-7-4-8-7"
          x="226.61864"
          y="64.829399"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">26: {{CN10[26].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">26: PB15</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2581,7 +2581,7 @@
          id="tspan26346-4-64-4-5-2-7"
          x="226.61864"
          y="70.334549"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">28: {{CN10[28].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">28: PB14</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2592,7 +2592,7 @@
          id="tspan26346-4-0-36-83-6-6"
          x="226.61864"
          y="75.839706"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">30: {{CN10[30].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">30: PB13</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2603,7 +2603,7 @@
          id="tspan26346-4-02-3-5-1-8"
          x="226.61864"
          y="81.344864"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">32: {{CN10[32].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">32: AGND</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2614,7 +2614,7 @@
          id="tspan26346-4-7-4-9-4-3"
          x="226.61864"
          y="86.850014"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">34: {{CN10[34].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">34: PC4</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2625,7 +2625,7 @@
          id="tspan26346-4-646-9-7-7-3"
          x="226.61864"
          y="92.355171"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">36: {{CN10[36].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">36: NC</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -2636,7 +2636,7 @@
          id="tspan26346-4-7-4-2-3-0-9"
          x="226.61864"
          y="97.860329"
-         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">38: {{CN10[38].L}}</tspan></text>
+         style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">38: NC</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot27488"
@@ -2672,9 +2672,9 @@
            y="125.38193"
            x="84.031212"
            id="tspan26346-4-4"
-           sodipodi:role="line">{{CN6[1].L}}: <tspan
+           sodipodi:role="line">NC: <tspan
    id="tspan27599"
-   style="fill:#338000;font-weight:bold">{{CN6[1].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8"
          y="128.88094"
@@ -2685,9 +2685,9 @@
            y="128.88094"
            x="84.031212"
            id="tspan26346-4-6-1"
-           sodipodi:role="line">{{CN6[2].L}}: <tspan
+           sodipodi:role="line">IOREF: <tspan
    id="tspan27607"
-   style="fill:#338000;font-weight:bold">{{CN6[2].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6"
          y="132.37994"
@@ -2698,9 +2698,9 @@
            y="132.37994"
            x="84.031212"
            id="tspan26346-4-1-8"
-           sodipodi:role="line">{{CN6[3].L}}: <tspan
+           sodipodi:role="line">RESET: <tspan
    id="tspan27609"
-   style="fill:#338000;font-weight:bold">{{CN6[3].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5"
          y="136.40811"
@@ -2711,9 +2711,9 @@
            y="136.40811"
            x="84.031212"
            id="tspan26346-4-64-2"
-           sodipodi:role="line">{{CN6[4].L}}: <tspan
+           sodipodi:role="line">+3V3: <tspan
    id="tspan27611"
-   style="fill:#338000;font-weight:bold">{{CN6[4].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1"
          y="139.90712"
@@ -2724,9 +2724,9 @@
            y="139.90712"
            x="84.031212"
            id="tspan26346-4-0-9"
-           sodipodi:role="line">{{CN6[5].L}}: <tspan
+           sodipodi:role="line">+5V: <tspan
    id="tspan27613"
-   style="fill:#338000;font-weight:bold">{{CN6[5].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96"
          y="143.40613"
@@ -2737,11 +2737,11 @@
            y="143.40613"
            x="84.031212"
            id="tspan26346-4-02-0"
-           sodipodi:role="line">{{CN6[6].L}}:<tspan
+           sodipodi:role="line">GND:<tspan
    style="font-weight:bold"
    id="tspan1621"> </tspan><tspan
    id="tspan27615"
-   style="fill:#338000;font-weight:bold">{{CN6[6].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6"
          y="146.90514"
@@ -2752,9 +2752,9 @@
            y="146.90514"
            x="84.031212"
            id="tspan26346-4-7-49"
-           sodipodi:role="line">{{CN6[7].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27617"
-   style="fill:#338000;font-weight:bold">{{CN6[7].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9"
          y="150.40414"
@@ -2765,9 +2765,9 @@
            y="150.40414"
            x="84.031212"
            id="tspan26346-4-646-0"
-           sodipodi:role="line">{{CN6[8].L}}: <tspan
+           sodipodi:role="line">VIN: <tspan
    id="tspan27619"
-   style="fill:#338000;font-weight:bold">{{CN6[8].F}}</tspan></tspan></text>
+   style="fill:#338000;font-weight:bold"></tspan></tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -2793,9 +2793,9 @@
            y="164.24904"
            x="84.143661"
            id="tspan26346-4-4-1"
-           sodipodi:role="line">{{CN8[1].L}}: <tspan
+           sodipodi:role="line">A0: <tspan
    id="tspan27599-4"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[1].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-8"
          y="167.74805"
@@ -2806,9 +2806,9 @@
            y="167.74805"
            x="84.143661"
            id="tspan26346-4-6-1-9"
-           sodipodi:role="line">{{CN8[2].L}}: <tspan
+           sodipodi:role="line">A1: <tspan
    id="tspan27607-6"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[2].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-7"
          y="171.24706"
@@ -2819,11 +2819,11 @@
            y="171.24706"
            x="84.143661"
            id="tspan26346-4-1-8-7"
-           sodipodi:role="line">{{CN8[3].L}}:<tspan
+           sodipodi:role="line">A2:<tspan
    style="font-weight:bold"
    id="tspan1623"> </tspan><tspan
    id="tspan27609-3"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[3].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">SPI0.cs</tspan></tspan></text>
       <text
          id="text26348-0-9-5-7"
          y="175.27524"
@@ -2834,9 +2834,9 @@
            y="175.27524"
            x="84.143661"
            id="tspan26346-4-64-2-1"
-           sodipodi:role="line">{{CN8[4].L}}: <tspan
+           sodipodi:role="line">A3: <tspan
    id="tspan27611-2"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[4].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-2"
          y="178.77425"
@@ -2847,9 +2847,9 @@
            y="178.77425"
            x="84.143661"
            id="tspan26346-4-0-9-1"
-           sodipodi:role="line">{{CN8[5].L}}: <tspan
+           sodipodi:role="line">A4: <tspan
    id="tspan27613-5"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[5].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-0"
          y="182.27325"
@@ -2860,9 +2860,9 @@
            y="182.27325"
            x="84.143661"
            id="tspan26346-4-02-0-9"
-           sodipodi:role="line">{{CN8[6].L}}: <tspan
+           sodipodi:role="line">A5: <tspan
    id="tspan27615-0"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN8[6].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
     </g>
     <rect
        style="opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -2906,9 +2906,9 @@
            y="125.25793"
            x="133.71574"
            id="tspan26346-4-4-3"
-           sodipodi:role="line">{{CN5[1].L}}: <tspan
+           sodipodi:role="line">D8: <tspan
    id="tspan27599-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[1].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">UART0.tx</tspan></tspan></text>
       <text
          id="text26348-0-6-8-1"
          y="128.75694"
@@ -2919,9 +2919,9 @@
            y="128.75694"
            x="133.71574"
            id="tspan26346-4-6-1-7"
-           sodipodi:role="line">{{CN5[2].L}}: <tspan
+           sodipodi:role="line">PWM/D9: <tspan
    id="tspan27607-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[2].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6"
          y="132.25595"
@@ -2932,9 +2932,9 @@
            y="132.25595"
            x="133.71574"
            id="tspan26346-4-1-8-5"
-           sodipodi:role="line">{{CN5[3].L}}: <tspan
+           sodipodi:role="line">PWM/CS/D10: <tspan
    id="tspan27609-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[3].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2"
          y="136.28412"
@@ -2945,9 +2945,9 @@
            y="136.28412"
            x="133.71574"
            id="tspan26346-4-64-2-2"
-           sodipodi:role="line">{{CN5[4].L}}: <tspan
+           sodipodi:role="line">PWM/MOSI/D11: <tspan
    id="tspan27611-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[4].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.mosi</tspan></tspan></text>
       <text
          id="text26348-0-8-1-7"
          y="139.78313"
@@ -2958,9 +2958,9 @@
            y="139.78313"
            x="133.71574"
            id="tspan26346-4-0-9-2"
-           sodipodi:role="line">{{CN5[5].L}}: <tspan
+           sodipodi:role="line">MISO/D12: <tspan
    id="tspan27613-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[5].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.miso</tspan></tspan></text>
       <text
          id="text26348-0-81-96-1"
          y="143.28214"
@@ -2971,9 +2971,9 @@
            y="143.28214"
            x="133.71574"
            id="tspan26346-4-02-0-6"
-           sodipodi:role="line">{{CN5[6].L}}: <tspan
+           sodipodi:role="line">SCK/D13: <tspan
    id="tspan27615-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[6].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.sck</tspan></tspan></text>
       <text
          id="text26348-0-29-6-7"
          y="146.78114"
@@ -2984,9 +2984,9 @@
            y="146.78114"
            x="133.71574"
            id="tspan26346-4-7-49-8"
-           sodipodi:role="line">{{CN5[7].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27617-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[7].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9"
          y="150.28015"
@@ -2997,9 +2997,9 @@
            y="150.28015"
            x="133.71574"
            id="tspan26346-4-646-0-2"
-           sodipodi:role="line">{{CN5[8].L}}: <tspan
+           sodipodi:role="line">AVDD: <tspan
    id="tspan27619-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[8].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4"
          y="153.81383"
@@ -3010,11 +3010,11 @@
            y="153.81383"
            x="133.92657"
            id="tspan26346-4-7-49-8-6"
-           sodipodi:role="line">{{CN5[9].L}}:<tspan
+           sodipodi:role="line">SDA/D14:<tspan
    style="font-weight:bold"
    id="tspan1611"> </tspan><tspan
    id="tspan27617-5-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[9].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">I2C0.sda</tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-0"
          y="157.31284"
@@ -3025,9 +3025,9 @@
            y="157.31284"
            x="133.92657"
            id="tspan26346-4-646-0-2-2"
-           sodipodi:role="line">{{CN5[10].L}}: <tspan
+           sodipodi:role="line">SCL/D15: <tspan
    id="tspan27619-7-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN5[10].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">I2C0.scl</tspan></tspan></text>
     </g>
     <g
        id="g28092"
@@ -3042,9 +3042,9 @@
            y="169.09477"
            x="133.40686"
            id="tspan26346-4-4-3-9"
-           sodipodi:role="line">{{CN9[1].L}}: <tspan
+           sodipodi:role="line">RX/D0: <tspan
    id="tspan27599-2-5"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[1].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">UART1.rx</tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-0"
          y="172.59378"
@@ -3055,9 +3055,9 @@
            y="172.59378"
            x="133.40686"
            id="tspan26346-4-6-1-7-6"
-           sodipodi:role="line">{{CN9[2].L}}: <tspan
+           sodipodi:role="line">TX/D1: <tspan
    id="tspan27607-5-0"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[2].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">UART1.tx</tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-8"
          y="176.09279"
@@ -3068,11 +3068,11 @@
            y="176.09279"
            x="133.40686"
            id="tspan26346-4-1-8-5-3"
-           sodipodi:role="line">{{CN9[3].L}}:<tspan
+           sodipodi:role="line">D2:<tspan
    style="font-weight:bold"
    id="tspan1613"> </tspan><tspan
    id="tspan27609-4-7"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[3].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-8"
          y="180.12096"
@@ -3083,9 +3083,9 @@
            y="180.12096"
            x="133.40686"
            id="tspan26346-4-64-2-2-2"
-           sodipodi:role="line">{{CN9[4].L}}: <tspan
+           sodipodi:role="line">PWM/D3: <tspan
    id="tspan27611-1-1"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[4].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-0"
          y="183.61996"
@@ -3096,9 +3096,9 @@
            y="183.61996"
            x="133.40686"
            id="tspan26346-4-0-9-2-5"
-           sodipodi:role="line">{{CN9[5].L}}: <tspan
+           sodipodi:role="line">D4: <tspan
    id="tspan27613-4-8"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[5].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-5"
          y="187.11897"
@@ -3109,9 +3109,9 @@
            y="187.11897"
            x="133.40686"
            id="tspan26346-4-02-0-6-5"
-           sodipodi:role="line">{{CN9[6].L}}: <tspan
+           sodipodi:role="line">PWM/D5: <tspan
    id="tspan27615-5-0"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[6].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-7"
          y="190.61798"
@@ -3122,9 +3122,9 @@
            y="190.61798"
            x="133.40686"
            id="tspan26346-4-7-49-8-3"
-           sodipodi:role="line">{{CN9[7].L}}: <tspan
+           sodipodi:role="line">PWM/D6: <tspan
    id="tspan27617-5-8"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[7].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-2"
          y="194.11699"
@@ -3135,9 +3135,9 @@
            y="194.11699"
            x="133.40686"
            id="tspan26346-4-646-0-2-3"
-           sodipodi:role="line">{{CN9[8].L}}: <tspan
+           sodipodi:role="line">D7: <tspan
    id="tspan27619-7-0"
-   style="font-weight:bold;fill:#338000;stroke-width:0.26458332">{{CN9[8].F}}</tspan></tspan></text>
+   style="font-weight:bold;fill:#338000;stroke-width:0.26458332"></tspan></tspan></text>
     </g>
     <rect
        style="opacity:1;vector-effect:none;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -3183,9 +3183,9 @@
            y="141.91249"
            x="186.75581"
            id="tspan26346-4-4-3-0"
-           sodipodi:role="line">{{CN10[1].L}}: <tspan
+           sodipodi:role="line">PC9: <tspan
    id="tspan27599-2-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[1].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9"
          y="145.41151"
@@ -3196,9 +3196,9 @@
            y="145.41151"
            x="186.75581"
            id="tspan26346-4-6-1-7-8"
-           sodipodi:role="line">{{CN10[3].L}}: <tspan
+           sodipodi:role="line">PB8: <tspan
    id="tspan27607-5-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[3].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">I2C0.scl</tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0"
          y="148.91052"
@@ -3209,9 +3209,9 @@
            y="148.91052"
            x="186.75581"
            id="tspan26346-4-1-8-5-37"
-           sodipodi:role="line">{{CN10[5].L}}: <tspan
+           sodipodi:role="line">PB9: <tspan
    id="tspan27609-4-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[5].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">I2C0.sda</tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6"
          y="152.93869"
@@ -3222,11 +3222,11 @@
            y="152.93869"
            x="186.75581"
            id="tspan26346-4-64-2-2-9"
-           sodipodi:role="line">{{CN10[7].L}}:<tspan
+           sodipodi:role="line">AVDD:<tspan
    style="font-weight:bold"
    id="tspan1625"> </tspan><tspan
    id="tspan27611-1-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[7].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1"
          y="156.4377"
@@ -3237,9 +3237,9 @@
            y="156.4377"
            x="186.75581"
            id="tspan26346-4-0-9-2-7"
-           sodipodi:role="line">{{CN10[9].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27613-4-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[9].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9"
          y="159.93671"
@@ -3250,9 +3250,9 @@
            y="159.93671"
            x="186.75581"
            id="tspan26346-4-02-0-6-7"
-           sodipodi:role="line">{{CN10[11].L}}: <tspan
+           sodipodi:role="line">PA5: <tspan
    id="tspan27615-5-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[11].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.sck</tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2"
          y="163.43571"
@@ -3263,9 +3263,9 @@
            y="163.43571"
            x="186.75581"
            id="tspan26346-4-7-49-8-7"
-           sodipodi:role="line">{{CN10[13].L}}: <tspan
+           sodipodi:role="line">PA6: <tspan
    id="tspan27617-5-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[13].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.miso</tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5"
          y="166.93472"
@@ -3276,11 +3276,11 @@
            y="166.93472"
            x="186.75581"
            id="tspan26346-4-646-0-2-8"
-           sodipodi:role="line">{{CN10[15].L}}:<tspan
+           sodipodi:role="line">PA7:<tspan
    style="font-weight:bold"
    id="tspan1627"> </tspan><tspan
    id="tspan27619-7-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[15].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.mosi</tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4"
          y="170.4684"
@@ -3291,11 +3291,11 @@
            y="170.4684"
            x="186.96664"
            id="tspan26346-4-7-49-8-6-5"
-           sodipodi:role="line">{{CN10[17].L}}:<tspan
+           sodipodi:role="line">PB6:<tspan
    style="font-weight:bold"
    id="tspan1629"> </tspan><tspan
    id="tspan27617-5-6-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[17].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-0-5"
          y="173.96741"
@@ -3306,9 +3306,9 @@
            y="173.96741"
            x="186.96664"
            id="tspan26346-4-646-0-2-2-6"
-           sodipodi:role="line">{{CN10[19].L}}: <tspan
+           sodipodi:role="line">PC7: <tspan
    id="tspan27619-7-5-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[19].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-48-0-9-8"
          y="177.57562"
@@ -3319,9 +3319,9 @@
            y="177.57562"
            x="186.87517"
            id="tspan26346-4-4-3-0-8"
-           sodipodi:role="line">{{CN10[21].L}}: <tspan
+           sodipodi:role="line">PA9: <tspan
    id="tspan27599-2-8-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[21].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">UART0.tx</tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-8"
          y="181.07465"
@@ -3332,9 +3332,9 @@
            y="181.07465"
            x="186.87517"
            id="tspan26346-4-6-1-7-8-7"
-           sodipodi:role="line">{{CN10[23].L}}: <tspan
+           sodipodi:role="line">PA8: <tspan
    id="tspan27607-5-8-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[23].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-2"
          y="184.57365"
@@ -3345,11 +3345,11 @@
            y="184.57365"
            x="186.87517"
            id="tspan26346-4-1-8-5-37-4"
-           sodipodi:role="line">{{CN10[25].L}}:<tspan
+           sodipodi:role="line">PB10:<tspan
    style="font-weight:bold"
    id="tspan1631"> </tspan><tspan
    id="tspan27609-4-0-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[25].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-0"
          y="188.60182"
@@ -3360,11 +3360,11 @@
            y="188.60182"
            x="186.87517"
            id="tspan26346-4-64-2-2-9-5"
-           sodipodi:role="line">{{CN10[27].L}}:<tspan
+           sodipodi:role="line">PB4:<tspan
    style="font-weight:bold"
    id="tspan1633"> </tspan><tspan
    id="tspan27611-1-2-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[27].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-3"
          y="192.10083"
@@ -3375,9 +3375,9 @@
            y="192.10083"
            x="186.87517"
            id="tspan26346-4-0-9-2-7-2"
-           sodipodi:role="line">{{CN10[29].L}}: <tspan
+           sodipodi:role="line">PB5: <tspan
    id="tspan27613-4-7-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[29].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-2"
          y="195.59984"
@@ -3388,9 +3388,9 @@
            y="195.59984"
            x="186.87517"
            id="tspan26346-4-02-0-6-7-1"
-           sodipodi:role="line">{{CN10[31].L}}: <tspan
+           sodipodi:role="line">PB3: <tspan
    id="tspan27615-5-6-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[31].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-4"
          y="199.09885"
@@ -3401,9 +3401,9 @@
            y="199.09885"
            x="186.87517"
            id="tspan26346-4-7-49-8-7-9"
-           sodipodi:role="line">{{CN10[33].L}}: <tspan
+           sodipodi:role="line">PA10: <tspan
    id="tspan27617-5-1-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[33].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-1"
          y="202.59785"
@@ -3414,9 +3414,9 @@
            y="202.59785"
            x="186.87517"
            id="tspan26346-4-646-0-2-8-9"
-           sodipodi:role="line">{{CN10[35].L}}: <tspan
+           sodipodi:role="line">PA2: <tspan
    id="tspan27619-7-8-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[35].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">UART1.tx</tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-7"
          y="206.13153"
@@ -3427,11 +3427,11 @@
            y="206.13153"
            x="187.086"
            id="tspan26346-4-7-49-8-6-5-4"
-           sodipodi:role="line">{{CN10[37].L}}:<tspan
+           sodipodi:role="line">PA3:<tspan
    style="font-weight:bold"
    id="tspan1635"> </tspan><tspan
    id="tspan27617-5-6-6-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[37].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">UART1.rx</tspan></tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:2.11666656px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -3442,11 +3442,11 @@
            id="tspan1641"
            x="187.086"
            y="206.13153"
-           style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">{{CN10[37].L}}:<tspan
+           style="font-size:3.17499995px;text-align:start;text-anchor:start;fill:#4d4d4d;stroke-width:0.26458332">PA3:<tspan
    id="tspan1637"
    style="font-weight:bold"> </tspan><tspan
    style="font-weight:bold;fill:#338000;stroke-width:0.26458332"
-   id="tspan1639">{{CN10[37].F}} </tspan></tspan></text>
+   id="tspan1639">UART1.rx </tspan></tspan></text>
     </g>
     <g
        transform="translate(54.974242,0.09531485)"
@@ -3461,11 +3461,11 @@
            y="141.91249"
            x="186.75581"
            id="tspan26346-4-4-3-0-2"
-           sodipodi:role="line">{{CN10[2].L}}:<tspan
+           sodipodi:role="line">PC8:<tspan
    style="font-weight:bold"
    id="tspan1645"> </tspan><tspan
    id="tspan27599-2-8-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[2].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-9"
          y="145.41151"
@@ -3476,9 +3476,9 @@
            y="145.41151"
            x="186.75581"
            id="tspan26346-4-6-1-7-8-74"
-           sodipodi:role="line">{{CN10[4].L}}: <tspan
+           sodipodi:role="line">PC6: <tspan
    id="tspan27607-5-8-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[4].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-5"
          y="148.91052"
@@ -3489,9 +3489,9 @@
            y="148.91052"
            x="186.75581"
            id="tspan26346-4-1-8-5-37-6"
-           sodipodi:role="line">{{CN10[6].L}}: <tspan
+           sodipodi:role="line">PC5: <tspan
    id="tspan27609-4-0-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[6].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-4"
          y="152.93869"
@@ -3502,9 +3502,9 @@
            y="152.93869"
            x="186.75581"
            id="tspan26346-4-64-2-2-9-0"
-           sodipodi:role="line">{{CN10[8].L}}: <tspan
+           sodipodi:role="line">U5V: <tspan
    id="tspan27611-1-2-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[8].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-1"
          y="156.4377"
@@ -3515,9 +3515,9 @@
            y="156.4377"
            x="186.75581"
            id="tspan26346-4-0-9-2-7-27"
-           sodipodi:role="line">{{CN10[10].L}}: <tspan
+           sodipodi:role="line">NC: <tspan
    id="tspan27613-4-7-79"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[10].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-8"
          y="159.93671"
@@ -3528,9 +3528,9 @@
            y="159.93671"
            x="186.75581"
            id="tspan26346-4-02-0-6-7-10"
-           sodipodi:role="line">{{CN10[12].L}}: <tspan
+           sodipodi:role="line">PA12: <tspan
    id="tspan27615-5-6-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[12].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-6"
          y="163.43571"
@@ -3541,11 +3541,11 @@
            y="163.43571"
            x="186.75581"
            id="tspan26346-4-7-49-8-7-0"
-           sodipodi:role="line">{{CN10[14].L}}:<tspan
+           sodipodi:role="line">PA11:<tspan
    style="font-weight:bold"
    id="tspan1647"> </tspan><tspan
    id="tspan27617-5-1-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[14].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-0"
          y="166.93472"
@@ -3556,9 +3556,9 @@
            y="166.93472"
            x="186.75581"
            id="tspan26346-4-646-0-2-8-2"
-           sodipodi:role="line">{{CN10[16].L}}: <tspan
+           sodipodi:role="line">PB12: <tspan
    id="tspan27619-7-8-51"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[16].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-9"
          y="170.4684"
@@ -3569,9 +3569,9 @@
            y="170.4684"
            x="186.96664"
            id="tspan26346-4-7-49-8-6-5-7"
-           sodipodi:role="line">{{CN10[18].L}}: <tspan
+           sodipodi:role="line">PB11: <tspan
    id="tspan27617-5-6-6-13"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[18].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-0-5-1"
          y="173.96741"
@@ -3582,9 +3582,9 @@
            y="173.96741"
            x="186.96664"
            id="tspan26346-4-646-0-2-2-6-2"
-           sodipodi:role="line">{{CN10[20].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27619-7-5-8-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[20].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-48-0-9-8-6"
          y="177.57562"
@@ -3595,9 +3595,9 @@
            y="177.57562"
            x="186.87517"
            id="tspan26346-4-4-3-0-8-8"
-           sodipodi:role="line">{{CN10[22].L}}: <tspan
+           sodipodi:role="line">PB2: <tspan
    id="tspan27599-2-8-3-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[22].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-8-4"
          y="181.07465"
@@ -3608,9 +3608,9 @@
            y="181.07465"
            x="186.87517"
            id="tspan26346-4-6-1-7-8-7-9"
-           sodipodi:role="line">{{CN10[24].L}}: <tspan
+           sodipodi:role="line">PB1: <tspan
    id="tspan27607-5-8-5-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[24].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-2-4"
          y="184.57365"
@@ -3621,9 +3621,9 @@
            y="184.57365"
            x="186.87517"
            id="tspan26346-4-1-8-5-37-4-4"
-           sodipodi:role="line">{{CN10[26].L}}: <tspan
+           sodipodi:role="line">PB15: <tspan
    id="tspan27609-4-0-5-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[26].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-0-9"
          y="188.60182"
@@ -3634,9 +3634,9 @@
            y="188.60182"
            x="186.87517"
            id="tspan26346-4-64-2-2-9-5-1"
-           sodipodi:role="line">{{CN10[28].L}}: <tspan
+           sodipodi:role="line">PB14: <tspan
    id="tspan27611-1-2-7-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[28].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-3-8"
          y="192.10083"
@@ -3647,9 +3647,9 @@
            y="192.10083"
            x="186.87517"
            id="tspan26346-4-0-9-2-7-2-9"
-           sodipodi:role="line">{{CN10[30].L}}: <tspan
+           sodipodi:role="line">PB13: <tspan
    id="tspan27613-4-7-7-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[30].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-2-0"
          y="195.59984"
@@ -3660,9 +3660,9 @@
            y="195.59984"
            x="186.87517"
            id="tspan26346-4-02-0-6-7-1-6"
-           sodipodi:role="line">{{CN10[32].L}}: <tspan
+           sodipodi:role="line">AGND: <tspan
    id="tspan27615-5-6-3-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[32].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-4-0"
          y="199.09885"
@@ -3673,11 +3673,11 @@
            y="199.09885"
            x="186.87517"
            id="tspan26346-4-7-49-8-7-9-9"
-           sodipodi:role="line">{{CN10[34].L}}:<tspan
+           sodipodi:role="line">PC4:<tspan
    style="font-weight:bold"
    id="tspan1657"> </tspan><tspan
    id="tspan27617-5-1-4-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[34].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-1-5"
          y="202.59785"
@@ -3688,9 +3688,9 @@
            y="202.59785"
            x="186.87517"
            id="tspan26346-4-646-0-2-8-9-4"
-           sodipodi:role="line">{{CN10[36].L}}: <tspan
+           sodipodi:role="line">NC: <tspan
    id="tspan27619-7-8-5-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[36].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-7-6"
          y="206.13153"
@@ -3701,11 +3701,11 @@
            y="206.13153"
            x="187.086"
            id="tspan26346-4-7-49-8-6-5-4-3"
-           sodipodi:role="line">{{CN10[38].L}}:<tspan
+           sodipodi:role="line">NC:<tspan
    style="font-weight:bold"
    id="tspan1659"> </tspan><tspan
    id="tspan27617-5-6-6-1-9"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN10[38].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -3731,9 +3731,9 @@
            y="141.91249"
            x="186.75581"
            id="tspan26346-4-4-3-0-0"
-           sodipodi:role="line">{{CN7[1].L}}: <tspan
+           sodipodi:role="line">PC10: <tspan
    id="tspan27599-2-8-9"
-   style="fill:#338000;stroke-width:0.26458332;-inkscape-font-specification:'sans-serif Bold';font-family:sans-serif;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal">{{CN7[1].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;-inkscape-font-specification:'sans-serif Bold';font-family:sans-serif;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-91"
          y="145.41151"
@@ -3744,9 +3744,9 @@
            y="145.41151"
            x="186.75581"
            id="tspan26346-4-6-1-7-8-3"
-           sodipodi:role="line">{{CN7[3].L}}: <tspan
+           sodipodi:role="line">PC12: <tspan
    id="tspan27607-5-8-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[3].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-58"
          y="148.91052"
@@ -3757,11 +3757,11 @@
            y="148.91052"
            x="186.75581"
            id="tspan26346-4-1-8-5-37-5"
-           sodipodi:role="line">{{CN7[5].L}}:<tspan
+           sodipodi:role="line">VDD:<tspan
    style="font-weight:bold"
    id="tspan1595"> </tspan><tspan
    id="tspan27609-4-0-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[5].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-3"
          y="152.93869"
@@ -3772,9 +3772,9 @@
            y="152.93869"
            x="186.75581"
            id="tspan26346-4-64-2-2-9-3"
-           sodipodi:role="line">{{CN7[7].L}}: <tspan
+           sodipodi:role="line">BOOT0: <tspan
    id="tspan27611-1-2-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[7].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-9"
          y="156.4377"
@@ -3785,9 +3785,9 @@
            y="156.4377"
            x="186.75581"
            id="tspan26346-4-0-9-2-7-5"
-           sodipodi:role="line">{{CN7[9].L}}: <tspan
+           sodipodi:role="line">NC: <tspan
    id="tspan27613-4-7-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[9].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-3"
          y="159.93671"
@@ -3798,9 +3798,9 @@
            y="159.93671"
            x="186.75581"
            id="tspan26346-4-02-0-6-7-8"
-           sodipodi:role="line">{{CN7[11].L}}: <tspan
+           sodipodi:role="line">NC: <tspan
    id="tspan27615-5-6-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[11].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-0"
          y="163.43571"
@@ -3811,9 +3811,9 @@
            y="163.43571"
            x="186.75581"
            id="tspan26346-4-7-49-8-7-3"
-           sodipodi:role="line">{{CN7[13].L}}: <tspan
+           sodipodi:role="line">PA13: <tspan
    id="tspan27617-5-1-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[13].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-6"
          y="166.93472"
@@ -3824,11 +3824,11 @@
            y="166.93472"
            x="186.75581"
            id="tspan26346-4-646-0-2-8-1"
-           sodipodi:role="line">{{CN7[15].L}}:<tspan
+           sodipodi:role="line">PA14:<tspan
    style="font-weight:bold"
    id="tspan1597"> </tspan><tspan
    id="tspan27619-7-8-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[15].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-70"
          y="170.4684"
@@ -3839,11 +3839,11 @@
            y="170.4684"
            x="186.96664"
            id="tspan26346-4-7-49-8-6-5-5"
-           sodipodi:role="line">{{CN7[17].L}}:<tspan
+           sodipodi:role="line">PA15:<tspan
    style="font-weight:bold"
    id="tspan1599"> </tspan><tspan
    id="tspan27617-5-6-6-11"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[17].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">UART0.rx</tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-0-5-0"
          y="173.96741"
@@ -3854,9 +3854,9 @@
            y="173.96741"
            x="186.96664"
            id="tspan26346-4-646-0-2-2-6-3"
-           sodipodi:role="line">{{CN7[19].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27619-7-5-8-00"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[19].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-48-0-9-8-4"
          y="177.57562"
@@ -3867,9 +3867,9 @@
            y="177.57562"
            x="186.87517"
            id="tspan26346-4-4-3-0-8-5"
-           sodipodi:role="line">{{CN7[21].L}}: <tspan
+           sodipodi:role="line">PB7: <tspan
    id="tspan27599-2-8-3-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[21].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-8-2"
          y="181.07465"
@@ -3880,11 +3880,11 @@
            y="181.07465"
            x="186.87517"
            id="tspan26346-4-6-1-7-8-7-4"
-           sodipodi:role="line">{{CN7[23].L}}:<tspan
+           sodipodi:role="line">PC13:<tspan
    style="font-weight:bold"
    id="tspan1601"> </tspan><tspan
    id="tspan27607-5-8-5-9"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[23].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-2-9"
          y="184.57365"
@@ -3895,9 +3895,9 @@
            y="184.57365"
            x="186.87517"
            id="tspan26346-4-1-8-5-37-4-9"
-           sodipodi:role="line">{{CN7[25].L}}: <tspan
+           sodipodi:role="line">PC14: <tspan
    id="tspan27609-4-0-5-4"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[25].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-0-98"
          y="188.60182"
@@ -3908,9 +3908,9 @@
            y="188.60182"
            x="186.87517"
            id="tspan26346-4-64-2-2-9-5-16"
-           sodipodi:role="line">{{CN7[27].L}}: <tspan
+           sodipodi:role="line">PC15: <tspan
    id="tspan27611-1-2-7-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[27].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-3-9"
          y="192.10083"
@@ -3921,9 +3921,9 @@
            y="192.10083"
            x="186.87517"
            id="tspan26346-4-0-9-2-7-2-3"
-           sodipodi:role="line">{{CN7[29].L}}: <tspan
+           sodipodi:role="line">PH0: <tspan
    id="tspan27613-4-7-7-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[29].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-2-4"
          y="195.59984"
@@ -3934,11 +3934,11 @@
            y="195.59984"
            x="186.87517"
            id="tspan26346-4-02-0-6-7-1-61"
-           sodipodi:role="line">{{CN7[31].L}}:<tspan
+           sodipodi:role="line">PH1:<tspan
    style="font-weight:bold"
    id="tspan1603"> </tspan><tspan
    id="tspan27615-5-6-3-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[31].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-4-6"
          y="199.09885"
@@ -3949,9 +3949,9 @@
            y="199.09885"
            x="186.87517"
            id="tspan26346-4-7-49-8-7-9-1"
-           sodipodi:role="line">{{CN10[33].L}}: <tspan
+           sodipodi:role="line">PA10: <tspan
    id="tspan27617-5-1-4-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[33].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-1-2"
          y="202.59785"
@@ -3962,9 +3962,9 @@
            y="202.59785"
            x="186.87517"
            id="tspan26346-4-646-0-2-8-9-2"
-           sodipodi:role="line">{{CN7[35].L}}: <tspan
+           sodipodi:role="line">PC2: <tspan
    id="tspan27619-7-8-5-9"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[35].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-7-2"
          y="206.13153"
@@ -3975,9 +3975,9 @@
            y="206.13153"
            x="187.086"
            id="tspan26346-4-7-49-8-6-5-4-8"
-           sodipodi:role="line">{{CN7[37].L}}: <tspan
+           sodipodi:role="line">PC3: <tspan
    id="tspan27617-5-6-6-1-1"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[37].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
     </g>
     <g
        transform="translate(-160.43836,1.3539333)"
@@ -3992,9 +3992,9 @@
            y="141.91249"
            x="186.75581"
            id="tspan26346-4-4-3-0-2-8"
-           sodipodi:role="line">{{CN7[2].L}}: <tspan
+           sodipodi:role="line">PC11: <tspan
    id="tspan27599-2-8-2-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[2].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-9-3"
          y="145.41151"
@@ -4005,9 +4005,9 @@
            y="145.41151"
            x="186.75581"
            id="tspan26346-4-6-1-7-8-74-7"
-           sodipodi:role="line">{{CN7[4].L}}: <tspan
+           sodipodi:role="line">PD2: <tspan
    id="tspan27607-5-8-3-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[4].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-5-2"
          y="148.91052"
@@ -4018,9 +4018,9 @@
            y="148.91052"
            x="186.75581"
            id="tspan26346-4-1-8-5-37-6-3"
-           sodipodi:role="line">{{CN7[6].L}}: <tspan
+           sodipodi:role="line">E5V: <tspan
    id="tspan27609-4-0-1-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[6].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-4-2"
          y="152.93869"
@@ -4031,9 +4031,9 @@
            y="152.93869"
            x="186.75581"
            id="tspan26346-4-64-2-2-9-0-5"
-           sodipodi:role="line">{{CN7[8].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27611-1-2-3-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[8].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-1-7"
          y="156.4377"
@@ -4044,11 +4044,11 @@
            y="156.4377"
            x="186.75581"
            id="tspan26346-4-0-9-2-7-27-6"
-           sodipodi:role="line">{{CN7[10].L}}:<tspan
+           sodipodi:role="line">NC:<tspan
    style="font-weight:bold"
    id="tspan1605"> </tspan><tspan
    id="tspan27613-4-7-79-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[10].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-8-1"
          y="159.93671"
@@ -4059,9 +4059,9 @@
            y="159.93671"
            x="186.75581"
            id="tspan26346-4-02-0-6-7-10-3"
-           sodipodi:role="line">{{CN7[12].L}}: <tspan
+           sodipodi:role="line">IOREF: <tspan
    id="tspan27615-5-6-7-6"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[12].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-6-4"
          y="163.43571"
@@ -4072,11 +4072,11 @@
            y="163.43571"
            x="186.75581"
            id="tspan26346-4-7-49-8-7-0-0"
-           sodipodi:role="line">{{CN7[14].L}}:<tspan
+           sodipodi:role="line">RESET:<tspan
    style="font-weight:bold"
    id="tspan1607"> </tspan><tspan
    id="tspan27617-5-1-1-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[14].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-0-5"
          y="166.93472"
@@ -4087,9 +4087,9 @@
            y="166.93472"
            x="186.75581"
            id="tspan26346-4-646-0-2-8-2-8"
-           sodipodi:role="line">{{CN7[16].L}}: <tspan
+           sodipodi:role="line">+3V3: <tspan
    id="tspan27619-7-8-51-5"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[16].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-9-0"
          y="170.4684"
@@ -4100,9 +4100,9 @@
            y="170.4684"
            x="186.96664"
            id="tspan26346-4-7-49-8-6-5-7-9"
-           sodipodi:role="line">{{CN7[18].L}}: <tspan
+           sodipodi:role="line">+5V: <tspan
    id="tspan27617-5-6-6-13-9"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[18].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-0-5-1-8"
          y="173.96741"
@@ -4113,9 +4113,9 @@
            y="173.96741"
            x="186.96664"
            id="tspan26346-4-646-0-2-2-6-2-0"
-           sodipodi:role="line">{{CN7[20].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27619-7-5-8-0-2"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[20].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-48-0-9-8-6-4"
          y="177.57562"
@@ -4126,9 +4126,9 @@
            y="177.57562"
            x="186.87517"
            id="tspan26346-4-4-3-0-8-8-9"
-           sodipodi:role="line">{{CN7[22].L}}: <tspan
+           sodipodi:role="line">GND: <tspan
    id="tspan27599-2-8-3-7-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[22].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-6-8-1-9-8-4-1"
          y="181.07465"
@@ -4139,9 +4139,9 @@
            y="181.07465"
            x="186.87517"
            id="tspan26346-4-6-1-7-8-7-9-2"
-           sodipodi:role="line">{{CN7[24].L}}: <tspan
+           sodipodi:role="line">VIN: <tspan
    id="tspan27607-5-8-5-2-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[24].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-2-6-6-0-2-4-0"
          y="184.57365"
@@ -4152,11 +4152,11 @@
            y="184.57365"
            x="186.87517"
            id="tspan26346-4-1-8-5-37-4-4-6"
-           sodipodi:role="line">{{CN7[26].L}}:<tspan
+           sodipodi:role="line">NC:<tspan
    style="font-weight:bold"
    id="tspan1615"> </tspan><tspan
    id="tspan27609-4-0-5-5-3"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[26].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-9-5-2-6-0-9-9"
          y="188.60182"
@@ -4167,9 +4167,9 @@
            y="188.60182"
            x="186.87517"
            id="tspan26346-4-64-2-2-9-5-1-0"
-           sodipodi:role="line">{{CN7[28].L}}: <tspan
+           sodipodi:role="line">PA0: <tspan
    id="tspan27611-1-2-7-2-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[28].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-8-1-7-1-3-8-3"
          y="192.10083"
@@ -4180,11 +4180,11 @@
            y="192.10083"
            x="186.87517"
            id="tspan26346-4-0-9-2-7-2-9-8"
-           sodipodi:role="line">{{CN7[30].L}}:<tspan
+           sodipodi:role="line">PA1:<tspan
    style="font-weight:bold"
    id="tspan1617"> </tspan><tspan
    id="tspan27613-4-7-7-6-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[30].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-81-96-1-9-2-0-3"
          y="195.59984"
@@ -4195,9 +4195,9 @@
            y="195.59984"
            x="186.87517"
            id="tspan26346-4-02-0-6-7-1-6-1"
-           sodipodi:role="line">{{CN7[32].L}}: <tspan
+           sodipodi:role="line">PA4: <tspan
    id="tspan27615-5-6-3-4-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[32].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">SPI0.cs</tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-2-4-0-0"
          y="199.09885"
@@ -4208,9 +4208,9 @@
            y="199.09885"
            x="186.87517"
            id="tspan26346-4-7-49-8-7-9-9-5"
-           sodipodi:role="line">{{CN7[34].L}}: <tspan
+           sodipodi:role="line">PB0: <tspan
    id="tspan27617-5-1-4-4-0"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[34].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-5-9-9-5-1-5-3"
          y="202.59785"
@@ -4221,9 +4221,9 @@
            y="202.59785"
            x="186.87517"
            id="tspan26346-4-646-0-2-8-9-4-1"
-           sodipodi:role="line">{{CN7[36].L}}: <tspan
+           sodipodi:role="line">PC1: <tspan
    id="tspan27619-7-8-5-6-8"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[36].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
       <text
          id="text26348-0-29-6-7-4-4-7-6-0"
          y="206.13153"
@@ -4234,9 +4234,9 @@
            y="206.13153"
            x="187.086"
            id="tspan26346-4-7-49-8-6-5-4-3-1"
-           sodipodi:role="line">{{CN7[38].L}}: <tspan
+           sodipodi:role="line">PC0: <tspan
    id="tspan27617-5-6-6-1-9-7"
-   style="fill:#338000;stroke-width:0.26458332;font-weight:bold">{{CN7[38].F}}</tspan></tspan></text>
+   style="fill:#338000;stroke-width:0.26458332;font-weight:bold"></tspan></tspan></text>
     </g>
     <text
        xml:space="preserve"
@@ -4323,7 +4323,7 @@
                y="71.947304"
                x="102.15065"
                id="tspan25499"
-               sodipodi:role="line">{{board.cpu_model}}</tspan></text>
+               sodipodi:role="line"></tspan></text>
         </g>
         <g
            transform="matrix(0.78592178,0,0,1,14.540305,0)"
