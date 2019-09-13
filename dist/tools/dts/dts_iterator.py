@@ -1,28 +1,63 @@
 import logging
-import fdt
-from peewee import *
-from hwd.dts.common import db
-from hwd.dts.common import _nodes
-from hwd.dts.common import DTBParser
-from hwd.dts.common import NodeModel
-from hwd.dts.common import Pinmap
-from hwd.dts.common import Pinout
-
-import ruamel.yaml as yaml
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-
 import os
 import argparse
+import ruamel.yaml as yaml
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from hwd.dts.common import Board
 
-import hwd
-from hwd import dts
+jinja_env = Environment(
+    loader=FileSystemLoader([os.environ['RIOTBASE'], os.environ['DTS_TEMPLATES']]),
+    lstrip_blocks=True,
+    trim_blocks=True
+)
+
+def generate_periph_conf(board):
+    # TODO: Just for demo purposes, should return all peripherals
+    ret = ''
+    template_struct = jinja_env.get_template('array_of_structs.jinja')
+
+    i2cs = board.render_peripherals('i2c')
+    ctx = {'attributes': ['static', 'const'], 'type': 'i2c_conf_t', 'name': 'i2c_config'}
+    ctx['structs'] = i2cs
+    ret += template_struct.render(ctx) + '\n\n'
+
+    uarts = board.render_peripherals('usart')
+    ctx['type'] = 'uart_conf_t'
+    ctx['name'] = 'uart_config'
+    ctx['structs'] = uarts
+    ret += template_struct.render(ctx)
+
+    return ret
+
+def generate_pinout(board, template_path):
+    ctx = board.get_description()
+    ctx['pins'] = {}
+    for name, connector in board.get_pinmap().items():
+        conn = [{}] # connector numeration starts in 1
+        for pin in connector:
+            if pin.cpu_pin:
+                cg = pin.cpu_pin.config_group
+                fu = pin.cpu_pin.function
+            else:
+                cg = ''
+                fu = ''
+            conn.append({'L':pin.label, 'F': '{}.{}'.format(cg,fu)})
+        ctx['pins'][name] = conn
+    try:
+        template = jinja_env.get_template(template_path)
+    except:
+        template = jinja_env.get_template('board_pinout.jinja')
+
+    return template.render(ctx)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description='Perform operations on Device Trees and Bindings')
 
     parser.add_argument('dtb', help='Path to the .dtb file')
+    parser.add_argument('cmd', help='Command')
     parser.add_argument('-b', '--board', help='Board description file')
+    parser.add_argument('-p', '--pinout', help='Board pinout template')
     parser.add_argument('--log', help='Logging level. Default: Warning.')
     args = parser.parse_args()
 
@@ -33,52 +68,16 @@ if __name__ == "__main__":
             raise ValueError('Invalid log level: %s' % args.log)
         logging.basicConfig(level=numeric_level)
 
-    db.create_tables([Pinmap])
-    db.create_tables([Pinout])
+    board = Board(args.dtb)
+    if args.board:
+        board.load_description(args.board)
 
-    try:
-        with open(args.board) as stream:
-            board = yaml.safe_load(stream)
-
-        for k, v in board['board']['pinmap'].items():
-            for el in v:
-                el['group'] = k
-                Pinmap.create(**el)
-    except TypeError:
-        logging.info('No board descripcion provided')
-
-    dtparser = DTBParser()
-    dtparser.load(args.dtb)
-    dtparser.create_pinout()
-
-    def format_function(function, config_group):
-        return config_group + '.' + function
-
-    q = Pinmap.select(Pinmap.label.alias('L'), Pinmap.pin, Pinmap.group,
-    format_function(Pinout.function, Pinout.config_group) \
-    .alias('F')) \
-    .join(Pinout, JOIN.LEFT_OUTER, on=(Pinmap.pin == Pinout.pin)).dicts()
-
-    # This will get all I2C configurations and will render them using a generic
-    # dictionary to C struct jinja template
-    env2 = Environment(
-        loader=FileSystemLoader([os.environ['DTS_TEMPLATES']]),
-        lstrip_blocks=True,
-        trim_blocks=True
-    )
-    template_struct = env2.get_template('array_of_structs.jinja')
-
-    i2cs = dtparser.render_peripherals('i2c')
-    ctx = {'attributes': ['static', 'const'], 'type': 'i2c_conf_t', 'name': 'i2c_config'}
-    ctx['structs'] = i2cs
-    print(template_struct.render(ctx))
-
-    uarts = dtparser.render_peripherals('usart')
-    ctx['type'] = 'uart_conf_t'
-    ctx['name'] = 'uart_config'
-    ctx['structs'] = uarts
-    print(template_struct.render(ctx))
-
+    if args.cmd == 'generate':
+        print(generate_periph_conf(board))
+    elif args.cmd == 'pinout':
+        print(generate_pinout(board, args.pinout))
+    else:
+        raise NotADirectoryError
 
     # ctx = {}
     # for el in q:

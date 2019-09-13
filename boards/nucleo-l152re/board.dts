@@ -8,6 +8,7 @@
         riot,uart1 = <&usart2>;
         riot,spi0 = <&spi1>;
         riot,i2c0 = <&i2c1>;
+        //riot,uart = <&usart1 &usart2>;
     };
 };
 

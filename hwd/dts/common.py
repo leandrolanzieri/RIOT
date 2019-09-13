@@ -5,6 +5,7 @@ import os
 import fdt
 import re
 import sys
+import ruamel.yaml as yaml
 
 
 db = SqliteDatabase(':memory:')
@@ -23,6 +24,9 @@ class MissingDBTAttributeException(Exception):
     pass
 
 class InvalidCellReference(Exception):
+    pass
+
+class NotEnabledPeripheralChosen(Exception):
     pass
 
 class DTBNode(BaseModel):
@@ -168,20 +172,7 @@ class Cell(ForeignKeyField):
 class Pinctrl(NodeModel):
     pass
 
-class Pinmap(Model):
-    id = AutoField()
-    label = CharField()
-    pin = CharField()
-    group = CharField()
-
-    @property
-    def L(self):
-        return self.label
-
-    class Meta:
-        database = db
-
-class Pinout(Model):
+class CpuPin(Model):
     pin = CharField(primary_key=True)
     function = CharField()
     config_group = CharField()
@@ -195,23 +186,51 @@ class Pinout(Model):
         for el in dictionary:
             cls.create(**el)
 
+class Pinmap(Model):
+    """Physical description of a pin in a board.
+
+    Each pin will be part of a group (e.g. Connector 'CN1' or 'leds') and will
+    have a label (preferably the one printed on the board).
+    """
+
+    id = AutoField()
+    label = CharField()
+    pin = CharField()
+    group = CharField()
+    cpu_pin = ForeignKeyField(CpuPin, null=True)
+
+    @property
+    def L(self):
+        return self.label
+
+    class Meta:
+        database = db
+
 class DuplicatePinException(Exception):
     pass
 
-class DTBParser:
-    def load(self, filename):
-        dtb_data = open(filename, 'rb').read()
-        tree = fdt.parse_dtb(dtb_data)
+class Board:
+    def __init__(self, dtb):
+        """Loads the hardware description (Device Tree Blob) for a given board.
+
+        Loads and parses a '.dtb' file (Device Tree Blob) that describes the
+        board.
+
+        :param str dtb:    Path to the file
+        """
+        dtb_data = open(dtb, 'rb').read()
+        self.tree = fdt.parse_dtb(dtb_data)
 
         # try to get bindings for every node that declares compatible strings
-        for compatible in tree.search('compatible'):
+        for compatible in self.tree.search('compatible'):
             for option in compatible:
                 (vendor, model) = option.split(',')
                 if get_bindings(vendor, model):
-                    logging.info('Found binding for [{} - {}]'.format(vendor,model))
+                    logging.info('Found binding for [{} - {}]'
+                        .format(vendor,model))
                     break
 
-        db.create_tables([DTBNode, DTBProp, DTBPropCell])
+        db.create_tables([DTBNode, DTBProp, DTBPropCell, CpuPin])
 
         for _, v in _nodes.items():
             db.create_tables([v.cell_class()])
@@ -219,30 +238,107 @@ class DTBParser:
         for p in _nodes.values():
             p.create_table()
 
-        for w in tree.walk():
+        for w in self.tree.walk():
             DTBNode.create_node(w)
 
         for n in DTBNode.select().where(DTBNode.model_name != None):
                 DTBNode.create_model(n)
 
-    def create_pinout(self):
-        for k,v  in DTBNode.get(path="/chosen").props.items():
-            config_group = k.split(",")[1].upper()
-            model = DTBNode.get(phandle=v).model
-            if model.status != 'okay':
-                raise NotImplementedError
+        # once all nodes are loaded, get the CpuPin
+        self._extract_cpupin()
 
-            if hasattr(model, 'pinctrl'):
-                for k,v in model.pinctrl.target.cells.items():
-                    if not v:
-                        continue
-                    pin_label = "{}{}".format(v.target.label, v.num)
-                    el = {'pin': pin_label, 'function': k, 'config_group': config_group}
-                    try:
-                        Pinout.create(**el)
-                    except IntegrityError:
-                        dp = Pinout.get(pin=pin_label)
-                        raise DuplicatePinException("Both {} and {} are trying to assign the same pin: {}".format("{}.{}".format(dp.config_group, dp.function), "{}.{}".format(config_group, k), pin_label))
+    def load_description(self, yml):
+        """Loads a board description in YML format.
+
+        :param str yml: Path to the file
+        """
+        with open(yml) as stream:
+            self.desc = yaml.safe_load(stream)
+
+        db.create_tables([Pinmap])
+
+        # create pinmap table
+        for k, v in self.desc['board']['pinmap'].items():
+            for el in v:
+                el['group'] = k
+                try:
+                    el['cpu_pin'] = CpuPin.get(pin=el['pin'])
+                    logging.debug('{} pin found'.format(el['pin']))
+                except:
+                    el['cpu_pin'] = None
+                    logging.debug('{} pin not found'.format(el['pin']))
+                Pinmap.create(**el)
+
+    def get_chosen(self):
+        """Returns the chosen models grouped by function.
+
+        Inspects the 'chosen' node for models and returns a dictionary where
+        each key is a functionality and the value is the array of chosen models
+        for that functionality.
+
+        :return:    Dictionary of models for each functionality.
+        """
+        ret = {}
+        # get all chosen nodes
+        for function, nodes in DTBNode.get(path='/chosen').props.items():
+            group = function.split(',')[1].upper()
+
+            # when only one phandle is defined the library returns a string
+            if type(nodes) is str:
+                nodes = [nodes]
+
+            models = []
+            for n in nodes:
+                models.append(DTBNode.get(phandle=n).model)
+            ret[group] = models
+
+        return ret
+
+    def get_pinmap(self):
+        if not self.desc:
+            return None
+        ret = {}
+        for p in Pinmap.select():
+            if not ret.get(p.group):
+                ret[p.group] = [p]
+            else:
+                ret[p.group].append(p)
+        return ret
+
+    def get_description(self):
+        """Get board description from YML board file.
+
+        :return: Board description
+        """
+        ret = {}
+        ret['name'] = self.desc['board']['name']
+        ret['cpu'] = self.desc['board']['cpu']
+        ret['desc'] = self.desc['board']['description']
+        return ret
+
+    def _extract_cpupin(self):
+        for config_group, models in self.get_chosen().items():
+            for model in models:
+                if model.status != 'okay':
+                    raise NotEnabledPeripheralChosen('{} chosen but not \
+                        enabled.Set status to \'okay\'.'.format(config_group))
+
+                if hasattr(model, 'pinctrl'):
+                    for k,v in model.pinctrl.target.cells.items():
+                        if not v:
+                            continue
+                        pin_label = "{}{}".format(v.target.label, v.num)
+                        el = {'pin': pin_label, 'function': k,
+                              'config_group': config_group}
+                        try:
+                            CpuPin.create(**el)
+                        except IntegrityError:
+                            dp = CpuPin.get(pin=pin_label)
+                            raise DuplicatePinException("Both {} and {} are"
+                                "trying to assign the same pin: {}"
+                                .format("{}.{}"
+                                    .format(dp.config_group, dp.function), "{}.{}"
+                                        .format(config_group, k), pin_label))
 
     def render_peripherals(self, type=None, only_active=True):
         """Returns the information of peripherals.
