@@ -11,4 +11,13 @@
 #define HAS_DMA1
 #define HAS_DMA2
 
+#define HAS_I2C1
+#define HAS_I2C2
+
 #include "../stm32l1.dtsi"
+
+/ {
+    soc {
+        compatible = "st,stm32l152re", "st,stm32l152", "st,stm32l1";
+    };
+};
