@@ -1,0 +1,20 @@
+{# array_of_structs.jinja
+ #
+ # This template takes an array of dictionaries and renders an array of C
+ # structures using the keys as fields.
+ #
+ # Parameters:
+ #  - attributes: Array of attributes for the C array (e.g. ['static', 'const'])
+ #  - type: String representing the structure type
+ #  - name: String representing the name of the array
+ #  - structs: Array of dictionaries to be rendered
+#}
+{% for a in attributes %}{{a}} {% endfor %}{{ type }} {{ name }}[] = {
+    {% for s in structs %}
+    {
+        {% for k, v in s.items() %}
+        .{{k}} = {{v}},
+        {% endfor %}
+    },
+    {% endfor %}
+};
