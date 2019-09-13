@@ -1,9 +1,11 @@
+import logging
 from peewee import *
+from hwd.binding_index import get_bindings
 import os
 import fdt
 import re
-import hwd
-import importlib
+import sys
+
 
 db = SqliteDatabase(':memory:')
 
@@ -85,7 +87,7 @@ class DTBNode(BaseModel):
             model_class.create(**d)
         except IntegrityError as e:
             exp = re.search("NOT NULL.*: ([\w]*\.[\w]*)$", e.args[0])
-            raise MissingDBTAttributeException("{} not present in '{}'".format(exp[1], path))
+            raise MissingDBTAttributeException("{} not present in '{}'".format(exp[1], dtb_node.path))
         except InvalidCellReference as e:
             e.args= ["Failed creating {}: {}".format(dtb_node.path, e.args[0])]
             raise
@@ -139,6 +141,13 @@ class NodeModel(BaseModel):
                 d[k] = getattr(self, k)
         return d
 
+    def render(self):
+        """
+        Renders the node information into a dictionary containing every field
+        that is needed in the initialization structure.
+        """
+        pass
+
 class Cell(ForeignKeyField):
     def db_value(self, value):
         if isinstance(value, int):
@@ -190,16 +199,22 @@ class DuplicatePinException(Exception):
     pass
 
 class DTBParser:
-    def __init__(self, cpu_name):
-        self.bindings = self.get_cpu_bindings(cpu_name)
-        for n, v in _nodes.items():
-            db.create_tables([v.cell_class()])
-
     def load(self, filename):
-        dtb_data = open(os.environ['DTB'], 'rb').read()
+        dtb_data = open(filename, 'rb').read()
         tree = fdt.parse_dtb(dtb_data)
+
+        # try to get bindings for every node that declares compatible strings
+        for compatible in tree.search('compatible'):
+            for option in compatible:
+                (vendor, model) = option.split(',')
+                if get_bindings(vendor, model):
+                    logging.info('Found binding for [{} - {}]'.format(vendor,model))
+                    break
+
         db.create_tables([DTBNode, DTBProp, DTBPropCell])
-        phandles = tree.search('phandle')
+
+        for _, v in _nodes.items():
+            db.create_tables([v.cell_class()])
 
         for p in _nodes.values():
             p.create_table()
@@ -210,16 +225,6 @@ class DTBParser:
         for n in DTBNode.select().where(DTBNode.model_name != None):
                 DTBNode.create_model(n)
 
-
-    def get_cpu_bindings(self, cpu_name):
-        for root, subdirs, files in os.walk(os.path.dirname(hwd.__file__)):
-            if cpu_name in subdirs:
-                module_name = "hwd.{}.bindings".format(os.path.relpath(os.path.join(root, cpu_name), start=os.path.dirname(hwd.__file__)).replace("/","."))
-                module = importlib.import_module(module_name)
-                return module
-        return None
-
-
     def create_pinout(self):
         for k,v  in DTBNode.get(path="/chosen").props.items():
             config_group = k.split(",")[1].upper()
@@ -229,16 +234,36 @@ class DTBParser:
 
             if hasattr(model, 'pinctrl'):
                 for k,v in model.pinctrl.target.cells.items():
+                    if not v:
+                        continue
                     pin_label = "{}{}".format(v.target.label, v.num)
                     el = {'pin': pin_label, 'function': k, 'config_group': config_group}
                     try:
                         Pinout.create(**el)
-                    except IntegrityError as e:
+                    except IntegrityError:
                         dp = Pinout.get(pin=pin_label)
                         raise DuplicatePinException("Both {} and {} are trying to assign the same pin: {}".format("{}.{}".format(dp.config_group, dp.function), "{}.{}".format(config_group, k), pin_label))
 
+    def render_peripherals(self, type=None, only_active=True):
+        """Returns the information of peripherals.
 
+        Renders the information and configuration of peripherals in a
+        dictionary, that matches the needed fields for its configuration in
+        RIOT.
 
+        If no type is specify all peripherals are returned.
 
+        :param str type:    Type of peripherals to render. If None all are rendered.
+        :param bool only_active:    If True only peripherals with status 'okay' are rendered
+        :return:    Array of dictionaries containing information and configuration of peripherals
+        """
+        ret = []
+        q = DTBNode.select()
+        if type is not None:
+            q = q.where(DTBNode.model_name == type)
 
+        for n in q:
+            if n.model and (only_active and n.model.status == 'okay' or not only_active):
+                ret.append(n.model.render())
 
+        return ret
