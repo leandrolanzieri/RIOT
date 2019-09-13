@@ -1,0 +1,33 @@
+{# board_pinout.jinja
+ #
+ # This is the default template for printing the pinout of a board. It's just a
+ # table for now.
+ #
+ # Parameters:
+ #  - name: Name of the board
+ #  - desc: Board description
+ #  - cpu: CPU model
+ #  - pins: Dictionary where every key is the name of a connector and the value
+ #          an array of pins. Every pin is a dictionary with the follwing
+ #          structure:
+ #            - F: Function of the pin
+ #            - L: Label for the pin
+#}
+{{'=' * 80}}
+[{{name}}] ({{cpu}})
+{{desc | wordwrap(78)}}
+{{'=' * 80}}
+
+LABEL {{'\t' * 4}} FUNCTION
+{{'=' * 80}}
+
+{% for name, list in pins.items() %}
+{{'-' * 80}}
+[{{name}}]
+{{'-' * 80}}
+    {% for p in list %}
+        {% if loop.index != 1 %} {# connectors start numeration in 1 #}
+{{p['L']}} {{'\t' * 4}} |{{p['F']}}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
