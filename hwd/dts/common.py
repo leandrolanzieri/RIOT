@@ -353,13 +353,21 @@ class Board:
         :param bool only_active:    If True only peripherals with status 'okay' are rendered
         :return:    Array of dictionaries containing information and configuration of peripherals
         """
+        def check_status(periph):
+            status = None
+            try:
+                status = periph.status
+            except:
+                return False
+            return status == 'okay'
+
         ret = []
         q = DTBNode.select()
         if type is not None:
             q = q.where(DTBNode.model_name == type)
 
         for n in q:
-            if n.model and (only_active and n.model.status == 'okay' or not only_active):
+            if n.model and (only_active and check_status(n.model) or not only_active):
                 ret.append(n.model.render())
 
         return ret

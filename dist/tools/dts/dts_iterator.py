@@ -1,7 +1,6 @@
 import logging
 import os
 import argparse
-import ruamel.yaml as yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from hwd.dts.common import Board
 
@@ -12,7 +11,6 @@ jinja_env = Environment(
 )
 
 def generate_periph_conf(board):
-    # TODO: Just for demo purposes, should return all peripherals
     ret = ''
     template_struct = jinja_env.get_template('array_of_structs.jinja')
 
@@ -25,6 +23,12 @@ def generate_periph_conf(board):
     ctx['type'] = 'uart_conf_t'
     ctx['name'] = 'uart_config'
     ctx['structs'] = uarts
+    ret += template_struct.render(ctx) + '\n\n'
+
+    spis = board.render_peripherals('spi')
+    ctx['type'] = 'spi_conf_t'
+    ctx['name'] = 'spi_config'
+    ctx['structs'] = spis
     ret += template_struct.render(ctx)
 
     return ret
@@ -50,6 +54,19 @@ def generate_pinout(board, template_path):
 
     return template.render(ctx)
 
+def output(out, file=None):
+    """Outputs a string to a file or STDOUT.
+
+    :param str out:     String to output
+    :param str file:    Path to the output file
+    """
+    try:
+        with open(file, 'w') as f:
+            f.write(out)
+            f.close()
+    except:
+        print(out)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description='Perform operations on Device Trees and Bindings')
@@ -58,6 +75,7 @@ if __name__ == "__main__":
     parser.add_argument('cmd', help='Command')
     parser.add_argument('-b', '--board', help='Board description file')
     parser.add_argument('-p', '--pinout', help='Board pinout template')
+    parser.add_argument('-o', '--output', help='Output file')
     parser.add_argument('--log', help='Logging level. Default: Warning.')
     args = parser.parse_args()
 
@@ -73,39 +91,8 @@ if __name__ == "__main__":
         board.load_description(args.board)
 
     if args.cmd == 'generate':
-        print(generate_periph_conf(board))
+        output(generate_periph_conf(board), args.output)
     elif args.cmd == 'pinout':
-        print(generate_pinout(board, args.pinout))
+        output(generate_pinout(board, args.pinout), args.output)
     else:
         raise NotADirectoryError
-
-    # ctx = {}
-    # for el in q:
-    #     # remove None values so they don't get printed
-    #     if el['F'] is None:
-    #         del el['F']
-
-    #     if not ctx.get(el['group']):
-    #         # Connector numbering starts with 1 in boards, so we add padding
-    #         ctx[el['group']] = [None, el]
-    #     else:
-    #         ctx[el['group']].append(el)
-
-    # template_pinout = os.environ['TEMPLATE_PINOUT']
-    # template_pinout_dir = os.path.dirname(template_pinout)
-    # template_pinout_base = os.path.basename(template_pinout)
-
-    # env = Environment(
-    #     loader=FileSystemLoader([template_pinout_dir]),
-    #     lstrip_blocks=True,
-    #     trim_blocks=True
-    # )
-
-    # template_board = env.get_template(template_pinout_base)
-    # #board['board']['cpu_model'] = cpu['information']['model'].upper()
-    # ctx['board'] = board
-    # #print(template_board.render(ctx))
-
-    # file = open(template_pinout, 'w')
-    # file.write(template_board.render(ctx))
-    # file.close()
