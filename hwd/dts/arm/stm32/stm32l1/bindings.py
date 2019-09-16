@@ -7,7 +7,7 @@ class Dma(NodeModel):
     device = CharField()
 
     class CellData:
-        cells = ['stream', 'channel']
+        cells = ['channel', 'request']
 
 @node
 class Rcc(NodeModel):
@@ -42,9 +42,9 @@ class Usart(NodeModel):
         ret['dev'] = self.device
         ret['bus'] = self.rcc.bus
         ret['rcc_mask'] = self.rcc.bits
-        ret['tx_dma_stream'] = self.tx_dma.stream
+        ret['tx_dma_request'] = self.tx_dma.request
         ret['tx_dma_channel'] = self.tx_dma.channel
-        ret['rx_dma_stream'] = self.rx_dma.stream
+        ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
         if self.pinctrl:
@@ -79,9 +79,9 @@ class Spi(NodeModel):
         ret['dev'] = self.device
         ret['rccmask'] = self.rcc.bits
         ret['apbbus'] = self.rcc.bus
-        ret['tx_dma_stream'] = self.tx_dma.stream
+        ret['tx_dma_request'] = self.tx_dma.request
         ret['tx_dma_channel'] = self.tx_dma.channel
-        ret['rx_dma_stream'] = self.rx_dma.stream
+        ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
         if self.pinctrl:
@@ -126,6 +126,10 @@ class I2C(NodeModel):
         ret['bus'] = self.rcc.bus
         ret['irqn'] = self.interrupts
         ret['clk'] = self.clk
+        ret['tx_dma_request'] = self.tx_dma.request
+        ret['tx_dma_channel'] = self.tx_dma.channel
+        ret['rx_dma_request'] = self.rx_dma.request
+        ret['rx_dma_channel'] = self.rx_dma.channel
 
         if self.pinctrl:
             scl = self.pinctrl.target.scl

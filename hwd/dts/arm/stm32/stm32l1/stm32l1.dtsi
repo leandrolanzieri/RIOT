@@ -170,7 +170,7 @@
         dma1: dma@40026000 {
             reg = <0x40026000 0x400>;
             device = "DMA1";
-            /* stream, channel */
+            /* channel ID, request num. */
             #dma-cells = <2>;
         };
 #endif /* HAS_DMA1 */
@@ -179,7 +179,7 @@
         dma2: dma@40026400 {
             reg = <0x40026400 0x400>;
             device = "DMA2";
-            /* stream, channel */
+            /* channel ID, request num. */
             #dma-cells = <2>;
         };
 #endif /* HAS_DMA2 */
