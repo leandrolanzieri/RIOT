@@ -6,7 +6,7 @@ _map = {
     }
 }
 
-def get_bindings(vendor, model):
+def import_bindings(vendor, model):
     """Imports the Device Tree bindings for a certain device.
 
     Inspects the available list of Python Device Tree bindings, if available the

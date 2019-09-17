@@ -1,6 +1,6 @@
 import logging
 from peewee import *
-from hwd.binding_index import get_bindings
+from hwd.binding_index import import_bindings
 import os
 import fdt
 import re
@@ -141,7 +141,7 @@ class NodeModel(BaseModel):
     def cells(self):
         d = {}
         for k,v in self._meta.fields.items():
-            if isinstance(v, Cell):
+            if isinstance(v, PhandleTo):
                 d[k] = getattr(self, k)
         return d
 
@@ -152,7 +152,12 @@ class NodeModel(BaseModel):
         """
         pass
 
-class Cell(ForeignKeyField):
+class PhandleTo(ForeignKeyField):
+    """Represents a phandle to a node.
+    """
+    def __init__(self, nodeType, *args, **kwargs):
+        super().__init__(nodeType.cell_class(), *args, **kwargs)
+
     def db_value(self, value):
         if isinstance(value, int):
             value = [value]
@@ -170,6 +175,12 @@ class Cell(ForeignKeyField):
         return super().db_value(self.rel_model.create(phandle=phandle, **args).id)
 
 class Pinctrl(NodeModel):
+    pass
+
+class String(CharField):
+    pass
+
+class Peripheral(NodeModel):
     pass
 
 class CpuPin(Model):
@@ -221,15 +232,7 @@ class Board:
         dtb_data = open(dtb, 'rb').read()
         self.tree = fdt.parse_dtb(dtb_data)
 
-        # try to get bindings for every node that declares compatible strings
-        for compatible in self.tree.search('compatible'):
-            for option in compatible:
-                (vendor, model) = option.split(',')
-                if get_bindings(vendor, model):
-                    logging.info('Found binding for [{} - {}]'
-                        .format(vendor,model))
-                    break
-
+        self._import_bindings()
         db.create_tables([DTBNode, DTBProp, DTBPropCell, CpuPin])
 
         for _, v in _nodes.items():
@@ -246,6 +249,18 @@ class Board:
 
         # once all nodes are loaded, get the CpuPin
         self._extract_cpupin()
+
+    def _import_bindings(self):
+        """ Try to get bindings for every node that declares compatible strings.
+        """
+        for compatible in self.tree.search('compatible'):
+            for option in compatible:
+                (vendor, model) = option.split(',')
+                if import_bindings(vendor, model):
+                    logging.info('Found binding for [{} - {}]'
+                        .format(vendor,model))
+                    break
+
 
     def load_description(self, yml):
         """Loads a board description in YML format.

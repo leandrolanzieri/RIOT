@@ -1,41 +1,39 @@
-from peewee import *
-from hwd.dts.common import node, NodeModel, db, BaseModel, Cell
-from hwd.dts.common import Pinctrl
+from hwd.dts.common import  PhandleTo, String, Pinctrl, node, Peripheral
 
 @node
-class Dma(NodeModel):
-    device = CharField()
+class Dma(Peripheral):
+    device = String()
 
     class CellData:
         cells = ['channel', 'request']
 
 @node
-class Rcc(NodeModel):
+class Rcc(Peripheral):
     class CellData:
         cells = ['bus', 'bits']
 
 @node
-class Gpio(NodeModel):
-    label = CharField()
+class Gpio(Peripheral):
+    label = String()
 
     class CellData:
         cells = ['num', 'flags']
 
 @node
 class UsartPinctrl(Pinctrl):
-    tx = Cell(Gpio.cell_class())
-    rx = Cell(Gpio.cell_class())
+    tx = PhandleTo(Gpio)
+    rx = PhandleTo(Gpio)
 
 @node
-class Usart(NodeModel):
-    device = CharField()
-    rcc = Cell(Rcc.cell_class())
-    interrupts = CharField()
-    isr = CharField()
-    status = CharField()
-    tx_dma = Cell(Dma.cell_class(), column_name="tx-dma")
-    rx_dma = Cell(Dma.cell_class(), column_name="rx-dma")
-    pinctrl = Cell(UsartPinctrl.cell_class(), null=True)
+class Usart(Peripheral):
+    device = String()
+    rcc = PhandleTo(Rcc)
+    interrupts = String()
+    isr = String()
+    status = String()
+    tx_dma = PhandleTo(Dma, column_name="tx-dma")
+    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    pinctrl = PhandleTo(UsartPinctrl, null=True)
 
     def render(self):
         ret = {}
@@ -59,20 +57,20 @@ class Usart(NodeModel):
 
 @node
 class SpiPinctrl(Pinctrl):
-    miso = Cell(Gpio.cell_class())
-    mosi = Cell(Gpio.cell_class())
-    sck = Cell(Gpio.cell_class())
-    cs = Cell(Gpio.cell_class(), null=True)
+    miso = PhandleTo(Gpio)
+    mosi = PhandleTo(Gpio)
+    sck = PhandleTo(Gpio)
+    cs = PhandleTo(Gpio, null=True)
 
 @node
-class Spi(NodeModel):
-    device = CharField()
-    rcc = Cell(Rcc.cell_class())
-    interrupts = CharField()
-    status = CharField()
-    tx_dma = Cell(Dma.cell_class(), column_name="tx-dma")
-    rx_dma = Cell(Dma.cell_class(), column_name="rx-dma")
-    pinctrl = Cell(SpiPinctrl.cell_class(), null=True)
+class Spi(Peripheral):
+    device = String()
+    rcc = PhandleTo(Rcc)
+    interrupts = String()
+    status = String()
+    tx_dma = PhandleTo(Dma, column_name="tx-dma")
+    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    pinctrl = PhandleTo(SpiPinctrl, null=True)
 
     def render(self):
         ret = {}
@@ -102,21 +100,21 @@ class Spi(NodeModel):
 
 @node
 class I2CPinctrl(Pinctrl):
-    sda = Cell(Gpio.cell_class())
-    scl = Cell(Gpio.cell_class())
+    sda = PhandleTo(Gpio)
+    scl = PhandleTo(Gpio)
 
 @node
-class I2C(NodeModel):
-    device = CharField()
-    rcc = Cell(Rcc.cell_class())
-    interrupts = CharField()
-    isr = CharField()
-    status = CharField()
-    tx_dma = Cell(Dma.cell_class(), column_name="tx-dma")
-    rx_dma = Cell(Dma.cell_class(), column_name="rx-dma")
-    speed = CharField(null=True)
-    clk = CharField(null=True)
-    pinctrl = Cell(I2CPinctrl.cell_class(), null=True)
+class I2C(Peripheral):
+    device = String()
+    rcc = PhandleTo(Rcc)
+    interrupts = String()
+    isr = String()
+    status = String()
+    tx_dma = PhandleTo(Dma, column_name="tx-dma")
+    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    speed = String(null=True)
+    clk = String(null=True)
+    pinctrl = PhandleTo(I2CPinctrl, null=True)
 
     def render(self):
         ret = {}
