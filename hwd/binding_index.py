@@ -3,6 +3,9 @@ import importlib
 _map = {
     'st': {
         'stm32l1': 'hwd.dts.arm.stm32.stm32l1.bindings'
+    },
+    'arm': {
+        'v7m-nvic': 'hwd.dts.arm.v7m_nvic'
     }
 }
 
