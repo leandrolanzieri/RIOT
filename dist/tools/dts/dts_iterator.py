@@ -10,26 +10,39 @@ jinja_env = Environment(
     trim_blocks=True
 )
 
-def generate_periph_conf(board):
-    ret = ''
+def generate_structure_for_periphs(periphs, periph_name):
+    """Given a peripheral name and its properties, it will render a struct.
+    """
     template_struct = jinja_env.get_template('array_of_structs.jinja')
+    ctx = {'attributes': ['static', 'const'], 'type': periph_name + '_conf_t',
+           'name': periph_name + '_config', 'structs': periphs}
+    return template_struct.render(ctx)
 
-    i2cs = board.render_peripherals('i2c')
-    ctx = {'attributes': ['static', 'const'], 'type': 'i2c_conf_t', 'name': 'i2c_config'}
-    ctx['structs'] = i2cs
-    ret += template_struct.render(ctx) + '\n\n'
 
-    uarts = board.render_peripherals('usart')
-    ctx['type'] = 'uart_conf_t'
-    ctx['name'] = 'uart_config'
-    ctx['structs'] = uarts
-    ret += template_struct.render(ctx) + '\n\n'
+def generate_periph_conf(board):
+    """Generates the string that corresponds to the content of the
+    'periph_conf.h' file, containing all the needed peripheral configurations.
+    """
+    ret = ''
+    peripherals = board.get_chosen()
 
-    spis = board.render_peripherals('spi')
-    ctx['type'] = 'spi_conf_t'
-    ctx['name'] = 'spi_config'
-    ctx['structs'] = spis
-    ret += template_struct.render(ctx)
+    try:
+        i2cs = [i.render() for i in peripherals['i2c']]
+        ret += generate_structure_for_periphs(i2cs, 'i2c') + '\n\n'
+    except:
+        logging.info('No I2C was chosen')
+
+    try:
+        uarts = [i.render() for i in peripherals['uart']]
+        ret += generate_structure_for_periphs(uarts, 'uart') + '\n\n'
+    except:
+        logging.info('No UART was chosen')
+
+    try:
+        spis = [i.render() for i in peripherals['spi']]
+        ret += generate_structure_for_periphs(spis, 'spi') + '\n\n'
+    except:
+        logging.info('No SPI was chosen')
 
     return ret
 

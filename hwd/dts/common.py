@@ -13,22 +13,9 @@ db = SqliteDatabase(':memory:')
 _nodes = {}
 def node(cls):
     """Specifies that a class is a DT binding.
-
-    Decorator that specifies that a given class represents a binding to a type
-    of node in the device tree. The lowercase version of the class name should
-    match the type of the node (e.g. Usart is the binding for usart@4000800
-    node).
-
-    In the case a class wants to represent a node type different to its name,
-    then the variable '_node_name' should contain the string of the node type
-    (e.g. _node_name = 'interrupt-controller').
     """
-    if hasattr(cls, '_node_name'):
-        _nodes[cls._node_name.lower()] = cls
-    else:
-        _nodes[cls.__name__.lower()] = cls
+    _nodes[cls.get_node_name()] = cls
     return cls
-
 
 class BaseModel(Model):
     class Meta:
@@ -141,6 +128,7 @@ class CellClass(BaseModel):
 
 
 class NodeModel(BaseModel):
+    _node_name = None
     id = CharField(primary_key=True)
     node = ForeignKeyField(DTBNode)
 
@@ -166,6 +154,19 @@ class NodeModel(BaseModel):
             if isinstance(v, PhandleTo):
                 d[k] = getattr(self, k)
         return d
+
+    @classmethod
+    def get_node_name(cls):
+        """Get the name of the node a binding represents in the Device Tree.
+
+        The lowercase version of the class name should match the type of the
+        node (e.g. Usart is the binding for usart@4000800 node).
+
+        In the case a class wants to represent a node type different to its name,
+        then the variable '_node_name' should contain the string of the node type
+        (e.g. _node_name = 'interrupt-controller').
+        """
+        return cls._node_name.lower() if cls._node_name else cls.__name__.lower()
 
     def render(self):
         """
@@ -341,7 +342,7 @@ class Board:
         ret = {}
         # get all chosen nodes
         for function, nodes in DTBNode.get(path='/chosen').props.items():
-            group = function.split(',')[1].upper()
+            group = function.split(',')[1]
 
             # when only one phandle is defined the library returns a string
             if type(nodes) is str:
@@ -378,12 +379,13 @@ class Board:
 
     def _extract_cpupin(self):
         for config_group, models in self.get_chosen().items():
-            for model in models:
+            for i,model in enumerate(models):
                 if model.status != 'okay':
-                    logging.warning('{} chosen but not enabled. To use the '
-                    'peripheral set its status to \'okay\''.format(config_group))
+                    logging.warning('{} number {} chosen but not enabled. To '
+                    'use the peripheral set its status to \'okay\''
+                    .format(model.get_node_name(), str(i)))
 
-                if hasattr(model, 'pinctrl'):
+                if hasattr(model, 'pinctrl') and model.pinctrl:
                     for k,v in model.pinctrl.target.cells.items():
                         if not v:
                             continue
