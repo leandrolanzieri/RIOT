@@ -1,3 +1,4 @@
+// TODO: License
 #include "../../armv7-m.dtsi"
 #include "dts-common.h"
 #include "stm32l1.h"
@@ -13,7 +14,7 @@
             reg = <0x40003800 0x400>;
             device = "SPI2";
             rcc = <&rcc APB1 UNCAST(RCC_APB1ENR_SPI2EN)>;
-            interrupts = <36>;
+            interrupts = <&nvic 36>;
             tx-dma = <&dma1 5 1>;
             rx-dma = <&dma1 4 1>;
             status = "disabled";
@@ -25,7 +26,7 @@
             reg = <0x4000c00 0x400>;
             device = "SPI3";
             rcc = <&rcc APB1 UNCAST(RCC_APB1ENR_SPI3EN)>;
-            interrupts = <46>;
+            interrupts = <&nvic 46>;
             tx-dma = <&dma2 2 0>;
             rx-dma = <&dma2 1 0>;
             status = "disabled";
@@ -37,7 +38,7 @@
             reg = <0x40004400 0x400>;
             device = "USART2";
             rcc =  <&rcc APB1 UNCAST(RCC_APB1ENR_USART2EN)>;
-            interrupts =  <38>;
+            interrupts = <&nvic 38>;
             isr =  "isr_usart2";
             tx-dma = <&dma1 7 2>;
             rx-dma = <&dma1 6 2>;
@@ -50,7 +51,7 @@
             reg = <0x40004800 0x400>;
             device = "UART3";
             rcc =  <&rcc APB1 UNCAST(RCC_APB1ENR_USART3EN)>;
-            interrupts = <39>;
+            interrupts = <&nvic 39>;
             isr = "isr_usart3";
             tx-dma = <&dma1 2 2>;
             rx-dma = <&dma1 3 2>;
@@ -63,7 +64,7 @@
             reg = <0x40004c00 0x400>;
             device = "UART4";
             rcc =  <&rcc 1 (1<<19)>;
-            interrupts = <48>;
+            interrupts = <&nvic 48>;
             isr = "isr_usart4";
             tx-dma = <&dma2 5 1>;
             rx-dma = <&dma2 3 1>;
@@ -76,7 +77,7 @@
             reg = <0x40005000 0x400>;
             device = "UART5";
             rcc =  <&rcc 1 (1<<20)>;
-            interrupts = <49>;
+            interrupts = <&nvic 49>;
             isr = "isr_usart5";
             tx-dma = <&dma1 1 2>;
             rx-dma = <&dma1 2 2>;
@@ -89,7 +90,7 @@
             reg = <0x40013000 0x400>;
             device = "SPI1";
             rcc = <&rcc APB2 UNCAST(RCC_APB2ENR_SPI1EN)>;
-            interrupts = <35>;
+            interrupts = <&nvic 35>;
             tx-dma = <&dma1 3 1>;
             rx-dma = <&dma1 2 1>;
             status = "disabled";
@@ -101,7 +102,7 @@
             reg = <0x40013800 0x400>;
             device = "USART1";
             rcc = <&rcc APB2 UNCAST(RCC_APB2ENR_USART1EN)>;
-            interrupts =  <37>;
+            interrupts = <&nvic 37>;
             isr = "isr_usart1";
             tx-dma = <&dma1 4 2>;
             rx-dma = <&dma1 5 2>;
@@ -116,7 +117,7 @@
             #size-cells = <0>;
             device = "I2C1";
             rcc = <&rcc APB1 UNCAST(RCC_APB1ENR_I2C1EN)>;
-            interrupts = <31>;
+            interrupts = <&nvic 31>;
             isr = "i2c_i2c1_ev";
             tx-dma = <&dma1 6 3>;
             rx-dma = <&dma1 7 3>;
@@ -131,7 +132,7 @@
             #size-cells = <0>;
             device = "I2C2";
             rcc = <&rcc APB1 UNCAST(RCC_APB1ENR_I2C2EN)>;
-            interrupts = <33>;
+            interrupts = <&nvic 33>;
             isr = "i2c_i2c2_ev";
             tx-dma = <&dma1 4 3>;
             rx-dma = <&dma1 5 3>;

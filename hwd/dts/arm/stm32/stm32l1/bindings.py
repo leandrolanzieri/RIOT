@@ -1,38 +1,91 @@
-from hwd.dts.common import  PhandleTo, String, Pinctrl, node, Peripheral
+from hwd.dts.common import  PhandleTo, String, Pinctrl, node, Peripheral, PeripheralStatus
+from hwd.dts.arm.v7m_nvic import Nvic
 
 @node
 class Dma(Peripheral):
+    """DMA peripheral Device Tree binding for STM32 architecture.
+
+    Properties:
+        - device: String representing the device (e.g. DMA1)
+    """
     device = String()
 
     class CellData:
+        """Phandles that reference DMAs.
+
+        Cells:
+            - channel: DMA Channel number
+            - request: DMA Request number
+        """
         cells = ['channel', 'request']
 
 @node
 class Rcc(Peripheral):
+    """Reset and Clock control peripheral Device Tree bindinf for STM32
+    architecture.
+    """
+
     class CellData:
+        """Phandles that reference the RCC.
+
+        Cells:
+            - bus: Clock bus (e.g. APB1)
+            - bits: Bits to set in the RCC (e.g. RCC_APB1ENR_SPI3EN).
+        """
         cells = ['bus', 'bits']
 
 @node
 class Gpio(Peripheral):
+    """GPIO port controller Device Tree binding for STM32 architecture.
+
+    Properties:
+        - label: String representing the port (e.g. PORT_A)
+    """
     label = String()
 
     class CellData:
+        """Phandles that reference a GPIO port
+
+        Cells:
+            - num: Pin number in the port
+            - flags: Flags needed for pin configuration (e.g. alternate
+                     functions needed)
+        """
         cells = ['num', 'flags']
 
 @node
 class UsartPinctrl(Pinctrl):
+    """Pinctrl for USART peripherals Device Tree bindings, for STM32
+    architecture.
+
+    Pins:
+        - tx: USART Transmission
+        - rx: USART Reception
+    """
     tx = PhandleTo(Gpio)
     rx = PhandleTo(Gpio)
 
 @node
 class Usart(Peripheral):
+    """USART peripheral Device Tree binding for STM32 architecture.
+
+    Properties:
+        - device: String representing the device (e.g. USART1)
+        - rcc: Phandle to the RCC
+        - interrupts: Phandle to the NVIC
+        - isr: String of the interrupt vector
+        - status: Peripheral activation status
+        - tx_dma: USART Transmission DMA configuration
+        - rx_dma: USART Reception DMA configuration
+        - pinctrl: Pin configuration for the USART
+    """
     device = String()
     rcc = PhandleTo(Rcc)
-    interrupts = String()
+    interrupts = PhandleTo(Nvic)
     isr = String()
-    status = String()
-    tx_dma = PhandleTo(Dma, column_name="tx-dma")
-    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    status = PeripheralStatus()
+    tx_dma = PhandleTo(Dma)
+    rx_dma = PhandleTo(Dma)
     pinctrl = PhandleTo(UsartPinctrl, null=True)
 
     def render(self):
@@ -57,6 +110,15 @@ class Usart(Peripheral):
 
 @node
 class SpiPinctrl(Pinctrl):
+    """Pinctrl for SPI peripherals Device Tree bindings, for STM32
+    architecture.
+
+    Pins:
+        - miso: SPI Master Input Slave Output
+        - mosi: SPI Master Output Slave Input
+        - sck: SPI Clock
+        - cs: SPI Chip Select
+    """
     miso = PhandleTo(Gpio)
     mosi = PhandleTo(Gpio)
     sck = PhandleTo(Gpio)
@@ -64,12 +126,23 @@ class SpiPinctrl(Pinctrl):
 
 @node
 class Spi(Peripheral):
+    """SPI peripheral Device Tree binding for STM32 architecture.
+
+    Properties:
+        - device: String representing the device (e.g. SPI1)
+        - rcc: Phandle to the RCC
+        - interrupts: Phandle to the NVIC
+        - status: Peripheral activation status
+        - tx_dma: SPI Transmission DMA configuration
+        - rx_dma: SPI Reception DMA configuration
+        - pinctrl: Pin configuration for the SPI
+    """
     device = String()
     rcc = PhandleTo(Rcc)
-    interrupts = String()
-    status = String()
-    tx_dma = PhandleTo(Dma, column_name="tx-dma")
-    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    interrupts = PhandleTo(Nvic)
+    status = PeripheralStatus()
+    tx_dma = PhandleTo(Dma)
+    rx_dma = PhandleTo(Dma)
     pinctrl = PhandleTo(SpiPinctrl, null=True)
 
     def render(self):
@@ -100,18 +173,39 @@ class Spi(Peripheral):
 
 @node
 class I2CPinctrl(Pinctrl):
+    """Pinctrl for I2C peripherals Device Tree bindings, for STM32
+    architecture.
+
+    Pins:
+        - sda: I2C Serial Data
+        - scl: I2C Serial Clock
+    """
     sda = PhandleTo(Gpio)
     scl = PhandleTo(Gpio)
 
 @node
 class I2C(Peripheral):
+    """I2C peripheral Device Tree binding for STM32 architecture.
+
+    Properties:
+        - device: String representing the device (e.g. I2C0)
+        - rcc: Phandle to the RCC
+        - interrupts: Phandle to the NVIC
+        - isr: String of the interrupt vector
+        - status: Peripheral activation status
+        - tx_dma: I2C Transmission DMA configuration
+        - rx_dma: I2C Reception DMA configuration
+        - clk: Clock configuration
+        - speed: Speed of the bus
+        - pinctrl: Pin configuration for the I2C
+    """
     device = String()
     rcc = PhandleTo(Rcc)
-    interrupts = String()
+    interrupts = PhandleTo(Nvic)
     isr = String()
-    status = String()
-    tx_dma = PhandleTo(Dma, column_name="tx-dma")
-    rx_dma = PhandleTo(Dma, column_name="rx-dma")
+    status = PeripheralStatus()
+    tx_dma = PhandleTo(Dma)
+    rx_dma = PhandleTo(Dma)
     speed = String(null=True)
     clk = String(null=True)
     pinctrl = PhandleTo(I2CPinctrl, null=True)
@@ -122,7 +216,7 @@ class I2C(Peripheral):
         ret['speed'] = self.speed
         ret['rcc_mask'] = self.rcc.bits
         ret['bus'] = self.rcc.bus
-        ret['irqn'] = self.interrupts
+        ret['irqn'] = self.interrupts.line
         ret['clk'] = self.clk
         ret['tx_dma_request'] = self.tx_dma.request
         ret['tx_dma_channel'] = self.tx_dma.channel
