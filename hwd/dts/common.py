@@ -12,7 +12,21 @@ db = SqliteDatabase(':memory:')
 
 _nodes = {}
 def node(cls):
-    _nodes[cls.__name__.lower()] = cls
+    """Specifies that a class is a DT binding.
+
+    Decorator that specifies that a given class represents a binding to a type
+    of node in the device tree. The lowercase version of the class name should
+    match the type of the node (e.g. Usart is the binding for usart@4000800
+    node).
+
+    In the case a class wants to represent a node type different to its name,
+    then the variable '_node_name' should contain the string of the node type
+    (e.g. _node_name = 'interrupt-controller').
+    """
+    if hasattr(cls, '_node_name'):
+        _nodes[cls._node_name.lower()] = cls
+    else:
+        _nodes[cls.__name__.lower()] = cls
     return cls
 
 
@@ -84,8 +98,13 @@ class DTBNode(BaseModel):
         if not model_class:
             return None
 
+        node_props = {}
+        for k, v in dtb_node.props.items():
+            nk = k.replace('-', '_').replace('#', '')
+            node_props[nk] = v
+
         d = {"id": dtb_node.model_id, "node": dtb_node}
-        d.update(dtb_node.props)
+        d.update(node_props)
 
         try:
             model_class.create(**d)
@@ -178,6 +197,13 @@ class Pinctrl(NodeModel):
     pass
 
 class String(CharField):
+    """String node property type.
+    """
+    pass
+
+class Number(IntegerField):
+    """Integer number node property type.
+    """
     pass
 
 class Peripheral(NodeModel):
