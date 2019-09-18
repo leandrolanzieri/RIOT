@@ -40,7 +40,10 @@ class MissingDBTAttributeException(Exception):
 class InvalidCellReference(Exception):
     pass
 
-class NotEnabledPeripheralChosen(Exception):
+class InvalidPeripheralStatus(Exception):
+    """Exception raised when an invalid value is assigned to the status
+    property of a peripheral in the Device Tree.
+    """
     pass
 
 class DTBNode(BaseModel):
@@ -206,7 +209,23 @@ class Number(IntegerField):
     """
     pass
 
+class PeripheralStatus(CharField):
+    """Status of a given peripheral in the Device Tree.
+
+    Possible values for this field are:
+        - okay: Indicates the device is operational
+        - disabled: Indicates that the device is not operational.
+    """
+    choices = ['okay', 'disabled']
+
+    def db_value(self, value):
+        if value not in PeripheralStatus.choices:
+            raise InvalidPeripheralStatus('{} status is not valid.'.format(value))
+        return value
+
 class Peripheral(NodeModel):
+    """MCU peripheral binding base class.
+    """
     pass
 
 class CpuPin(Model):
@@ -361,8 +380,8 @@ class Board:
         for config_group, models in self.get_chosen().items():
             for model in models:
                 if model.status != 'okay':
-                    raise NotEnabledPeripheralChosen('{} chosen but not \
-                        enabled.Set status to \'okay\'.'.format(config_group))
+                    logging.warning('{} chosen but not enabled. To use the '
+                    'peripheral set its status to \'okay\''.format(config_group))
 
                 if hasattr(model, 'pinctrl'):
                     for k,v in model.pinctrl.target.cells.items():
