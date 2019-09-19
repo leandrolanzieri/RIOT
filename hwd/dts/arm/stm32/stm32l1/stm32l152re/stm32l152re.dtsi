@@ -14,6 +14,8 @@
 #define HAS_I2C1
 #define HAS_I2C2
 
+#define HAS_ADC
+
 #include "../stm32l1.dtsi"
 
 / {

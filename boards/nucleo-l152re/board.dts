@@ -7,27 +7,31 @@
         riot,spi = <&spi1>;
         riot,i2c = <&i2c1>;
         riot,uart = <&usart2>, <&usart1>;
+        riot,adc = <&adc_0>;
     };
 };
 
 &pinctrl {
-    my_usart1_pinctrl: usartpinctrl@a10a9 {
+    my_usart1_pinctrl: usartpinctrl@0 {
         rx = <&gpioa 15 7>;
         tx = <&gpioa 9 7>;
     };
-    my_usart2_pinctrl: usartpinctrl@a3a2 {
+    my_usart2_pinctrl: usartpinctrl@1 {
         rx = <&gpioa 3 7>;
         tx = <&gpioa 2 7>;
     };
-    my_spi1_pinctrl: spipinctrl@a4a5a6a7 {
+    my_spi1_pinctrl: spipinctrl@2 {
         cs =   <&gpioa 4 5>;
         sck =  <&gpioa 5 5>;
         miso = <&gpioa 6 5>;
         mosi = <&gpioa 7 5>;
     };
-    my_i2c1_pinctrl: i2cpinctrl@b7b6 {
+    my_i2c1_pinctrl: i2cpinctrl@3 {
         sda = <&gpiob 9 4>;
         scl = <&gpiob 8 4>;
+    };
+    adc_0_pinctrl: adcpinctrl@4 {
+        pin = <&gpioa 0 0>;
     };
 };
 
@@ -51,4 +55,12 @@
     pinctrl = <&my_i2c1_pinctrl>;
     speed = "I2C_SPEED_NORMAL";
     clk = "CLOCK_APB1";
+};
+
+&adc1 {
+    adc_0: adc-ch@0 {
+        status = "okay";
+        channel = <0>;
+        pinctrl = <&adc_0_pinctrl>;
+    };
 };

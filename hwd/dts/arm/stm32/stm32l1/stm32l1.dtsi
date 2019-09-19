@@ -185,5 +185,12 @@
         };
 #endif /* HAS_DMA2 */
 
+#ifdef HAS_ADC
+        adc1: adc@40012400 {
+            reg = <0x40012400 0x400>;
+            device = "ADC1";
+            dma = <&dma1 1 0>;
+        };
+#endif /* HAS_ADC */
     };
 };
