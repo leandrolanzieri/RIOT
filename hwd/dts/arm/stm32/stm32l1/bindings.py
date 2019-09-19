@@ -1,4 +1,4 @@
-from hwd.dts.common import  PhandleTo, String, Pinctrl, node, Peripheral, PeripheralStatus
+from hwd.dts.common import  PhandleTo, String, Number, Pinctrl, node, Peripheral, PeripheralStatus
 from hwd.dts.arm.v7m_nvic import Nvic
 
 @node
@@ -52,6 +52,47 @@ class Gpio(Peripheral):
                      functions needed)
         """
         cells = ['num', 'flags']
+
+@node
+class AdcPinctrl(Pinctrl):
+    """Pinctrl for ADC peripheral Device Tree bindings, for STM32 architecture.
+
+    Pins:
+        - pin: ADC input pin
+    """
+    pin = PhandleTo(Gpio)
+
+@node
+class AdcChannel(Peripheral):
+    """ADC channel Device Tree binding for STM32 architecture.
+
+    Properties:
+        - status: Peripheral activation status
+        - channel: ADC channel number
+        - pinctrl: Pin configuration for the ADC
+    """
+    _node_name = 'adc-ch'
+    status = PeripheralStatus()
+    channel = Number()
+    pinctrl = PhandleTo(AdcPinctrl)
+
+    def render(self):
+        ret = {}
+        ret['chan'] = self.channel
+        pin = self.pinctrl.target.pin
+        ret['pin'] = 'GPIO_PIN({},{})'.format(pin.target.label, pin.num)
+        return ret
+
+@node
+class Adc(Peripheral):
+    """ADC peripheral Device Tree binding for STM32 architecture
+
+    Properties:
+        - device: String representing the device (e.g. ADC1)
+        - dma: ADC DMA configuration
+    """
+    device = String()
+    dma = PhandleTo(Dma)
 
 @node
 class UsartPinctrl(Pinctrl):
@@ -223,6 +264,7 @@ class I2C(Peripheral):
         ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
+        # TODO: Move this to I2CPinctrl render
         if self.pinctrl:
             scl = self.pinctrl.target.scl
             sda = self.pinctrl.target.sda
