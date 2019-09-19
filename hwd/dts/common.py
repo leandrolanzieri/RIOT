@@ -184,6 +184,8 @@ class PhandleTo(ForeignKeyField):
     def db_value(self, value):
         if isinstance(value, int):
             value = [value]
+        elif isinstance(value, str):
+            value = [int(value)]
 
         phandle = value[0]
         parent_model = self.rel_model.parent_class
