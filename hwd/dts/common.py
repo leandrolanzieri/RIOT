@@ -200,7 +200,15 @@ class PhandleTo(ForeignKeyField):
         return super().db_value(self.rel_model.create(phandle=phandle, **args).id)
 
 class Pinctrl(NodeModel):
-    pass
+    """Base class for pin configuration bindings.
+    """
+    @staticmethod
+    def render_pin(pin):
+        """Render a pin to be used in RIOT.
+        """
+        if not pin:
+            return 'GPIO_UNDEF'
+        return 'GPIO_PIN({},{})'.format(pin.target.label, pin.num)
 
 class String(CharField):
     """String node property type.

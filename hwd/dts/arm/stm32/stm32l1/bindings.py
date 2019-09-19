@@ -1,3 +1,4 @@
+import logging
 from hwd.dts.common import  PhandleTo, String, Number, Pinctrl, node, Peripheral, PeripheralStatus
 from hwd.dts.arm.v7m_nvic import Nvic
 
@@ -62,6 +63,11 @@ class AdcPinctrl(Pinctrl):
     """
     pin = PhandleTo(Gpio)
 
+    def render(self):
+        ret = {}
+        ret['pin'] = self.render_pin(self.pin)
+        return ret
+
 @node
 class AdcChannel(Peripheral):
     """ADC channel Device Tree binding for STM32 architecture.
@@ -79,8 +85,7 @@ class AdcChannel(Peripheral):
     def render(self):
         ret = {}
         ret['chan'] = self.channel
-        pin = self.pinctrl.target.pin
-        ret['pin'] = 'GPIO_PIN({},{})'.format(pin.target.label, pin.num)
+        ret.update(self.pinctrl.target.render())
         return ret
 
 @node
@@ -105,6 +110,14 @@ class UsartPinctrl(Pinctrl):
     """
     tx = PhandleTo(Gpio)
     rx = PhandleTo(Gpio)
+
+    def render(self):
+        ret = {}
+        ret['tx_pin'] = self.render_pin(self.tx)
+        ret['rx_pin'] = self.render_pin(self.rx)
+        ret['tx_af'] = self.tx.flags
+        ret['rx_af'] = self.rx.flags
+        return ret
 
 @node
 class Usart(Peripheral):
@@ -139,14 +152,10 @@ class Usart(Peripheral):
         ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
-        if self.pinctrl:
-            tx = self.pinctrl.target.tx
-            rx = self.pinctrl.target.rx
-            ret['tx_pin'] = 'GPIO_PIN({},{})'.format(tx.target.label, tx.num)
-            ret['rx_pin'] = 'GPIO_PIN({},{})'.format(tx.target.label, rx.num)
-            ret['tx_af'] = tx.flags
-            ret['rx_af'] = rx.flags
-
+        try:
+            ret.update(self.pinctrl.target.render())
+        except AttributeError:
+            logging.warning('{} has no assigned pins'.format(self.device))
         return ret
 
 @node
@@ -165,6 +174,14 @@ class SpiPinctrl(Pinctrl):
     sck = PhandleTo(Gpio)
     cs = PhandleTo(Gpio, null=True)
 
+    def render(self):
+        ret = {}
+        ret['mosi_pin'] = self.render_pin(self.mosi)
+        ret['miso_pin'] = self.render_pin(self.miso)
+        ret['sck_pin'] = self.render_pin(self.sck)
+        ret['cs_pin'] = self.render_pin(self.cs)
+        ret['af'] = self.mosi.flags
+        return ret
 @node
 class Spi(Peripheral):
     """SPI peripheral Device Tree binding for STM32 architecture.
@@ -196,20 +213,10 @@ class Spi(Peripheral):
         ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
-        if self.pinctrl:
-            mosi = self.pinctrl.target.mosi
-            miso = self.pinctrl.target.miso
-            sck = self.pinctrl.target.sck
-            ret['mosi_pin'] = 'GPIO_PIN({},{})'.format(mosi.target.label, mosi.num)
-            ret['miso_pin'] = 'GPIO_PIN({},{})'.format(miso.target.label, miso.num)
-            ret['sck_pin'] = 'GPIO_PIN({},{})'.format(sck.target.label, sck.num)
-            ret['af'] = mosi.flags
-            if self.pinctrl.target.cs:
-                cs = self.pinctrl.target.cs
-                ret['cs_pin'] = 'GPIO_PIN({},{})'.format(cs.target.label, cs.num)
-            else:
-                ret['cs_pin'] = 'GPIO_UNDEF'
-
+        try:
+            ret.update(self.pinctrl.target.render())
+        except AttributeError:
+            logging.warning('{} has no assigned pins'.format(self.device))
         return ret
 
 @node
@@ -223,6 +230,14 @@ class I2CPinctrl(Pinctrl):
     """
     sda = PhandleTo(Gpio)
     scl = PhandleTo(Gpio)
+
+    def render(self):
+        ret = {}
+        ret['scl_pin'] = self.render_pin(self.scl)
+        ret['sda_pin'] = self.render_pin(self.sda)
+        ret['scl_af'] = self.scl.flags
+        ret['sda_af'] = self.sda.flags
+        return ret
 
 @node
 class I2C(Peripheral):
@@ -264,13 +279,8 @@ class I2C(Peripheral):
         ret['rx_dma_request'] = self.rx_dma.request
         ret['rx_dma_channel'] = self.rx_dma.channel
 
-        # TODO: Move this to I2CPinctrl render
-        if self.pinctrl:
-            scl = self.pinctrl.target.scl
-            sda = self.pinctrl.target.sda
-            ret['scl_pin'] = 'GPIO_PIN({},{})'.format(scl.target.label, scl.num)
-            ret['scl_af'] = scl.flags
-            ret['sda_pin'] = 'GPIO_PIN({},{})'.format(sda.target.label, sda.num)
-            ret['sda_af'] = sda.flags
-
+        try:
+            ret.update(self.pinctrl.target.render())
+        except AttributeError:
+            logging.warning('{} has no assigned pins'.format(self.device))
         return ret
