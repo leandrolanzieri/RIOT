@@ -44,6 +44,12 @@ def generate_periph_conf(board):
     except:
         logging.info('No SPI was chosen')
 
+    try:
+        adcs = [i.render() for i in peripherals['adc']]
+        ret += generate_structure_for_periphs(adcs, 'adc') + '\n\n'
+    except:
+        logging.info('No ADC was chosen')
+
     return ret
 
 def generate_pinout(board, template_path):
