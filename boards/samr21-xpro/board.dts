@@ -1,0 +1,35 @@
+/dts-v1/;
+#include "dts/arm/sam/samr/samr21/samr21g18/samr21g18.dtsi"
+
+/ {
+    compatible = "atmel,samr21-xpro";
+    chosen {
+        riot,uart = <&usart0>, <&usart5>;
+    };
+
+    usart0: usart@0 {
+        sercom = <&sercom0>;
+        pinctrl = <&usart0_pinctrl>;
+        clk = "GCLK_CLKCTRL_GEN_GCLK0";
+        status = "okay";
+    };
+
+    usart5: usart@5 {
+        sercom = <&sercom5>;
+        pinctrl = <&usart5_pinctrl>;
+        clk = "GCLK_CLKCTRL_GEN_GCLK0";
+        status = "okay";
+    };
+};
+
+&pinctrl {
+    usart0_pinctrl: usartpinctrl@0 {
+        rx = <&gpioa 5 0>; // TODO: Add pad and mux
+        tx = <&gpioa 4 0>;
+    };
+
+    usart5_pinctrl: usartpinctrl@5 {
+        rx = <&gpioa 23 0>; // TODO: Add pad and mux
+        tx = <&gpioa 22 0>;
+    };
+};

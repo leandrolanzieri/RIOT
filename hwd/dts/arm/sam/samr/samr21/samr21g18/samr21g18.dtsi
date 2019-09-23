@@ -1,0 +1,13 @@
+#define HAS_SERCOM0
+#define HAS_SERCOM1
+#define HAS_SERCOM3
+#define HAS_SERCOM4
+#define HAS_SERCOM5
+
+#include "../samr21.dtsi"
+
+/ {
+    soc {
+        compatible = "atmel,samr21g18", "atmel,samr21";
+    };
+};

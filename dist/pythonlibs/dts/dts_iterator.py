@@ -114,4 +114,4 @@ if __name__ == "__main__":
     elif args.cmd == 'pinout':
         output(generate_pinout(board, args.pinout), args.output)
     else:
-        raise NotADirectoryError
+        raise NotImplementedError

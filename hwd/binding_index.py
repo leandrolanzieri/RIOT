@@ -4,6 +4,10 @@ _map = {
     'st': {
         'stm32l1': 'hwd.dts.arm.stm32.stm32l1.bindings'
     },
+    'atmel': {
+        'samd21': 'hwd.dts.arm.sam.samd.samd21.bindings',
+        'samr21': 'hwd.dts.arm.sam.samd.samd21.bindings'
+    },
     'arm': {
         'v7m-nvic': 'hwd.dts.arm.v7m_nvic'
     }

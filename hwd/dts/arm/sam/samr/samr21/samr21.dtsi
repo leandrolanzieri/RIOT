@@ -1,0 +1,7 @@
+#include "../../samd/samd21/samd21.dtsi"
+
+/ {
+    soc {
+        compatible = "atmel,samr21";
+    };
+};

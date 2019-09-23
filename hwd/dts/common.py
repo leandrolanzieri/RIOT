@@ -329,16 +329,19 @@ class Board:
         db.create_tables([Pinmap])
 
         # create pinmap table
-        for k, v in self.desc['board']['pinmap'].items():
-            for el in v:
-                el['group'] = k
-                try:
-                    el['cpu_pin'] = CpuPin.get(pin=el['pin'])
-                    logging.debug('{} pin found'.format(el['pin']))
-                except:
-                    el['cpu_pin'] = None
-                    logging.debug('{} pin not found'.format(el['pin']))
-                Pinmap.create(**el)
+        try:
+            for k, v in self.desc['board']['pinmap'].items():
+                for el in v:
+                    el['group'] = k
+                    try:
+                        el['cpu_pin'] = CpuPin.get(pin=el['pin'])
+                        logging.debug('{} pin found'.format(el['pin']))
+                    except:
+                        el['cpu_pin'] = None
+                        logging.debug('{} pin not found'.format(el['pin']))
+                    Pinmap.create(**el)
+        except KeyError:
+            logging.info('No board pinmap provided')
 
     def get_chosen(self):
         """Returns the chosen models grouped by function.
@@ -384,7 +387,7 @@ class Board:
         ret = {}
         ret['name'] = self.desc['board']['name']
         ret['cpu'] = self.desc['board']['cpu']
-        ret['desc'] = self.desc['board']['description']
+        ret['desc'] = getattr(self.desc['board'], 'description', '')
         return ret
 
     def _extract_cpupin(self):
@@ -401,7 +404,7 @@ class Board:
                             continue
                         pin_label = "{}{}".format(v.target.label, v.num)
                         el = {'pin': pin_label, 'function': k,
-                              'config_group': config_group}
+                              'config_group': config_group + str(i)}
                         try:
                             CpuPin.create(**el)
                         except IntegrityError:

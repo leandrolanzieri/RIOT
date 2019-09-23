@@ -1,0 +1,70 @@
+#include "../../../armv7-m.dtsi"
+#include "dts-common.h"
+
+/ {
+    soc {
+        compatible = "atmel,samd21";
+
+#ifdef HAS_SERCOM0
+        sercom0: sercom@42000800 {
+            reg = <0x42000800 0x400>;
+            device = "SERCOM0";
+        };
+#endif /* HAS_SERCOM0 0 */
+
+#ifdef HAS_SERCOM1
+        sercom1: sercom@42000C00 {
+            reg = <0x42000C00 0x400>;
+            device = "SERCOM1";
+        };
+#endif /* HAS_SERCOM1 1 */
+
+#ifdef HAS_SERCOM2
+        sercom2: sercom@42001000 {
+            reg = <0x42001000 0x400>;
+            device = "SERCOM2";
+        };
+#endif /* HAS_SERCOM2 2 */
+
+#ifdef HAS_SERCOM3
+        sercom3: sercom@42001400 {
+            reg = <0x42001400 0x400>;
+            device = "SERCOM3";
+        };
+#endif /* HAS_SERCOM3 3 */
+
+#ifdef HAS_SERCOM4
+        sercom4: sercom@42001800 {
+            reg = <0x42001800 0x400>;
+            device = "SERCOM4";
+        };
+#endif /* HAS_SERCOM4 4 */
+
+#ifdef HAS_SERCOM5
+        sercom5: sercom@42001C00 {
+            reg = <0x42001C00 0x400>;
+            device = "SERCOM5";
+        };
+#endif /* HAS_SERCOM5 5 */
+
+        pinctrl: pin-controller@41004400 {
+            reg = <0x41004400 0x400>;
+
+            gpioa: gpio@0 {
+                label = "PA";
+            };
+
+            gpiob: gpio@1 {
+                label = "PB";
+            };
+
+            gpioc: gpio@2 {
+                label = "PC";
+            };
+
+            gpiod: gpio@3 {
+                label = "PD";
+            };
+        };
+    };
+};
