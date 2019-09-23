@@ -117,8 +117,6 @@ class CellAttr(IntegerField):
     pass
 
 class CellClass(BaseModel):
-    phandle = IntegerField()
-
     @property
     def target(self):
         node = DTBNode.get(phandle=self.phandle)
@@ -133,13 +131,21 @@ class NodeModel(BaseModel):
     node = ForeignKeyField(DTBNode)
 
     class CellData:
+        """Metadata on cells that point to a specific type of node.
+
+        Properties:
+            - cells: Array of names for each position in the cell
+            - unique: Forces that only one reference to this type of node exists
+        """
         cells = []
+        unique = False
 
     @classmethod
     def cell_class(cls):
         cells = cls.CellData.cells
 
         d = {"parent_class": cls }
+        d['phandle'] = IntegerField(unique=cls.CellData.unique)
         for c in cells:
             d[c] =  CellAttr()
 
