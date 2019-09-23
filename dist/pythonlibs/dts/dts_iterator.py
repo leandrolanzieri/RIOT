@@ -64,7 +64,9 @@ def generate_pinout(board, template_path):
             else:
                 cg = ''
                 fu = ''
-            conn.append({'L':pin.label, 'F': '{}.{}'.format(cg,fu)})
+            function = '{}.{}'.format(cg,fu)
+            conn.append({'L':pin.label, 'F': function})
+            ctx[pin.label] = function
         ctx['pins'][name] = conn
     try:
         template = jinja_env.get_template(template_path)
