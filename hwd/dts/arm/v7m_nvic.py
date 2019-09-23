@@ -13,7 +13,7 @@ class Nvic(Peripheral):
     _node_name = 'interrupt-controller'
     interrupt_cells = Number(column_name="interrupt_cells")
 
-    class CellData:
+    class CellData(Peripheral.CellData):
         """Phandles that reference the NVIC.
 
         Cells:
