@@ -5,6 +5,8 @@
     compatible = "atmel,samr21-xpro";
     chosen {
         riot,uart = <&usart0>, <&usart5>;
+        riot,spi = <&spi4>;
+        riot,i2c = <&i2c3>;
     };
 
     usart0: usart@0 {
@@ -12,6 +14,7 @@
         pinctrl = <&usart0_pinctrl>;
         clk = "GCLK_CLKCTRL_GEN_GCLK0";
         status = "okay";
+        flags = <0>;
     };
 
     usart5: usart@5 {
@@ -19,17 +22,44 @@
         pinctrl = <&usart5_pinctrl>;
         clk = "GCLK_CLKCTRL_GEN_GCLK0";
         status = "okay";
+        flags = <0>;
+    };
+
+    spi4: spi@4 {
+        sercom = <&sercom4>;
+        pinctrl = <&spi4_pinctrl>;
+        status = "okay";
+    };
+
+    i2c3: i2c@3 {
+        sercom = <&sercom3>;
+        speed = "I2C_SPEED_NORMAL";
+        pinctrl = <&i2c3_pinctrl>;
+        clk = "GCLK_CLKCTRL_GEN_GCLK0";
+        flags = <0>;
+        status = "okay";
     };
 };
 
 &pinctrl {
     usart0_pinctrl: usartpinctrl@0 {
-        rx = <&gpioa 5 0>; // TODO: Add pad and mux
+        rx = <&gpioa 5 1>; // TODO: Add mux
         tx = <&gpioa 4 0>;
     };
 
     usart5_pinctrl: usartpinctrl@5 {
-        rx = <&gpioa 23 0>; // TODO: Add pad and mux
+        rx = <&gpioa 23 1>; // TODO: Add mux
         tx = <&gpioa 22 0>;
+    };
+
+    spi4_pinctrl: spipinctrl@4 {
+        miso = <&gpioc 19 0>;
+        mosi = <&gpiob 30 2>;
+        sck = <&gpioc 18 3>;
+    };
+
+    i2c3_pinctrl: i2cpinctrl@3 {
+        scl = <&gpioa 17 3>;
+        sda = <&gpioa 16 3>;
     };
 };
