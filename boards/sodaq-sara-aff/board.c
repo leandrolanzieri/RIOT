@@ -41,6 +41,8 @@ void board_init(void)
     /* enable TX line if the divice is used */
     gpio_init(NB_IOT_TX_EN_PIN, GPIO_OUT);
     gpio_set(NB_IOT_TX_EN_PIN);
+    gpio_init(NB_IOT_ENABLE_PIN, GPIO_OUT);
+    NB_IOT_ENABLE;
 #else
     /* set NB-IoT device off if not used */
     NB_IOT_DISABLE;

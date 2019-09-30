@@ -80,20 +80,21 @@ static int _socket_cmd(int argc, char **argv)
     return 1;
 }
 
-static int _sys_cmd(int argc, char **argv)
+static int _register_cmd(int argc, char **argv)
 {
     if (argc != 2) {
-        printf("usage: %s <register>\n", argv[0]);
-        return 1;
+        printf("usage: %s register <oper_num>\n", argv[0]);
+        goto err;
     }
 
     if (!strcmp(argv[1], "register")) {
-        if (sara_r410m_register(&sara_dev) != SARA_R410M_OK) {
+        if (sara_r410m_register(&sara_dev, argv[2]) != SARA_R410M_OK) {
             puts("Error: Could not register to network");
-            return 1;
+            goto err;
         }
         return 0;
     }
+err:
     return 1;
 }
 
@@ -133,7 +134,7 @@ static int _att_cmd(int argc, char **argv)
 
 static const shell_command_t shell_commands[] = {
     { "socket", "Socket operations", _socket_cmd },
-    { "sys", "System operations", _sys_cmd },
+    { "register", "Register to a network", _register_cmd },
     { "att", "AllThingsTalk debug commands", _att_cmd },
     { NULL, NULL, NULL }
 };
@@ -143,8 +144,7 @@ int main(void)
 {
     puts("SARA-R410M NB-IoT module driver test");
 
-    if (sara_r410m_init(&sara_dev, &sara_r410m_params[0],
-                        &sara_r410m_nbiot_configs[0]) != SARA_R410M_OK) {
+    if (sara_r410m_init(&sara_dev, &sara_r410m_params[0]) != SARA_R410M_OK) {
         puts("SARA-R410M initialization failed");
         return -1;
     }

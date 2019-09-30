@@ -52,19 +52,8 @@ typedef struct {
     uart_t uart;            /**< UART device */
     uint32_t baudrate;      /**< UART baudrate */
     gpio_t reset_pin;       /**< pin to reset module */
-    gpio_t vcc_pin;         /**< pin to power module */
     gpio_t pwr_on_pin;      /**< PWR_ON pin */
 } sara_r410m_params_t;
-
-/**
- * @brief SARA-R410M NB-IoT configuration parameters
- */
-typedef struct {
-    const char *apn;        /**< Access Point Name */
-    const char *op;         /**< Operator code */
-    const char *sim_pin;    /**< SIM car PIN (can be NULL) */
-    uint16_t band;          /**< NB-IoT band to use */
-} sara_r410m_nbiot_t;
 
 /**
  * @brief SARA-R410M device descriptor
@@ -72,8 +61,6 @@ typedef struct {
 typedef struct {
     at_dev_t at;                    /**< at device descriptor */
     sara_r410m_params_t params;     /**< driver configuration parameters */
-    sara_r410m_nbiot_t nbiot;       /**< NB-IoT configuration parameters */
-    mutex_t mutex;                  /**< mutex for the device */
 } sara_r410m_t;
 
 /**
@@ -102,17 +89,14 @@ enum {
 
 /**
  * @brief Initializes a SARA-R410M module with the given parameters @p params
- *        and the given NB-IoT configuration @p nbiot.
  *
  * @param[in out] dev       device descriptor
  * @param[in] params        driver parameters
- * @param[in] nbiot         NB-IoT configurations
  *
  * @return SARA_R410M_OK    on success
  * @return SARA_R410M_ERR   on error
  */
-int sara_r410m_init(sara_r410m_t *dev, const sara_r410m_params_t *params,
-                    const sara_r410m_nbiot_t *nbiot);
+int sara_r410m_init(sara_r410m_t *dev, const sara_r410m_params_t *params);
 
 /**
  * @brief Checks if a SARA-R410M module is present on the bus.
@@ -135,12 +119,13 @@ void sara_r410m_deinit(sara_r410m_t *dev);
 
 /**
  * @brief Sets the band to be used
- * 
- * @param dev 
- * @param band 
- * @return int 
+ *
+ * @param[in] dev            device descriptor
+ * @param[in] band           band to set
+ * @return SARA_R410M_OK    on success
+ * @return SARA_R410M_ERR   on error
  */
-int sara_r410m_band_set(sara_r410m_t *dev, uint16_t band);
+int sara_r410m_set_band(sara_r410m_t *dev, uint16_t band);
 
 /**
  * @brief Sets the Access Point Name.
@@ -151,23 +136,23 @@ int sara_r410m_band_set(sara_r410m_t *dev, uint16_t band);
  * @return SARA_R410M_OK    on success
  * @return SARA_R410M_ERR   on error
  */
-int sara_r410m_apn_set(sara_r410m_t *dev, const char *apn);
+int sara_r410m_set_apn(sara_r410m_t *dev, const char *apn);
 
 /**
  * @brief Unlocks the SIM card. If a PIN is given it will use it, if not it
  *        assumes no PIN is needed.
- * 
+ *
  * @param[in] dev           device descriptor
  * @param[in] pin           PIN to unlock SIM card. Can be NULL.
  *
  * @return SARA_R410M_OK    on success
  * @return SARA_R410M_ERR   on error 
  */
-int sara_r410m_sim_unlock(sara_r410m_t *dev, const char *pin);
+int sara_r410m_set_pin(sara_r410m_t *dev, const char *pin);
 
 /**
  * @brief Issues a power off command to the device.
- * 
+ *
  * @param[in] dev           device descriptor
  *
  * @return SARA_R410M_OK    on success
@@ -177,7 +162,7 @@ int sara_r410m_power_off(sara_r410m_t *dev);
 
 /**
  * @brief Sets the status of the power saving configuration.
- * 
+ *
  * @param[in] dev           device descriptor
  * @param[in] status        1 = On, 0 = Off
  *
@@ -187,21 +172,72 @@ int sara_r410m_power_off(sara_r410m_t *dev);
 int sara_r410m_power_saving_set(sara_r410m_t *dev, int status);
 
 /**
- * @brief 
- * 
- * @param dev 
- * @param status 
- * @return int 
+ * @brief   Sets the device power status
+ *
+ * @param[in] dev           device descriptor
+ * @param[in] status        status to change to
+ *
+ * @return 0 on success
+ * @return <0 otherwise
  */
-int sara_r410m_status_set(sara_r410m_t *dev, sara_r410m_status_t status);
+int sara_r410m_set_status(sara_r410m_t *dev, sara_r410m_status_t status);
 
-int sara_r410m_register(sara_r410m_t *dev);
+/**
+ * @brief   Register to a given network @p operator. The operator string should
+ * be given in numeric format, and be 5 or 6 characters, null-terminated.
+ *
+ * @note This command can take up to @ref SARA_R410M_EXT_TIMEOUT us to return.
+ *
+ * @param[in] dev           device descriptor
+ * @param[in] operator      operator number string
+ *
+ * @return 0 on success
+ * @return <0 otherwise
+ */
+int sara_r410m_register(sara_r410m_t *dev, char *operator);
 
+/**
+ * @brief   Creates a socket of the given type.
+ *
+ * @note For now only UDP sockets are created.
+ *
+ * @param[in] dev                device descriptor
+ * @param[in, out] socket        socket descriptor
+ * @param[in] local_port         port to open the socket at
+ *
+ * @return 0 on success
+ * @return -ETIMEDOUT if no response
+ * @return -EINVAL if the socket could not be created
+ */
 int sara_r410m_socket_create(sara_r410m_t *dev, sara_r410m_socket_t *socket,
                              uint16_t local_port);
 
+/**
+ * @brief   Closes a given @p socket.
+ *
+ * @param[in] dev               device descriptor
+ * @param[in] socket            socket to close
+ *
+ * @return 0 on success
+ * @return <0 otherwise
+ */
 int sara_r410m_socket_close(sara_r410m_t *dev, sara_r410m_socket_t *socket);
 
+/**
+ * @brief   Sends @p data through a given @p socket. @p addr has to be a
+ * null-terminated string of the address, it can be IPV4 or IPV6.
+ *
+ * @param[in] dev               device descriptor
+ * @param[in] socket            socket to send the data through
+ * @param[in] addr              IP address to send the data to
+ * @param[in] port              port to send the data to
+ * @param[in] data              data to send
+ * @param[in] data_len          length of @p data
+ *
+ * @return @ref SARA_R410M_OK on success
+ * @return -ETIMEDOUT on timeout of any of the commands
+ * @return -EINVAL on not implemented socket type
+ */
 int sara_r410m_socket_send(sara_r410m_t *dev, sara_r410m_socket_t *socket,
                            char *addr, uint16_t port, char *data,
                            int data_len);
