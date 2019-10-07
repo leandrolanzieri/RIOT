@@ -1,5 +1,5 @@
 menuconfig KCONFIG_MODULE_GCOAP
-    bool "Configure Gcoap" if "$(module-sock-util)" != ""
+    bool "Configure Gcoap" if "$(module-gcoap)" != ""
     help
         Enable this to configure Gcoap module using Kconfig. If not set default
         values and CFLAGS will be used.
