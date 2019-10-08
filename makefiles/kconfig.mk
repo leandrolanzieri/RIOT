@@ -5,7 +5,7 @@ KCONFIG ?= $(RIOTBASE)/Kconfig
 include $(RIOTMAKE)/tools/kconfiglib.inc.mk
 
 # .config file will contain the generated configuraion
-KCONFIG_CONFIG = $(GENERATED_DIR)/.config
+MENUCONFIG_CONFIG = $(GENERATED_DIR)/menuconfig.config
 
 # Generated dir will contain Kconfig generated configurations
 GENERATED_DIR = $(BINDIR)/generated
@@ -28,7 +28,7 @@ KCONFIG_MERGED_CONFIG = $(GENERATED_DIR)/merged.config
 # previous ones)
 MERGE_SOURCES += $(wildcard $(KCONFIG_APP_CONFIG))
 MERGE_SOURCES += $(wildcard $(KCONFIG_DEFCONFIG))
-MERGE_SOURCES += $(wildcard $(KCONFIG_CONFIG))
+MERGE_SOURCES += $(wildcard $(MENUCONFIG_CONFIG))
 
 # Build a Kconfig file defining all used modules. This is done by defining
 # Kconfig variables like 'module-<module-name> = y'. Then, every module Kconfig
@@ -43,11 +43,11 @@ $(KCONFIG_GENERATED_DEPENDENCIES): FORCE
 
 # Opens the menuconfig interface for configuration of modules using the Kconfig
 # system.
-menuconfig: $(KCONFIG_CONFIG) $(MENUCONFIG)
-	$(Q)KCONFIG_CONFIG=$(KCONFIG_CONFIG) $(MENUCONFIG) $(KCONFIG)
+menuconfig: $(MENUCONFIG_CONFIG) $(MENUCONFIG)
+	$(Q)KCONFIG_CONFIG=$(MENUCONFIG_CONFIG) $(MENUCONFIG) $(KCONFIG)
 
 # Generates a merged configuration file from the given sources
-$(KCONFIG_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) FORCE
+$(MENUCONFIG_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) FORCE
 	$(Q)\
 	if ! test -z "$(strip $(MERGE_SOURCES))"; then \
 	  $(MERGECONFIG) $(KCONFIG) $@ $(MERGE_SOURCES); \
