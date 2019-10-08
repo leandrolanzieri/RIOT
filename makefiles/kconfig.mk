@@ -18,7 +18,7 @@ export KCONFIG_GENERATED_DEPENDENCIES = $(GENERATED_DIR)/Kconfig.dep
 KCONFIG_APP_CONFIG = $(APPDIR)/app.config
 
 # Default and user overwritten configurations
-KCONFIG_DEFCONFIG = $(APPDIR)/defconfig
+KCONFIG_USER_CONFIG = $(APPDIR)/user.config
 
 # This file will contain merged configurations from MERGE_SOURCES and is the
 # one that is used to generate the 'autoconf.h' header
@@ -27,7 +27,7 @@ KCONFIG_MERGED_CONFIG = $(GENERATED_DIR)/merged.config
 # Add configurations to merge, in ascendent priority (i.e. a file overrides the
 # previous ones)
 MERGE_SOURCES += $(wildcard $(KCONFIG_APP_CONFIG))
-MERGE_SOURCES += $(wildcard $(KCONFIG_DEFCONFIG))
+MERGE_SOURCES += $(wildcard $(KCONFIG_USER_CONFIG))
 MERGE_SOURCES += $(wildcard $(MENUCONFIG_CONFIG))
 
 # Build a Kconfig file defining all used modules. This is done by defining
