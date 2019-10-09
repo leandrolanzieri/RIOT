@@ -1,0 +1,4 @@
+/**
+ * @defgroup kconfig Kconfig symbols
+ * @brief Options configurable via Kconfig
+ */

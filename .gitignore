@@ -7,6 +7,7 @@ doc/doxygen/man
 doc/doxygen/*.log
 doc/doxygen/*.db
 doc/doxygen/*.tmp
+doc/doxygen/src/kconfig/*.h
 # Built binaries
 *bin
 # Build directory
