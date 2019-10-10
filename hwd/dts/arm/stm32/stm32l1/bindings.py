@@ -19,6 +19,7 @@ class Dma(Peripheral):
             - request: DMA Request number
         """
         cells = ['channel', 'request']
+        unique = False
 
 @node
 class Rcc(Peripheral):
@@ -34,6 +35,7 @@ class Rcc(Peripheral):
             - bits: Bits to set in the RCC (e.g. RCC_APB1ENR_SPI3EN).
         """
         cells = ['bus', 'bits']
+        unique = False
 
 @node
 class Gpio(Peripheral):
@@ -53,6 +55,7 @@ class Gpio(Peripheral):
                      functions needed)
         """
         cells = ['num', 'flags']
+        unique = False
 
 @node
 class AdcPinctrl(Pinctrl):
