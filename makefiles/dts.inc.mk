@@ -26,6 +26,10 @@ board-pinout: dtb-prepare
 	$(Q)PYTHONPATH=$(RIOTBASE) python3 \
 		$(DTS_ITERATOR) $(DTB) pinout -b $(BOARD_YML) -p $(TEMPLATE_PINOUT) --log=INFO
 
+print-pinout: dtb-prepare
+	$(Q)PYTHONPATH=$(RIOTBASE) python3 \
+		$(DTS_ITERATOR) $(DTB) pinout -b $(BOARD_YML) --log=INFO
+
 gen-periph-conf: dtb-prepare
 	$(Q)PYTHONPATH=$(RIOTBASE) python3 \
 		$(DTS_ITERATOR) $(DTB) generate -b $(BOARD_YML) --log=INFO
