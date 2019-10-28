@@ -32,7 +32,7 @@ extern "C" {
 /**
  * @brief Types of supported sockets
  */
-typedef enum {
+typedef enum sara_r410m_socket_type {
     SOCK_UDP = 17,  /**< UDP socket */
     SOCK_TCP = 6    /**< TCP socket */
 } sara_r410m_socket_type_t;
@@ -40,7 +40,7 @@ typedef enum {
 /**
  * @brief Socket descriptor
  */
-typedef struct {
+typedef struct sara_r410m_socket {
     sara_r410m_socket_type_t type;  /**< socket type */
     int id;                         /**< socket ID number (returned when created) */
 } sara_r410m_socket_t;
@@ -48,7 +48,7 @@ typedef struct {
 /**
  * @brief SARA-R410M driver configuration parameters
  */
-typedef struct {
+typedef struct sara_r410m_params {
     uart_t uart;            /**< UART device */
     uint32_t baudrate;      /**< UART baudrate */
     gpio_t reset_pin;       /**< pin to reset module */
@@ -58,7 +58,7 @@ typedef struct {
 /**
  * @brief SARA-R410M device descriptor
  */
-typedef struct {
+typedef struct sara_r410m {
     at_dev_t at;                    /**< at device descriptor */
     sara_r410m_params_t params;     /**< driver configuration parameters */
 } sara_r410m_t;
@@ -66,7 +66,7 @@ typedef struct {
 /**
  * @brief Possible device status
  */
-typedef enum {
+typedef enum sara_r410m_status {
     STATUS_MINIMUM = 0,              /**< Minimum functionality */
     STATUS_ACTIVE = 1,               /**< Full functionality */
     STATUS_AIRPLANE_MODE = 4,        /**< Disable TX and RX */
@@ -82,7 +82,7 @@ typedef enum {
 /**
  * @brief Return codes
  */
-enum {
+enum sara_r410m_ret {
     SARA_R410M_ERR = -1,    /**< error */
     SARA_R410M_OK  = 0,     /**< success */
 };
