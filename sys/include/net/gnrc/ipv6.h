@@ -131,17 +131,25 @@ extern "C" {
 #endif
 
 /**
+ * @brief   Default priority level for the IPv6 thread referenced to the main
+ *          thread. The lower this number is, the higher the priority.
+ */
+#ifndef CONFIG_GNRC_IPV6_PRIO_DELTA
+#define CONFIG_GNRC_IPV6_PRIO_DELTA     (-3)
+#endif
+
+/**
  * @brief   Default priority for the IPv6 thread
  */
 #ifndef GNRC_IPV6_PRIO
-#define GNRC_IPV6_PRIO              (THREAD_PRIORITY_MAIN - 3)
+#define GNRC_IPV6_PRIO     (THREAD_PRIORITY_MAIN + CONFIG_GNRC_IPV6_PRIO_DELTA)
 #endif
 
 /**
  * @brief   Default message queue size to use for the IPv6 thread.
  */
-#ifndef GNRC_IPV6_MSG_QUEUE_SIZE
-#define GNRC_IPV6_MSG_QUEUE_SIZE    (8U)
+#ifndef CONFIG_GNRC_IPV6_MSG_QUEUE_SIZE
+#define CONFIG_GNRC_IPV6_MSG_QUEUE_SIZE    (8U)
 #endif
 
 #ifdef DOXYGEN
