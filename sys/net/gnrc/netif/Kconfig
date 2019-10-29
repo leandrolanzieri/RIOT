@@ -1,0 +1,50 @@
+menuconfig KCONFIG_MODULE_GNRC_NETIF
+    bool "Configure Network interface" if MODULE_GNRC_NETIF
+    help
+        Configure GNRC network interfaces using Kconfig
+
+if KCONFIG_MODULE_GNRC_NETIF
+
+config GNRC_NETIF_PRIO_DELTA
+    int "Priority for network interface threads"
+    default -5
+    help
+        Default priority level for network interface threads referenced to
+        the main thread priority. The priority will be higher if this number
+        is negative, otherwise it will be lower.
+
+config GNRC_NETIF_MSG_QUEUE_SIZE
+    int "Message queue size for network interface threads"
+    default 16
+    help
+        This has influence on the used stack memory of the thread, so the
+        thread's stack size might need to be adapted if this is changed.
+
+config GNRC_NETIF_IPV6_ADDRS_NUMOF
+    int "Maximum number of unicast and anycast addresses per interface"
+    default 2
+    help
+        If the default is changed, make sure that GNRC_NETIF_IPV6_GROUPS_NUMOF
+        is also large enough to fit the addresses' solicited nodes multicast
+        addresses.
+
+config GNRC_NETIF_DEFAULT_HL
+    int "Default hop limit"
+    default 64
+
+config GNRC_NETIF_L2ADDR_MAXLEN
+    int "Maximum length of the link-layer address"
+    default 8 if MODULE_NETDEV_IEEE802154 || MODULE_XBEE
+    default 6 if MODULE_NETDEV_ETH
+    default 1 if MODULE_CC110X
+    default 8
+
+config GNRC_NETIF_MIN_WAIT_AFTER_SEND_US
+    int "[EXPERIMENTAL] Minimum wait time after a send operation"
+    default 0
+    help
+        Minimum wait time expressed in microseconds, after a send operation is
+        performed. This option is experimental, and is purely meant as a
+        debugging feature to slow down a radios sending.
+
+endif # KCONFIG_GNRC_NETIF

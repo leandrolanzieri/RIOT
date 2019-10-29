@@ -1,0 +1,6 @@
+menu "Networking"
+
+rsource "gnrc/Kconfig"
+
+endmenu # Networking
+

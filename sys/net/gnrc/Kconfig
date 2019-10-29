@@ -1,0 +1,7 @@
+menu "Generic (GNRC) network stack"
+    visible if MODULE_GNRC
+
+rsource "network_layer/ipv6/Kconfig"
+rsource "netif/Kconfig"
+
+endmenu # Generic (GNRC) network stack

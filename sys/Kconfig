@@ -1,0 +1,6 @@
+menu "System"
+
+rsource "net/Kconfig"
+
+endmenu # System
+
