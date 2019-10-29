@@ -37,7 +37,7 @@
 #ifdef MODULE_GNRC_SIXLOWPAN
 #include "net/gnrc/netif/6lo.h"
 #endif
-#if defined(MODULE_GNRC_NETIF_DEDUP) && (GNRC_NETIF_L2ADDR_MAXLEN > 0)
+#if defined(MODULE_GNRC_NETIF_DEDUP) && (CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0)
 #include "net/gnrc/netif/dedup.h"
 #endif
 #include "net/gnrc/netif/flags.h"
@@ -88,19 +88,19 @@ typedef struct {
      * @see net_gnrc_netif_flags
      */
     uint32_t flags;
-#if (GNRC_NETIF_L2ADDR_MAXLEN > 0) || DOXYGEN
+#if (CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0) || DOXYGEN
     /**
      * @brief   The link-layer address currently used as the source address
      *          on this interface.
      *
-     * @note    Only available if @ref GNRC_NETIF_L2ADDR_MAXLEN > 0
+     * @note    Only available if @ref CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
      */
-    uint8_t l2addr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t l2addr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
 
     /**
      * @brief   Length in bytes of gnrc_netif_t::l2addr
      *
-     * @note    Only available if @ref GNRC_NETIF_L2ADDR_MAXLEN > 0
+     * @note    Only available if @ref CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
      */
     uint8_t l2addr_len;
 #if defined(MODULE_GNRC_NETIF_DEDUP) || DOXYGEN
@@ -287,7 +287,7 @@ gnrc_netif_t *gnrc_netif_get_by_pid(kernel_pid_t pid);
  *                      addresses assigned to @p netif. May not be `NULL`
  * @param[in] max_len   Number of *bytes* available in @p addrs. Must be at
  *                      least `sizeof(ipv6_addr_t)`. It is recommended to use
- *                      @p GNRC_NETIF_IPV6_ADDRS_NUMOF `* sizeof(ipv6_addr_t)
+ *                      @p CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF `* sizeof(ipv6_addr_t)
  *                      here (and have @p addrs of the according length).
  *
  * @return  Number of addresses in @p addrs times `sizeof(ipv6_addr_t)` on
@@ -488,11 +488,11 @@ char *gnrc_netif_addr_to_str(const uint8_t *addr, size_t addr_len, char *out);
  *
  * @pre `(out != NULL)`
  * @pre @p out **MUST** have allocated at least
- *      @ref GNRC_NETIF_L2ADDR_MAXLEN bytes.
+ *      @ref CONFIG_GNRC_NETIF_L2ADDR_MAXLEN bytes.
  *
  * @param[in] str       A string of colon-separated hexadecimals.
  * @param[out] out      The resulting hardware address. Must at least have
- *                      @ref GNRC_NETIF_L2ADDR_MAXLEN bytes allocated.
+ *                      @ref CONFIG_GNRC_NETIF_L2ADDR_MAXLEN bytes allocated.
  *
  * @return  Actual length of @p out on success.
  * @return  0, on failure.

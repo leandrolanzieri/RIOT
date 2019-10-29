@@ -401,10 +401,10 @@ static void _netif_list_groups(ipv6_addr_t *addr)
 static void _netif_list(kernel_pid_t iface)
 {
 #ifdef MODULE_GNRC_IPV6
-    ipv6_addr_t ipv6_addrs[GNRC_NETIF_IPV6_ADDRS_NUMOF];
+    ipv6_addr_t ipv6_addrs[CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF];
     ipv6_addr_t ipv6_groups[GNRC_NETIF_IPV6_GROUPS_NUMOF];
 #endif
-    uint8_t hwaddr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t hwaddr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
     uint32_t u32;
     uint16_t u16;
     int16_t i16;
@@ -556,7 +556,7 @@ static void _netif_list(kernel_pid_t iface)
     res = gnrc_netapi_get(iface, NETOPT_IPV6_ADDR, 0, ipv6_addrs,
                           sizeof(ipv6_addrs));
     if (res >= 0) {
-        uint8_t ipv6_addrs_flags[GNRC_NETIF_IPV6_ADDRS_NUMOF];
+        uint8_t ipv6_addrs_flags[CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF];
 
         memset(ipv6_addrs_flags, 0, sizeof(ipv6_addrs_flags));
         /* assume it to succeed (otherwise array will stay 0) */
@@ -820,7 +820,7 @@ static int _netif_set_flag(kernel_pid_t iface, netopt_t opt,
 
 static int _netif_set_addr(kernel_pid_t iface, netopt_t opt, char *addr_str)
 {
-    uint8_t addr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t addr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
     size_t addr_len = gnrc_netif_addr_from_str(addr_str, addr);
 
     if (addr_len == 0) {
@@ -964,7 +964,7 @@ static int _netif_set_encrypt_key(kernel_pid_t iface, netopt_t opt, char *key_st
 #ifdef MODULE_L2FILTER
 static int _netif_addrm_l2filter(kernel_pid_t iface, char *val, bool add)
 {
-    uint8_t addr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t addr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
     size_t addr_len = gnrc_netif_addr_from_str(val, addr);
 
     if ((addr_len == 0) || (addr_len > L2FILTER_ADDR_MAXLEN)) {
@@ -1217,7 +1217,7 @@ static int _netif_del(kernel_pid_t iface, char *addr_str)
 int _gnrc_netif_send(int argc, char **argv)
 {
     kernel_pid_t iface;
-    uint8_t addr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t addr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
     size_t addr_len;
     gnrc_pktsnip_t *pkt, *hdr;
     gnrc_netif_hdr_t *nethdr;

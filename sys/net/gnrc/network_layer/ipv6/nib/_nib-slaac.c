@@ -93,7 +93,7 @@ void _auto_configure_addr(gnrc_netif_t *netif, const ipv6_addr_t *pfx,
 #if GNRC_IPV6_NIB_CONF_SLAAC
 static bool _try_l2addr_reconfiguration(gnrc_netif_t *netif)
 {
-    uint8_t hwaddr[GNRC_NETIF_L2ADDR_MAXLEN];
+    uint8_t hwaddr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
     uint16_t hwaddr_len;
 
     if (gnrc_netapi_get(netif->pid, NETOPT_SRC_LEN, 0, &hwaddr_len,
@@ -134,7 +134,7 @@ static bool _try_addr_reconfiguration(gnrc_netif_t *netif)
     gnrc_netif_acquire(netif);
     if (hwaddr_reconf) {
         if (remove_old) {
-            for (unsigned i = 0; i < GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
+            for (unsigned i = 0; i < CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
                 ipv6_addr_t *addr = &netif->ipv6.addrs[i];
                 if (addr->u64[1].u64 == orig_iid.uint64.u64) {
                     gnrc_netif_ipv6_addr_remove_internal(netif, addr);

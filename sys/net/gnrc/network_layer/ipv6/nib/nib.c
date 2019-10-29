@@ -670,7 +670,7 @@ static void _handle_rtr_adv(gnrc_netif_t *netif, const ipv6_hdr_t *ipv6,
     if ((dr != NULL) && gnrc_netif_is_6ln(netif) &&
         !gnrc_netif_is_6lbr(netif)) {
         /* (register addresses already assigned but not valid yet)*/
-        for (int i = 0; i < GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
+        for (int i = 0; i < CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
             if ((netif->ipv6.addrs_flags[i] != 0) &&
                 (netif->ipv6.addrs_flags[i] != GNRC_NETIF_IPV6_ADDRS_FLAGS_STATE_VALID)) {
                 _handle_rereg_address(&netif->ipv6.addrs[i]);
@@ -746,14 +746,14 @@ static void _handle_rtr_adv(gnrc_netif_t *netif, const ipv6_hdr_t *ipv6,
 
 static inline size_t _get_l2src(const gnrc_netif_t *netif, uint8_t *l2src)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     memcpy(l2src, netif->l2addr, netif->l2addr_len);
     return netif->l2addr_len;
-#else   /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#else   /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     (void)netif;
     (void)l2src;
     return 0;
-#endif  /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif  /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
 }
 
 static gnrc_pktsnip_t *_check_release_pkt(gnrc_pktsnip_t *pkt,
@@ -788,9 +788,9 @@ static void _send_delayed_nbr_adv(const gnrc_netif_t *netif,
         reply_flags |= NDP_NBR_ADV_FLAGS_R;
     }
 #endif  /* GNRC_IPV6_NIB_CONF_ROUTER */
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     if (ipv6_addr_is_multicast(&ipv6_hdr->dst)) {
-        uint8_t l2addr[GNRC_NETIF_L2ADDR_MAXLEN];
+        uint8_t l2addr[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];
         size_t l2addr_len = _get_l2src(netif, l2addr);
 
         if (l2addr_len > 0) {
@@ -806,9 +806,9 @@ static void _send_delayed_nbr_adv(const gnrc_netif_t *netif,
     else {
         reply_flags |= NDP_NBR_ADV_FLAGS_O;
     }
-#else /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#else /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     reply_flags |= NDP_NBR_ADV_FLAGS_O;
-#endif  /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif  /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     /* discard const qualifier */
     pkt = gnrc_ndp_nbr_adv_build(tgt, reply_flags, payload);
     if ((payload = _check_release_pkt(pkt, payload)) == NULL) {
@@ -1243,7 +1243,7 @@ static void _handle_pfx_timeout(_nib_offl_entry_t *pfx)
     gnrc_netif_acquire(netif);
     if (now >= pfx->valid_until) {
         evtimer_del(&_nib_evtimer, &pfx->pfx_timeout.event);
-        for (int i = 0; i < GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
+        for (int i = 0; i < CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
             if (ipv6_addr_match_prefix(&netif->ipv6.addrs[i],
                                        &pfx->pfx) >= pfx->pfx_len) {
                 gnrc_netif_ipv6_addr_remove_internal(netif,
@@ -1254,7 +1254,7 @@ static void _handle_pfx_timeout(_nib_offl_entry_t *pfx)
         _nib_offl_clear(pfx);
     }
     else if (now >= pfx->pref_until) {
-        for (int i = 0; i < GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
+        for (int i = 0; i < CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF; i++) {
             if (ipv6_addr_match_prefix(&netif->ipv6.addrs[i],
                                        &pfx->pfx) >= pfx->pfx_len) {
                 netif->ipv6.addrs_flags[i] &= ~GNRC_NETIF_IPV6_ADDRS_FLAGS_STATE_MASK;

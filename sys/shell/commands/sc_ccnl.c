@@ -28,7 +28,7 @@
 
 #define BUF_SIZE (64)
 
-#define MAX_ADDR_LEN            (GNRC_NETIF_L2ADDR_MAXLEN)
+#define MAX_ADDR_LEN            (CONFIG_GNRC_NETIF_L2ADDR_MAXLEN)
 
 static unsigned char _int_buf[BUF_SIZE];
 

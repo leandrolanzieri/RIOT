@@ -488,13 +488,13 @@ int gnrc_netif_eui64_from_addr(const gnrc_netif_t *netif,
  */
 static inline int gnrc_netif_get_eui64(gnrc_netif_t *netif, eui64_t *eui64)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     if (netif->flags & GNRC_NETIF_FLAGS_HAS_L2ADDR) {
         return gnrc_netif_eui64_from_addr(netif,
                                           netif->l2addr, netif->l2addr_len,
                                           eui64);
     }
-#endif /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     (void)netif;
     (void)eui64;
     return -ENOTSUP;
@@ -550,7 +550,7 @@ int gnrc_netif_ipv6_iid_from_addr(const gnrc_netif_t *netif,
  * @pre `netif->flags & GNRC_NETIF_FLAGS_HAS_L2ADDR`
  * @pre @p iid was based on a hardware address
  * @pre The number of bytes available at @p addr is less or equal to
- *      @ref GNRC_NETIF_L2ADDR_MAXLEN.
+ *      @ref CONFIG_GNRC_NETIF_L2ADDR_MAXLEN.
  *
  * @attention   When `NDEBUG` is not defined, the node fails with an assertion
  *              instead of returning `-ENOTSUP`
@@ -562,7 +562,7 @@ int gnrc_netif_ipv6_iid_from_addr(const gnrc_netif_t *netif,
  * @param[out] addr     The hardware address. It is assumed that @p iid was
  *                      based on a hardware address and that the available bytes
  *                      in @p addr are less or equal to
- *                      `GNRC_NETIF_L2ADDR_MAXLEN`.
+ *                      `CONFIG_GNRC_NETIF_L2ADDR_MAXLEN`.
  *
  * @return  Length of resulting @p addr on success.
  * @return  `-ENOTSUP`, when gnrc_netif_t::device_type of @p netif does not
@@ -596,13 +596,13 @@ static inline int gnrc_netif_ipv6_iid_to_addr(const gnrc_netif_t *netif,
  */
 static inline int gnrc_netif_ipv6_get_iid(gnrc_netif_t *netif, eui64_t *iid)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     if (netif->flags & GNRC_NETIF_FLAGS_HAS_L2ADDR) {
         return gnrc_netif_ipv6_iid_from_addr(netif,
                                              netif->l2addr, netif->l2addr_len,
                                              iid);
     }
-#endif /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     (void)netif;
     (void)iid;
     return -ENOTSUP;

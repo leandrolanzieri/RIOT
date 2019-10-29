@@ -40,10 +40,20 @@ extern "C" {
 #endif
 
 /**
+ * @brief   Default priority level for network interface threads referenced to
+ *          the main thread priority.
+ * @note    The priority will be higher if this number is negative, otherwise it
+ *          will be lower.
+ */
+#ifndef CONFIG_GNRC_NETIF_PRIO_DELTA
+#define CONFIG_GNRC_NETIF_PRIO_DELTA (-5)
+#endif
+
+/**
  * @brief   Default priority for network interface threads
  */
 #ifndef GNRC_NETIF_PRIO
-#define GNRC_NETIF_PRIO            (THREAD_PRIORITY_MAIN - 5)
+#define GNRC_NETIF_PRIO    (THREAD_PRIORITY_MAIN + CONFIG_GNRC_NETIF_PRIO_DELTA)
 #endif
 
 /**
@@ -53,8 +63,8 @@ extern "C" {
  *              the thread's stack size might need to be adapted if this is
  *              changed.
  */
-#ifndef GNRC_NETIF_MSG_QUEUE_SIZE
-#define GNRC_NETIF_MSG_QUEUE_SIZE  (16U)
+#ifndef CONFIG_GNRC_NETIF_MSG_QUEUE_SIZE
+#define CONFIG_GNRC_NETIF_MSG_QUEUE_SIZE  (16U)
 #endif
 
 /**
@@ -89,8 +99,8 @@ extern "C" {
  *
  * Default: 2 (1 link-local + 1 global address)
  */
-#ifndef GNRC_NETIF_IPV6_ADDRS_NUMOF
-#define GNRC_NETIF_IPV6_ADDRS_NUMOF    (2)
+#ifndef CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF
+#define CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF    (2)
 #endif
 
 /**
@@ -100,7 +110,7 @@ extern "C" {
  * address) + @ref GNRC_NETIF_RPL_ADDR + @ref GNRC_NETIF_IPV6_RTR_ADDR
  */
 #ifndef GNRC_NETIF_IPV6_GROUPS_NUMOF
-#define GNRC_NETIF_IPV6_GROUPS_NUMOF   (GNRC_NETIF_IPV6_ADDRS_NUMOF + \
+#define GNRC_NETIF_IPV6_GROUPS_NUMOF   (CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF + \
                                         GNRC_NETIF_RPL_ADDR + \
                                         GNRC_NETIF_IPV6_RTR_ADDR + 1)
 #endif
@@ -121,20 +131,20 @@ extern "C" {
  * @note Implementers note: From longest to shortest extend, if new link-layer
  *       address types are included
  */
-#ifndef GNRC_NETIF_L2ADDR_MAXLEN
+#ifndef CONFIG_GNRC_NETIF_L2ADDR_MAXLEN
 #if defined(MODULE_NETDEV_IEEE802154) || defined(MODULE_XBEE)
-#define GNRC_NETIF_L2ADDR_MAXLEN   (IEEE802154_LONG_ADDRESS_LEN)
+#define CONFIG_GNRC_NETIF_L2ADDR_MAXLEN   (IEEE802154_LONG_ADDRESS_LEN)
 #elif   MODULE_NETDEV_ETH
-#define GNRC_NETIF_L2ADDR_MAXLEN   (ETHERNET_ADDR_LEN)
+#define CONFIG_GNRC_NETIF_L2ADDR_MAXLEN   (ETHERNET_ADDR_LEN)
 #elif   MODULE_CC110X
-#define GNRC_NETIF_L2ADDR_MAXLEN   (1U)
+#define CONFIG_GNRC_NETIF_L2ADDR_MAXLEN   (1U)
 #else
-#define GNRC_NETIF_L2ADDR_MAXLEN   (GNRC_IPV6_NIB_L2ADDR_MAX_LEN)
+#define CONFIG_GNRC_NETIF_L2ADDR_MAXLEN   (GNRC_IPV6_NIB_L2ADDR_MAX_LEN)
 #endif
 #endif
 
-#ifndef GNRC_NETIF_DEFAULT_HL
-#define GNRC_NETIF_DEFAULT_HL      (64U)   /**< default hop limit */
+#ifndef CONFIG_GNRC_NETIF_DEFAULT_HL
+#define CONFIG_GNRC_NETIF_DEFAULT_HL      (64U)   /**< default hop limit */
 #endif
 
 /**
@@ -144,8 +154,8 @@ extern "C" {
  *
  * This is purely meant as a debugging feature to slow down a radios sending.
  */
-#ifndef GNRC_NETIF_MIN_WAIT_AFTER_SEND_US
-#define GNRC_NETIF_MIN_WAIT_AFTER_SEND_US   (0U)
+#ifndef CONFIG_GNRC_NETIF_MIN_WAIT_AFTER_SEND_US
+#define CONFIG_GNRC_NETIF_MIN_WAIT_AFTER_SEND_US   (0U)
 #endif
 
 #ifdef __cplusplus

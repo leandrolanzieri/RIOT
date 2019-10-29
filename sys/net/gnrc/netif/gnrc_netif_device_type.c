@@ -59,7 +59,7 @@ int gnrc_netif_eui64_from_addr(const gnrc_netif_t *netif,
                                const uint8_t *addr, size_t addr_len,
                                eui64_t *eui64)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     if (netif->flags & GNRC_NETIF_FLAGS_HAS_L2ADDR) {
         switch (netif->device_type) {
 #if defined(MODULE_NETDEV_IEEE802154) || defined(MODULE_XBEE)
@@ -82,7 +82,7 @@ int gnrc_netif_eui64_from_addr(const gnrc_netif_t *netif,
                                               addr_len, eui64);
         }
     }
-#endif /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     return -ENOTSUP;
 }
 
@@ -185,12 +185,12 @@ int gnrc_netif_ipv6_iid_from_addr(const gnrc_netif_t *netif,
                                   const uint8_t *addr, size_t addr_len,
                                   eui64_t *iid)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     if (netif->flags & GNRC_NETIF_FLAGS_HAS_L2ADDR) {
         return l2util_ipv6_iid_from_addr(netif->device_type,
                                          addr, addr_len, iid);
     }
-#endif /* GNRC_NETIF_L2ADDR_MAXLEN > 0 */
+#endif /* CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0 */
     return -ENOTSUP;
 }
 

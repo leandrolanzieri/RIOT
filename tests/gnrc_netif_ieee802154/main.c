@@ -20,7 +20,7 @@
 
 int main(void)
 {
-    char addr_str[GNRC_NETIF_L2ADDR_MAXLEN * 3];
+    char addr_str[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN * 3];
     gnrc_netif_t *netif = gnrc_netif_iter(NULL);
 
     printf("l2_addr: %s\n", gnrc_netif_addr_to_str(netif->l2addr,

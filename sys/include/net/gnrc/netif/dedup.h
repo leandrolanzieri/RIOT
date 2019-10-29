@@ -39,7 +39,7 @@ extern "C" {
  * @brief   Structure to store information on the last broadcast packet received
  */
 typedef struct {
-    uint8_t src[GNRC_NETIF_L2ADDR_MAXLEN];  /**< link-layer source address */
+    uint8_t src[CONFIG_GNRC_NETIF_L2ADDR_MAXLEN];  /**< link-layer source address */
     uint16_t seq;                           /**< link-layer sequence number */
     uint8_t src_len;                        /**< length of gnrc_netif_dedup_t:src */
 } gnrc_netif_dedup_t;

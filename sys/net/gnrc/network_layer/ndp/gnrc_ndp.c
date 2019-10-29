@@ -616,7 +616,7 @@ static gnrc_pktsnip_t *_build_headers(gnrc_netif_t *netif,
 
 static inline size_t _get_l2src(const gnrc_netif_t *netif, uint8_t *l2src)
 {
-#if GNRC_NETIF_L2ADDR_MAXLEN > 0
+#if CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0
     memcpy(l2src, netif->l2addr, netif->l2addr_len);
     return netif->l2addr_len;
 #else
