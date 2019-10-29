@@ -19,3 +19,4 @@ config GNRC_IPV6_MSG_QUEUE_SIZE
 endif # KCONFIG_MODULE_GNRC_IPV6
 
 rsource "whitelist/Kconfig"
+rsource "blacklist/Kconfig"
