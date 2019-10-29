@@ -17,3 +17,5 @@ config GNRC_IPV6_MSG_QUEUE_SIZE
     default 8
 
 endif # KCONFIG_MODULE_GNRC_IPV6
+
+rsource "whitelist/Kconfig"
