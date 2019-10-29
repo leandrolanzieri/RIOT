@@ -1,0 +1,19 @@
+menuconfig KCONFIG_MODULE_GNRC_IPV6
+    bool "Configure IPv6" if MODULE_GNRC_IPV6
+    help
+        Enable to configure IPv6 module of GNRC using Kconfig.
+
+if KCONFIG_MODULE_GNRC_IPV6
+
+config GNRC_IPV6_PRIO_DELTA
+    int "Priority for the IPv6 thread"
+    default -3
+    help
+        Default priority level for the IPv6 thread, referenced to the main
+        thread priority. The lower this number is, the higher the priority.
+
+config GNRC_IPV6_MSG_QUEUE_SIZE
+    int "Message queue size for the IPv6 thread"
+    default 8
+
+endif # KCONFIG_MODULE_GNRC_IPV6
