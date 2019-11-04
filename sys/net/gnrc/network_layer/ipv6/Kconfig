@@ -20,3 +20,5 @@ endif # KCONFIG_MODULE_GNRC_IPV6
 
 rsource "whitelist/Kconfig"
 rsource "blacklist/Kconfig"
+rsource "nib/Kconfig"
+
