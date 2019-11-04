@@ -1,0 +1,118 @@
+menuconfig KCONFIG_GNRC_IPV6_NIB
+    bool "Configure Neighbor Information Base for IPv6" if MODULE_GNRC_IPV6_NIB
+
+if KCONFIG_GNRC_IPV6_NIB
+
+config GNRC_IPV6_NIB_6LBR
+    bool "6Lo border router features"
+    default y if MODULE_GNRC_IPV6_NIB_6LBR
+
+config GNRC_IPV6_NIB_6LR
+    bool "6Lo router features"
+    default y if MODULE_GNRC_IPV6_NIB_6LR || GNRC_IPV6_NIB_6LBR
+
+config GNRC_IPV6_NIB_6LN
+    bool "6Lo node features"
+    default y if MODULE_GNRC_IPV6_NIB_6LN || GNRC_IPV6_NIB_6LR
+
+config GNRC_IPV6_NIB_ROUTER
+    bool "IPV6 router features"
+    default y if MODULE_GNRC_IPV6_NIB_ROUTER || GNRC_IPV6_NIB_6LR
+
+config GNRC_IPV6_NIB_ADV_ROUTER
+    bool "Router advertising at interface start-up"
+    default y if GNRC_IPV6_NIB_ROUTER && (!GNRC_IPV6_NIB_6LR || GNRC_IPV6_NIB_6LBR)
+
+config GNRC_IPV6_NIB_ARSM
+    bool "NDP address resolution state machine"
+    default n if MODULE_GNRC_IPV6_NIB_6LN && !GNRC_IPV6_NIB_6LR
+    default y
+
+config GNRC_IPV6_NIB_QUEUE_PKT
+    bool "Queue packets for address resolution"
+    default n if MODULE_GNRC_IPV6_NIB_6LN
+    default n if GNRC_IPV6_NIB_6LN
+    default y
+
+config GNRC_IPV6_NIB_SLAAC
+    bool "Handle NDP messages for SLAAC"
+    default y if MODULE_GNRC_IPV6_NIB_6LBR
+    default n if MODULE_GNRC_IPV6_NIB_6LR || MODULE_GNRC_IPV6_NIB_6LN
+    default y
+    help
+        Handle NDP messages according for stateless address auto-configuration
+        (if activated on interface). See RFC 4862.
+
+config GNRC_IPV6_NIB_REDIRECT
+    bool "Handle redirect messages"
+
+config GNRC_IPV6_NIB_DC
+    bool "Destination cache"
+    default y if GNRC_IPV6_NIB_REDIRECT
+
+config GNRC_IPV6_NIB_DNS
+    bool "Support for DNS configuration options"
+    default y if MODULE_GNRC_IPV6_NIB_DNS
+    help
+        For more information, see RFC 8106.
+
+config GNRC_IPV6_NIB_MULTIHOP_P6C
+    bool "Multihop prefix and 6LoWPAN context distribution"
+    default y if GNRC_IPV6_NIB_6LR
+    help
+        For more information, see RFC 6775.
+
+config GNRC_IPV6_NIB_MULTIHOP_DAD
+    bool "Multihop duplicate address detection"
+    help
+        For more information, see RFC 6775.
+
+config GNRC_IPV6_NIB_REACH_TIME_RESET
+    int "Reset time for the reachability time"
+    default 7200000
+    help
+        This time is expressed in milliseconds. For more information, see RFC
+        4861.
+
+config GNRC_IPV6_NIB_NO_RTR_SOL
+    # consider inverting the logic of this symbol
+    bool "No router solicitations"
+    help
+        If set router solicitations will be disabled. Only set this if you
+        know what you are doing.
+
+config GNRC_IPV6_NIB_L2ADDR_MAX_LEN
+    int "Maximum link layer address length (aligned)"
+    default 8
+
+config GNRC_IPV6_NIB_DEFAULT_ROUTER_NUMOF
+    int "Number of default routers in the default router list"
+    default 1
+    help
+        Keep in mind that this number has a direct influence on the maximum
+        number of default routers.
+
+config GNRC_IPV6_NIB_NUMOF
+    int "Number of entries in NIB"
+    default 16 if MODULE_GNRC_IPV6_NIB_6LBR
+    # only needs to store default router
+    default 1 if MODULE_GNRC_IPV6_NIB_6LN && !GNRC_IPV6_NIB_6LR
+    default 4
+    help
+        Keep in mind that this number has direct influence on the maximum
+        number of neighbors and duplicate address detection table entries.
+
+config GNRC_IPV6_NIB_OFFL_NUMOF
+    int "Number of off-link entries in NIB"
+    default 8
+    help
+        This number is equal to the maximum number of forwarding table and
+        prefix list entries in NIB.
+
+config GNRC_IPV6_NIB_ABR_NUMOF
+    int "Number of authoritative border router entries in NIB"
+    default 1
+    depends on GNRC_IPV6_NIB_MULTIHOP_P6C
+
+endif # KCONFIG_GNRC_IPV6_NIB
+
