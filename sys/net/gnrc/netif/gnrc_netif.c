@@ -17,6 +17,7 @@
 
 #include <string.h>
 
+#include "kernel_defines.h"
 #include "bitfield.h"
 #include "net/ethernet.h"
 #include "net/ipv6.h"
@@ -200,7 +201,7 @@ int gnrc_netif_get_from_netdev(gnrc_netif_t *netif, gnrc_netapi_opt_t *opt)
             }
             /* else ask device */
             break;
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if IS_ACTIVE(CONFIG_GNRC_IPV6_NIB_ROUTER)
         case NETOPT_IPV6_FORWARDING:
             assert(opt->data_len == sizeof(netopt_enable_t));
             *((netopt_enable_t *)opt->data) = (gnrc_netif_is_rtr(netif)) ?
@@ -213,7 +214,7 @@ int gnrc_netif_get_from_netdev(gnrc_netif_t *netif, gnrc_netapi_opt_t *opt)
                                               NETOPT_ENABLE : NETOPT_DISABLE;
             res = sizeof(netopt_enable_t);
             break;
-#endif  /* GNRC_IPV6_NIB_CONF_ROUTER */
+#endif  /* CONFIG_GNRC_IPV6_NIB_ROUTER */
 #endif  /* MODULE_GNRC_IPV6 */
 #ifdef MODULE_GNRC_SIXLOWPAN_IPHC
         case NETOPT_6LO_IPHC:
@@ -293,7 +294,7 @@ int gnrc_netif_set_from_netdev(gnrc_netif_t *netif,
             }
             /* else set device */
             break;
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if IS_ACTIVE(CONFIG_GNRC_IPV6_NIB_ROUTER)
         case NETOPT_IPV6_FORWARDING:
             assert(opt->data_len == sizeof(netopt_enable_t));
             if (*(((netopt_enable_t *)opt->data)) == NETOPT_ENABLE) {
@@ -313,7 +314,7 @@ int gnrc_netif_set_from_netdev(gnrc_netif_t *netif,
                     (*(((netopt_enable_t *)opt->data)) == NETOPT_ENABLE));
             res = sizeof(netopt_enable_t);
             break;
-#endif  /* GNRC_IPV6_NIB_CONF_ROUTER */
+#endif  /* CONFIG_GNRC_IPV6_NIB_ROUTER */
 #endif  /* MODULE_GNRC_IPV6 */
 #ifdef MODULE_GNRC_SIXLOWPAN_IPHC
         case NETOPT_6LO_IPHC:
@@ -599,7 +600,7 @@ int gnrc_netif_ipv6_addr_add_internal(gnrc_netif_t *netif,
         gnrc_netif_release(netif);
         return -ENOMEM;
     }
-#if GNRC_IPV6_NIB_CONF_ARSM
+#if IS_ACTIVE(CONFIG_GNRC_IPV6_NIB_ARSM)
     ipv6_addr_t sol_nodes;
     int res;
 
@@ -613,7 +614,7 @@ int gnrc_netif_ipv6_addr_add_internal(gnrc_netif_t *netif,
               netif->pid);
         return res;
     }
-#endif /* GNRC_IPV6_NIB_CONF_ARSM */
+#endif /* CONFIG_GNRC_IPV6_NIB_ARSM */
     netif->ipv6.addrs_flags[idx] = flags;
     memcpy(&netif->ipv6.addrs[idx], addr, sizeof(netif->ipv6.addrs[idx]));
 #ifdef MODULE_GNRC_IPV6_NIB
@@ -632,7 +633,7 @@ int gnrc_netif_ipv6_addr_add_internal(gnrc_netif_t *netif,
                                  UINT32_MAX, UINT32_MAX);
         }
     }
-#if GNRC_IPV6_NIB_CONF_SLAAC
+#if IS_ACTIVE(CONFIG_GNRC_IPV6_NIB_SLAAC)
     else if (!gnrc_netif_is_6ln(netif)) {
         /* cast to remove const qualifier (will still be used NIB internally as
          * const) */
@@ -1259,10 +1260,10 @@ static void _test_options(gnrc_netif_t *netif)
         assert(-ENOTSUP != gnrc_netif_ndp_addr_len_from_l2ao(netif,
                                                              &dummy_opt));
 #endif  /* MODULE_GNRC_IPV6 */
-#if GNRC_IPV6_NIB_CONF_6LN
+#if IS_ACTIVE(CONFIG_GNRC_IPV6_NIB_6LN)
         assert(-ENOTSUP != gnrc_netif_ipv6_iid_to_addr(netif, (eui64_t *)&tmp64,
                                                        dummy_addr));
-#endif  /* GNRC_IPV6_NIB_CONF_6LN */
+#endif  /* CONFIG_GNRC_IPV6_NIB_6LN */
     }
 #endif /* (CONFIG_GNRC_NETIF_L2ADDR_MAXLEN > 0) */
 }
