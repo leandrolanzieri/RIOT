@@ -21,6 +21,8 @@
 #ifndef NET_GNRC_NETIF_INTERNAL_H
 #define NET_GNRC_NETIF_INTERNAL_H
 
+#include "kernel_defines.h"
+
 #include "net/gnrc/netif.h"
 #include "net/l2util.h"
 #include "net/netopt.h"
@@ -356,7 +358,7 @@ bool gnrc_netif_is_6lo(const gnrc_netif_t *netif);
  *          RFC 6775
  *
  * @attention   Requires prior locking
- * @note        Assumed to be false, when @ref GNRC_IPV6_NIB_CONF_6LN is 0.
+ * @note        Assumed to be false, when @ref CONFIG_GNRC_IPV6_NIB_6LN is 0.
  *
  * @param[in] netif the network interface
  *
@@ -365,7 +367,7 @@ bool gnrc_netif_is_6lo(const gnrc_netif_t *netif);
  * @return  true, if the interface represents a 6LN
  * @return  false, if the interface does not represent a 6LN
  */
-#if GNRC_IPV6_NIB_CONF_6LN || defined(DOXYGEN)
+#if CONFIG_GNRC_IPV6_NIB_6LN || defined(DOXYGEN)
 static inline bool gnrc_netif_is_6ln(const gnrc_netif_t *netif)
 {
     return (netif->flags & GNRC_NETIF_FLAGS_6LN);
@@ -379,7 +381,8 @@ static inline bool gnrc_netif_is_6ln(const gnrc_netif_t *netif)
  *          RFC 6775
  *
  * @attention   Requires prior locking
- * @note        Assumed to be false, when @ref GNRC_IPV6_NIB_CONF_6LR == 0
+ * @note        Assumed to be false, when @ref CONFIG_GNRC_IPV6_NIB_6LR == 0
+ *              or not defined.
  *
  * @param[in] netif the network interface
  *
@@ -388,7 +391,7 @@ static inline bool gnrc_netif_is_6ln(const gnrc_netif_t *netif)
  * @return  true, if the interface represents a 6LR
  * @return  false, if the interface does not represent a 6LR
  */
-#if (GNRC_IPV6_NIB_CONF_6LR && \
+#if (CONFIG_GNRC_IPV6_NIB_6LR && \
      /* if flag checkers even evaluate, otherwise just assume their result */ \
      (defined(MODULE_GNRC_IPV6_ROUTER) || \
       (GNRC_NETIF_NUMOF > 1) || !defined(MODULE_GNRC_SIXLOWPAN))) || \
@@ -406,7 +409,7 @@ static inline bool gnrc_netif_is_6lr(const gnrc_netif_t *netif)
  *          according to RFC 6775
  *
  * @attention   Requires prior locking
- * @note        Assumed to be false, when @ref GNRC_IPV6_NIB_CONF_6LBR == 0.
+ * @note        Assumed to be false, when @ref CONFIG_GNRC_IPV6_NIB_6LBR == 0.
  *
  * @param[in] netif the network interface
  *
@@ -415,7 +418,7 @@ static inline bool gnrc_netif_is_6lr(const gnrc_netif_t *netif)
  * @return  true, if the interface represents a 6LBR
  * @return  false, if the interface does not represent a 6LBR
  */
-#if GNRC_IPV6_NIB_CONF_6LBR
+#if CONFIG_GNRC_IPV6_NIB_6LBR
 static inline bool gnrc_netif_is_6lbr(const gnrc_netif_t *netif)
 {
     return (netif->flags & GNRC_NETIF_FLAGS_6LO_ABR) &&

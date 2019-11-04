@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <stdio.h>
 
+#include "kernel_defines.h"
 #include "_nib-internal.h"
 
 #include "net/gnrc/ipv6/nib/ft.h"
@@ -59,7 +60,7 @@ int gnrc_ipv6_nib_ft_add(const ipv6_addr_t *dst, unsigned dst_len,
             }
         }
     }
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_ROUTER
     else {
         _nib_offl_entry_t *ptr;
 
@@ -73,7 +74,7 @@ int gnrc_ipv6_nib_ft_add(const ipv6_addr_t *dst, unsigned dst_len,
                          &ptr->route_timeout, ltime * MS_PER_SEC);
         }
     }
-#else /* GNRC_IPV6_NIB_CONF_ROUTER */
+#else /* CONFIG_GNRC_IPV6_NIB_ROUTER */
     else {
         res = -ENOTSUP;
     }
@@ -92,7 +93,7 @@ void gnrc_ipv6_nib_ft_del(const ipv6_addr_t *dst, unsigned dst_len)
             _nib_drl_remove(entry);
         }
     }
-#if GNRC_IPV6_NIB_CONF_ROUTER
+#if CONFIG_GNRC_IPV6_NIB_ROUTER
     else {
         _nib_offl_entry_t *entry = NULL;
 
