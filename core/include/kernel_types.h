@@ -50,11 +50,11 @@
 #endif
 
 /**
- * @def MAXTHREADS
+ * @def CONFIG_MAXTHREADS
  * @brief The maximum number of threads to be scheduled
  */
-#ifndef MAXTHREADS
-#define MAXTHREADS 32
+#ifndef CONFIG_MAXTHREADS
+#define CONFIG_MAXTHREADS 32
 #endif
 
 /**
@@ -70,7 +70,7 @@
 /**
  * The last valid PID (inclusive).
  */
-#define KERNEL_PID_LAST (KERNEL_PID_FIRST + MAXTHREADS - 1)
+#define KERNEL_PID_LAST (KERNEL_PID_FIRST + CONFIG_MAXTHREADS - 1)
 
 /**
  * Macro for printing formatter

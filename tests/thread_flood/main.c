@@ -54,12 +54,12 @@ int main(void)
     /* decrease by 1 because last thread_create failed */
     --thr_cnt;
 
-    /* expect (MAXTHREADS - 2), as main and idle thread take a PID each */
-    if (thr_cnt == (MAXTHREADS - 2)) {
+    /* expect (CONFIG_MAXTHREADS - 2), as main and idle thread take a PID each */
+    if (thr_cnt == (CONFIG_MAXTHREADS - 2)) {
         printf("[SUCCESS]");
     }
     else {
-        printf("[ERROR] expected %u,", (MAXTHREADS - 2));
+        printf("[ERROR] expected %u,", (CONFIG_MAXTHREADS - 2));
     }
     printf(" created %u\n", thr_cnt);
 

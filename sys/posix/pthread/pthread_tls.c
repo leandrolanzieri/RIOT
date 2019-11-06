@@ -126,7 +126,7 @@ int pthread_key_delete(pthread_key_t key)
     }
 
     mutex_lock(&tls_mutex);
-    for (unsigned i = 1; i <= MAXTHREADS; ++i) {
+    for (unsigned i = 1; i <= CONFIG_MAXTHREADS; ++i) {
         tls_data_t **tls = __pthread_get_tls_head(i);
         if (!tls) {
             continue;

@@ -95,7 +95,7 @@ void print_thread_sigmask(ucontext_t *cp)
 #ifdef DEVELHELP
 void print_sigmasks(void)
 {
-    for (int i = 0; i < MAXTHREADS; i++) {
+    for (int i = 0; i < CONFIG_MAXTHREADS; i++) {
         if (sched_threads[i] != NULL) {
             ucontext_t *p;
             printf("%s:\n", sched_threads[i]->name);

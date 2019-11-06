@@ -71,7 +71,7 @@ typedef struct {
     __pthread_cleanup_datum_t *cleanup_top;
 } pthread_thread_t;
 
-static pthread_thread_t *volatile pthread_sched_threads[MAXTHREADS];
+static pthread_thread_t *volatile pthread_sched_threads[CONFIG_MAXTHREADS];
 static mutex_t pthread_mutex;
 
 static volatile kernel_pid_t pthread_reaper_pid = KERNEL_PID_UNDEF;
@@ -90,7 +90,7 @@ static int insert(pthread_thread_t *pt)
     int result = KERNEL_PID_UNDEF;
     mutex_lock(&pthread_mutex);
 
-    for (int i = 0; i < MAXTHREADS; i++){
+    for (int i = 0; i < CONFIG_MAXTHREADS; i++){
         if (!pthread_sched_threads[i]) {
             pthread_sched_threads[i] = pt;
             result = i+1;
@@ -230,7 +230,7 @@ void pthread_exit(void *retval)
 
 int pthread_join(pthread_t th, void **thread_return)
 {
-    if (th < 1 || th > MAXTHREADS) {
+    if (th < 1 || th > CONFIG_MAXTHREADS) {
         DEBUG("passed pthread_t th (%d) exceeds bounds of pthread_sched_threads[] in \"%s\"!\n", th, __func__);
         return -3;
     }
@@ -264,7 +264,7 @@ int pthread_join(pthread_t th, void **thread_return)
 
 int pthread_detach(pthread_t th)
 {
-    if (th < 1 || th > MAXTHREADS) {
+    if (th < 1 || th > CONFIG_MAXTHREADS) {
         DEBUG("passed pthread_t th (%d) exceeds bounds of pthread_sched_threads[] in \"%s\"!\n", th, __func__);
         return -2;
     }
@@ -291,7 +291,7 @@ pthread_t pthread_self(void)
     pthread_t result = 0;
     mutex_lock(&pthread_mutex);
     kernel_pid_t pid = sched_active_pid; /* sched_active_pid is volatile */
-    for (int i = 0; i < MAXTHREADS; i++) {
+    for (int i = 0; i < CONFIG_MAXTHREADS; i++) {
         if (pthread_sched_threads[i] && pthread_sched_threads[i]->thread_pid == pid) {
             result = i+1;
             break;

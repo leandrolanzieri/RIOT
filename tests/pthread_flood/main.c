@@ -27,7 +27,7 @@
 #include "pthread.h"
 #include "mutex.h"
 
-static char dummy_stack[MAXTHREADS][THREAD_STACKSIZE_IDLE];
+static char dummy_stack[CONFIG_MAXTHREADS][THREAD_STACKSIZE_IDLE];
 static mutex_t testing_mutex;
 
 static void *thread_func(void *arg)
@@ -46,13 +46,13 @@ int main(void)
 
     int pthread_cnt = 0;
 
-    pthread_t pthread_ids[MAXTHREADS];
+    pthread_t pthread_ids[CONFIG_MAXTHREADS];
 
     pthread_attr_t th_attr;
     pthread_attr_init(&th_attr);
 
     if (-1 ==
-        pthread_create(&(pthread_ids[pthread_cnt % MAXTHREADS]), &th_attr, thread_func,
+        pthread_create(&(pthread_ids[pthread_cnt % CONFIG_MAXTHREADS]), &th_attr, thread_func,
                        NULL)) {
         puts("[ERROR] cannot create pthreads");
         return 0;
@@ -64,9 +64,9 @@ int main(void)
     puts("[START] Spawning threads");
     do {
         pthread_attr_setstackaddr(&th_attr,
-                                  &(dummy_stack[pthread_cnt % MAXTHREADS]));
+                                  &(dummy_stack[pthread_cnt % CONFIG_MAXTHREADS]));
         pthread_attr_setstacksize(&th_attr, THREAD_STACKSIZE_IDLE);
-        exit_loop = pthread_create(&(pthread_ids[pthread_cnt + 1 % MAXTHREADS]), &th_attr,
+        exit_loop = pthread_create(&(pthread_ids[pthread_cnt + 1 % CONFIG_MAXTHREADS]), &th_attr,
                                    thread_func, NULL);
         if (exit_loop == 0) {
             ++pthread_cnt;
@@ -77,11 +77,11 @@ int main(void)
 
     puts("");
     if (numthread_check_after - numthread_check == pthread_cnt &&
-        numthread_check_after == MAXTHREADS) {
+        numthread_check_after == CONFIG_MAXTHREADS) {
         printf("[SUCCESS]\n");
     }
     else {
-        printf("[ERROR] expected %d,", (MAXTHREADS - numthread_check));
+        printf("[ERROR] expected %d,", (CONFIG_MAXTHREADS - numthread_check));
     }
     printf("created %d pthreads\n", pthread_cnt);
     printf("created %d threads\n", numthread_check_after - numthread_check);

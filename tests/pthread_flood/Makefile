@@ -2,6 +2,6 @@ include ../Makefile.tests_common
 
 USEMODULE += posix_headers
 USEMODULE += pthread
-CFLAGS += -DMAXTHREADS=8
+CFLAGS += -DCONFIG_MAXTHREADS=8
 
 include $(RIOTBASE)/Makefile.include
