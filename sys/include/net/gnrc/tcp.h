@@ -39,7 +39,7 @@ extern "C" {
  *
  * @returns   PID of TCP thread on success
  *            -1 if TCB is already running.
- *            -EINVAL, if priority is greater than or equal SCHED_PRIO_LEVELS
+ *            -EINVAL, if priority is greater than or equal CONFIG_SCHED_PRIO_LEVELS
  *            -EOVERFLOW, if there are too many threads running.
  */
 int gnrc_tcp_init(void);

@@ -50,7 +50,7 @@ volatile thread_t *sched_active_thread;
 
 volatile kernel_pid_t sched_active_pid = KERNEL_PID_UNDEF;
 
-clist_node_t sched_runqueues[SCHED_PRIO_LEVELS];
+clist_node_t sched_runqueues[CONFIG_SCHED_PRIO_LEVELS];
 static uint32_t runqueue_bitcache = 0;
 
 /* Needed by OpenOCD to read sched_threads */

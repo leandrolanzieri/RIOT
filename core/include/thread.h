@@ -270,7 +270,7 @@ struct _thread {
  * @def THREAD_PRIORITY_MIN
  * @brief Least priority a thread can have
  */
-#define THREAD_PRIORITY_MIN            (SCHED_PRIO_LEVELS-1)
+#define THREAD_PRIORITY_MIN            (CONFIG_SCHED_PRIO_LEVELS-1)
 
 /**
  * @def THREAD_PRIORITY_IDLE
@@ -283,7 +283,7 @@ struct _thread {
  * @brief Priority of the main thread
  */
 #ifndef THREAD_PRIORITY_MAIN
-#define THREAD_PRIORITY_MAIN           (THREAD_PRIORITY_MIN - (SCHED_PRIO_LEVELS/2))
+#define THREAD_PRIORITY_MAIN           (THREAD_PRIORITY_MIN - (CONFIG_SCHED_PRIO_LEVELS/2))
 #endif
 
 /**
@@ -336,7 +336,7 @@ struct _thread {
  *
  * @return              PID of newly created task on success
  * @return              -EINVAL, if @p priority is greater than or equal to
- *                      @ref SCHED_PRIO_LEVELS
+ *                      @ref CONFIG_SCHED_PRIO_LEVELS
  * @return              -EOVERFLOW, if there are too many threads running already
 */
 kernel_pid_t thread_create(char *stack,

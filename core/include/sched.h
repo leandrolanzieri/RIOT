@@ -126,11 +126,11 @@ typedef enum {
 #define STATUS_NOT_FOUND ((thread_status_t)-1)  /**< Describes an illegal thread status */
 /** @} */
 /**
- * @def SCHED_PRIO_LEVELS
+ * @def CONFIG_SCHED_PRIO_LEVELS
  * @brief The number of thread priority levels
  */
-#ifndef SCHED_PRIO_LEVELS
-#define SCHED_PRIO_LEVELS 16
+#ifndef CONFIG_SCHED_PRIO_LEVELS
+#define CONFIG_SCHED_PRIO_LEVELS 16
 #endif
 
 /**
@@ -196,7 +196,7 @@ extern volatile kernel_pid_t sched_active_pid;
 /**
  * List of runqueues per priority level
  */
-extern clist_node_t sched_runqueues[SCHED_PRIO_LEVELS];
+extern clist_node_t sched_runqueues[CONFIG_SCHED_PRIO_LEVELS];
 
 /**
  * @brief  Removes thread from scheduler and set status to #STATUS_STOPPED

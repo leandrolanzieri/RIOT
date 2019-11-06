@@ -48,7 +48,7 @@ BaseType_t xTaskCreatePinnedToCore (TaskFunction_t pvTaskCode,
                                     const BaseType_t xCoreID)
 {
     /* FreeRTOS priority values have to be inverted */
-    uxPriority = SCHED_PRIO_LEVELS - uxPriority - 1;
+    uxPriority = CONFIG_SCHED_PRIO_LEVELS - uxPriority - 1;
 
     DEBUG("%s name=%s size=%d prio=%d pvCreatedTask=%p ",
           __func__, pcName, usStackDepth, uxPriority, pvCreatedTask);

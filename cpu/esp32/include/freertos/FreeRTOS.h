@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#define configMAX_PRIORITIES    SCHED_PRIO_LEVELS
+#define configMAX_PRIORITIES    CONFIG_SCHED_PRIO_LEVELS
 
 #ifndef configASSERT
 #define configASSERT    assert

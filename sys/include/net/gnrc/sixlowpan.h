@@ -157,7 +157,7 @@ extern "C" {
  *
  * @return  The PID to the 6LoWPAN thread, on success.
  * @return  -EINVAL, if @ref GNRC_SIXLOWPAN_PRIO was greater than or equal to
- *          @ref SCHED_PRIO_LEVELS
+ *          @ref CONFIG_SCHED_PRIO_LEVELS
  * @return  -EOVERFLOW, if there are too many threads running already in general
  */
 kernel_pid_t gnrc_sixlowpan_init(void);
