@@ -1,0 +1,70 @@
+menuconfig KCONFIG_MODULE_GNRC_SIXLOWPAN
+    bool "Configure GNRC 6LoWPAN"
+    depends on MODULE_GNRC_SIXLOWPAN
+    help
+        Enable to configure 6LoWPAN module of GNRC using Kconfig.
+
+if KCONFIG_MODULE_GNRC_SIXLOWPAN
+
+config GNRC_SIXLOWPAN_PRIO_DELTA
+    int "Priority for the 6LoWPAN thread"
+    default -4
+    help
+       Default priority level for the 6LoWPAN thread, referenced to the main
+       thread priority. The lower this number is, the higher the priority.
+
+config GNRC_SIXLOWPAN_MSG_QUEUE_SIZE
+    int "Message queue size for the 6LoWPAN thread"
+    default 8
+
+if MODULE_GNRC_SIXLOWPAN_FRAG
+
+config GNRC_SIXLOWPAN_MSG_FRAG_SIZE
+    int "Number of datagrams that can be fragmented simultaneously"
+    default 1
+    help
+        This determines the number of gnrc_sixlowpan_msg_frag_t instances
+        available.
+
+config GNRC_SIXLOWPAN_FRAG_RBUF_SIZE
+    int "Size of the reassembly buffer"
+    default 4
+
+config GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US
+    int "Timeout for reassembly buffer entries"
+    default 3000000
+    help
+        Timeout for reassemble buffer entries expressed in microseconds.
+
+config GNRC_SIXLOWPAN_FRAG_RBUF_AGGRESSIVE_OVERRIDE
+    bool "Aggressively ovverride reassembly buffer when full"
+    default y
+    help
+        Setting this will cause the reassembly buffer to override the oldest
+        entry no matter what. When not set, only the oldest entry that is older
+        than GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US will be overwritten (they will
+        still timeout normally if reassembly buffer is not full).
+
+endif # MODULE_GNRC_SIXLOWPAN_FRAG
+
+config GNRC_SIXLOWPAN_ND_AR_LTIME
+    int "Registration lifetime in minutes for the address registration option"
+    default 15
+    help
+        This value should be adapted to the devices power-lifecycle so that it
+        is greater than the time the device spends sleeping.
+        See RFC 6775, section 5.8.1.
+
+config GNRC_SIXLOWPAN_FRAG_VRB_SIZE
+    int "Size of the virtual reassembly buffer"
+    default 16 if MODULE_GNRC_SIXLOWPAN_FRAG_VRB
+    default 0
+    help
+        See https://tools.ietf.org/html/draft-ietf-lwig-6lowpan-virtual-reassembly-01
+
+config GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US
+    int "Timeout for VRB entry in microseconds"
+    default GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US
+
+endif # KCONFIG_MODULE_GNRC_SIXLOWPAN
+
