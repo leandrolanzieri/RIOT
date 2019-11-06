@@ -35,17 +35,28 @@ extern "C" {
 #endif
 
 /**
- * @brief   Default priority for the 6LoWPAN thread.
+ * @brief   Default priority for the 6LoWPAN thread referenced to the main
+ *          thread's priority. The lower this number is, the higher the
+ *          priority. If the absolute priority needs to be set, override
+ *          @ref GNRC_SIXLOWPAN_PRIO instead.
+ */
+#ifndef CONFIG_GNRC_SIXLOWPAN_PRIO_DELTA
+#define CONFIG_GNRC_SIXLOWPAN_PRIO_DELTA    (-4)
+#endif
+
+/**
+ * @brief   Default priority for the 6LoWPAN thread expressed as absolute.
+ *          Consider using @ref CONFIG_GNRC_SIXLOWPAN_PRIO_DELTA instead.
  */
 #ifndef GNRC_SIXLOWPAN_PRIO
-#define GNRC_SIXLOWPAN_PRIO                 (THREAD_PRIORITY_MAIN - 4)
+#define GNRC_SIXLOWPAN_PRIO    (THREAD_PRIORITY_MAIN - CONFIG_GNRC_SIXLOWPAN_PRIO_DELTA)
 #endif
 
 /**
  * @brief   Default message queue size to use for the 6LoWPAN thread.
  */
-#ifndef GNRC_SIXLOWPAN_MSG_QUEUE_SIZE
-#define GNRC_SIXLOWPAN_MSG_QUEUE_SIZE       (8U)
+#ifndef CONFIG_GNRC_SIXLOWPAN_MSG_QUEUE_SIZE
+#define CONFIG_GNRC_SIXLOWPAN_MSG_QUEUE_SIZE       (8U)
 #endif
 
 /**
@@ -57,8 +68,8 @@ extern "C" {
  * @note    Only applicable with
  *          [gnrc_sixlowpan_frag](@ref net_gnrc_sixlowpan_frag) module
  */
-#ifndef GNRC_SIXLOWPAN_MSG_FRAG_SIZE
-#define GNRC_SIXLOWPAN_MSG_FRAG_SIZE    (1U)
+#ifndef CONFIG_GNRC_SIXLOWPAN_MSG_FRAG_SIZE
+#define CONFIG_GNRC_SIXLOWPAN_MSG_FRAG_SIZE    (1U)
 #endif
 
 /**
@@ -67,8 +78,8 @@ extern "C" {
  * @note    Only applicable with
  *          [gnrc_sixlowpan_frag](@ref net_gnrc_sixlowpan_frag) module
  */
-#ifndef GNRC_SIXLOWPAN_FRAG_RBUF_SIZE
-#define GNRC_SIXLOWPAN_FRAG_RBUF_SIZE       (4U)
+#ifndef CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_SIZE
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_SIZE       (4U)
 #endif
 
 /**
@@ -77,10 +88,11 @@ extern "C" {
  * @note    Only applicable with
  *          [gnrc_sixlowpan_frag](@ref net_gnrc_sixlowpan_frag) module
  */
-#ifndef GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US
-#define GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US (3U * US_PER_SEC)
+#ifndef CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US (3U * US_PER_SEC)
 #endif
 
+#if !defined(KCONFIG_MODULE_GNRC_SIXLOWPAN)
 /**
  * @brief   Aggressively override reassembly buffer when full
  *
@@ -89,13 +101,14 @@ extern "C" {
  *
  * When set to a non-zero value this will cause the reassembly buffer to
  * override the oldest entry no matter what. When set to zero only the oldest
- * entry that is older than @ref GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US will be
+ * entry that is older than @ref CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US will be
  * overwritten (they will still timeout normally if reassembly buffer is not
  * full).
  */
-#ifndef GNRC_SIXLOWPAN_FRAG_RBUF_AGGRESSIVE_OVERRIDE
-#define GNRC_SIXLOWPAN_FRAG_RBUF_AGGRESSIVE_OVERRIDE    (1)
+#ifndef CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_AGGRESSIVE_OVERRIDE
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_AGGRESSIVE_OVERRIDE    (1)
 #endif
+#endif /* !KCONFIG_MODULE_GNRC_SIXLOWPAN */
 
 /**
  * @brief   Registration lifetime in minutes for the address registration option
@@ -111,8 +124,8 @@ extern "C" {
  *          provides capabilities to build the address registration option as a
  *          @ref gnrc_pktsnip_t
  */
-#ifndef GNRC_SIXLOWPAN_ND_AR_LTIME
-#define GNRC_SIXLOWPAN_ND_AR_LTIME          (15U)
+#ifndef CONFIG_GNRC_SIXLOWPAN_ND_AR_LTIME
+#define CONFIG_GNRC_SIXLOWPAN_ND_AR_LTIME          (15U)
 #endif
 
 /**
@@ -126,13 +139,13 @@ extern "C" {
  *          gnrc_sixlowpan_frag_rb_int_t entries (even when
  *          `gnrc_sixlowpan_frag_vrb` is not compiled in).
  */
-#ifndef GNRC_SIXLOWPAN_FRAG_VRB_SIZE
+#ifndef CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_SIZE
 #if defined(MODULE_GNRC_SIXLOWPAN_FRAG_VRB) || defined(DOXYGEN)
-#define GNRC_SIXLOWPAN_FRAG_VRB_SIZE        (16U)
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_SIZE        (16U)
 #else   /* defined(MODULE_GNRC_SIXLOWPAN_FRAG_VRB) || defined(DOXYGEN) */
-#define GNRC_SIXLOWPAN_FRAG_VRB_SIZE        (0U)
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_SIZE        (0U)
 #endif  /* defined(MODULE_GNRC_SIXLOWPAN_FRAG_VRB) || defined(DOXYGEN) */
-#endif  /* GNRC_SIXLOWPAN_FRAG_VRB_SIZE */
+#endif  /* CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_SIZE */
 
 /**
  * @brief   Timeout for a VRB entry in microseconds
@@ -142,9 +155,9 @@ extern "C" {
  * @note    Only applicable with
  *          [gnrc_sixlowpan_frag_vrb](@ref net_gnrc_sixlowpan_frag_vrb) module.
  */
-#ifndef GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US
-#define GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US  (GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US)
-#endif  /* GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US */
+#ifndef CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US
+#define CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US  (CONFIG_GNRC_SIXLOWPAN_FRAG_RBUF_TIMEOUT_US)
+#endif  /* CONFIG_GNRC_SIXLOWPAN_FRAG_VRB_TIMEOUT_US */
 
 #ifdef __cplusplus
 }

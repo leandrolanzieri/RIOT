@@ -30,7 +30,7 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
-static gnrc_sixlowpan_msg_frag_t _fragment_msg[GNRC_SIXLOWPAN_MSG_FRAG_SIZE];
+static gnrc_sixlowpan_msg_frag_t _fragment_msg[CONFIG_GNRC_SIXLOWPAN_MSG_FRAG_SIZE];
 
 #if ENABLE_DEBUG
 /* For PRIu16 etc. */
@@ -268,7 +268,7 @@ static uint16_t _send_nth_fragment(gnrc_netif_t *iface,
 
 gnrc_sixlowpan_msg_frag_t *gnrc_sixlowpan_msg_frag_get(void)
 {
-    for (unsigned i = 0; i < GNRC_SIXLOWPAN_MSG_FRAG_SIZE; i++) {
+    for (unsigned i = 0; i < CONFIG_GNRC_SIXLOWPAN_MSG_FRAG_SIZE; i++) {
         if (_fragment_msg[i].pkt == NULL) {
             return &_fragment_msg[i];
         }
