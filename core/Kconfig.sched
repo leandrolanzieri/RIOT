@@ -7,4 +7,8 @@ config SCHED_PRIO_LEVELS
     int "Number of thread priority levels"
     default 16
 
+config CONFIG_MAXTHREADS
+    int "Maximum number of threads to be scheduled"
+    default 32
+
 endif # KCONFIG_SCHED

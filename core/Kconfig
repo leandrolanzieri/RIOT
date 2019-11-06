@@ -1,5 +1,6 @@
 menu "Core"
 
+rsource "Kconfig.sched"
 rsource "Kconfig.log"
 
 endmenu # Core
