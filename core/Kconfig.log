@@ -1,0 +1,45 @@
+menuconfig KCONFIG_LOG
+    bool "Configure System Log"
+
+if KCONFIG_LOG
+
+choice
+    prompt "System Log level"
+    default LOG_LEVEL_INFO
+
+config LOG_LEVEL_ALL
+    bool "All"
+    help
+        Prints everything
+
+config LOG_LEVEL_DEBUG
+    bool "Debug"
+    help
+        Prints developer stuff considered too verbose for production use.
+
+config LOG_LEVEL_INFO
+    bool "Info"
+    help
+        Prints purely informational message like successful system bootup,
+        network link state, ...
+
+config LOG_LEVEL_WARNING
+    bool "Warning"
+    help
+        Prints warning messages for temporary errors.
+
+config LOG_LEVEL_ERROR
+    bool "Error"
+    help
+        Prints only critical, non-recoverable errors like hardware
+        initialization failures.
+
+config LOG_LEVEL_NONE
+    bool "None"
+    help
+        Prints nothing.
+
+endchoice
+
+endif # KCONFIG_LOG
+

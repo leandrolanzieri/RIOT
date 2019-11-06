@@ -1,0 +1,6 @@
+menu "Core"
+
+rsource "Kconfig.log"
+
+endmenu # Core
+
