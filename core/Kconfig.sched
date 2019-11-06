@@ -1,0 +1,10 @@
+menuconfig KCONFIG_SCHED
+    bool "Configure scheduler"
+
+if KCONFIG_SCHED
+
+config SCHED_PRIO_LEVELS
+    int "Number of thread priority levels"
+    default 16
+
+endif # KCONFIG_SCHED
