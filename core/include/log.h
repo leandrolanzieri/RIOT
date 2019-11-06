@@ -67,8 +67,22 @@ enum {
 /**
  * @brief Default log level define
  */
-#define LOG_LEVEL LOG_INFO
+#ifdef CONFIG_LOG_LEVEL_ALL
+#define LOG_LEVEL           LOG_ALL
+#elif CONFIG_LOG_LEVEL_DEBUG
+#define LOG_LEVEL           LOG_DEBUG
+#elif CONFIG_LOG_LEVEL_INFO
+#define LOG_LEVEL           LOG_INFO
+#elif CONFIG_LOG_LEVEL_WARNING
+#define LOG_LEVEL           LOG_WARNING
+#elif CONFIG_LOG_LEVEL_ERROR
+#define LOG_LEVEL           LOG_ERROR
+#elif CONFIG_LOG_LEVEL_NONE
+#define LOG_LEVEL           LOG_NONE
+#else
+#define LOG_LEVEL           LOG_INFO
 #endif
+#endif /* LOG_LEVEL */
 
 /**
  * @brief Log message if level <= LOG_LEVEL
