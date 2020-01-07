@@ -4,8 +4,8 @@ KCONFIG ?= $(RIOTBASE)/Kconfig
 # Include tools targets
 include $(RIOTMAKE)/tools/kconfiglib.inc.mk
 
-# Generated dir will contain Kconfig generated configurations
-GENERATED_DIR = $(BINDIR)/generated
+# Include Kconfig symbols
+include $(RIOTMAKE)/kconfig_symbols.mk
 
 # This file will contain all generated configuration from kconfig
 export KCONFIG_GENERATED_AUTOCONF_HEADER_C = $(GENERATED_DIR)/autoconf.h
@@ -31,22 +31,6 @@ KCONFIG_APP_CONFIG = $(APPDIR)/app.config
 
 # Default and user overwritten configurations
 KCONFIG_USER_CONFIG = $(APPDIR)/user.config
-
-# This file will contain merged configurations from MERGE_SOURCES and is the
-# one that is used to generate the 'riotconf.h' header
-KCONFIG_MERGED_CONFIG = $(GENERATED_DIR)/merged.config
-
-# Include configuration symbols if available, only when not cleaning. This
-# allows to check for Kconfig symbols in makefiles.
-# Make tries to 'remake' all included files
-# (see https://www.gnu.org/software/make/manual/html_node/Remaking-Makefiles.html).
-# So if this file was included even when 'clean' is called, make would enter a
-# loop, as it always is out-of-date.
-# This has the side effect of requiring a Kconfig user to run 'clean' on a
-# separate call (e.g. 'make clean && make all'), to get the symbols correctly.
-ifneq ($(CLEAN),clean)
-  -include $(KCONFIG_MERGED_CONFIG)
-endif
 
 # Flag that indicates that the configuration has been edited
 KCONFIG_EDITED_CONFIG = $(GENERATED_DIR)/.editedconfig
