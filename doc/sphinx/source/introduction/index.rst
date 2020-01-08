@@ -19,14 +19,14 @@ priority queues), a shell and more. RIOT supports a wide range of
 microcontroller architectures, radio drivers, sensors, and configurations for
 entire platforms, e.g. Atmel SAM R21 Xplained Pro, Zolertia Z1, STM32 Discovery
 Boards etc. (see the list of
-[supported hardware](https://github.com/RIOT-OS/RIOT/wiki/RIOT-Platforms).
+`supported hardware <https://github.com/RIOT-OS/RIOT/wiki/RIOT-Platforms>`_.
 Across all supported hardware (32-bit, 16-bit, and 8-bit platforms). RIOT
 provides a consistent API and enables ANSI C and C++ application programming,
 with  multithreading, IPC, system timers, mutexes etc.
 
 A good high-level overview can be found in the article
-[RIOT: An Open Source Operating System for Low-End Embedded Devices in
-the IoT](https://riot-os.org/docs/riot-ieeeiotjournal-2018.pdf)
+`RIOT: An Open Source Operating System for Low-End Embedded Devices in
+the IoT <https://riot-os.org/docs/riot-ieeeiotjournal-2018.pdf>`_
 (IEEE Internet of Things Journal, December 2018).
 
 Structure
@@ -39,15 +39,15 @@ structure, you will easily find your way around in RIOT's code base.
 
 RIOT's code base is structured into five groups.
 
- - The kernel (`core`)
- - Platform specific code (`cpu`; `boards`)
- - Device drivers (`drivers`)
- - Libraries and network code (`sys`; `pkg`)
- - Applications for demonstrating features and for testing (`examples`;
-   `tests`)
+ - The kernel (``core``)
+ - Platform specific code (``cpu``; ``boards``)
+ - Device drivers (``drivers``)
+ - Libraries and network code (``sys``; ``pkg``)
+ - Applications for demonstrating features and for testing (``examples``;
+   ``tests``)
 
-In addition RIOT includes a collection of scripts for various tasks (`dist`) as
-well as a predefined environment for generating this documentation (`doc`).
+In addition RIOT includes a collection of scripts for various tasks (``dist``) as
+well as a predefined environment for generating this documentation (``doc``).
 
 The structural groups are projected onto the directory structure of RIOT, where
 each of these groups resides in one or two directories in the main RIOT
@@ -82,7 +82,7 @@ On top of the source and header files needed for each board, this directory
 additionally may include some script and configuration files needed for
 interfacing with the board. These are typically custom flash/debug scripts or
 e.g. OpenOCD configuration files. For most boards, these files are located in a
-`dist` sub-directory of the board.
+``dist`` sub-directory of the board.
 
 See here @ref boards for further information.
 
@@ -94,18 +94,18 @@ the CPU. These directories then contain all CPU specific configurations, such
 as implementations of power management (LPM), interrupt handling and vectors,
 startup code, clock initialization code and thread handling (e.g. context
 switching) code. For most CPUs you will also find the linker scripts in the
-`ldscripts` sub-directory.
+``ldscripts`` sub-directory.
 
-In the `periph` sub-directory of each CPU you can find the implementations of
+In the ``periph`` sub-directory of each CPU you can find the implementations of
 the CPU's peripheral drivers like SPI, UART, GPIO, etc.  See @ref drivers_periph
 for their API documentation.
 
 Many CPUs share a certain amount of their code (e.g. all ARM Cortex-M based
 CPUs share the same code for task switching and interrupt handling). This
-shared code is put in its own directories, following a `xxxxx_common` naming
+shared code is put in its own directories, following a ``xxxxx_common`` naming
 scheme. Examples for this is code shared across architectures (e.g.
-`cortexm_common`, `msp430_comon`) or code shared among vendors (e.g.
-`stm32_common`).
+``cortexm_common``, ``msp430_common``) or code shared among vendors (e.g.
+``stm32_common``).
 
 See @ref cpu for more detailed information.
 
@@ -117,7 +117,7 @@ interfaces, sensors and actuators. Each device driver is put into its own
 sub-directory with the name of that device.
 
 All of RIOT's device drivers are based on the peripheral driver API (e.g. SPI,
-GPIO, etc.) and other RIOT modules like the `xtimer`. This way the drivers are
+GPIO, etc.) and other RIOT modules like the ``xtimer``. This way the drivers are
 completely platform agnostic and they don't have any dependencies into the CPU
 and board code.
 
@@ -138,7 +138,7 @@ See @ref sys for a complete list of available libraries
 sys/net
 =======
 
-The `sys/net` sub-directory needs to be explicitly mentioned, as this is where
+The ``sys/net`` sub-directory needs to be explicitly mentioned, as this is where
 all the networking code in RIOT resides. Here you can find the network stack
 implementations (e.g. the @ref net_gnrc "GNRC" stack) as well as network stack agnostic code as
 header definitions or network types.
@@ -149,11 +149,11 @@ pkg
 ===
 
 RIOT comes with support for a number of external libraries (e.g.
-[ccn-lite](https://github.com/cn-uofbasel/ccn-lite),
-[microcoap](https://github.com/1248/microcoap)). The way they are included is
+`ccn-lite <https://github.com/cn-uofbasel/ccn-lite>`_,
+`microcoap <https://github.com/1248/microcoap>`_). The way they are included is
 that RIOT ships with a custom Makefile for each supported library that
 downloads the library and optionally applies a number of patches to make it
-work with RIOT. These Makefiles and patches can be found in the `pkg`
+work with RIOT. These Makefiles and patches can be found in the ``pkg``
 directory.
 
 See @ref pkg for a detailed description on how this works.
@@ -166,7 +166,7 @@ features of RIOT. The default example found in this directory is a good
 starting point for anyone who is new to RIOT.
 
 For more information best browse that directory and have a look at the
-`README.md` files that ship with each example.
+``README.md`` files that ship with each example.
 
 To create your own application - here or anywhere else - see @ref creating-an-application
 
@@ -183,15 +183,15 @@ dist & doc
 
 All the tooling around RIOT can be found in these two folders.
 
-`doc` contains the doxygen configuration and also contains the compiled doxygen
-output after running `make doc`.
+``doc`` contains the doxygen configuration and also contains the compiled doxygen
+output after running ``make doc``.
 
-Lastly, the `dist` directory contains tools to help you with RIOT. These
+Lastly, the ``dist`` directory contains tools to help you with RIOT. These
 include
-the serial terminal application `pyterm`, generic scripts for flashing,
-debugging, resetting (e.g. support for [OpenOCD](http://openocd.org/),
-[Jlink](https://www.segger.com/jlink_base.html)), as well as code enabling easy
-integration to open testbeds such as the [IoT-LAB](https://www.iot-lab.info/).
+the serial terminal application ``pyterm``, generic scripts for flashing,
+debugging, resetting (e.g. support for `OpenOCD <http://openocd.org/>`_,
+`Jlink <https://www.segger.com/jlink_base.html>`_), as well as code enabling easy
+integration to open testbeds such as the `IoT-LAB <https://www.iot-lab.info/>`_.
 Furthermore you can find here scripts to do all kind of code and style checks.
 
 Further information
