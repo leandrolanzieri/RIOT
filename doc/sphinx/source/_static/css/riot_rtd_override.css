@@ -1,7 +1,27 @@
 @import 'theme.css';
 
+a:visited {
+    color: #4ca98c;
+}
+
+a {
+    color: #4ca98c;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .wy-side-nav-search {
     background-color: #212121;
+}
+
+.wy-menu-vertical a {
+    display: inline-block;
+    line-height: 18px;
+    padding: .4045em 1.618em;
+    display: block;
+    position: relative;
+    font-size: 90%;
+    color: #d9d9d9;
 }
 
 .wy-menu-vertical li.current>a {
@@ -17,3 +37,4 @@
     border-bottom: solid 1px #408670;
     border-top: solid 1px #408670;
 }
+
