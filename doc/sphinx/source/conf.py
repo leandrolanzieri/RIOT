@@ -36,7 +36,7 @@ if "RIOTBASE" not in os.environ:
 RIOTBASE = os.path.abspath(os.environ["RIOTBASE"])
 sys.path.append(os.path.join(RIOTBASE, "doc", "breathe"))
 
-extensions = ['breathe', 'm2r']
+extensions = ['breathe']
 breathe_projects = { "RIOT": os.path.join(RIOTBASE, "doc", "doxygen", "xml")}
 breathe_default_project = "riot"
 master_doc = 'index'
