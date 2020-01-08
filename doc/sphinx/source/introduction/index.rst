@@ -1,3 +1,5 @@
+.. _introduction_to_riot:
+
 Introduction to RIOT
 ####################
 
@@ -195,7 +197,7 @@ Furthermore you can find here scripts to do all kind of code and style checks.
 Further information
 *******************
 
-- @ref getting-started
+- :ref:`Getting started <getting_started_with_riot>`
 - @ref creating-an-application
 - @ref creating-modules
 - @ref advanced-build-system-tricks

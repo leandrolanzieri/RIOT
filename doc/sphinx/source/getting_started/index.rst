@@ -1,3 +1,5 @@
+.. _getting_started_with_riot:
+
 Getting started with RIOT
 #########################
 

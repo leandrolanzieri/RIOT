@@ -1,3 +1,5 @@
+.. _contribute_to_riot:
+
 Contribute to RIOT
 ##################
 
