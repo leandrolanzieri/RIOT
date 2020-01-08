@@ -8,3 +8,4 @@ This is the unofficial documentation for RIOT.
    :glob:
 
    introduction/index
+   getting_started/index
