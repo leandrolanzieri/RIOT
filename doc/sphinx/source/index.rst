@@ -7,7 +7,7 @@ This is the unofficial documentation for RIOT.
    :maxdepth: 1
    :glob:
 
-   examples.rst
    introduction/index
    getting_started/index
    contribute/index
+   examples.rst
