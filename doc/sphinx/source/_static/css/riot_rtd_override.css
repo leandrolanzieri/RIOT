@@ -1,0 +1,19 @@
+@import 'theme.css';
+
+.wy-side-nav-search {
+    background-color: #212121;
+}
+
+.wy-menu-vertical li.current>a {
+    background-color: #4ca98c;
+    color: #343131;
+}
+
+.wy-menu-vertical li.current>a:hover {
+    background-color: #4ca98c;
+}
+
+.wy-menu-vertical li.toctree-l1.current>a {
+    border-bottom: solid 1px #408670;
+    border-top: solid 1px #408670;
+}
