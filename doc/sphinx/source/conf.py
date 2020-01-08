@@ -19,9 +19,9 @@ import os
 
 # -- Project information -----------------------------------------------------
 
-project = 'riot'
-copyright = '2020, riot'
-author = 'riot'
+project = 'RIOT'
+copyright = '2020, RIOT'
+author = 'RIOT'
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,12 +34,12 @@ if "RIOTBASE" not in os.environ:
     sys.exit(1)
 
 RIOTBASE = os.path.abspath(os.environ["RIOTBASE"])
-print("EL RIOT BASE", RIOTBASE)
 sys.path.append(os.path.join(RIOTBASE, "doc", "breathe"))
 
-extensions = ['breathe', 'cakephp_theme']
-breathe_projects = { "riot": os.path.join(RIOTBASE, "doc", "doxygen", "xml")}
+extensions = ['breathe']
+breathe_projects = { "RIOT": os.path.join(RIOTBASE, "doc", "doxygen", "xml")}
 breathe_default_project = "riot"
+master_doc = 'index'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -54,17 +54,7 @@ exclude_patterns = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-import cakephp_theme
-html_theme_path = [cakephp_theme.get_html_theme_path()]
-html_theme = 'cakephp_theme'
-html_context = {
-    'maintainer': 'Sphinx-themes test',
-    'project_pretty_name': 'Sphinx Themes',
-    'projects': {
-        'CakePHP Book': 'https://book.cakephp.org/',
-        'Some other project': 'https://example.com/',
-    }
-}
+html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
