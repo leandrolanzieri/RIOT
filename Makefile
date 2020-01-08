@@ -15,7 +15,7 @@ doc-man:
 doc-latex:
 	"$(MAKE)" -BC doc/doxygen latex
 
-doc-sphinx: doc
+doc-sphinx:
 	"$(MAKE)" -BC doc/sphinx html
 
 docclean:

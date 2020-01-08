@@ -9,6 +9,7 @@ doc/doxygen/*.log
 doc/doxygen/*.db
 doc/doxygen/*.tmp
 doc/sphinx/build
+doc/sphinx/source/examples
 # Built binaries
 *bin
 # Build directory

@@ -6,6 +6,8 @@ This is the unofficial documentation for RIOT.
    :maxdepth: 1
    :glob:
 
+   examples.rst
+
 RIOT in a nutshell
 ==================
 RIOT is an open-source  microkernel-based operating system, designed to match
