@@ -4,9 +4,11 @@
 doc/doxygen/html
 doc/doxygen/latex
 doc/doxygen/man
+doc/doxygen/xml
 doc/doxygen/*.log
 doc/doxygen/*.db
 doc/doxygen/*.tmp
+doc/sphinx/build
 # Built binaries
 *bin
 # Build directory
