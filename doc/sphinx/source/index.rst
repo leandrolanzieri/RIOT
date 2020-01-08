@@ -9,3 +9,4 @@ This is the unofficial documentation for RIOT.
 
    introduction/index
    getting_started/index
+   contribute/index
