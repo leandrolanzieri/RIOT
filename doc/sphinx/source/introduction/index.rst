@@ -33,7 +33,7 @@ Structure
 This section walks you through RIOT's structure. Once you understand this
 structure, you will easily find your way around in RIOT's code base.
 
-.. image:: _static/riot-structure.svg
+.. figure:: riot-structure.svg
 
 RIOT's code base is structured into five groups.
 

@@ -7,4 +7,4 @@ This is the unofficial documentation for RIOT.
    :maxdepth: 1
    :glob:
 
-   introduction.rst
+   introduction/index
