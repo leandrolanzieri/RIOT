@@ -1,0 +1,52 @@
+mainmenu "To generate documentation"
+
+menu "System"
+
+menuconfig MODULE_FOO
+    bool "Foo"
+    help
+        This will allow you to Foo.
+
+if MODULE_FOO
+
+config FOO_FACTOR
+    int "Foo factor"
+    default 4
+    range 2 10
+    help
+        Will multiply the Foo by this.
+
+config FOO_EXTRA
+    bool "Some extra Foo"
+    default y
+    help
+        Go extra on the Foo
+
+endif # MODULE_FOO
+
+menuconfig MODULE_BAR
+    bool "Bar"
+    help
+        Get to Bar around.
+
+if MODULE_BAR
+
+choice
+    bool "Bar mode"
+    default BAR_MODE_ADV
+
+config BAR_MODE_BASIC
+    bool "Basic"
+    help
+        Not all the features for Bar.
+
+config BAR_MODE_ADV
+    bool "Advance"
+    help
+        You get a full-featured Bar.
+
+endchoice
+
+endif # MODULE_BAR
+
+endmenu

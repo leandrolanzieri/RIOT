@@ -14,7 +14,7 @@ doc: html
 
 # by marking html as phony we force make to re-run Doxygen even if the directory exists.
 .PHONY: html
-html: src/css/riot.css src/changelog.md src/kconfig/symbols.h
+html: src/css/riot.css src/changelog.md src/kconfig/kconfig_symbols.h
 	( cat riot.doxyfile ; echo "GENERATE_HTML = yes" ) | doxygen -
 
 .PHONY: man
@@ -41,10 +41,6 @@ clean:
 	-@rm -rf latex man html doxygen_objdb_*.tmp doxygen_entrydb_*.tmp src/changelog.md
 
 .PHONY:
-src/kconfig/symbols.h:
+src/kconfig/kconfig_symbols.h:
 	$(RIOTBASE)/dist/tools/kconfig2header/kconfig2header.py -k $(RIOTBASE)/Kconfig \
-		-o $@ -g 'kconfig'
-#src/kconfig/symbols.txt:
-#	python3 $(RIOTBASE)/dist/tools/kconfig2dox/kconfig2dox.py -k $(RIOTBASE)/Kconfig \
-#		-d $@ -f "" -p "kconfig_options_page" -t "Kconfig options for RIOT"
-
+		-o $(@D) -g 'kconfig' -d
