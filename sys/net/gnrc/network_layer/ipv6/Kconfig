@@ -16,4 +16,6 @@ config GNRC_IPV6_MSG_QUEUE_SIZE
     int "Default message queue size to use for the IPv6 thread"
     default 8
 
+rsource "nib/Kconfig"
+
 endif # KCONFIG_MODULE_GNRC_IPV6
