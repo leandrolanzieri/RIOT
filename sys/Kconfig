@@ -6,6 +6,7 @@
 #
 menu "System"
 
+rsource "bitfield/Kconfig"
 rsource "net/Kconfig"
 rsource "usb/Kconfig"
 

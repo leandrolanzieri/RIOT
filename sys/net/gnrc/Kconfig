@@ -4,7 +4,8 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
-menu "GNRC Network stack"
+menuconfig KCONFIG_MODULE_GNRC
+    bool "GNRC Network stack"
     depends on MODULE_GNRC
 
 rsource "link_layer/lorawan/Kconfig"

@@ -1,0 +1,27 @@
+config COMPONENT_native_drivers
+    bool
+    default y
+
+config COMPONENT_periph
+    bool
+    default y
+
+config COMPONENT_periph_common
+    bool
+    default y
+
+config COMPONENT_periph_gpio
+    bool
+    default y
+
+config COMPONENT_periph_pm
+    bool
+    default y
+
+config COMPONENT_periph_uart
+    bool
+    default y
+
+config COMPONENT_stdio_native
+    bool
+    default y

@@ -3,7 +3,7 @@ export NATIVEINCLUDES += -I$(RIOTBOARD)/native/include/
 export NATIVEINCLUDES += -I$(RIOTBASE)/core/include/
 export NATIVEINCLUDES += -I$(RIOTBASE)/drivers/include/
 
-USEMODULE += native-drivers
+USEMODULE += native_drivers
 
 ifeq ($(OS),Darwin)
   DEBUGGER ?= lldb

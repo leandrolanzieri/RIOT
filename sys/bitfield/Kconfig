@@ -1,0 +1,2 @@
+menuconfig COMPONENT_bitfield
+    bool "Bitfield"

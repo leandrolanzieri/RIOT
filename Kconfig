@@ -6,8 +6,35 @@
 #
 mainmenu "RIOT Configuration"
 
+orsource "boards/$(BOARD)/Kconfig"
+orsource "cpu/$(CPU)/Kconfig"
+
+config COMPONENT_cpu
+    bool
+    default y
+
+config COMPONENT_board
+    bool
+    default y
+
+config COMPONENT_auto_init
+    bool
+    default y
+
+config COMPONENT_sys
+    bool
+    default y
+
+config COMPONENT_core
+    bool
+    default y
+
+config COMPONENT_core_msg
+    bool
+    default y
+
 # For now, get used modules as macros from this file (see kconfig.mk)
-osource "$(KCONFIG_GENERATED_DEPENDENCIES)"
+#osource "$(KCONFIG_GENERATED_DEPENDENCIES)"
 
 rsource "drivers/Kconfig"
 rsource "sys/Kconfig"

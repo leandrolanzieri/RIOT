@@ -42,6 +42,7 @@ ifneq ($(CLEAN),clean)
   -include $(KCONFIG_MERGED_CONFIG)
 endif
 
+
 # Flag that indicates that the configuration has been edited
 KCONFIG_EDITED_CONFIG = $(GENERATED_DIR)/.editedconfig
 
@@ -94,7 +95,7 @@ $(KCONFIG_GENERATED_DEPENDENCIES): FORCE | $(GENERATED_DIR)
 # Opens the menuconfig interface for configuration of modules using the Kconfig
 # system.
 menuconfig: $(MENUCONFIG) $(KCONFIG_MERGED_CONFIG) $(KCONFIG_EDITED_CONFIG)
-	$(Q)KCONFIG_CONFIG=$(KCONFIG_MERGED_CONFIG) $(MENUCONFIG) $(KCONFIG)
+	$(Q)BOARD=$(BOARD) CPU=$(CPU) KCONFIG_CONFIG=$(KCONFIG_MERGED_CONFIG) $(MENUCONFIG) $(KCONFIG)
 
 # Marks that the configuration file has been edited via some interface, such as
 # menuconfig

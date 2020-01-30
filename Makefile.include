@@ -179,9 +179,6 @@ include $(RIOTMAKE)/scan-build.inc.mk
 
 export RIOTBUILD_CONFIG_HEADER_C = $(BINDIR)/riotbuild/riotbuild.h
 
-# Include Kconfig functionalities
-include $(RIOTMAKE)/kconfig.mk
-
 ifeq ($(OS),Darwin)
   OPEN   := open
 else
@@ -326,6 +323,9 @@ INCLUDES += -I$(RIOTBASE)/core/include -I$(RIOTBASE)/drivers/include -I$(RIOTBAS
 # process provided features
 include $(RIOTBASE)/Makefile.features
 
+# Include Kconfig functionalities
+include $(RIOTMAKE)/kconfig.mk
+
 # mandatory includes!
 include $(RIOTMAKE)/pseudomodules.inc.mk
 include $(RIOTMAKE)/defaultmodules.inc.mk
@@ -364,6 +364,15 @@ USEMODULE += $(filter-out $(DISABLE_MODULE), $(DEFAULT_MODULE))
 
 # process dependencies
 include $(RIOTBASE)/Makefile.dep
+
+
+$(info 1: $(USEMODULE))
+# CONFIG_COMPONENT_BITFIELD=y
+USECOMPONENT := $(patsubst CONFIG_COMPONENT_%,%,$(filter CONFIG_COMPONENT_%, $(.VARIABLES)))
+
+USEMODULE := $(sort $(USECOMPONENT))
+$(info 2: $(USEMODULE))
+
 
 ifeq ($(strip $(MCU)),)
 	MCU = $(CPU)
