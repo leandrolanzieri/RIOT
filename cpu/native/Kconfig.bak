@@ -1,0 +1,11 @@
+config CPU_NATIVE
+    bool
+    default y
+
+    select COMPONENT_native_drivers
+    select COMPONENT_stdio_native
+    select HAS_periph
+    select HAS_periph_common
+    select HAS_periph_gpio
+    select HAS_periph_uart
+    select HAS_periph_pm

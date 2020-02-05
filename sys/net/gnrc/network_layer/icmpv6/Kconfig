@@ -1,0 +1,5 @@
+menuconfig COMPONENT_gnrc_icmpv6
+    bool "Use GNRC ICMPv6"
+    depends on GNRC_CORE
+    depends on COMPONENT_inet_csum
+    select HAS_ICMPV6

@@ -1,0 +1,5 @@
+menuconfig COMPONENT_gnrc_udp
+    bool "Enable GNRC UDP support"
+    depends on GNRC_CORE
+    depends on COMPONENT_gnrc_ipv6
+    select HAS_UDP

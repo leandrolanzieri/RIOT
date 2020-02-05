@@ -4,14 +4,37 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
-menuconfig KCONFIG_MODULE_GNRC_NETIF
-    bool "Configure GNRC network interface"
-    depends on MODULE_GNRC_NETIF
+menuconfig COMPONENT_gnrc_netif
+    bool "Add support for GNRC network interface"
     help
         Configure GNRC network interface using Kconfig.
+    depends on COMPONENT_netif
+    depends on GNRC_CORE
+    depends on COMPONENT_l2util
 
-if KCONFIG_MODULE_GNRC_NETIF
+if COMPONENT_gnrc_netif
 
+config COMPONENT_gnrc_netif_hdr
+    bool
+    default y
+
+config COMPONENT_auto_init_gnrc_netif
+    bool "Auto initialized GNRC netif"
+    default y
+    depends on COMPONENT_auto_init
+
+config COMPONENT_gnrc_netif_ethernet
+    bool
+    default y if HAS_ETHERNET
+
+config COMPONENT_gnrc_netif_lorawan
+    bool
+    default y if HAS_LORA
+
+config COMPONENT_gnrc_netif_ieee802154
+    bool
+    default y if HAS_IEEE802154
+ 
 config GNRC_NETIF_MSG_QUEUE_SIZE
     int "Message queue size for network interface threads"
     default 16
@@ -36,4 +59,5 @@ config GNRC_NETIF_MIN_WAIT_AFTER_SEND_US
         This value is expressed in microseconds. It is purely meant as a debugging
         feature to slow down a radios sending.
 
-endif # KCONFIG_MODULE_GNRC_NETIF
+endif # COMPONENT_gnrc_netif
+rsource "lorawan/Kconfig"

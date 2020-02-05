@@ -1,0 +1,344 @@
+config HAS_arch_16bit
+    bool
+    help
+        Indicates that arch_16bit is present
+
+config HAS_arch_32bit
+    bool
+    help
+        Indicates that arch_32bit is present
+
+config HAS_arch_8bit
+    bool
+    help
+        Indicates that arch_8bit is present
+
+config HAS_arch_arm
+    bool
+    help
+        Indicates that arch_arm is present
+
+config HAS_arch_arm7
+    bool
+    help
+        Indicates that arch_arm7 is present
+
+config HAS_arch_avr8
+    bool
+    help
+        Indicates that arch_avr8 is present
+
+config HAS_arch_cortexm
+    bool
+    help
+        Indicates that arch_cortexm is present
+
+config HAS_arch_efm32
+    bool
+    help
+        Indicates that arch_efm32 is present
+
+config HAS_arch_esp32
+    bool
+    help
+        Indicates that arch_esp32 is present
+
+config HAS_arch_esp8266
+    bool
+    help
+        Indicates that arch_esp8266 is present
+
+config HAS_arch_mips32r2
+    bool
+    help
+        Indicates that arch_mips32r2 is present
+
+config HAS_arch_msp430
+    bool
+    help
+        Indicates that arch_msp430 is present
+
+config HAS_arch_native
+    bool
+    help
+        Indicates that arch_native is present
+
+config HAS_arch_riscv
+    bool
+    help
+        Indicates that arch_riscv is present
+
+config HAS_arduino
+    bool
+    help
+        Indicates that arduino is present
+
+config HAS_arduino_pwm
+    bool
+    help
+        Indicates that arduino_pwm is present
+
+config HAS_atmega_pcint0
+    bool
+    help
+        Indicates that atmega_pcint0 is present
+
+config HAS_atmega_pcint1
+    bool
+    help
+        Indicates that atmega_pcint1 is present
+
+config HAS_atmega_pcint2
+    bool
+    help
+        Indicates that atmega_pcint2 is present
+
+config HAS_atmega_pcint3
+    bool
+    help
+        Indicates that atmega_pcint3 is present
+
+config HAS_backup_ram
+    bool
+    help
+        Indicates that backup_ram is present
+
+config HAS_ble_nimble
+    bool
+    help
+        Indicates that ble_nimble is present
+
+config HAS_ble_nimble_netif
+    bool
+    help
+        Indicates that ble_nimble_netif is present
+
+config HAS_cpp
+    bool
+    help
+        Indicates that cpp is present
+
+config HAS_cpu_check_address
+    bool
+    help
+        Indicates that cpu_check_address is present
+
+config HAS_emulator_renode
+    bool
+    help
+        Indicates that emulator_renode is present
+
+config HAS_esp_spi_ram
+    bool
+    help
+        Indicates that esp_spi_ram is present
+
+config HAS_ethernet
+    bool
+    help
+        Indicates that ethernet is present
+
+config HAS_motor_driver
+    bool
+    help
+        Indicates that motor_driver is present
+
+config HAS_periph_adc
+    bool
+    help
+        Indicates that periph_adc is present
+
+config HAS_periph_can
+    bool
+    help
+        Indicates that periph_can is present
+
+config HAS_periph_cpuid
+    bool
+    help
+        Indicates that periph_cpuid is present
+
+config HAS_periph_dac
+    bool
+    help
+        Indicates that periph_dac is present
+
+config HAS_periph_dma
+    bool
+    help
+        Indicates that periph_dma is present
+
+config HAS_periph_eeprom
+    bool
+    help
+        Indicates that periph_eeprom is present
+
+config HAS_periph_eth
+    bool
+    help
+        Indicates that periph_eth is present
+
+config HAS_periph_flashpage
+    bool
+    help
+        Indicates that periph_flashpage is present
+
+config HAS_periph_flashpage_raw
+    bool
+    help
+        Indicates that periph_flashpage_raw is present
+
+config HAS_periph_flashpage_rwee
+    bool
+    help
+        Indicates that periph_flashpage_rwee is present
+
+config HAS_periph_gpio
+    bool
+    help
+        Indicates that periph_gpio is present
+
+config HAS_periph_gpio_irq
+    bool
+    help
+        Indicates that periph_gpio_irq is present
+
+config HAS_periph_hwrng
+    bool
+    help
+        Indicates that periph_hwrng is present
+
+config HAS_periph_i2c
+    bool
+    help
+        Indicates that periph_i2c is present
+
+config HAS_periph_ics
+    bool
+    help
+        Indicates that periph_ics is present
+
+config HAS_periph_ir
+    bool
+    help
+        Indicates that periph_ir is present
+
+config HAS_periph_lpuart
+    bool
+    help
+        Indicates that periph_lpuart is present
+
+config HAS_periph_mcg
+    bool
+    help
+        Indicates that periph_mcg is present
+
+config HAS_periph_pm
+    bool
+    help
+        Indicates that periph_pm is present
+
+config HAS_periph_pwm
+    bool
+    help
+        Indicates that periph_pwm is present
+
+config HAS_periph_qdec
+    bool
+    help
+        Indicates that periph_qdec is present
+
+config HAS_periph_rtc
+    bool
+    help
+        Indicates that periph_rtc is present
+
+config HAS_periph_rtt
+    bool
+    help
+        Indicates that periph_rtt is present
+
+config HAS_periph_spi
+    bool
+    help
+        Indicates that periph_spi is present
+
+config HAS_periph_spi_gpio_mode
+    bool
+    help
+        Indicates that periph_spi_gpio_mode is present
+
+config HAS_periph_temperature
+    bool
+    help
+        Indicates that periph_temperature is present
+
+config HAS_periph_timer
+    bool
+    help
+        Indicates that periph_timer is present
+
+config HAS_periph_uart
+    bool
+    help
+        Indicates that periph_uart is present
+
+config HAS_periph_uart_modecfg
+    bool
+    help
+        Indicates that periph_uart_modecfg is present
+
+config HAS_periph_uart_nonblocking
+    bool
+    help
+        Indicates that periph_uart_nonblocking is present
+
+config HAS_periph_usbdev
+    bool
+    help
+        Indicates that periph_usbdev is present
+
+config HAS_periph_wdt
+    bool
+    help
+        Indicates that periph_wdt is present
+
+config HAS_periph_wdt_cb
+    bool
+    help
+        Indicates that periph_wdt_cb is present
+
+config HAS_puf_sram
+    bool
+    help
+        Indicates that puf_sram is present
+
+config HAS_radio_nrf802154
+    bool
+    help
+        Indicates that radio_nrf802154 is present
+
+config HAS_radio_nrfble
+    bool
+    help
+        Indicates that radio_nrfble is present
+
+config HAS_radio_nrfmin
+    bool
+    help
+        Indicates that radio_nrfmin is present
+
+config HAS_riotboot
+    bool
+    help
+        Indicates that riotboot is present
+
+config HAS_sdcard_spi
+    bool
+    help
+        Indicates that sdcard_spi is present
+
+config HAS_netdev_tap
+    bool
+    help
+        Indicates that netdev_tap is present

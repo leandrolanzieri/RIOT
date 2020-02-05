@@ -1,0 +1,6 @@
+config HAS_periph_pwm
+    default y
+
+config HAS_arduino_pwm
+    default y
+

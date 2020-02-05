@@ -1,0 +1,3 @@
+config COMPONENT_luid
+    bool "Locally Unique ID Generator"
+    default y

@@ -1,0 +1,58 @@
+# Copyright (c) 2019 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+menuconfig COMPONENT_random
+    bool "Add RNG support"
+    default y
+
+if COMPONENT_random
+    choice
+        bool "Random source"
+        config RANDOM_SEED_SOURCE_PUF
+            bool "PUF-SRAM"
+            depends on COMPONENT_puf_sram
+        config RANDOM_SEED_SOURCE_PERIPH_HWRNG
+            bool "Hardware RNG"
+            depends on COMPONENT_periph_hwrng
+        config RANDOM_SEED_SOURCE_PERIPH_CPUID
+            bool "CPU ID"
+            depends on COMPONENT_luid
+        config RANDOM_SEED_SOURCE_DEFAULT
+            bool "Default Seed"
+    endchoice
+    config RANDOM_SEED_DEFAULT
+        hex "Seed value"
+        default 0x1
+        range 0x0 0xFFFFFFFF
+        depends on RANDOM_SEED_SOURCE_DEFAULT
+
+choice
+    bool "PRNG implementation"
+    config COMPONENT_prng_tinymt32
+        bool "TinyMT32"
+    config COMPONENT_prng_fortuna
+        bool "Fortuna"
+    config COMPONENT_prng_mersenne
+        bool "Mersenne"
+    config COMPONENT_prng_minstd
+        bool "Min Std"
+    config COMPONENT_prng_musl_lcg
+        bool "Musl lcg"
+    config COMPONENT_prng_sha1prng
+        bool "SHA1 PRNG"
+    config COMPONENT_prng_xorshift
+        bool "Xor shift"
+endchoice
+
+config COMPONENT_tinymt32
+    bool
+    default y if COMPONENT_prng_tinymt32
+
+config COMPONENT_prng
+    bool
+    default y
+
+endif # COMPONENT_random

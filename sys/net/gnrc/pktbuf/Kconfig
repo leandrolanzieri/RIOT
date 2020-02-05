@@ -1,0 +1,11 @@
+menuconfig COMPONENT_gnrc_pktbuf
+    bool "GNRC Packet Buffer"
+if COMPONENT_gnrc_pktbuf
+    choice
+        bool "GNRC Packet Buffer backend"
+        config COMPONENT_gnrc_pktbuf_static
+            bool "Static"
+        config COMPONENT_gnrc_pktbuf_malloc
+            bool "Malloc"
+    endchoice
+endif # COMPONENT_gnrc_pktbuf

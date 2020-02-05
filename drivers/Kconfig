@@ -5,4 +5,27 @@
 # directory for more details.
 
 menu "Drivers"
+config COMPONENT_periph_timer
+    bool "Use periph timer"
+    depends on HAS_periph_timer
+
+menu "Network Devices"
+rsource "sx127x/Kconfig"
+
+config COMPONENT_netdev_tap
+    bool "Netdev TAP device"
+    default y if DEFAULT_NETDEV && HAS_netdev_tap
+    select COMPONENT_netdev_eth
+
+menu "Netdev"
+config COMPONENT_netdev_layer
+    bool "Use netdev_layer module"
+
+config COMPONENT_netdev_eth
+    bool "Netdev Ethernet device"
+    select HAS_ETHERNET
+endmenu # Netdev
+endmenu # Network Devices
+
+
 endmenu # Drivers

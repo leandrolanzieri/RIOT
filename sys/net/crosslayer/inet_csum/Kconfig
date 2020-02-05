@@ -1,0 +1,2 @@
+config COMPONENT_inet_csum
+    bool "Internet Checksum utilities"

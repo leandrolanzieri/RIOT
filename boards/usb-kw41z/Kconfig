@@ -1,0 +1,3 @@
+config HAS_periph_spi
+    default y
+

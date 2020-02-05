@@ -3,12 +3,40 @@
 # This file is subject to the terms and conditions of the GNU Lesser
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
-#
-menuconfig KCONFIG_MODULE_SOCK_UTIL
+
+
+menu "Sock"
+menuconfig COMPONENT_sock_ip
+    bool "Sock IP: Support for abstract IP endpoint"
+    depends on HAS_SOCK_IP
+
+if COMPONENT_sock_ip
+    config COMPONENT_sock_ipv6
+        bool "Enable IPv6 support"
+        depends on HAS_SOCK_IPV6
+
+    config COMPONENT_sock_ipv4
+        bool "Enable IPv4 support"
+        depends on HAS_SOCK_IPV4
+endif
+
+    config COMPONENT_sock_udp
+        bool "Sock UDP: Support for abstract UDP endpoint"
+        depends on HAS_SOCK_UDP
+
+    config COMPONENT_sock_tcp
+        bool "Sock TCP: Support for abstract TCP endpoint"
+        depends on HAS_SOCK_TCP
+
+    config COMPONENT_sock_dtls
+        bool "Sock DTLS: Support for abstract DTLS endpoint"
+        depends on HAS_SOCK_DTLS
+
+menuconfig COMPONENT_sock_util
     bool "Configure SOCK utility functions"
     depends on MODULE_SOCK_UTIL
 
-if KCONFIG_MODULE_SOCK_UTIL
+if COMPONENT_sock_util
 
 config SOCK_SCHEME_MAXLEN
     int "Maximum length of the scheme part"
@@ -28,4 +56,5 @@ config SOCK_URLPATH_MAXLEN
     help
         This value is used in sock_urlsplit().
 
-endif # KCONFIG_MODULE_SOCK_UTIL
+endif # COMPONENT_sock_util
+endmenu # Sock

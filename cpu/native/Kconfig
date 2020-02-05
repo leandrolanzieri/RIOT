@@ -1,27 +1,26 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
 config COMPONENT_native_drivers
     bool
-    default y
-
-config COMPONENT_periph
-    bool
-    default y
-
-config COMPONENT_periph_common
-    bool
-    default y
-
-config COMPONENT_periph_gpio
-    bool
-    default y
-
-config COMPONENT_periph_pm
-    bool
-    default y
-
-config COMPONENT_periph_uart
-    bool
-    default y
+    default y if CPU_NATIVE
 
 config COMPONENT_stdio_native
     bool
+    default y if CPU_NATIVE
+
+config CPU_NATIVE
+    bool
     default y
+    select HAS_arch_32bit
+    select HAS_arch_native
+    select HAS_cpp
+    select HAS_periph_cpuid
+    select HAS_periph_hwrng
+    select HAS_periph_pm
+    select HAS_periph_pwm
+    select HAS_netdev_tap
+    #select HAS_periph_spi

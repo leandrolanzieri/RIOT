@@ -1,0 +1,4 @@
+menuconfig COMPONENT_evtimer
+    bool "Use Event Timer"
+    default n
+    depends on COMPONENT_xtimer

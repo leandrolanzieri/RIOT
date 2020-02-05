@@ -1,0 +1,12 @@
+config HAS_periph_rtc
+    default y
+
+config HAS_periph_spi
+    default y
+
+config HAS_periph_timer
+    default y
+
+config HAS_periph_uart
+    default y
+

@@ -1,0 +1,3 @@
+config COMPONENT_icmpv6
+    bool
+    default y if HAS_ICMPV6

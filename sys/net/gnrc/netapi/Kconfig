@@ -1,0 +1,3 @@
+menuconfig COMPONENT_gnrc_netapi
+    bool "GNRC netapi support"
+    default y

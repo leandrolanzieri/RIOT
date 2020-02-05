@@ -4,9 +4,80 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
-menu "Networking"
 
-rsource "gnrc/Kconfig"
-rsource "sock/Kconfig"
+config HAS_LORA
+    bool
 
-endmenu # Networking
+config HAS_ETHERNET
+    bool
+
+config HAS_IPV6
+    bool
+
+config HAS_UDP
+    bool
+
+config HAS_ICMPV6
+    bool
+
+config HAS_SOCK_IP
+    bool
+
+config HAS_SOCK_IPV6
+    bool
+    select HAS_SOCK_IP
+
+config HAS_SOCK_IPV4
+    bool
+    select HAS_SOCK_IP
+
+config HAS_SOCK_UDP
+    bool
+
+config HAS_SOCK_TCP
+    bool
+
+config HAS_SOCK_DTLS
+    bool
+
+menuconfig NETWORKING
+    bool "Networking support"
+
+if NETWORKING
+    choice
+        bool "Select network stack"
+        config COMPONENT_gnrc
+            bool "GNRC Network Stack"
+        config COMPONENT_lwip
+            bool "LWIP Stack"
+        config COMPONENT_emb6
+            bool "emb6 Stack"
+        config COMPONENT_openthread
+            bool "OpenThread Stack"
+    endchoice
+
+    rsource "sock/Kconfig"
+    rsource "network_layer/icmpv6/Kconfig"
+    rsource "transport_layer/udp/Kconfig"
+
+menu "Net Utils"
+    rsource "crosslayer/inet_csum/Kconfig"
+    rsource "link_layer/l2util/Kconfig"
+endmenu # Net Utils
+
+if COMPONENT_gnrc
+    rsource "gnrc/Kconfig"
+endif # COMPONENT_gnrc
+
+    rsource "netif/Kconfig"
+
+config COMPONENT_ipv6_addr
+    bool
+    default y if HAS_IPV6
+
+config COMPONENT_ipv6_hdr
+    bool
+    default y if HAS_IPV6
+
+endif # NETWORKING
+

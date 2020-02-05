@@ -4,10 +4,59 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
+
+config COMPONENT_pm_layered
+    bool
+    depends on COMPONENT_periph_pm
+
 menu "System"
 
+menu "Utils"
 rsource "bitfield/Kconfig"
-rsource "net/Kconfig"
-rsource "usb/Kconfig"
+rsource "tsrb/Kconfig"
+rsource "isrpipe/Kconfig"
+rsource "fmt/Kconfig"
+rsource "luid/Kconfig"
+rsource "od/Kconfig"
+rsource "iolist/Kconfig"
+endmenu # Utils
 
+menu "Crypto and hashes"
+rsource "random/Kconfig"
+rsource "hashes/Kconfig"
+rsource "crypto/Kconfig"
+endmenu # Crypto and hashes
+
+rsource "usb/Kconfig"
+rsource "shell/Kconfig"
+
+menu "Event handlers"
+rsource "evtimer/Kconfig"
+endmenu # Event handlers
+
+menuconfig COMPONENT_stdin
+    bool "Enable and configure STDIN"
+    default n
+
+if COMPONENT_stdin
+config COMPONENT_stdio_uart
+    bool "Enable STDIO over UART"
+    default y
+    depends on COMPONENT_periph_uart
+
+config COMPONENT_stdio_uart_rx
+    bool "Enable STDIO over UART RX"
+    default y
+    depends on COMPONENT_stdio_uart
+    depends on COMPONENT_isrpipe
+
+endif # COMPONENT_stdin
+
+menu "Boot configurations"
+
+config COMPONENT_auto_init
+    bool "Enable Auto Init"
+    default y
+
+endmenu # Boot configurations
 endmenu # System

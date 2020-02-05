@@ -1,0 +1,15 @@
+config BOARD_NUCLEO_F072RB
+    bool
+    default y
+    select HAS_periph_adc
+    select HAS_periph_i2c
+    select HAS_periph_pwm
+    select HAS_periph_rtc
+    select HAS_periph_timer
+    select HAS_periph_uart
+    select HAS_periph_spi
+    select CPU_STM32_COMMON
+
+config COMPONENT_boards_common_nucleo
+    bool
+    default y

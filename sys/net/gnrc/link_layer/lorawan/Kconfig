@@ -3,14 +3,23 @@
 # This file is subject to the terms and conditions of the GNU Lesser
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
-#
-menuconfig KCONFIG_MODULE_GNRC_LORAWAN
-    bool "Configure GNRC LoRaWAN"
-    depends on MODULE_GNRC_LORAWAN
-    help
-        Configure GNRC LoRaWAN module using Kconfig.
 
-if KCONFIG_MODULE_GNRC_LORAWAN
+menuconfig COMPONENT_gnrc_lorawan
+    bool "GNRC LoRaWAN support"
+    depends on COMPONENT_xtimer
+    depends on COMPONENT_random
+    depends on COMPONENT_hashes
+    depends on COMPONENT_crypto
+    depends on COMPONENT_netdev_layer
+    depends on COMPONENT_gnrc_neterr
+    depends on COMPONENT_gnrc_netif
+    depends on COMPONENT_fmt
+    depends on COMPONENT_iolist
+    depends on HAS_LORA
+    help
+        Use GNRC LoRaWAN.
+
+if COMPONENT_gnrc_lorawan
 
 config GNRC_LORAWAN_TIMER_DRIFT
     int "Maximum timer drift"
@@ -27,4 +36,4 @@ config GNRC_LORAWAN_MIN_SYMBOLS_TIMEOUT
     default 30
     range 0 1024
 
-endif # KCONFIG_MODULE_GNRC_LORAWAN
+endif # COMPONENT_gnrc_lorawan

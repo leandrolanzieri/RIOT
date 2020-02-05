@@ -1,0 +1,17 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+config CPU_STM32L0
+    bool
+    default y 
+    select COMPONENT_cortexm_common
+    select COMPONENT_cortexm_common_periph
+    select COMPONENT_periph
+    select COMPONENT_newlib
+    select COMPONENT_newlib_nano
+    select COMPONENT_newlib_syscalls_default
+    select COMPONENT_stm32_common
+    select COMPONENT_stm32_common_periph

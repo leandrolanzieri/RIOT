@@ -1,0 +1,3 @@
+config COMPONENT_l2util
+    bool "Use L2 utils"
+    default y

@@ -4,16 +4,35 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
-menuconfig KCONFIG_MODULE_GNRC_IPV6
-    bool "Configure GNRC IPv6 module"
-    depends on MODULE_GNRC_IPV6
-    help
-        Configure GNRC IPv6 module using Kconfig.
 
-if KCONFIG_MODULE_GNRC_IPV6
+menuconfig COMPONENT_gnrc_ipv6
+    bool "Enable GNRC IPv6 support"
+    depends on COMPONENT_evtimer
+    depends on COMPONENT_gnrc_icmpv6
+    depends on COMPONENT_gnrc_ipv6_nib
+    depends on COMPONENT_gnrc_ndp
+    depends on COMPONENT_gnrc_netif
+    depends on GNRC_CORE
+    select COMPONENT_gnrc_ipv6_hdr
+    select HAS_SOCK_IPV6
+    select HAS_IPV6
+
+if COMPONENT_gnrc_ipv6
 
 config GNRC_IPV6_MSG_QUEUE_SIZE
     int "Default message queue size to use for the IPv6 thread"
     default 8
 
-endif # KCONFIG_MODULE_GNRC_IPV6
+endif # COMPONENT_gnrc_ipv6
+
+config COMPONENT_gnrc_ipv6_hdr
+    bool
+
+config COMPONENT_gnrc_ipv6_nib
+    bool "GNRC IPv6 Neighbour Information Base"
+    default y
+    depends on COMPONENT_luid
+    depends on COMPONENT_l2util
+
+config COMPONENT_gnrc_ndp
+    bool "GNRC IPv6 Neighbour Discovery Protocol"

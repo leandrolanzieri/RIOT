@@ -1,0 +1,35 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+menuconfig COMPONENT_shell
+    bool "Use Shell"
+    default y
+    depends on COMPONENT_stdio_uart_rx
+
+if COMPONENT_shell
+
+config COMPONENT_shell_commands
+    bool "Use shell commands"
+    default y
+
+config COMPONENT_gnrc_netif_cmd_lora
+    bool "Use LoRaWAN shell commands"
+    default y
+    depends on COMPONENT_shell_commands
+
+config COMPONENT_gnrc_icmpv6_echo
+    bool "Enable ping command"
+    default y
+    depends on COMPONENT_gnrc_icmpv6
+    depends on COMPONENT_shell_commands
+
+config COMPONENT_gnrc_txtsnd
+    bool "Enable txtsnd command"
+    default y
+    depends on COMPONENT_gnrc_netif
+    depends on COMPONENT_shell_commands
+
+endif # COMPONENT_shell

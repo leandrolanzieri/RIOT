@@ -1,0 +1,12 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config CPU_MSP430_COMMON
+    select HAS_arch_16bit
+    select HAS_arch_msp430
+    select HAS_periph_flashpage
+    select HAS_periph_flashpage_raw
+    select HAS_periph_pm

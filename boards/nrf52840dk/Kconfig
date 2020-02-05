@@ -1,0 +1,9 @@
+config HAS_radio_nrf802154
+    default y
+
+config HAS_periph_pwm
+    default y
+
+config HAS_periph_usbdev
+    default y
+

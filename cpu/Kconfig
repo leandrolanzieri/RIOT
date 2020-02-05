@@ -1,0 +1,71 @@
+rsource "Kconfig.features"
+rsource "cortexm_common/Kconfig"
+rsource "stm32_common/Kconfig"
+
+config COMPONENT_periph
+    bool
+
+config COMPONENT_periph_common
+    bool
+    select COMPONENT_periph
+
+config COMPONENT_periph_gpio
+    bool
+    default HAS_periph_gpio
+    depends on HAS_periph_gpio
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_gpio_irq
+    bool
+    default HAS_periph_gpio_irq
+    depends on HAS_periph_gpio_irq
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_spi
+    bool
+    default HAS_periph_spi
+    depends on HAS_periph_spi
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_cpuid
+    bool
+    default HAS_periph_cpuid
+    depends on HAS_periph_cpuid
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_hwrng
+    bool
+    default HAS_periph_hwrng
+    depends on HAS_periph_hwrng
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_pm
+    bool
+    default HAS_periph_pm
+    depends on HAS_periph_pm
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_spi_gpio_mode
+    bool
+    default HAS_periph_spi_gpio_mode
+    depends on HAS_periph_spi_gpio_mode
+    select COMPONENT_periph_common
+
+config COMPONENT_periph_uart
+    bool
+    default HAS_periph_uart
+    depends on HAS_periph_uart
+    select COMPONENT_periph_common
+
+config COMPONENT_native_drivers
+    default n
+    bool
+
+config COMPONENT_newlib
+    bool
+
+config COMPONENT_newlib_nano
+    bool
+
+config COMPONENT_newlib_syscalls_default
+    bool

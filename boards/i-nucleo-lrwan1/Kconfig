@@ -1,0 +1,24 @@
+config HAS_periph_i2c
+    default y
+
+config HAS_periph_lpuart
+    default y
+
+config HAS_periph_rtc
+    default y
+
+config HAS_periph_rtt
+    default y
+
+config HAS_periph_spi
+    default y
+
+config HAS_periph_spi_gpio_mode
+    default y
+
+config HAS_periph_timer
+    default y
+
+config HAS_periph_uart
+    default y
+

@@ -1,0 +1,24 @@
+config HAS_periph_adc
+    default y
+
+config HAS_periph_dac
+    default y
+
+config HAS_periph_i2c
+    default y
+
+config HAS_periph_pwm
+    default y
+
+config HAS_periph_spi
+    default y
+
+config HAS_periph_uart
+    default y
+
+config HAS_arduino
+    default y
+
+config HAS_esp_spi_ram
+    default y
+

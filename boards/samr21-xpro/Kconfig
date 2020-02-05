@@ -1,0 +1,14 @@
+config BOARD_SAMR21_XPRO
+    bool
+    default y
+    select HAS_periph_adc
+    select HAS_periph_i2c
+    select HAS_periph_pwm
+    select HAS_periph_rtc
+    select HAS_periph_rtt
+    select HAS_periph_spi
+    select HAS_periph_timer
+    select HAS_periph_uart
+    select HAS_periph_usbdev
+    select HAS_riotboot
+    select CPU_CORTEXM_COMMON

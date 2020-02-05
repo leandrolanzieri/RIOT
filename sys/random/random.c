@@ -42,19 +42,19 @@
 void auto_init_random(void)
 {
     uint32_t seed;
-#ifdef MODULE_PUF_SRAM
+#if IS_ACTIVE(CONFIG_RANDOM_SEED_SOURCE_PUF)
     /* TODO: hand state to application? */
     if (puf_sram_state) {
         LOG_WARNING("random: PUF SEED not fresh\n");
     }
     seed = puf_sram_seed;
-#elif defined (MODULE_PERIPH_HWRNG)
+#elif IS_ACTIVE(CONFIG_RANDOM_SEED_SOURCE_PERIPH_HWRNG)
     hwrng_read(&seed, 4);
-#elif defined (MODULE_PERIPH_CPUID)
+#elif IS_ACTIVE(CONFIG_RANDOM_SEED_SOURCE_PERIPH_CPUID)
     luid_get(&seed, 4);
 #else
     LOG_WARNING("random: NO SEED AVAILABLE!\n");
-    seed = RANDOM_SEED_DEFAULT;
+    seed = CONFIG_RANDOM_SEED_DEFAULT;
 #endif
     DEBUG("random: using seed value %u\n", (unsigned)seed);
     random_init(seed);

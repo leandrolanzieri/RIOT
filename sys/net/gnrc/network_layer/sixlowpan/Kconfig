@@ -5,10 +5,6 @@
 # directory for more details.
 #
 
-config COMPONENT_gnrc_sixlowpan
-    bool "GNRC Sixlowpan support"
-    depends on COMPONENT_bitfield
-
 menuconfig KCONFIG_MODULE_GNRC_SIXLOWPAN
     bool "Configure GNRC 6LoWPAN"
     depends on MODULE_GNRC_SIXLOWPAN

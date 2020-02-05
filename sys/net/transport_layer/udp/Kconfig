@@ -1,0 +1,3 @@
+config COMPONENT_udp
+    bool
+    default y if HAS_UDP

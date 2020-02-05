@@ -1,0 +1,13 @@
+config BOARD_B_L072Z_LRWAN1
+    bool
+    default y
+    select HAS_periph_dma
+    select HAS_periph_i2c
+    select HAS_periph_rtc
+    select HAS_periph_rtt
+    select HAS_periph_spi
+    select HAS_periph_spi_gpio_mode
+    select HAS_periph_timer
+    select HAS_periph_uart
+    select HAS_riotboot
+    select HAS_sx1276

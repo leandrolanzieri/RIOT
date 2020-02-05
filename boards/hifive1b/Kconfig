@@ -1,0 +1,21 @@
+config HAS_periph_i2c
+    default y
+
+config HAS_periph_rtc
+    default y
+
+config HAS_periph_rtt
+    default y
+
+config HAS_periph_spi
+    default y
+
+config HAS_periph_timer
+    default y
+
+config HAS_periph_uart
+    default y
+
+config HAS_arduino
+    default y
+

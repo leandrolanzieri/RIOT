@@ -7,7 +7,8 @@
 mainmenu "RIOT Configuration"
 
 orsource "boards/$(BOARD)/Kconfig"
-orsource "cpu/$(CPU)/Kconfig"
+rsource "cpu/$(CPU)/Kconfig"
+rsource "cpu/Kconfig"
 
 config COMPONENT_cpu
     bool
@@ -33,11 +34,23 @@ config COMPONENT_core_msg
     bool
     default y
 
+menu "Board"
+config DEFAULT_NETDEV
+    bool "Enable default network devices"
+    help
+        Enable support for all network devices present in the board
+endmenu # Defaults
+
 # For now, get used modules as macros from this file (see kconfig.mk)
 #osource "$(KCONFIG_GENERATED_DEPENDENCIES)"
 
 rsource "drivers/Kconfig"
 rsource "sys/Kconfig"
+rsource "sys/net/Kconfig"
+
+menu "Timers"
+rsource "sys/xtimer/Kconfig"
+endmenu # Timers
 
 # The application may declare new symbols as well
 osource "$(APPDIR)/Kconfig"

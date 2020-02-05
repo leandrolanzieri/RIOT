@@ -1,0 +1,15 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config CPU_ESP32
+    select HAS_arch_32bit
+    select HAS_arch_esp32
+    select HAS_cpp
+    select HAS_periph_cpuid
+    select HAS_periph_hwrng
+    select HAS_periph_pm
+    select HAS_periph_rtc
+    select HAS_periph_timer

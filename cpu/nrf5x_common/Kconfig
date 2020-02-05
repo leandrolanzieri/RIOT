@@ -1,0 +1,21 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config CPU_NRF5X_COMMON
+    select HAS_periph_cpuid
+    select HAS_periph_flashpage
+    select HAS_periph_flashpage_raw
+    select HAS_periph_gpio
+    select HAS_periph_gpio_irq
+    select HAS_periph_hwrng
+    select HAS_periph_temperature
+    select HAS_periph_uart_modecfg
+    select HAS_periph_wdt
+    select HAS_periph_wdt_cb
+    select HAS_ble_nimble
+    select HAS_radio_nrfble
+    select HAS_radio_nrfmin
+    select HAS_puf_sram

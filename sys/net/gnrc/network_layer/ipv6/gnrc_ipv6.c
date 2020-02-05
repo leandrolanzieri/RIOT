@@ -102,11 +102,12 @@ static void _dispatch_next_header(gnrc_pktsnip_t *pkt, unsigned nh,
                                   bool interested);
 
 static inline bool _gnrc_ipv6_is_interested(unsigned nh) {
-#ifdef MODULE_GNRC_ICMPV6
-    return (nh == PROTNUM_ICMPV6);
-#else  /* MODULE_GNRC_ICMPV6 */
-    return false;
-#endif /* MODULE_GNRC_ICMPV6 */
+    if (IS_USED(MODULE_GNRC_ICMPV6)) {
+        return (nh == PROTNUM_ICMPV6);
+    }
+    else {
+        return false;
+    }
 }
 
 static void _demux(gnrc_netif_t *netif, gnrc_pktsnip_t *pkt, unsigned nh)
@@ -114,12 +115,13 @@ static void _demux(gnrc_netif_t *netif, gnrc_pktsnip_t *pkt, unsigned nh)
     pkt->type = gnrc_nettype_from_protnum(nh);
     _dispatch_next_header(pkt, nh, _gnrc_ipv6_is_interested(nh));
     switch (nh) {
-#ifdef MODULE_GNRC_ICMPV6
         case PROTNUM_ICMPV6:
-            DEBUG("ipv6: handle ICMPv6 packet (nh = %u)\n", nh);
-            gnrc_icmpv6_demux(netif, pkt);
-            break;
-#endif /* MODULE_GNRC_ICMPV6 */
+            if (IS_USED(MODULE_GNRC_ICMPV6)) {
+                DEBUG("ipv6: handle ICMPv6 packet (nh = %u)\n", nh);
+                gnrc_icmpv6_demux(netif, pkt);
+                break;
+            }
+        /* FALL-THRU */
         default:
             break;
     }

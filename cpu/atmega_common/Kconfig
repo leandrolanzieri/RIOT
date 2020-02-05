@@ -1,0 +1,16 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config CPU_ATMEGA_COMMON
+    select HAS_arch_8bit
+    select HAS_arch_avr8
+    select HAS_atmega_pcint0
+    select HAS_periph_eeprom
+    select HAS_periph_gpio
+    select HAS_periph_gpio_irq
+    select HAS_periph_pm
+    select HAS_periph_cpuid
+    select HAS_periph_wdt

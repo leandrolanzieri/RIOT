@@ -21,10 +21,8 @@
 #include "net/ethernet.h"
 #include "net/ipv6.h"
 #include "net/gnrc.h"
-#ifdef MODULE_GNRC_IPV6_NIB
 #include "net/gnrc/ipv6/nib.h"
 #include "net/gnrc/ipv6.h"
-#endif /* MODULE_GNRC_IPV6_NIB */
 #ifdef MODULE_NETSTATS
 #include "net/netstats.h"
 #endif
@@ -1016,8 +1014,7 @@ static unsigned _cap_match(const gnrc_netif_t *netif, const ipv6_addr_t *src,
     if (ipv6_addr_is_link_local(src)) {
         best_prefix = 64U;  /* Link-local prefix is always of length 64 */
     }
-#ifdef MODULE_GNRC_IPV6_NIB
-    else {
+    else if(IS_USED(MODULE_GNRC_IPV6_NIB)) {
         void *state = NULL;
         gnrc_ipv6_nib_pl_t ple;
 
@@ -1027,7 +1024,6 @@ static unsigned _cap_match(const gnrc_netif_t *netif, const ipv6_addr_t *src,
             }
         }
     }
-#endif /* MODULE_GNRC_IPV6_NIB */
     return ((best_prefix > 0) && (best_prefix < match)) ? best_prefix : match;
 }
 

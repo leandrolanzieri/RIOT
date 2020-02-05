@@ -366,12 +366,14 @@ USEMODULE += $(filter-out $(DISABLE_MODULE), $(DEFAULT_MODULE))
 include $(RIOTBASE)/Makefile.dep
 
 
-$(info 1: $(USEMODULE))
+#$(info 1: $(USEMODULE))
 # CONFIG_COMPONENT_BITFIELD=y
 USECOMPONENT := $(patsubst CONFIG_COMPONENT_%,%,$(filter CONFIG_COMPONENT_%, $(.VARIABLES)))
 
+#$(info 1.5: $(USECOMPONENT))
+$(info $(filter-out $(USECOMPONENT), $(USEMODULE)))
 USEMODULE := $(sort $(USECOMPONENT))
-$(info 2: $(USEMODULE))
+#$(info 2: $(USEMODULE))
 
 
 ifeq ($(strip $(MCU)),)
