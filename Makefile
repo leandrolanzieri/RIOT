@@ -1,5 +1,9 @@
 .all:
 
+.PHONY:
+print-deps:
+	@$(RIOTBASE)/dist/tools/kconfig_dependencies/kconfig_dependencies.py -k $(RIOTBASE)/Kconfig -d
+
 .PHONY: all doc doc-man doc-latex docclean print-versions welcome
 
 all: welcome
