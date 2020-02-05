@@ -5,6 +5,7 @@
 # directory for more details.
 
 menu "Drivers"
+rsource "*/Kconfig"
 config COMPONENT_periph_timer
     bool "Use periph timer"
     depends on HAS_periph_timer

@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_vcnl40x0
+    bool
+
+menuconfig COMPONENT_vcnl40x0
+    bool "VCNL4010/VCNL4020/VCNL4040 Proximity and Ambient Light Sensors"
+    default y if HAS_vcnl40x0 && SAUL_DEFAULT
+

@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_mpl3115a2
+    bool
+
+menuconfig COMPONENT_mpl3115a2
+    bool "MPL3115A2 Pressure Sensor"
+    default y if HAS_mpl3115a2 && SAUL_DEFAULT
+

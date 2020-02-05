@@ -1,0 +1,14 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_pn532
+    bool
+
+menuconfig COMPONENT_pn532
+    bool "PN532 NFC Reader"
+    default y if HAS_pn532
+    select HAS_HAS_NETDEV_NFC
+

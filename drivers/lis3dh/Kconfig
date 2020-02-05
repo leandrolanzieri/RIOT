@@ -1,0 +1,14 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_lis3dh
+    bool
+
+menuconfig COMPONENT_lis3dh
+    bool "LIS3DH accelerometer"
+    default y if HAS_lis3dh && SAUL_DEFAULT
+    select HAS_HAS_NETDEV_BLE
+

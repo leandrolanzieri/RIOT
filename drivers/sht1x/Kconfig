@@ -1,0 +1,35 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_sht10
+    bool
+    select HAS_sht1x
+
+config HAS_sht15
+    bool
+    select HAS_sht1x
+
+config HAS_sht1x
+    bool
+
+menuconfig COMPONENT_sht1x
+    bool "SHT10/SHT11/SHT15 Humidity and Temperature Sensor"
+    default y if HAS_sht1x && SAUL_DEFAULT
+
+if COMPONENT_sht1x
+    choice
+        bool "Select device model"
+        default COMPONENT_sht10 if HAS_sht10
+        default COMPONENT_sht15 if HAS_sht15
+
+        config COMPONENT_sht10
+            bool "SHT10"
+
+        config COMPONENT_sht15
+            bool "SHT15"
+
+    endchoice
+endif # COMPONENT_sht1x

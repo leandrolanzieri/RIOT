@@ -1,0 +1,14 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_lsm303dlhc
+    bool
+
+menuconfig COMPONENT_lsm303dlhc
+    bool "LSM303DLHC 3D accelerometer/magnetometer"
+    default y if HAS_lsm303dlhc && SAUL_DEFAULT
+    select HAS_HAS_NETDEV_BLE
+

@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_ina3221
+    bool
+
+menuconfig COMPONENT_ina3221
+    bool "INA3221 current/power monitor"
+    default y if HAS_ina3221 && SAUL_DEFAULT
+

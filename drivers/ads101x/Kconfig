@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_ads101x
+    bool
+
+menuconfig COMPONENT_ads101x
+    bool "ADS101x/111x ADC device driver"
+    default y if HAS_ads101x && SAUL_DEFAULT
+

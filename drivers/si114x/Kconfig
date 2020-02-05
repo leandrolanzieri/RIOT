@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_si114x
+    bool
+
+menuconfig COMPONENT_si114x
+    bool "Si1145/6/7 UV/Ambient light/Proximity sensors"
+    default y if HAS_si114x && SAUL_DEFAULT
+

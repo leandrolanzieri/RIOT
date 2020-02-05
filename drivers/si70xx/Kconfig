@@ -1,0 +1,51 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_si7006
+    bool
+    select HAS_si70xx
+
+config HAS_si7013
+    bool
+    select HAS_si70xx
+
+config HAS_si7020
+    bool
+    select HAS_si70xx
+
+config HAS_si7021
+    bool
+    select HAS_si70xx
+
+config HAS_si70xx
+    bool
+
+menuconfig COMPONENT_si70xx
+    bool "Si7006/13/20/21 temperature and humidity sensors"
+    default y if HAS_si70xx && SAUL_DEFAULT
+
+if COMPONENT_si70xx
+    choice
+        bool "Select device model"
+        default COMPONENT_si7006 if HAS_si7006
+        default COMPONENT_si7013 if HAS_si7013
+        default COMPONENT_si7020 if HAS_si7020
+        default COMPONENT_si7021 if HAS_si7021
+
+        config COMPONENT_si7006
+            bool "SI7006"
+
+        config COMPONENT_si7013
+            bool "SI7013"
+
+        config COMPONENT_si7020
+            bool "SI7020"
+
+        config COMPONENT_si7021
+            bool "SI7021"
+
+    endchoice
+endif # COMPONENT_si70xx

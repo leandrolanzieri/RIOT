@@ -1,0 +1,14 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_ata8520e
+    bool
+
+menuconfig COMPONENT_ata8520e
+    bool "Microchip ATA8520E transceiver"
+    default y if HAS_ata8520e
+    select HAS_HAS_NETDEV_SIGFOX
+

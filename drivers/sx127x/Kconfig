@@ -1,3 +1,9 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
 config HAS_sx1272
     bool
     select HAS_sx127x
@@ -10,20 +16,21 @@ config HAS_sx127x
     bool
 
 menuconfig COMPONENT_sx127x
-    bool "SX127x radio support"
-    default y if DEFAULT_NETDEV && HAS_sx127x
-    select HAS_LORA
+    bool "Semtech SX1272 and SX1276 radios driver"
+    default y if HAS_sx127x && NETDEV_DEFAULT
+    select HAS_HAS_NETDEV_LORA
 
 if COMPONENT_sx127x
     choice
         bool "Select device model"
-        default COMPONENT_sx1276 if HAS_sx1276
         default COMPONENT_sx1272 if HAS_sx1272
-        config COMPONENT_sx1276
-            bool "SX1276"
+        default COMPONENT_sx1276 if HAS_sx1276
 
         config COMPONENT_sx1272
             bool "SX1272"
-    endchoice
 
+        config COMPONENT_sx1276
+            bool "SX1276"
+
+    endchoice
 endif # COMPONENT_sx127x

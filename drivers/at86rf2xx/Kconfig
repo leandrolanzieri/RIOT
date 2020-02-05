@@ -1,0 +1,52 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_at86rf212b
+    bool
+    select HAS_at86rf2xx
+
+config HAS_at86rf231
+    bool
+    select HAS_at86rf2xx
+
+config HAS_at86rf232
+    bool
+    select HAS_at86rf2xx
+
+config HAS_at86rf233
+    bool
+    select HAS_at86rf2xx
+
+config HAS_at86rf2xx
+    bool
+
+menuconfig COMPONENT_at86rf2xx
+    bool "AT86RF2xx based drivers"
+    default y if HAS_at86rf2xx && NETDEV_DEFAULT
+    select HAS_HAS_NETDEV_IEEE802154
+
+if COMPONENT_at86rf2xx
+    choice
+        bool "Select device model"
+        default COMPONENT_at86rf212b if HAS_at86rf212b
+        default COMPONENT_at86rf231 if HAS_at86rf231
+        default COMPONENT_at86rf232 if HAS_at86rf232
+        default COMPONENT_at86rf233 if HAS_at86rf233
+
+        config COMPONENT_at86rf212b
+            bool "AT86RF212B"
+
+        config COMPONENT_at86rf231
+            bool "AT86RF231"
+
+        config COMPONENT_at86rf232
+            bool "AT86RF232"
+
+        config COMPONENT_at86rf233
+            bool "AT86RF233"
+
+    endchoice
+endif # COMPONENT_at86rf2xx

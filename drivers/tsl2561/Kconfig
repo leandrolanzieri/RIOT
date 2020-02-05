@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_tsl2561
+    bool
+
+menuconfig COMPONENT_tsl2561
+    bool "TSL2561 illuminance sensor"
+    default y if HAS_tsl2561 && SAUL_DEFAULT
+

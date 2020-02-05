@@ -1,0 +1,35 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_tmp006
+    bool
+    select HAS_tmp00x
+
+config HAS_tmp007
+    bool
+    select HAS_tmp00x
+
+config HAS_tmp00x
+    bool
+
+menuconfig COMPONENT_tmp00x
+    bool "TMP006/TMP007 Infrared Thermopile Sensor"
+    default y if HAS_tmp00x && SAUL_DEFAULT
+
+if COMPONENT_tmp00x
+    choice
+        bool "Select device model"
+        default COMPONENT_tmp006 if HAS_tmp006
+        default COMPONENT_tmp007 if HAS_tmp007
+
+        config COMPONENT_tmp006
+            bool "TMP006"
+
+        config COMPONENT_tmp007
+            bool "TMP007"
+
+    endchoice
+endif # COMPONENT_tmp00x

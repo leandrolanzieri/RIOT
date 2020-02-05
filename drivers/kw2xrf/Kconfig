@@ -1,0 +1,14 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_kw2xrf
+    bool
+
+menuconfig COMPONENT_kw2xrf
+    bool "KW2x radio-driver"
+    default y if HAS_kw2xrf && NETDEV_DEFAULT
+    select HAS_HAS_NETDEV_IEEE802154
+

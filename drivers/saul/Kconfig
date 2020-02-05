@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_saul
+    bool
+
+menuconfig COMPONENT_saul
+    bool "[S]ensor [A]ctuator [U]ber [L]ayer"
+    default y if HAS_saul && SAUL_DEFAULT
+

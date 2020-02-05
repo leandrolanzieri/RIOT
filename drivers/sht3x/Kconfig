@@ -1,0 +1,13 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_sht3x
+    bool
+
+menuconfig COMPONENT_sht3x
+    bool "SHT3x Humidity and Temperature sensor"
+    default y if HAS_sht3x && SAUL_DEFAULT
+

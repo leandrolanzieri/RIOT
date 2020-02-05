@@ -1,0 +1,43 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+
+config HAS_lps22hb
+    bool
+    select HAS_lpsxxx
+
+config HAS_lps25hb
+    bool
+    select HAS_lpsxxx
+
+config HAS_lps331ap
+    bool
+    select HAS_lpsxxx
+
+config HAS_lpsxxx
+    bool
+
+menuconfig COMPONENT_lpsxxx
+    bool "LPS331AP/LPS25HB/LPS22HB Pressure Sensors Driver"
+    default y if HAS_lpsxxx && SAUL_DEFAULT
+
+if COMPONENT_lpsxxx
+    choice
+        bool "Select device model"
+        default COMPONENT_lps22hb if HAS_lps22hb
+        default COMPONENT_lps25hb if HAS_lps25hb
+        default COMPONENT_lps331ap if HAS_lps331ap
+
+        config COMPONENT_lps22hb
+            bool "LPS22HB"
+
+        config COMPONENT_lps25hb
+            bool "LPS25HB"
+
+        config COMPONENT_lps331ap
+            bool "LPS331AP"
+
+    endchoice
+endif # COMPONENT_lpsxxx
