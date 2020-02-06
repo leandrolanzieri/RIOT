@@ -8,6 +8,6 @@ config HAS_ds3234
     bool
 
 menuconfig COMPONENT_ds3234
-    bool " DS3234 Extremely Accurate SPI RTC"
+    bool "DS3234 Extremely Accurate SPI RTC"
     default y if HAS_ds3234
 

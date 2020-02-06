@@ -11,3 +11,6 @@ menuconfig COMPONENT_periph_common
     bool "Common peripheral interface"
     default y if HAS_periph_common
 
+config COMPONENT_periph_timer
+    bool "Timer peripheral"
+    depends on HAS_periph_timer

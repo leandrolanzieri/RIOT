@@ -5,28 +5,179 @@
 # directory for more details.
 
 menu "Drivers"
-rsource "*/Kconfig"
-config COMPONENT_periph_timer
-    bool "Use periph timer"
-    depends on HAS_periph_timer
 
-menu "Network Devices"
-rsource "sx127x/Kconfig"
+menu "Actuator devices"
+
+rsource "apa102/Kconfig"
+rsource "dsp0401/Kconfig"
+rsource "dynamixel/Kconfig"
+rsource "feetech/Kconfig"
+rsource "grove_ledbar/Kconfig"
+rsource "hd44780/Kconfig"
+rsource "lpd8808/Kconfig"
+rsource "motor_driver/Kconfig"
+rsource "my9221/Kconfig"
+rsource "pca9685/Kconfig"
+rsource "pcd8544/Kconfig"
+rsource "rgbled/Kconfig"
+rsource "servo/Kconfig"
+rsource "uart_half_duplex/Kconfig"
+rsource "ws281x/Kconfig"
+
+endmenu # Actuator devices
+
+
+menu "Network devices"
+
+menu "Netdev interfaces"
+
+rsource "netdev_ieee802154/Kconfig"
+rsource "netdev_eth/Kconfig"
+rsource "netdev_layer/Kconfig"
 
 config COMPONENT_netdev_tap
     bool "Netdev TAP device"
     default y if DEFAULT_NETDEV && HAS_netdev_tap
     select COMPONENT_netdev_eth
 
-menu "Netdev"
-config COMPONENT_netdev_layer
-    bool "Use netdev_layer module"
+endmenu # Netdev interface
 
-config COMPONENT_netdev_eth
-    bool "Netdev Ethernet device"
-    select HAS_ETHERNET
-endmenu # Netdev
-endmenu # Network Devices
+menu "CAN devices"
 
+rsource "can_trx/Kconfig"
+rsource "ncv7356/Kconfig"
+rsource "tja1042/Kconfig"
+
+endmenu # CAN devices
+
+rsource "at86rf2xx/Kconfig"
+rsource "ata8520e/Kconfig"
+rsource "cc110x/Kconfig"
+rsource "cc2420/Kconfig"
+rsource "dose/Kconfig"
+rsource "enc28j60/Kconfig"
+rsource "encx24j600/Kconfig"
+rsource "ethos/Kconfig"
+rsource "kw2xrf/Kconfig"
+rsource "mrf24j40/Kconfig"
+rsource "pn532/Kconfig"
+rsource "rn2xx3/Kconfig"
+rsource "slipdev/Kconfig"
+rsource "stm32_eth/Kconfig"
+rsource "sx127x/Kconfig"
+rsource "w5100/Kconfig"
+rsource "xbee/Kconfig"
+
+endmenu # Network devices
+
+
+menu "Peripheral drivers"
+
+rsource "periph_common/Kconfig"
+
+endmenu # Peripheral drivers
+
+
+menu "Power supply devices"
+
+rsource "tps6274x/Kconfig"
+
+endmenu # Power supply devices
+
+
+menu "Sensor devices"
+
+rsource "ad7746/Kconfig"
+rsource "adcxx1c/Kconfig"
+rsource "ads101x/Kconfig"
+rsource "adt7310/Kconfig"
+rsource "adxl345/Kconfig"
+rsource "at30tse75x/Kconfig"
+rsource "bh1750fvi/Kconfig"
+rsource "bmp180/Kconfig"
+rsource "bmx055/Kconfig"
+rsource "bmx280/Kconfig"
+rsource "ccs811/Kconfig"
+rsource "dcf77/Kconfig"
+rsource "dht/Kconfig"
+rsource "ds1307/Kconfig"
+rsource "ds18/Kconfig"
+rsource "ds3234/Kconfig"
+rsource "ds75lx/Kconfig"
+rsource "fxos8700/Kconfig"
+rsource "hdc1000/Kconfig"
+rsource "hih6130/Kconfig"
+rsource "hts221/Kconfig"
+rsource "ina2xx/Kconfig"
+rsource "ina3221/Kconfig"
+rsource "io1_xplained/Kconfig"
+rsource "isl29020/Kconfig"
+rsource "isl29125/Kconfig"
+rsource "itg320x/Kconfig"
+rsource "jc42/Kconfig"
+rsource "l3g4200d/Kconfig"
+rsource "lc709203f/Kconfig"
+rsource "lis2dh12/Kconfig"
+rsource "lis3dh/Kconfig"
+rsource "lis3mdl/Kconfig"
+rsource "lpsxxx/Kconfig"
+rsource "lsm303dlhc/Kconfig"
+rsource "lsm6dsl/Kconfig"
+rsource "ltc4150/Kconfig"
+rsource "mag3110/Kconfig"
+rsource "mma7660/Kconfig"
+rsource "mma8x5x/Kconfig"
+rsource "mpl3115a2/Kconfig"
+rsource "mpu9x50/Kconfig"
+rsource "mq3/Kconfig"
+rsource "opt3001/Kconfig"
+rsource "ph_oem/Kconfig"
+rsource "pir/Kconfig"
+rsource "pulse_counter/Kconfig"
+rsource "qmc5883l/Kconfig"
+rsource "sds011/Kconfig"
+rsource "sht1x/Kconfig"
+rsource "sht2x/Kconfig"
+rsource "sht3x/Kconfig"
+rsource "shtc1/Kconfig"
+rsource "srf02/Kconfig"
+rsource "srf04/Kconfig"
+rsource "srf08/Kconfig"
+rsource "si114x/Kconfig"
+rsource "si70xx/Kconfig"
+rsource "tcs37727/Kconfig"
+rsource "tmp00x/Kconfig"
+rsource "tsl2561/Kconfig"
+rsource "tsl4531x/Kconfig"
+rsource "vcnl40x0/Kconfig"
+rsource "veml6070/Kconfig"
+
+endmenu # Sensor devices
+
+
+menu "Soft Peripheral interface"
+
+rsource "soft_spi/Kconfig"
+
+endmenu # Soft Peripheral interface
+
+
+menu "Storage devices"
+
+rsource "mtd/Kconfig"
+rsource "mtd_flashpage/Kconfig"
+rsource "mtd_sdcard/Kconfig"
+rsource "mtd_spi_nor/Kconfig"
+rsource "nvram/Kconfig"
+rsource "sdcard_spi/Kconfig"
+
+endmenu # Storage devices
+
+menu "Others"
+
+rsource "at/Kconfig"
+rsource "ili9341/Kconfig"
+
+endmenu # Others
 
 endmenu # Drivers

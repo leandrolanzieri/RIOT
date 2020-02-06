@@ -8,6 +8,6 @@ config HAS_ds1307
     bool
 
 menuconfig COMPONENT_ds1307
-    bool " DS1307 RTC"
+    bool "DS1307 RTC"
     default y if HAS_ds1307
 
