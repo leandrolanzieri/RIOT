@@ -8,3 +8,5 @@ config CPU_MSP430FXYZ
     bool
     default y
     select CPU_MSP430_COMMON
+
+source "$(RIOTCPU)/msp430_common/Kconfig"

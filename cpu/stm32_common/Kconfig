@@ -37,3 +37,5 @@ config CPU_STM32_COMMON
     select COMPONENT_stm32_common
     select COMPONENT_stm32_common_periph
     select CPU_CORTEXM_COMMON
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"

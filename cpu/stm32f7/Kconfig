@@ -9,3 +9,5 @@ config CPU_STM32F7
     default y
     select HAS_periph_hwrng
     select CPU_STM32_COMMON
+
+source "$(RIOTCPU)/stm32_common/Kconfig"

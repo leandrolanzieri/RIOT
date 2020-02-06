@@ -10,3 +10,5 @@ config CPU_SAMD5X
     select HAS_periph_hwrng
     select HAS_backup_ram
     select CPU_SAM0_COMMON
+
+source "$(RIOTCPU)/sam0_common/Kconfig"

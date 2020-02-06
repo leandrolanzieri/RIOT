@@ -9,3 +9,5 @@ config CPU_MIPS_PIC32_COMMON
     default y
     select HAS_periph_cpuid
     select CPU_MIPS32R2_COMMON
+
+source "$(RIOTCPU)/mips32r2_common/Kconfig"

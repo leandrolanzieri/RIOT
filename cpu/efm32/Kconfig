@@ -15,3 +15,5 @@ config CPU_EFM32
     select HAS_periph_gpio_irq
     select HAS_periph_hwrng
     select CPU_CORTEXM_COMMON
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"

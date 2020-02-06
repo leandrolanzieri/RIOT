@@ -9,3 +9,5 @@ config CPU_MIPS_PIC32MZ
     default y
     select HAS_periph_hwrng
     select CPU_MIPS_PIC32_COMMON
+
+source "$(RIOTCPU)/mips_pic32_common/Kconfig"

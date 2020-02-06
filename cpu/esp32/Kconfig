@@ -16,3 +16,5 @@ config CPU_ESP32
     select HAS_periph_rtc
     select HAS_periph_timer
     select CPU_ESP_COMMON
+
+source "$(RIOTCPU)/esp_common/Kconfig"

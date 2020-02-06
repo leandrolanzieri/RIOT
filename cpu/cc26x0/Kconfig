@@ -8,3 +8,5 @@ config CPU_CC26X0
     bool
     default y
     select CPU_CORTEXM_COMMON
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"

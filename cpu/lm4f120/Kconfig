@@ -8,3 +8,5 @@ config CPU_LM4F120
     bool
     default y
     select CPU_STELLARIS_COMMON
+
+source "$(RIOTCPU)/stellaris_common/Kconfig"

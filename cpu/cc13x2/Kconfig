@@ -8,3 +8,5 @@ config CPU_CC13X2
     bool
     default y
     select CPU_CORTEXM_COMMON
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"

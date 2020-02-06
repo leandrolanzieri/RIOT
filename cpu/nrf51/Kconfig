@@ -8,3 +8,5 @@ config CPU_NRF51
     bool
     default y
     select CPU_NRF5X_COMMON
+
+source "$(RIOTCPU)/nrf5x_common/Kconfig"

@@ -10,3 +10,5 @@ config CPU_LPC1768
     select HAS_periph_cpuid
     select HAS_periph_pm
     select CPU_CORTEXM_COMMON
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"

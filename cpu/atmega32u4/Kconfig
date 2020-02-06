@@ -8,3 +8,5 @@ config CPU_ATMEGA32U4
     bool
     default y
     select CPU_ATMEGA_COMMON
+
+source "$(RIOTCPU)/atmega_common/Kconfig"

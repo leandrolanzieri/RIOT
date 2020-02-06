@@ -1,6 +1,4 @@
 rsource "Kconfig.features"
-rsource "cortexm_common/Kconfig"
-rsource "stm32_common/Kconfig"
 
 config COMPONENT_periph
     bool

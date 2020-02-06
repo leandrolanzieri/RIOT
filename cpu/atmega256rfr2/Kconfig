@@ -9,3 +9,5 @@ config CPU_ATMEGA256RFR2
     default y
     select HAS_atmega_pcint1
     select CPU_ATMEGA_COMMON
+
+source "$(RIOTCPU)/atmega_common/Kconfig"

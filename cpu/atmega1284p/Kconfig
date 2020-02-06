@@ -11,3 +11,5 @@ config CPU_ATMEGA1284P
     select HAS_atmega_pcint2
     select HAS_atmega_pcint3
     select CPU_ATMEGA_COMMON
+
+source "$(RIOTCPU)/atmega_common/Kconfig"
