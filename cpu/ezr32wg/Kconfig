@@ -8,3 +8,4 @@ config CPU_EZR32WG
     select HAS_periph_cpuid
     select HAS_periph_gpio
     select HAS_periph_gpio_irq
+    select CPU_CORTEXM_COMMON

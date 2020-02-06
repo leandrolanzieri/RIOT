@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_ATMEGA32U4
+    select CPU_ATMEGA_COMMON

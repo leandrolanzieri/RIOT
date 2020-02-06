@@ -6,3 +6,4 @@
 
 config CPU_STM32F2
     select HAS_periph_hwrng
+    select CPU_STM32_COMMON

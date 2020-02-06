@@ -8,3 +8,4 @@ config CPU_CC26XX_CC13XX
     select HAS_periph_cpuid
     select HAS_periph_uart
     select HAS_periph_uart_modecfg
+    select CPU_CORTEXM_COMMON

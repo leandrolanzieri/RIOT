@@ -11,3 +11,4 @@ config CPU_CC2538
     select HAS_periph_hwrng
     select HAS_periph_uart_modecfg
     select HAS_puf_sram
+    select CPU_CORTEXM_COMMON

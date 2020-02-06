@@ -12,3 +12,4 @@ config CPU_ESP8266
     select HAS_periph_hwrng
     select HAS_periph_pm
     select HAS_periph_timer
+    select CPU_ESP_COMMON

@@ -13,3 +13,4 @@ config CPU_KINETIS
     select HAS_periph_mcg
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw
+    select CPU_CORTEXM_COMMON

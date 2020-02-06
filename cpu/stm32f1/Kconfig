@@ -8,3 +8,4 @@ config CPU_STM32F1
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw
     select HAS_periph_rtc
+    select CPU_STM32_COMMON

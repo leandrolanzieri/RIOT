@@ -6,3 +6,4 @@
 
 config CPU_MIPS_PIC32_COMMON
     select HAS_periph_cpuid
+    select CPU_MIPS32R2_COMMON

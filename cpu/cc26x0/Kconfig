@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_CC26X0
+    select CPU_CORTEXM_COMMON

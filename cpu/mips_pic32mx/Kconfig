@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_MIPS_PIC32MX
+    select CPU_MIPS_PIC32_COMMON

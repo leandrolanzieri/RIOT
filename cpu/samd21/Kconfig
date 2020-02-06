@@ -6,3 +6,4 @@
 
 config CPU_SAMD21
     select HAS_puf_sram
+    select CPU_SAM0_COMMON

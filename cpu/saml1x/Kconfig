@@ -6,3 +6,4 @@
 
 config CPU_SAML1X
     select HAS_periph_hwrng
+    select CPU_SAM0_COMMON

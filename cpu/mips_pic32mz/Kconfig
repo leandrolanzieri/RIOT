@@ -6,3 +6,4 @@
 
 config CPU_MIPS_PIC32MZ
     select HAS_periph_hwrng
+    select CPU_MIPS_PIC32_COMMON

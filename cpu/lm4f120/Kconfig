@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_LM4F120
+    select CPU_STELLARIS_COMMON

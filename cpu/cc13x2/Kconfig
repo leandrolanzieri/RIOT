@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_CC13X2
+    select CPU_CORTEXM_COMMON

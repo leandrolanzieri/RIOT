@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_NRF51
+    select CPU_NRF5X_COMMON

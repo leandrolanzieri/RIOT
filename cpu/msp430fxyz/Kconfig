@@ -5,3 +5,4 @@
 # directory for more details.
 
 config CPU_MSP430FXYZ
+    select CPU_MSP430_COMMON

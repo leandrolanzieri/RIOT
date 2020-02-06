@@ -7,3 +7,4 @@
 config CPU_SAMD5X
     select HAS_periph_hwrng
     select HAS_backup_ram
+    select CPU_SAM0_COMMON
