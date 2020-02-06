@@ -1,0 +1,9 @@
+config COMPONENT_ieee802154
+    bool "IEEE 802.15.4 support"
+    default y if HAS_NETDEV_IEEE802154 && NETDEV_DEFAULT
+    select HAS_IEEE802154
+
+config HAS_IEEE802154
+    bool
+    help
+        Indicates that there is IEEE 802.15.4 software support.

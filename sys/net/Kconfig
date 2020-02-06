@@ -60,6 +60,8 @@ if NETWORKING
     rsource "network_layer/icmpv6/Kconfig"
     rsource "transport_layer/udp/Kconfig"
 
+    rsource "link_layer/ieee802154/Kconfig"
+
 menu "Net Utils"
     rsource "crosslayer/inet_csum/Kconfig"
     rsource "link_layer/l2util/Kconfig"

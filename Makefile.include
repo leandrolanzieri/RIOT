@@ -371,7 +371,7 @@ include $(RIOTBASE)/Makefile.dep
 USECOMPONENT := $(patsubst CONFIG_COMPONENT_%,%,$(filter CONFIG_COMPONENT_%, $(.VARIABLES)))
 
 #$(info 1.5: $(USECOMPONENT))
-$(info $(filter-out $(USECOMPONENT), $(USEMODULE)))
+#$(info $(filter-out $(USECOMPONENT), $(USEMODULE)))
 USEMODULE := $(sort $(USECOMPONENT))
 #$(info 2: $(USEMODULE))
 
