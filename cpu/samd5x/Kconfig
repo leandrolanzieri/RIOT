@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_SAMD5X
+    bool
+    default y
     select HAS_periph_hwrng
     select HAS_backup_ram
     select CPU_SAM0_COMMON

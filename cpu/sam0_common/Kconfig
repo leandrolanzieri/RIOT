@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_SAM0_COMMON
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw

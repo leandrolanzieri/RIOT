@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_MSP430_COMMON
+    bool
+    default y
     select HAS_arch_16bit
     select HAS_arch_msp430
     select HAS_periph_flashpage

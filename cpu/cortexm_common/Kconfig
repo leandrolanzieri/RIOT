@@ -12,6 +12,7 @@ config COMPONENT_cortexm_common_periph
 
 config CPU_CORTEXM_COMMON
     bool
+    default y
     select HAS_arch_32bit
     select HAS_arch_arm
     select HAS_arch_cortexm

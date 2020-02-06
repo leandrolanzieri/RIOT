@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_FE310
+    bool
+    default y
     select HAS_arch_32bit
     select HAS_arch_riscv
     select HAS_cpp

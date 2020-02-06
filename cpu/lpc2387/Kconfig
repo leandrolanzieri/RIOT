@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_LPC2387
+    bool
+    default y
     select HAS_backup_ram
     select HAS_periph_dac
     select HAS_periph_gpio

@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_CC26XX_CC13XX
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_uart
     select HAS_periph_uart_modecfg

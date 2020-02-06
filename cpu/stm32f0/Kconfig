@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_STM32F0
+    bool
+    default y
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw
     select CPU_STM32_COMMON

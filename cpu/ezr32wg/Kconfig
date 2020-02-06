@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_EZR32WG
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_gpio
     select HAS_periph_gpio_irq

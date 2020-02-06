@@ -5,5 +5,7 @@
 # directory for more details.
 
 config CPU_SAML1X
+    bool
+    default y
     select HAS_periph_hwrng
     select CPU_SAM0_COMMON

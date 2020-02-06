@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_ARM7_COMMON
+    bool
+    default y
     select HAS_arch_32bit
     select HAS_arch_arm
     select HAS_arch_arm7

@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_EFM32
+    bool
+    default y
     select HAS_arch_efm32
     select HAS_periph_cpuid
     select HAS_periph_flashpage

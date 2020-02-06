@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_SAM3
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_hwrng
     select CPU_SAM_COMMON

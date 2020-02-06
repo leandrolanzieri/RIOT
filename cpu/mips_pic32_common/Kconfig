@@ -5,5 +5,7 @@
 # directory for more details.
 
 config CPU_MIPS_PIC32_COMMON
+    bool
+    default y
     select HAS_periph_cpuid
     select CPU_MIPS32R2_COMMON

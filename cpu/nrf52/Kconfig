@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_NRF52
+    bool
+    default y
     select HAS_periph_adc
     select HAS_ble_nimble_netif
     select CPU_NRF5X_COMMON

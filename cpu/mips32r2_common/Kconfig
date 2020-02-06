@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_MIPS32R2_COMMON
+    bool
+    default y
     select HAS_arch_32bit
     select HAS_arch_mips32r2
     select HAS_cpp

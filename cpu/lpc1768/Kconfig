@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_LPC1768
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_pm
     select CPU_CORTEXM_COMMON

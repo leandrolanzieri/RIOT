@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_ATMEGA_COMMON
+    bool
+    default y
     select HAS_arch_8bit
     select HAS_arch_avr8
     select HAS_atmega_pcint0

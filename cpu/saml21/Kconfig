@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_SAML21
+    bool
+    default y
     select HAS_backup_ram
     select HAS_periph_hwrng
     select CPU_SAM0_COMMON

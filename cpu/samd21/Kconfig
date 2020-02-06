@@ -5,5 +5,7 @@
 # directory for more details.
 
 config CPU_SAMD21
+    bool
+    default y
     select HAS_puf_sram
     select CPU_SAM0_COMMON

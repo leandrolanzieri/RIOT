@@ -6,17 +6,27 @@
 
 config COMPONENT_stm32_common
     bool
+    default y
+    bool
 
 config COMPONENT_stm32_common_periph
     bool
+    default y
+    bool
 
 config COMPONENT_pm_layered
+    bool
+    default y
     default y if CPU_STM32_COMMON
 
 config COMPONENT_periph_uart
+    bool
+    default y
     depends on COMPONENT_pm_layered
 
 config CPU_STM32_COMMON
+    bool
+    default y
     bool
     select HAS_periph_cpuid
     select HAS_periph_gpio

@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_ESP32
+    bool
+    default y
     select HAS_arch_32bit
     select HAS_arch_esp32
     select HAS_cpp

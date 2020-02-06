@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_ATMEGA2560
+    bool
+    default y
     select HAS_atmega_pcint1
     select HAS_atmega_pcint2
     select CPU_ATMEGA_COMMON

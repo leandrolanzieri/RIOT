@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_KINETIS
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_hwrng
     select HAS_periph_gpio
