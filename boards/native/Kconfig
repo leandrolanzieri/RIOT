@@ -18,7 +18,3 @@ config HAS_periph_qdec
 
 config HAS_ethernet
     default y
-
-config HAS_motor_driver
-    default y
-
