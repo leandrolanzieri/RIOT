@@ -7,26 +7,36 @@
 config HAS_at86rf212b
     bool
     select HAS_at86rf2xx
+    help
+        Indicates that a radio at86rf212b is present.
 
 config HAS_at86rf231
     bool
     select HAS_at86rf2xx
+    help
+        Indicates that a radio at86rf231 is present.
 
 config HAS_at86rf232
     bool
     select HAS_at86rf2xx
+    help
+        Indicates that a radio at86rf232 is present.
 
 config HAS_at86rf233
     bool
     select HAS_at86rf2xx
+    help
+        Indicates that a radio at86rf233 is present.
 
 config HAS_at86rf2xx
     bool
+    help
+        Indicates that a radio of the at86rf2xx family is present.
 
 menuconfig COMPONENT_at86rf2xx
     bool "AT86RF2xx based drivers"
     default y if HAS_at86rf2xx && NETDEV_DEFAULT
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
 
 if COMPONENT_at86rf2xx
     choice

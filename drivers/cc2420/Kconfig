@@ -10,5 +10,5 @@ config HAS_cc2420
 menuconfig COMPONENT_cc2420
     bool "CC2420 radio driver"
     default y if HAS_cc2420 && NETDEV_DEFAULT
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
 

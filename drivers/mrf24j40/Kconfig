@@ -10,5 +10,5 @@ config HAS_mrf24j40
 menuconfig COMPONENT_mrf24j40
     bool "MRF24J40 based drivers"
     default y if HAS_mrf24j40 && NETDEV_DEFAULT
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
 

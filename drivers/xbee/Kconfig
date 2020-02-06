@@ -10,6 +10,6 @@ config HAS_xbee
 menuconfig COMPONENT_xbee
     bool "XBee driver"
     default y if HAS_xbee
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
     select HAS_HAS_NETDEV_XBEE
 
