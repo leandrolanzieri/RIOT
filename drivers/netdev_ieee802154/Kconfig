@@ -10,5 +10,5 @@ config HAS_netdev_ieee802154
 menuconfig COMPONENT_netdev_ieee802154
     bool "Netdev IEEE802.15.4 interface"
     default y if HAS_netdev_ieee802154
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
 

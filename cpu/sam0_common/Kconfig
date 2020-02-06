@@ -18,5 +18,7 @@ config CPU_SAM0_COMMON
     select HAS_periph_wdt
     select HAS_periph_wdt_cb
     select CPU_CORTEXM_COMMON
+    select COMPONENT_sam0_common_periph
 
+rsource "periph/Kconfig"
 source "$(RIOTCPU)/cortexm_common/Kconfig"

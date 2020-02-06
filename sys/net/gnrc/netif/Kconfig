@@ -34,6 +34,7 @@ config COMPONENT_gnrc_netif_lorawan
 config COMPONENT_gnrc_netif_ieee802154
     bool
     default y if HAS_IEEE802154
+    depends on COMPONENT_ieee802154
  
 config GNRC_NETIF_MSG_QUEUE_SIZE
     int "Message queue size for network interface threads"

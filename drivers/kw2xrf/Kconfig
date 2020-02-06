@@ -10,5 +10,5 @@ config HAS_kw2xrf
 menuconfig COMPONENT_kw2xrf
     bool "KW2x radio-driver"
     default y if HAS_kw2xrf && NETDEV_DEFAULT
-    select HAS_HAS_NETDEV_IEEE802154
+    select HAS_NETDEV_IEEE802154
 

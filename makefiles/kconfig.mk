@@ -30,6 +30,16 @@ KCONFIG_USER_CONFIG = $(APPDIR)/user.config
 # one that is used to generate the 'riotconf.h' header
 KCONFIG_MERGED_CONFIG = $(GENERATED_DIR)/merged.config
 
+# KCONFIG_MODULES environmental variable can be used to inyect modules that
+# should be compiled directly from the command line.
+PREFIXED_KCONFIG_MODULES := $(KCONFIG_MODULES:%=CONFIG_COMPONENT_%=y)
+
+# This file contains all the modules that are requested from the command line
+KCONFIG_TEMP_CONFIG = $(GENERATED_DIR)/temp.config
+
+$(KCONFIG_TEMP_CONFIG): FORCE
+	echo "$(PREFIXED_KCONFIG_MODULES)" > $@
+
 # Include configuration symbols if available, only when not cleaning. This
 # allows to check for Kconfig symbols in makefiles.
 # Make tries to 'remake' all included files
@@ -50,6 +60,7 @@ KCONFIG_EDITED_CONFIG = $(GENERATED_DIR)/.editedconfig
 # previous ones)
 MERGE_SOURCES += $(wildcard $(KCONFIG_APP_CONFIG))
 MERGE_SOURCES += $(wildcard $(KCONFIG_USER_CONFIG))
+MERGE_SOURCES += $(KCONFIG_TEMP_CONFIG)
 
 # Create directory to place generated files
 $(GENERATED_DIR): $(CLEAN)
@@ -68,7 +79,7 @@ $(GENERATED_DIR): $(CLEAN)
 # configuration via Kconfig is disabled by default). Should this change, the
 # check would not longer be valid, and Kconfig would have to run on every
 # build.
-SHOULD_RUN_KCONFIG := $(or $(wildcard $(APPDIR)/*.config), $(wildcard $(APPDIR)/Kconfig), $(wildcard $(KCONFIG_MERGED_CONFIG)), $(filter menuconfig, $(MAKECMDGOALS)))
+SHOULD_RUN_KCONFIG ?= $(or $(wildcard $(APPDIR)/*.config), $(wildcard $(APPDIR)/Kconfig), $(wildcard $(KCONFIG_MERGED_CONFIG)), $(filter menuconfig, $(MAKECMDGOALS)))
 
 ifneq (,$(SHOULD_RUN_KCONFIG))
 # Add configuration header to build dependencies
@@ -105,7 +116,7 @@ $(KCONFIG_EDITED_CONFIG): FORCE
 # Generates a merged configuration file from the given sources. If the config
 # file has been edited a '.editedconfig' file will be present.
 # This is used to decide if the sources have to be merged or not.
-$(KCONFIG_MERGED_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) FORCE
+$(KCONFIG_MERGED_CONFIG): $(MERGECONFIG) $(KCONFIG_GENERATED_DEPENDENCIES) $(KCONFIG_TEMP_CONFIG) FORCE
 	$(Q)\
 	if ! test -f $(KCONFIG_EDITED_CONFIG); then \
 	  if ! test -z "$(strip $(MERGE_SOURCES))"; then \
