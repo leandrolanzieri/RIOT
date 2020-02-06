@@ -1,0 +1,2 @@
+config COMPONENT_sam0_common_periph
+    bool

@@ -12,3 +12,4 @@ config BOARD_SAMR21_XPRO
     select HAS_periph_usbdev
     select HAS_riotboot
     select CPU_CORTEXM_COMMON
+    select HAS_at86rf233

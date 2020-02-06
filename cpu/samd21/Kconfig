@@ -5,4 +5,8 @@
 # directory for more details.
 
 config CPU_SAMD21
+    bool
+    default y
     select HAS_puf_sram
+
+rsource "$(RIOTCPU)/sam0_common/Kconfig"

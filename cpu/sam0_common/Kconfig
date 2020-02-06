@@ -5,6 +5,8 @@
 # directory for more details.
 
 config CPU_SAM0_COMMON
+    bool
+    default y
     select HAS_periph_cpuid
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw
@@ -15,3 +17,6 @@ config CPU_SAM0_COMMON
     select HAS_periph_uart_nonblocking
     select HAS_periph_wdt
     select HAS_periph_wdt_cb
+    select COMPONENT_sam0_common_periph
+
+rsource "periph/Kconfig"
