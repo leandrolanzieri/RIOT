@@ -20,6 +20,7 @@ if COMPONENT_random
         config RANDOM_SEED_SOURCE_PERIPH_CPUID
             bool "CPU ID"
             depends on COMPONENT_luid
+            depends on COMPONEND_periph_cpuid
         config RANDOM_SEED_SOURCE_DEFAULT
             bool "Default Seed"
     endchoice
