@@ -8,6 +8,6 @@ config HAS_mtd_flashpage
     bool
 
 menuconfig COMPONENT_mtd_flashpage
-    bool "  Flashpage MTD"
+    bool "Flashpage MTD"
     default y if HAS_mtd_flashpage
 
