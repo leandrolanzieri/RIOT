@@ -8,6 +8,7 @@ config CPU_STM32F2
     bool
     default y
     select HAS_periph_hwrng
+    select HAS_HW_HASH_SHA1
     select CPU_STM32_COMMON
 
 source "$(RIOTCPU)/stm32_common/Kconfig"
