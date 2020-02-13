@@ -1,0 +1,5 @@
+# config COMPONENT_nucleo144_common
+#     bool
+#     default y
+
+rsource "../nucleo/Kconfig"

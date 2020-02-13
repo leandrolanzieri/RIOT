@@ -25,3 +25,4 @@ config HAS_periph_uart
 config HAS_riotboot
     default y
 
+rsource "../common/nucleo144/Kconfig"

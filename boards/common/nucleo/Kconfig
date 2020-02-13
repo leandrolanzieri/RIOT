@@ -1,0 +1,3 @@
+config COMPONENT_boards_common_nucleo
+    bool
+    default y
