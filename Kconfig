@@ -51,6 +51,7 @@ endmenu # Defaults
 rsource "drivers/Kconfig"
 rsource "sys/Kconfig"
 rsource "sys/net/Kconfig"
+rsource "tests/Kconfig"
 
 menu "Timers"
 rsource "sys/xtimer/Kconfig"
