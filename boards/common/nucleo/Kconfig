@@ -1,18 +1,15 @@
-# Copyright (c) 2020 Inria
+# Copyright (c) 2020 HAW Hamburg
 #
 # This file is subject to the terms and conditions of the GNU Lesser
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
 
-config BOARD_COMMON_NUCLEO144
+config BOARD_COMMON_NUCLEO
     bool
-    select HAS_ARDUINO
-    select BOARD_COMMON_NUCLEO
 
-config MOD_NUCLEO144_COMMON
+config MOD_BOARDS_COMMON_NUCLEO
+    bool
     default y
-    depends on BOARD_COMMON_NUCLEO144
+    depends on BOARD_COMMON_NUCLEO
     depends on TEST_KCONFIG
-
-source "$(RIOTBOARD)/common/nucleo/Kconfig"
