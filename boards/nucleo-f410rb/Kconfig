@@ -16,3 +16,4 @@ config HAS_periph_timer
 config HAS_periph_uart
     default y
 
+rsource "../common/nucleo144/Kconfig"
