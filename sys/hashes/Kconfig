@@ -4,6 +4,31 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
-menuconfig COMPONENT_hashes
-    bool "Add hashes support"
-    default y
+menu "Hashes"
+
+menuconfig HASHES_SHA1
+    bool "SHA1"
+
+if HASHES_SHA1
+
+choice
+    bool "SHA1 implementation"
+    default COMPONENT_periph_hash_sha1
+
+config COMPONENT_periph_hash_sha1
+    bool "Hardware accelerated"
+    depends on HAS_HW_HASH_SHA1
+
+config COMPONENT_hashes_sha1
+    bool "Software"
+    select COMPONENT_hashes
+
+endchoice
+
+endif # HASHES_SHA1
+endmenu # Hashes
+
+config COMPONENT_hashes
+    bool
+    help
+        Base module for software implemented hashes.
