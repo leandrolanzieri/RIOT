@@ -27,6 +27,10 @@
 #define HASHES_SHA1_H
 
 #include <stdint.h>
+#include "kernel_defines.h"
+#if IS_ACTIVE(MODULE_PERIPH_HASH_SHA1)
+#include "sha1_hwctx.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
