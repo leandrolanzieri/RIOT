@@ -6,7 +6,6 @@
 #
 menuconfig COMPONENT_random
     bool "Add RNG support"
-    default y
 
 if COMPONENT_random
     choice
