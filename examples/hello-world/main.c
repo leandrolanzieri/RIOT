@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include "hashes/sha1.h"
 
 int main(void)
 {
@@ -27,6 +28,8 @@ int main(void)
 
     printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
     printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+    sha1_context ctx;
+    sha1_init(&ctx);
 
     return 0;
 }
