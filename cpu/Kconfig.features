@@ -342,3 +342,9 @@ config HAS_netdev_tap
     bool
     help
         Indicates that netdev_tap is present
+
+# Hash related features
+config HAS_HW_HASH_SHA1
+    bool
+    help
+        Indicates that there is SHA1 hardware acceleration present
