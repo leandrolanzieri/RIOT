@@ -16,5 +16,10 @@ config CPU_KINETIS
     select HAS_periph_flashpage
     select HAS_periph_flashpage_raw
     select CPU_CORTEXM_COMMON
+    select HAS_HW_HASH_SHA1
+
+config COMPONENT_periph_wdog
+    bool
+    default y
 
 source "$(RIOTCPU)/cortexm_common/Kconfig"
