@@ -19,6 +19,11 @@ config COMPONENT_periph_gpio_irq
     depends on HAS_periph_gpio_irq
     select COMPONENT_periph_common
 
+config COMPONENT_periph_mcg
+    bool
+    default y
+    depends on HAS_periph_mcg
+
 config COMPONENT_periph_spi
     bool
     default HAS_periph_spi
