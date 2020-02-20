@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "MKW24D5.h"
 #include "hashes/sha1.h"
 
 #define ENABLE_DEBUG    (1)
