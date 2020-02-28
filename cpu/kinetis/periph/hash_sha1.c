@@ -49,10 +49,10 @@ void sha1_init(sha1_context *ctx)
     ctx->state[4] = 0xc3d2e1f0;
 }
 
-static void sha1_step(int count, int i, int constant, int *w)
+static void sha1_step(int count, int func, int i, int constant, int *w)
 {
     for (int j = 0; j < count; j++) {
-            CAU->DIRECT[0] = MMCAU_2_CMDS((HASH+HFC), (ADRA+CA4));
+            CAU->DIRECT[0] = MMCAU_2_CMDS((HASH+func), (ADRA+CA4));
             CAU->ADR_CAA = constant;
             CAU->LDR_CA[5] = w[i-16];
             CAU->XOR_CA[5] = w[i-14];
@@ -72,7 +72,7 @@ void sha1_update(sha1_context *ctx, const void *data, size_t len)
     int w[80];
 
     unsigned char *da = (unsigned char*) data;
-    /* The code I copied this from gets a number of 512 bit blocks instead of the input length. To be able to just recycle the code I convert len into  num_blks */
+    /* The code I copied this from gets a number of 512 bit blocks (64 byte) instead of the input length. To be able to just recycle the code I convert len into  num_blks */
 
     if(len <= 64) {
         num_blks = 1;
@@ -85,13 +85,14 @@ void sha1_update(sha1_context *ctx, const void *data, size_t len)
     /* Initialize hash variables in CAU */
     for (j = 0; j < 5; j++) {
         CAU->LDR_CA[j] = ctx->state[j];
-        DEBUG("LDR_CA[%d]: %lx\n", j, CAU->STR_CA[j]);
+        DEBUG("CA[%d]: %lx\n", j, CAU->STR_CA[j]);
     }
 
     for (int n = 0; n < num_blks; n++) {
         int i = 0;
 
         CAU->DIRECT[0] = MMCAU_1_CMD((MVRA+CA0));     /* a -> CAA */
+        DEBUG("CAA: %lx\n", CAU->STR_CAA);
         CAU->ROTL_CAA = 5;                          /* rotate 5 */
 
         for (j = 0; j < 16; j++, k++) {
@@ -103,10 +104,10 @@ void sha1_update(sha1_context *ctx, const void *data, size_t len)
             CAU->DIRECT[0] = MMCAU_1_CMD(SHS);
         }
 
-        sha1_step(4, i, SHA1_K0, w);
-        sha1_step(20, i, SHA1_K20, w);
-        sha1_step(20, i, SHA1_K40, w);
-        sha1_step(20, i, SHA1_K60, w);
+        sha1_step(4, HFC, i, SHA1_K0, w);
+        sha1_step(20, HFP, i, SHA1_K20, w);
+        sha1_step(20, HFM, i, SHA1_K40, w);
+        sha1_step(20, HFP, i, SHA1_K60, w);
 
         for (j = 0; j < 5; j++) {
             CAU->ADR_CA[j] = ctx->state[j];
