@@ -79,6 +79,40 @@ def test_running_echo_application(app_pidfile_env):
             assert i == num
 
 
+def test_running_term_with_reset(app_pidfile_env):
+    """Test that node resets on run_term."""
+    env = {'BOARD': 'board'}
+    env.update(app_pidfile_env)
+    env['APPLICATION'] = './hello.py'
+
+    node = riotnode.node.RIOTNode(APPLICATIONS_DIR, env)
+    node.TERM_STARTED_DELAY = 1
+
+    with node.run_term(logfile=sys.stdout) as child:
+        # Firmware should have started twice
+        child.expect_exact('Starting RIOT node')
+        child.expect_exact('Hello World')
+        child.expect_exact('Starting RIOT node')
+        child.expect_exact('Hello World')
+
+
+def test_running_term_without_reset(app_pidfile_env):
+    """Test not resetting node on run_term."""
+    env = {'BOARD': 'board'}
+    env.update(app_pidfile_env)
+    env['APPLICATION'] = './hello.py'
+
+    node = riotnode.node.RIOTNode(APPLICATIONS_DIR, env)
+    node.TERM_STARTED_DELAY = 1
+
+    with node.run_term(reset=False, logfile=sys.stdout) as child:
+        child.expect_exact('Starting RIOT node')
+        child.expect_exact('Hello World')
+        # Firmware should start only once
+        with pytest.raises(pexpect.exceptions.TIMEOUT):
+            child.expect_exact('Starting RIOT node', timeout=1)
+
+
 def test_running_error_cases(app_pidfile_env):
     """Test basic functionnalities with the 'echo' application.
 
