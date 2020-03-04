@@ -25,8 +25,8 @@
 #include "hashes/sha1.h"
 
 uint8_t result[SHA1_DIGEST_LENGTH];
-char teststring[] = "Im dichten Fichtendickicht picken zwei Finken tuechtig";
-uint8_t expected_result[] = { 0xb7, 0xfc, 0x27, 0x42, 0x78, 0x62, 0xae, 0x3b, 0x07, 0x4e, 0x90, 0x21, 0xec, 0x78, 0x92, 0xec, 0x12, 0xac, 0x5e, 0x05 };
+char teststring[] = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean";
+uint8_t expected_result[] = { 0xfe, 0x54, 0xb2, 0xc7, 0xa6, 0x63, 0x3e, 0x27, 0x13, 0x58, 0x2d, 0x55, 0xbf, 0xf2, 0x18, 0x04, 0x4d, 0x1d, 0x8a, 0x78 };
 
 size_t teststring_size = (sizeof(teststring)-1);
 
@@ -38,7 +38,7 @@ int main(void)
     printf("This board features a(n) %s MCU.\n", RIOT_MCU);
     sha1_context ctx;
     sha1_init(&ctx);
-    sha1_update(&ctx, teststring, teststring_size);
+    sha1_update(&ctx, (unsigned char*)teststring, teststring_size);
     sha1_final(&ctx, result);
 
     if (memcmp(result, expected_result, SHA1_DIGEST_LENGTH) != 0) {

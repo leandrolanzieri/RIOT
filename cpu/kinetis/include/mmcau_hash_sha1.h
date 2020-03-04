@@ -93,3 +93,9 @@
 #define MMCAU_2_CMDS(c1,c2)    (0x80100000 + (c1<<22) + (c2<<11))
 #define MMCAU_3_CMDS(c1,c2,c3) (0x80100200 + (c1<<22) + (c2<<11) + c3)
 #define BYTEREV(d)             (d>>24)|((d>>8)&0xff00)|((d<<8)&0xff0000)|(d<<24)
+
+#define MMCAU_PPB_INDIRECT  (0xe0081800u)
+#define MMCAU_PPB_DIRECT    (0xe0081000u)
+
+// uint32_t* const mmcau_ppb_indirect = (uint32_t *)0xe0081800;
+// uint32_t* const mmcau_ppb_direct = (uint32_t *)0xe0081000;
