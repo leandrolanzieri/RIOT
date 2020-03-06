@@ -1,0 +1,17 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+# TODO: Maybe this configurations should only be included for tests. How to detect?
+menu "Tests"
+
+config COMPONENT_test_utils_interactive_sync
+    bool "Enable interactive sync for tests"
+
+config COMPONENT_embunit
+    bool "Embunit support"
+
+
+endmenu
