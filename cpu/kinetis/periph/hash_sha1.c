@@ -30,7 +30,7 @@
 #include "hashes/sha1.h"
 #include "mmcau_hash_sha1.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
 
 #define SHA1_K0  0x5a827999
@@ -176,17 +176,48 @@ void sha1(void *digest, const void *data, size_t len)
     sha1_final(&ctx, digest);
 }
 
+#define HMAC_IPAD 0x36
+#define HMAC_OPAD 0x5c
+
 void sha1_init_hmac(sha1_context *ctx, const void *key, size_t key_length)
 {
-    // TBD
-    (void)ctx;
-    (void)key;
-    (void)key_length;
+    uint8_t i;
+    const uint8_t *k = key;
+
+    memset(ctx->key_buffer, 0, SHA1_BLOCK_LENGTH);
+    if (key_length > SHA1_BLOCK_LENGTH) {
+        /* Hash long keys */
+        sha1_init(ctx);
+        while (key_length--) {
+            sha1_update_byte(ctx, *k++);
+        }
+        sha1_final(ctx, ctx->key_buffer);
+    }
+    else {
+        /* Block length keys are used as is */
+        memcpy(ctx->key_buffer, key, key_length);
+    }
+    /* Start inner hash */
+    sha1_init(ctx);
+    for (i = 0; i < SHA1_BLOCK_LENGTH; i++) {
+        sha1_update_byte(ctx, ctx->key_buffer[i] ^ HMAC_IPAD);
+    }
 }
 
 void sha1_final_hmac(sha1_context *ctx, void *digest)
 {
-    // TBD
-    (void)ctx;
-    (void)digest;
+    uint8_t i;
+
+    /* Complete inner hash */
+    sha1_final(ctx, ctx->inner_hash);
+    /* Calculate outer hash */
+    sha1_init(ctx);
+    for (i = 0; i < SHA1_BLOCK_LENGTH; i++) {
+        sha1_update_byte(ctx, ctx->key_buffer[i] ^ HMAC_OPAD);
+    }
+    for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+        sha1_update_byte(ctx, ctx->inner_hash[i]);
+    }
+
+    sha1_final(ctx, digest);
 }
