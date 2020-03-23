@@ -17,6 +17,7 @@ config CPU_KINETIS
     select HAS_periph_flashpage_raw
     select CPU_CORTEXM_COMMON
     select HAS_HW_HASH_SHA1
+    select HAS_HW_HASH_SHA256
 
 config COMPONENT_periph_wdog
     bool
