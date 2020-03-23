@@ -26,6 +26,28 @@ config COMPONENT_hashes_sha1
 endchoice
 
 endif # HASHES_SHA1
+
+menuconfig HASHES_SHA256
+    bool "SHA256"
+
+if HASHES_SHA256
+
+choice
+    bool "SHA256 implementation"
+    default COMPONENT_periph_hash_sha256
+
+config COMPONENT_periph_hash_sha256
+    bool "Hardware accelerated"
+    depends on HAS_HW_HASH_SHA256
+
+config COMPONENT_hashes_sha256
+    bool "Software"
+    select COMPONENT_hashes
+
+endchoice
+
+endif # HASHES_SHA256
+
 endmenu # Hashes
 
 config COMPONENT_hashes
