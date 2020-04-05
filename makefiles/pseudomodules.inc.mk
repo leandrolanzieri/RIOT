@@ -10,6 +10,7 @@ PSEUDOMODULES += cord_ep_standalone
 PSEUDOMODULES += core_%
 PSEUDOMODULES += cortexm_fpu
 PSEUDOMODULES += cpu_check_address
+PSEUDOMODULES += crypto_%
 PSEUDOMODULES += devfs_%
 PSEUDOMODULES += dhcpv6_%
 PSEUDOMODULES += ecc_%

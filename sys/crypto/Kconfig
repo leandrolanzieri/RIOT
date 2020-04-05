@@ -4,5 +4,30 @@
 # General Public License v2.1. See the file LICENSE in the top level
 # directory for more details.
 #
+menu "Crypto"
+
+menuconfig CRYPTO_AES
+    bool "AES"
+
+if CRYPTO_AES
+
+choice
+    bool "AES implementation"
+    default COMPONENT_periph_crypto_aes
+
+config COMPONENT_periph_crypto_aes
+    bool "Hardware accelerated"
+    depends on HAS_HW_AES
+
+config COMPONENT_crypto_aes
+    bool "Software"
+    select COMPONENT_crypto
+
+endchoice
+
+endif # CRYPTO_AES
+
+endmenu # Crypto
+
 config COMPONENT_crypto
     bool "Add crypto support"

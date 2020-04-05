@@ -4,4 +4,8 @@ endif
 
 CFLAGS += -DRIOT_CHACHA_PRNG_DEFAULT="$(RIOT_CHACHA_PRNG_DEFAULT)"
 
+Module = crypto
+
+SUBMODULES := 1
+
 include $(RIOTBASE)/Makefile.base

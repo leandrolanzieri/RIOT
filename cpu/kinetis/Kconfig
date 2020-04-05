@@ -18,6 +18,7 @@ config CPU_KINETIS
     select CPU_CORTEXM_COMMON
     select HAS_HW_HASH_SHA1
     select HAS_HW_HASH_SHA256
+    select HAS_HW_AES
 
 config COMPONENT_periph_wdog
     bool

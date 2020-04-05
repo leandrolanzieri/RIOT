@@ -25,9 +25,12 @@
 
 #include "hashes/sha1.h"
 #include "hashes/sha256.h"
+#include "crypto/aes.h"
+#include "crypto/ciphers.h"
 #include "xtimer.h"
 #include "periph/gpio.h"
 
+/* SHA Tests */
 uint8_t sha1_result[SHA1_DIGEST_LENGTH];
 uint8_t sha256_result[SHA256_DIGEST_LENGTH];
 char teststring[] = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue";
@@ -37,29 +40,33 @@ uint8_t expected_result_sha256[] = { 0xfc, 0xbd, 0x7f, 0xe5, 0x12, 0x31, 0x1d, 0
 
 size_t teststring_size = (sizeof(teststring)-1);
 
+
+/* AES Test */
+static uint8_t TEST_0_KEY[] = {
+    0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+    0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF
+};
+
+static uint8_t TEST_0_INP[] = {
+    0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF,
+    0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+};
+static uint8_t TEST_0_ENC[] = {
+    0x37, 0x29, 0xa3, 0x6c, 0xaf, 0xe9, 0x84, 0xff,
+    0x46, 0x22, 0x70, 0x42, 0xee, 0x24, 0x83, 0xf6
+};
+
+
+/* Timer variables */
 uint32_t start, stop, t_diff;
 
 static void sha1_test(void)
 {
-    gpio_init(GPIO_PIN(2,5), GPIO_OUT);
-    sha1_context ctx;
-
-    gpio_set(GPIO_PIN(2,5));
-    sha1_init(&ctx);
-    gpio_clear(GPIO_PIN(2,5));
-
     start = xtimer_now_usec();
-    sha1_update(&ctx, (unsigned char*)teststring, teststring_size);
+    sha1(sha1_result, (unsigned char*)teststring, teststring_size);
     stop = xtimer_now_usec();
     t_diff = stop - start;
-    printf("Sha1 Update Time: %ld us\n", t_diff);
-
-    gpio_set(GPIO_PIN(2,5));
-    start = xtimer_now_usec();
-    sha1_final(&ctx, sha1_result);
-    stop = xtimer_now_usec();
-    t_diff = stop - start;
-    printf("Sha1 Final Time: %ld us\n", t_diff);
+    printf("Sha1 Time: %ld us\n", t_diff);
 
     gpio_clear(GPIO_PIN(2,5));
     if (memcmp(sha1_result, expected_result_sha1, SHA1_DIGEST_LENGTH) != 0) {
@@ -77,25 +84,11 @@ static void sha1_test(void)
 
 static void sha256_test(void)
 {
-    gpio_init(GPIO_PIN(2,5), GPIO_OUT);
-    sha256_context_t ctx;
-
-    gpio_set(GPIO_PIN(2,5));
-    sha256_init(&ctx);
-    gpio_clear(GPIO_PIN(2,5));
-
     start = xtimer_now_usec();
-    sha256_update(&ctx, (unsigned char*)teststring, teststring_size);
+    sha256((unsigned char*)teststring, teststring_size, sha256_result);
     stop = xtimer_now_usec();
     t_diff = stop - start;
-    printf("Sha256 Update Time: %ld us\n", t_diff);
-
-    gpio_set(GPIO_PIN(2,5));
-    start = xtimer_now_usec();
-    sha256_final(&ctx, sha256_result);
-    stop = xtimer_now_usec();
-    t_diff = stop - start;
-    printf("Sha256 Final Time: %ld us\n", t_diff);
+    printf("Sha256 Time: %ld us\n", t_diff);
 
     gpio_clear(GPIO_PIN(2,5));
     if (memcmp(sha256_result, expected_result_sha256, SHA256_DIGEST_LENGTH) != 0) {
@@ -110,13 +103,72 @@ static void sha256_test(void)
         printf("SHA-256 Success\n");
     }
 }
+static void aes_test(void)
+{
+    int err;
+    cipher_context_t c_ctx;
+    uint8_t data[AES_BLOCK_SIZE];
+    memset(data, 0, AES_BLOCK_SIZE);
+
+    err = aes_init(&c_ctx, TEST_0_KEY, sizeof(TEST_0_KEY));
+    if (err == 1) {
+        printf("AES Init successful\n");
+    }
+    else
+    {
+        printf("AES Init failed: %d\n", err);
+        // Had to define CRYPTO_AES as CFLAG –> how do I make it work with Kconfig?
+    }
+
+    start = xtimer_now_usec();
+    if (aes_encrypt(&c_ctx, TEST_0_INP, data)) {
+        stop = xtimer_now_usec();
+        t_diff = stop - start;
+        printf("AES Encrypt time: %ld us\n", t_diff);
+        if (!memcmp(data, TEST_0_ENC, AES_BLOCK_SIZE)) {
+            printf("AES encryption successful\n");
+        }
+        else
+        {
+            printf("AES encryption failed\n");
+            for (int i = 0; i < 16; i++) {
+                printf("%02x ", data[i]);
+            }
+            printf("\n");
+        }
+    }
+    memset(data, 0, AES_BLOCK_SIZE);
+    start = xtimer_now_usec();
+    if (aes_decrypt(&c_ctx, TEST_0_ENC, data)) {
+        stop = xtimer_now_usec();
+        t_diff = stop - start;
+        printf("AES Decrypt time: %ld us\n", t_diff);
+        if (!memcmp(data, TEST_0_INP, AES_BLOCK_SIZE)) {
+            printf("AES decryption successful\n");
+        }
+        else
+        {
+            printf("AES decryption failed\n");
+            for (int i = 0; i < 16; i++) {
+                printf("%02x ", data[i]);
+            }
+            printf("\n");
+        }
+    }
+}
 
 int main(void)
 {
     puts("Hello World!");
     printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
     printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+
+    /*There are some internal time measurements in the SHA-1 and AES
+    Algorithms, which can be activated by setting the ENABLE_DEBUG flag
+    in the API Because of the internal printfs his makes the hashing
+    and encryption much slower, though. */
     sha1_test();
     sha256_test();
+    aes_test();
     return 0;
 }
