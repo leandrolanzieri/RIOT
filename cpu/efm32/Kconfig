@@ -14,6 +14,9 @@ config CPU_EFM32
     select HAS_periph_gpio
     select HAS_periph_gpio_irq
     select HAS_periph_hwrng
+    select HAS_HW_AES
+    select HAS_HW_HASH_SHA1
+    select HAS_HW_HASH_SHA256
     select CPU_CORTEXM_COMMON
 
 source "$(RIOTCPU)/cortexm_common/Kconfig"
