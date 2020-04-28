@@ -167,8 +167,8 @@ int main(void)
     Algorithms, which can be activated by setting the ENABLE_DEBUG flag
     in the API Because of the internal printfs his makes the hashing
     and encryption much slower, though. */
-    sha1_test();
-    sha256_test();
+    // sha1_test();
+    // sha256_test();
     aes_test();
     return 0;
 }

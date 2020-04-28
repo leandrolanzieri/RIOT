@@ -4,7 +4,7 @@ APPLICATION = hello-world
 # If no BOARD is found in the environment, use this default:
 BOARD ?= native
 
-CFLAGS += -DCRYPTO_AES
+CFLAGS += -DCRYPTO_AES -Wno-unused-function
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
