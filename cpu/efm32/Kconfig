@@ -16,7 +16,27 @@ config CPU_EFM32
     select HAS_periph_hwrng
     select HAS_HW_AES
     select HAS_HW_HASH_SHA1
-    select HAS_HW_HASH_SHA256
+    select HAS_HW_HASH_SHA256 
     select CPU_CORTEXM_COMMON
 
+# define specific CPU models
+config CPU_EFM32_PG12B
+    bool
+    select CPU_EFM32
+    select COMPONENT_cpu_efm32pg12b
+    select COMPONENT_gecko_sdk
+    select COMPONENT_gecko_sdk_emlib
+    select COMPONENT_gecko_sdk_emlib_extra
+
+# SDK components
+config COMPONENT_gecko_sdk
+    bool
+
+config COMPONENT_gecko_sdk_emlib
+    bool
+
+config COMPONENT_gecko_sdk_emlib_extra
+    bool
+
+rsource "families/Kconfig"
 source "$(RIOTCPU)/cortexm_common/Kconfig"

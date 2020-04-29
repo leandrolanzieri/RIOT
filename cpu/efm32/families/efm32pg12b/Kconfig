@@ -1,0 +1,2 @@
+config COMPONENT_cpu_efm32pg12b
+    bool
