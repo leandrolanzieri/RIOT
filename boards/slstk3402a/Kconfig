@@ -22,3 +22,10 @@ config HAS_periph_uart
 config HAS_periph_uart_modecfg
     default y
 
+config BOARD_SLSTK3402A
+    bool
+    default y
+    select CPU_EFM32_PG12B
+    select COMPONENT_boards_common_silabs
+
+source "$(RIOTBOARD)/common/silabs/Kconfig"
