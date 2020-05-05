@@ -42,6 +42,10 @@
 #include "periph/wdt.h"
 #endif
 
+#ifdef MODULE_GECKO_SDK
+#include "periph/hwcrypto.h"
+#endif
+
 void periph_init(void)
 {
     /* initialize configured I2C devices */
@@ -80,3 +84,9 @@ void periph_init(void)
     wdt_init();
 #endif
 }
+#ifdef MODULE_GECKO_SDK
+    /* initialize hardware crypto devices */
+    for (unsigned i = 0; i < HWCRYPTO_NUMOF; i++) {
+        hwcrypto_init(HWCRYPTO_DEV(i));
+    }
+#endif
