@@ -27,5 +27,7 @@ config BOARD_SLSTK3402A
     default y
     select CPU_EFM32_PG12B
     select COMPONENT_boards_common_silabs
+    select COMPONENT_silabs_aem
+    select COMPONENT_silabs_bc
 
 source "$(RIOTBOARD)/common/silabs/Kconfig"
