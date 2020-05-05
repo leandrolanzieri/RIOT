@@ -48,6 +48,11 @@
 #include "hashes/sha256.h"
 #include "mmcau.h"
 
+#ifdef FREESCALE_MMCAU
+#include <stdlib.h>
+#include "cau_api.h"
+#endif
+
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
@@ -261,8 +266,95 @@ void sha256_final(sha256_context_t *ctx, void *dst)
     memset((void *) ctx, 0, sizeof(*ctx));
 }
 
+#ifdef FREESCALE_MMCAU
+    static void *mmcau_sha_pad(const void *data, unsigned int *len, unsigned char endianess)
+    {
+        unsigned char *padding_array;
+        signed char padding_length;
+        unsigned int temp_length;
+        unsigned int bits_length;
+        unsigned int final_length;
+
+        temp_length = *len % SHA256_INTERNAL_BLOCK_SIZE;
+
+        /*get padding length: padding special case when 448 mod 512*/
+        /*working with bytes rather than bits*/
+        if( !((padding_length = 56-(temp_length%SHA256_INTERNAL_BLOCK_SIZE)) > 0) )
+            padding_length = SHA256_INTERNAL_BLOCK_SIZE - (temp_length%56);
+
+        padding_length +=  temp_length/SHA256_INTERNAL_BLOCK_SIZE;
+        temp_length = *len;
+
+        /*reserve necessary memory*/
+        final_length = temp_length + padding_length + 8/*bits length*/;
+        if( (padding_array = (unsigned char *)malloc(final_length)) == NULL )
+            return (unsigned char *)NULL;/*not enough mem*/
+
+        /*copy original data to new padding array*/
+        memcpy((void*)padding_array,data,temp_length);
+
+        /*add padding*/
+        padding_array[temp_length++] = 0x80;/*first bit enabled*/
+        while((--padding_length != 0))
+            padding_array[temp_length++] = 0;/*clear the rest*/
+
+        /*add length depending on endianess: get number of bits*/
+        bits_length = *len << 3;
+        *len = final_length;
+
+        if( endianess == 0 )
+        {
+            padding_array[temp_length++] = bits_length     & 0xff;
+            padding_array[temp_length++] = bits_length>>8  & 0xff;
+            padding_array[temp_length++] = bits_length>>16 & 0xff;
+            padding_array[temp_length++] = bits_length>>24 & 0xff;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length  ] = 0;
+        }
+        else/*CRYPTO_BIG_ENDIAN*/
+        {
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = 0;
+            padding_array[temp_length++] = bits_length>>24 & 0xff;
+            padding_array[temp_length++] = bits_length>>16 & 0xff;
+            padding_array[temp_length++] = bits_length>>8  & 0xff;
+            padding_array[temp_length  ] = bits_length     & 0xff;
+        }
+
+        return padding_array;
+    }
+
+    static void mmcau_sha256(unsigned int *state, const void *data, void *digest, unsigned int len)
+    {
+        unsigned char *sha1_padded;
+        sha1_padded = mmcau_sha_pad(data, &len, 1);
+        int blocks = len/SHA256_INTERNAL_BLOCK_SIZE;
+        cau_sha256_update(sha1_padded, blocks, state);
+        /* Write the hash */
+        be32enc_vect(digest, state, 32);
+        free(sha1_padded);
+    }
+#endif
+
 void *sha256(const void *data, size_t len, void *digest)
 {
+#ifdef FREESCALE_MMCAU
+    unsigned int sha_state[8];
+    sha_state[0] = 0x6A09E667;
+    sha_state[1] = 0xBB67AE85;
+    sha_state[2] = 0x3C6EF372;
+    sha_state[3] = 0xA54FF53A;
+    sha_state[4] = 0x510E527F;
+    sha_state[5] = 0x9B05688C;
+    sha_state[6] = 0x1F83D9AB;
+    sha_state[7] = 0x5BE0CD19;
+
+    mmcau_sha256(sha_state, data, digest, (unsigned int) len);
+#else
     sha256_context_t c;
     static unsigned char m[SHA256_DIGEST_LENGTH];
 
@@ -273,10 +365,9 @@ void *sha256(const void *data, size_t len, void *digest)
     sha256_init(&c);
     sha256_update(&c, data, len);
     sha256_final(&c, digest);
-
+#endif
     return digest;
 }
-
 
 void hmac_sha256_init(hmac_context_t *ctx, const void *key, size_t key_length)
 {

@@ -33,8 +33,9 @@
 #include "mmcau.h"
 #include "xtimer.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
+
 
 /**
  * Interface to the aes cipher
@@ -203,6 +204,7 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 
     res = aes_set_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
+
     if (res < 0) {
         return res;
     }
