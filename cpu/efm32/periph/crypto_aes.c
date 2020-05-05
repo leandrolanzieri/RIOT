@@ -78,18 +78,6 @@ int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
     return CIPHER_INIT_SUCCESS;
 }
 
-/**
- * Expand the cipher key into the encryption key schedule.
- */
-static int aes_set_key(const unsigned char *userKey, const int bits,
-                               AES_KEY *key)
-{
-    (void) userKey;
-    (void) bits;
-    (void) key;
-    return 0;
-}
-
 /*
  * Encrypt a single block
  * in and out can overlap
