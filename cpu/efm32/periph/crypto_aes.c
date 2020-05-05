@@ -29,10 +29,12 @@
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 
+#include "periph_conf.h"
 #include "em_cmu.h"
 #include "em_crypto.h"
+#include "em_device.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
 
 /**
@@ -74,7 +76,6 @@ int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
             context->context[i] = key[i];
         }
     }
-
     return CIPHER_INIT_SUCCESS;
 }
 
@@ -85,7 +86,12 @@ int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
 int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
                 uint8_t *cipherBlock)
 {
-    AES_ECB128(cipherBlock, plainBlock, AES_BLOCK_SIZE, context->context, true);
+    uint8_t key[AES_KEY_SIZE];
+    for (int i = 0; i < AES_KEY_SIZE; i++) {
+        key[i] = context->context[i];
+    }
+    CRYPTO_AES_ECB128(hwcrypto_config[0].dev, cipherBlock, plainBlock, AES_BLOCK_SIZE, key, true);
+
     return 1;
 }
 
@@ -96,6 +102,10 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
                 uint8_t *plainBlock)
 {
-    AES_ECB128(plainBlock, cipherBlock, AES_BLOCK_SIZE, context->context, false);
+    uint8_t key[AES_KEY_SIZE];
+    for (int i = 0; i < AES_KEY_SIZE; i++) {
+        key[i] = context->context[i];
+    }
+    CRYPTO_AES_ECB128(hwcrypto_config[0].dev, plainBlock, cipherBlock, AES_BLOCK_SIZE, key, false);
     return 1;
 }

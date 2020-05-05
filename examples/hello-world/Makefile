@@ -9,7 +9,7 @@ BOARD ?= native
 
 # BASELIBS += ./lib_mmcau.a
 
-# CFLAGS += -DCRYPTO_AES -Wno-unused-function
+CFLAGS += -DCRYPTO_AES -Wno-unused-function
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..

@@ -45,7 +45,11 @@
 #include <assert.h>
 #include "em_cmu.h"
 #include "em_crypto.h"
+#include "em_device.h"
+
 #include "hashes/sha256.h"
+
+#include "periph_conf.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -78,7 +82,7 @@ void sha256_final(sha256_context_t *ctx, void *dst)
 
 void *sha256(const void *data, size_t len, void *digest)
 {
-    CRYPTO_SHA_256(NULL, data, len, digest);
+    CRYPTO_SHA_256(hwcrypto_config[0].dev, data, len, digest);
     return digest;
 }
 

@@ -4,6 +4,9 @@
 #include "hashes/sha1.h"
 #include "em_cmu.h"
 #include "em_crypto.h"
+#include "em_device.h"
+
+#include "periph_conf.h"
 
 #include "xtimer.h"
 
@@ -39,7 +42,7 @@ void sha1_final(sha1_context *ctx, void *digest)
 
 void sha1(void *digest, const void *data, size_t len)
 {
-    CRYPTO_SHA_1(NULL, data, (uint64_t) len, digest);
+    CRYPTO_SHA_1(hwcrypto_config[0].dev, data, (uint64_t) len, digest);
 }
 
 #define HMAC_IPAD 0x36

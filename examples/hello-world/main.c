@@ -165,7 +165,7 @@ static void sha256_test(void)
         uint8_t data[AES_BLOCK_SIZE];
         memset(data, 0, AES_BLOCK_SIZE);
 
-        err = aes_init(&c_ctx, TEST_0_KEY, sizeof(TEST_0_KEY));
+        err = aes_init(&c_ctx, TEST_0_KEY, AES_KEY_SIZE);
         if (err == 1) {
             printf("AES Init successful\n");
         }
@@ -224,10 +224,10 @@ int main(void)
     // and encryption much slower, though. */
     sha1_test();
     sha256_test();
-    #ifdef FREESCALE_MMCAU
-        mmcau_aes_test();
-    #else
-        aes_test();
-    #endif
+#ifdef FREESCALE_MMCAU
+    mmcau_aes_test();
+#else
+    aes_test();
+#endif
     return 0;
 }
