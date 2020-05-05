@@ -13,6 +13,11 @@ config COMPONENT_periph_gpio
     depends on HAS_periph_gpio
     select COMPONENT_periph_common
 
+config COMPONENT_periph_init_gpio
+    bool
+    default y
+    depends on COMPONENT_periph_gpio
+
 config COMPONENT_periph_gpio_irq
     bool
     default HAS_periph_gpio_irq
@@ -48,6 +53,11 @@ config COMPONENT_periph_pm
     depends on HAS_periph_pm
     select COMPONENT_periph_common
 
+config COMPONENT_periph_init_pm
+    bool
+    default y
+    depends on COMPONENT_periph_pm
+
 config COMPONENT_periph_spi_gpio_mode
     bool
     default HAS_periph_spi_gpio_mode
@@ -59,6 +69,11 @@ config COMPONENT_periph_uart
     default HAS_periph_uart
     depends on HAS_periph_uart
     select COMPONENT_periph_common
+
+config COMPONENT_periph_init_uart
+    bool
+    default y
+    depends on COMPONENT_periph_uart
 
 config COMPONENT_native_drivers
     default n
