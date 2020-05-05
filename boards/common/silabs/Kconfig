@@ -1,2 +1,8 @@
 config COMPONENT_boards_common_silabs
     bool
+
+config COMPONENT_silabs_aem
+    bool
+
+config COMPONENT_silabs_bc
+    bool
