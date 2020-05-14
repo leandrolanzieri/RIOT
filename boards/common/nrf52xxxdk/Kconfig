@@ -1,0 +1,19 @@
+config HAS_periph_i2c
+    default y
+
+config HAS_periph_pwm
+    default y
+
+config HAS_periph_spi
+    default y
+
+config HAS_periph_uart
+    default y
+
+config COMPONENT_boards_common_nrf52xxdk
+    bool
+    default y
+    help
+        Common NRF52xxDK code.
+
+source "$(RIOTBOARD)/common/nrf52/Kconfig"
