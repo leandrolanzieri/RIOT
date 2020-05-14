@@ -1,0 +1,6 @@
+config HAS_periph_rtt
+    default y
+
+config HAS_periph_timer
+    default y
+
