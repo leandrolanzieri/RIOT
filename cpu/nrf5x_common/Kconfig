@@ -21,3 +21,13 @@ config CPU_NRF5X_COMMON
     select HAS_radio_nrfble
     select HAS_radio_nrfmin
     select HAS_puf_sram
+
+config COMPONENT_nrf5x_common_periph
+    bool
+    default y
+
+config COMPONENT_cpu_common
+    bool
+    default y
+
+source "$(RIOTCPU)/cortexm_common/Kconfig"
