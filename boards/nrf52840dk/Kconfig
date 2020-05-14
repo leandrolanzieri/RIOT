@@ -7,3 +7,4 @@ config HAS_periph_pwm
 config HAS_periph_usbdev
     default y
 
+source "$(RIOTBOARD)/common/nrf52xxxdk/Kconfig"
