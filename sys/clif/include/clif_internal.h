@@ -147,6 +147,17 @@ extern "C" {
 #define LF_ATTR_OBS_S _P_SIZE(LF_ATTR_OBS) /**< attr name length */
 /** @} */
 
+/**
+ * @name Type of binding attribute for a dynamic link
+ * 
+ *       This attribute is specified in
+ *       [draft-ietf-core-dynlink-11](https://tools.ietf.org/html/draft-ietf-core-dynlink-11).
+ * @{
+ */
+#define LF_ATTR_BIND   "bind"                /**< attr name */
+#define LF_ATTR_BIND_S _P_SIZE(LF_ATTR_BIND) /**< attr name length */
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif

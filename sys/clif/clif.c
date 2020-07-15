@@ -40,7 +40,8 @@ static const char *_attr_to_str[] = {
     [CLIF_ATTR_IF]        = LF_ATTR_IF_DESC,
     [CLIF_ATTR_SZ]        = LF_ATTR_SIZE,
     [CLIF_ATTR_CT]        = LF_ATTR_CT,
-    [CLIF_ATTR_OBS]       = LF_ATTR_OBS
+    [CLIF_ATTR_OBS]       = LF_ATTR_OBS,
+    [CLIF_ATTR_BIND]      = LF_ATTR_BIND
 };
 
 /* returns the correspondent attribute string size */
@@ -56,7 +57,8 @@ static const unsigned _attr_to_size[] = {
     [CLIF_ATTR_IF]        = LF_ATTR_IF_DESC_S,
     [CLIF_ATTR_SZ]        = LF_ATTR_SIZE_S,
     [CLIF_ATTR_CT]        = LF_ATTR_CT_S,
-    [CLIF_ATTR_OBS]       = LF_ATTR_OBS_S
+    [CLIF_ATTR_OBS]       = LF_ATTR_OBS_S,
+    [CLIF_ATTR_BIND]      = LF_ATTR_BIND_S
 };
 
 /* do not count extension attr type */

@@ -119,6 +119,11 @@ void auto_init(void)
         extern void gcoap_init(void);
         gcoap_init();
     }
+    if (IS_USED(MODULE_DYNLINK)) {
+        LOG_DEBUG("Auto init dynlink module.\n");
+        extern int dynlink_init(void);
+        dynlink_init();
+    }
     if (IS_USED(MODULE_DEVFS)) {
         LOG_DEBUG("Mounting /dev.\n");
         extern void auto_init_devfs(void);

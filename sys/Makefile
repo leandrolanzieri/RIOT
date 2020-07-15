@@ -160,6 +160,9 @@ endif
 ifneq (,$(filter bluetil_%,$(USEMODULE)))
   DIRS += net/ble/bluetil
 endif
+ifneq (,$(filter dynlink,$(USEMODULE)))
+  DIRS += net/application_layer/dynlink
+endif
 ifneq (,$(filter usbus usbus_%,$(USEMODULE)))
     DIRS += usb/usbus
 endif

@@ -876,6 +876,12 @@ ifneq (,$(filter gcoap,$(USEMODULE)))
   USEMODULE += event_timeout
 endif
 
+ifneq (,$(filter dynlink,$(USEMODULE)))
+  USEMODULE += clif
+  USEMODULE += fmt
+  USEMODULE += gcoap
+endif
+
 ifneq (,$(filter luid,$(USEMODULE)))
   FEATURES_OPTIONAL += periph_cpuid
 endif

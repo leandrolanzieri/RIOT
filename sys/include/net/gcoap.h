@@ -910,6 +910,10 @@ uint8_t gcoap_op_state(void);
  */
 int gcoap_get_resource_list(void *buf, size_t maxlen, uint8_t cf);
 
+int gcoap_find_resource_by_path(const char *path, size_t path_len,
+                                const coap_resource_t **resource_ptr,
+                                gcoap_listener_t **listener_ptr);
+
 /**
  * @brief   Writes a resource in CoRE Link Format to a provided buffer.
  *

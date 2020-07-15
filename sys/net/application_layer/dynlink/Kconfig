@@ -1,0 +1,29 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menuconfig KCONFIG_MODULE_DYNLINK
+    bool "Configure Dynlink"
+    depends on MODULE_DYNLINK
+    help
+        Configure the Dynlink module using Kconfig. If not set, default values
+        and CFLAGS will be used instead.
+
+if KCONFIG_MODULE_DYNLINK
+
+config DYNLINK_CLIF_ATTRS_MAX
+    int "Maximum number of link format attributes to accept on a request"
+    default 10
+
+config DYNLINK_COND_MAX
+    int "Maximum number of bindings to support"
+    default 4
+
+config DYNLINK_BIND_TABLE_PATH
+    string "Binding table CoAP resource path"
+    default "/bnd"
+
+endif # KCONFIG_MODULE_DYNLINK

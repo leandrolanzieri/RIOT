@@ -433,6 +433,46 @@ static int _find_resource(coap_pkt_t *pdu, const coap_resource_t **resource_ptr,
     return ret;
 }
 
+int gcoap_find_resource_by_path(const char *path, size_t path_len,
+                                const coap_resource_t **resource_ptr,
+                                gcoap_listener_t **listener_ptr)
+{
+    int ret = GCOAP_RESOURCE_NO_PATH;
+    gcoap_listener_t *listener = _coap_state.listeners;
+
+    while (listener) {
+        const coap_resource_t *resource = listener->resources;
+        for (size_t i = 0; i < listener->resources_len; i++) {
+            if (i) {
+                resource++;
+            }
+
+            int res;
+            if (resource->methods & COAP_MATCH_SUBTREE) {
+                int len = strlen(resource->path);
+                res = strncmp((char *)path, resource->path, len);
+            }
+            else {
+                res = strncmp((char *)path, resource->path, path_len);
+            }
+
+            if (res > 0) {
+                continue;
+            }
+            else if (res < 0) {
+                break;
+            }
+            else {
+                *resource_ptr = resource;
+                *listener_ptr = listener;
+                return GCOAP_RESOURCE_FOUND;
+            }
+        }
+        listener = listener->next;
+    }
+    return ret;
+}
+
 /*
  * Finds the memo for an outstanding request within the _coap_state.open_reqs
  * array. Matches on remote endpoint and token.

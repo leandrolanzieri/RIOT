@@ -128,7 +128,8 @@ typedef enum {
     CLIF_ATTR_SZ            = 9,  /**< sz */
     CLIF_ATTR_CT            = 10, /**< ct */
     CLIF_ATTR_OBS           = 11, /**< obs */
-    CLIF_ATTR_EXT           = 12  /**< extensions */
+    CLIF_ATTR_BIND          = 12, /**< bind */
+    CLIF_ATTR_EXT           = 13  /**< extensions */
 } clif_attr_type_t;
 
 /**
