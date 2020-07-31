@@ -23,8 +23,6 @@
 
 #include <stdint.h>
 
-#include "cpu_conf.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -139,11 +137,11 @@ uint8_t bitarithm_bits_set_u32(uint32_t v);
 /* implementations */
 
 static inline unsigned bitarithm_lsb(unsigned v)
-#if defined(BITARITHM_LSB_BUILTIN)
+#if defined(FEATURE_BITARITHM_LSB_BUILTIN)
 {
     return __builtin_ffs(v) - 1;
 }
-#elif defined(BITARITHM_LSB_LOOKUP)
+#elif defined(FEATURE_BITARITHM_LSB_LOOKUP)
 {
 /* Source: http://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup */
     extern const uint8_t MultiplyDeBruijnBitPosition[32];
@@ -185,10 +183,10 @@ static inline unsigned bitarithm_lsb(unsigned v)
  */
 static inline unsigned bitarithm_test_and_clear(unsigned state, uint8_t *index)
 {
-#if defined(BITARITHM_HAS_CLZ)
+#if defined(FEATURE_BITARITHM_HAS_CLZ)
     *index = 8 * sizeof(state) - __builtin_clz(state) - 1;
     return state & ~(1 << *index);
-#elif defined(BITARITHM_LSB_LOOKUP)
+#elif defined(FEATURE_BITARITHM_LSB_LOOKUP)
     /* Source: http://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup */
     extern const uint8_t MultiplyDeBruijnBitPosition[32];
     uint32_t least_bit = state & -state;

@@ -1,5 +1,5 @@
 MODULE = stm32_clk
-
+INCLUDE_BOARD_INCLUDES:=1
 SRC = stmclk_common.c
 
 ifneq (,$(filter f%,$(CPU_FAM)))

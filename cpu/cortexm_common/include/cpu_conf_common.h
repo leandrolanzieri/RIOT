@@ -37,24 +37,24 @@ extern "C" {
  * @todo Configure second set if no newlib nano.specs are available?
  * @{
  */
-#ifndef THREAD_EXTRA_STACKSIZE_PRINTF
-#define THREAD_EXTRA_STACKSIZE_PRINTF   (512)
-#endif
-#ifndef THREAD_STACKSIZE_DEFAULT
-#define THREAD_STACKSIZE_DEFAULT        (1024)
-#endif
-#ifndef THREAD_STACKSIZE_IDLE
-#define THREAD_STACKSIZE_IDLE           (256)
-#endif
+// #ifndef THREAD_EXTRA_STACKSIZE_PRINTF
+// #define THREAD_EXTRA_STACKSIZE_PRINTF   (512)
+// #endif
+// #ifndef THREAD_STACKSIZE_DEFAULT
+// #define THREAD_STACKSIZE_DEFAULT        (1024)
+// #endif
+// #ifndef THREAD_STACKSIZE_IDLE
+// #define THREAD_STACKSIZE_IDLE           (256)
+// #endif
 /** @} */
 
 /**
  * @brief   Stack size used for the exception (ISR) stack
  * @{
  */
-#ifndef ISR_STACKSIZE
-#define ISR_STACKSIZE                   (512U)
-#endif
+// #ifndef ISR_STACKSIZE
+// #define ISR_STACKSIZE                   (512U)
+// #endif
 /** @} */
 
 /**
@@ -164,12 +164,6 @@ extern "C" {
  */
 #define BACKUP_RAM_DATA __attribute__((section(".backup.data")))
 #endif /* CPU_HAS_BACKUP_RAM */
-
-
-/**
- * @brief   This arch uses the inlined irq API.
- */
-#define IRQ_API_INLINED     (1)
 
 #ifdef __cplusplus
 }

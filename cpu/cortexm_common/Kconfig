@@ -30,7 +30,11 @@ config CPU_CORE_CORTEX_M
     bool
     select HAS_CPU_CORE_CORTEXM
     select HAS_PERIPH_PM
+    select HAS_BITARITHM_LSB_BUILTIN
+    select HAS_BITARITHM_LSB_LOOKUP
+    select HAS_BITARITHM_HAS_CLZ
     select HAS_CPP
+    select HAS_IRQ_API_INLINED
     select HAS_LIBSTDCPP
     select HAS_CPU_CHECK_ADDRESS
     select HAS_SSP

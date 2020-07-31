@@ -98,7 +98,6 @@
 
 #include <stdint.h>
 
-#include "irq.h"
 #include "thread_flags.h"
 #include "clist.h"
 

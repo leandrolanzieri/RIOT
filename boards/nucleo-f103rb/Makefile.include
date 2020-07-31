@@ -6,4 +6,4 @@ include $(RIOTBOARD)/common/nucleo64/Makefile.include
 # needs to take care to not enable SWO with the debugger while at the same time
 # PB3 is used as GPIO. But RIOT does not use SWO in any case, so if a user adds
 # this feature in her/his own code, she/he should be well aware of this.)
-CFLAGS += -DSTM32F1_DISABLE_JTAG
+CFLAGS_WITH_MACROS += -DSTM32F1_DISABLE_JTAG

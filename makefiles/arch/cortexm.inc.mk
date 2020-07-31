@@ -57,8 +57,8 @@ ifneq (1,$(BUILD_IN_DOCKER))
   endif # ARM_GCC_UNSUPPORTED
 endif # BUILD_IN_DOCKER
 
-CFLAGS += -DCPU_MODEL_$(call uppercase_and_underscore,$(CPU_MODEL))
-CFLAGS += -DCPU_CORE_$(call uppercase_and_underscore,$(CPU_CORE))
+CFLAGS_WITH_MACROS += -DCPU_MODEL_$(call uppercase_and_underscore,$(CPU_MODEL))
+CFLAGS_WITH_MACROS += -DCPU_CORE_$(call uppercase_and_underscore,$(CPU_CORE))
 
 # Add corresponding FPU CFLAGS
 # clang assumes there is an FPU, no CFLAGS necessary

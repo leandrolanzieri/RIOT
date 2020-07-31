@@ -1092,6 +1092,11 @@ FEATURES_OPTIONAL += periph_pm
 # always select provided architecture features
 FEATURES_REQUIRED += $(filter arch_%,$(FEATURES_PROVIDED))
 
+FEATURES_OPTIONAL += irq_api_inlined
+FEATURES_OPTIONAL += bitarithm_lsb_builtin
+FEATURES_OPTIONAL += bitarithm_lsb_lookup
+FEATURES_OPTIONAL += bitarithm_has_clz
+
 # always select CPU core features
 FEATURES_REQUIRED += $(filter cpu_core_%,$(FEATURES_PROVIDED))
 

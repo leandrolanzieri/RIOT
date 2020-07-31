@@ -114,13 +114,13 @@ $(OBJC): $(BINDIR)/$(MODULE)/%.o: %.c $(OBJ_DEPS)
 	$(Q)$(CCACHE) $(CC) \
 		-DRIOT_FILE_RELATIVE=\"$(patsubst $(RIOTBASE)/%,%,$(abspath $<))\" \
 		-DRIOT_FILE_NOPATH=\"$(notdir $<)\" \
-		$(CFLAGS) $(INCLUDES) -MQ '$@' -MD -MP -c -o $@ $(abspath $<)
+		$(CFLAGS) $(INCLUDES) $(if $(INCLUDE_BOARD_INCLUDES),$(BOARD_INCLUDES)) -MQ '$@' -MD -MP -c -o $@ $(abspath $<)
 
 $(GENOBJC): %.o: %.c $(OBJ_DEPS)
 	$(Q) $(CCACHE) $(CC) \
 		-DRIOT_FILE_RELATIVE=\"$(patsubst $(RIOTBASE)/%,%,$<)\" \
 		-DRIOT_FILE_NOPATH=\"$(notdir $<)\" \
-		$(CFLAGS) $(INCLUDES) -MQ '$@' -MD -MP -c -o $@ $<
+		$(CFLAGS) $(INCLUDES) $(if $(INCLUDE_BOARD_INCLUDES),$(BOARD_INCLUDES)) -MQ '$@' -MD -MP -c -o $@ $<
 
 $(OBJCXX): $(BINDIR)/$(MODULE)/%.o: %.$(SRCXXEXT) $(OBJ_DEPS)
 	$(Q)$(CCACHE) $(CXX) \

@@ -25,8 +25,6 @@
 #define DEBUG_H
 
 #include <stdio.h>
-#include "sched.h"
-#include "thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,6 +41,8 @@ extern "C" {
  * is not set, this check is not performed. (CPU exception may occur)
  */
 #ifdef DEVELHELP
+#include "sched.h"
+#include "thread.h"
 #include "cpu_conf.h"
 #define DEBUG_PRINT(...) \
     do { \

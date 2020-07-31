@@ -1,6 +1,6 @@
 # include module specific includes
-INCLUDES += -I$(RIOTCPU)/cortexm_common/include
-INCLUDES += -I$(RIOTCPU)/cortexm_common/include/vendor
+BOARD_INCLUDES += -I$(RIOTCPU)/cortexm_common/include
+BOARD_INCLUDES += -I$(RIOTCPU)/cortexm_common/include/vendor
 
 # All variables must be defined in the CPU configuration when using the common
 # `ldscripts/cortexm.ld`
@@ -69,3 +69,8 @@ SLOT0_LEN ?= $(shell printf "0x%x" $$((($(ROM_LEN:%K=%*1024)-$(RIOTBOOT_LEN)) / 
 SLOT1_LEN ?= $(SLOT0_LEN)
 SLOT0_LEN := $(SLOT0_LEN)
 SLOT1_LEN := $(SLOT1_LEN)
+
+THREAD_EXTRA_STACKSIZE_PRINTF ?= 512
+THREAD_STACKSIZE_DEFAULT ?= 1024
+THREAD_STACKSIZE_IDLE ?= 256
+ISR_STACKSIZE ?= 512

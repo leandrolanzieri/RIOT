@@ -25,6 +25,7 @@
 #include "clist.h"
 #include "bitarithm.h"
 #include "irq.h"
+#include "irq_arch.h"
 #include "thread.h"
 #include "log.h"
 

@@ -53,6 +53,10 @@ static inline void _update_long_timers(uint64_t *now);
 static inline void _schedule_earliest_lltimer(uint32_t now);
 
 static void _timer_callback(void);
+extern uint32_t _xtimer_now(void);
+extern uint64_t _xtimer_now64(void);
+extern void _xtimer_spin(uint32_t offset);
+extern uint32_t _xtimer_lltimer_mask(uint32_t val);
 
 #ifndef MODULE_XTIMER_ON_ZTIMER
 static void _periph_timer_callback(void *arg, int chan);

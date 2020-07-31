@@ -22,7 +22,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "xtimer.h"
 #include "mutex.h"
 #include "rmutex.h"
 #include "thread.h"
@@ -32,6 +31,11 @@
 
 #include "timex.h"
 
+#include "board.h"
+#ifndef MODULE_XTIMER_ON_ZTIMER
+#include "periph_conf.h"
+#endif
+
 #ifdef MODULE_CORE_THREAD_FLAGS
 #include "thread_flags.h"
 #endif
@@ -39,6 +43,7 @@
 #define ENABLE_DEBUG 0
 #include "debug.h"
 
+#include "xtimer.h"
 /*
  * @brief: struct for mutex lock with timeout
  * xtimer_mutex_lock_timeout() uses it to give information to the timer callback function
@@ -56,6 +61,10 @@ typedef struct {
      */
     volatile uint8_t blocking;
 } mutex_thread_t;
+
+extern void _xtimer_spin(uint32_t offset);
+extern void _xtimer_set64(xtimer_t *timer, uint32_t offset, uint32_t long_offset);
+extern uint32_t _xtimer_now(void);
 
 static void _callback_unlock_mutex(void* arg)
 {

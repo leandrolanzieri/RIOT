@@ -22,17 +22,16 @@
 #define IRQ_H
 
 #include <stdbool.h>
-#include "cpu_conf.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef IRQ_API_INLINED
+#ifdef FEATURE_IRQ_API_INLINED
 #define MAYBE_INLINE static inline __attribute__((always_inline))
 #else
 #define MAYBE_INLINE
-#endif /* IRQ_API_INLINED */
+#endif /* FEATURES_IRQ_API_INLINED */
 
 /**
  * @brief   This function sets the IRQ disable bit in the status register

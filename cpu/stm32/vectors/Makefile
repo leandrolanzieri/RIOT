@@ -1,5 +1,5 @@
 MODULE = stm32_vectors
-
+INCLUDE_BOARD_INCLUDES:=1
 NO_AUTO_SRC = 1
 
 SRC_FILE = vectors_$(CPU_FAM).c

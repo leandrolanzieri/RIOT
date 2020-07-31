@@ -38,11 +38,6 @@ extern "C" {
 /** @} */
 
 /**
-￼ * @brief   This arch uses the inlined irq API.
-￼ */
-#define IRQ_API_INLINED     (1)
-
-/**
  * @name Kernel configuration
  * @{
  */

@@ -43,14 +43,14 @@
 #include "ztimer/xtimer_compat.h"
 #else
 
-#include "board.h"
-#ifndef MODULE_XTIMER_ON_ZTIMER
-#include "periph_conf.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief IPC message type for xtimer msg callback
+ */
+#define MSG_XTIMER 12345
 
 /**
  * @brief xtimer timestamp (64 bit)
@@ -97,14 +97,14 @@ typedef struct xtimer {
  *
  * @return  current time as 32bit time stamp
  */
-static inline xtimer_ticks32_t xtimer_now(void);
+xtimer_ticks32_t xtimer_now(void);
 
 /**
  * @brief get the current system time as 64bit time stamp
  *
  * @return  current time as 64bit time stamp
  */
-static inline xtimer_ticks64_t xtimer_now64(void);
+xtimer_ticks64_t xtimer_now64(void);
 
 /**
  * @brief get the current system time into a timex_t
@@ -118,14 +118,14 @@ void xtimer_now_timex(timex_t *out);
  *
  * This is a convenience function for @c xtimer_usec_from_ticks(xtimer_now())
  */
-static inline uint32_t xtimer_now_usec(void);
+uint32_t xtimer_now_usec(void);
 
 /**
  * @brief get the current system time in microseconds since start
  *
  * This is a convenience function for @c xtimer_usec_from_ticks64(xtimer_now64())
  */
-static inline uint64_t xtimer_now_usec64(void);
+uint64_t xtimer_now_usec64(void);
 
 /**
  * @brief xtimer initialization function
@@ -144,7 +144,7 @@ void xtimer_init(void);
  *
  * @param[in] seconds   the amount of seconds the thread should sleep
  */
-static inline void xtimer_sleep(uint32_t seconds);
+void xtimer_sleep(uint32_t seconds);
 
 /**
  * @brief Pause the execution of a thread for some microseconds
@@ -155,7 +155,7 @@ static inline void xtimer_sleep(uint32_t seconds);
  *
  * @param[in] microseconds  the amount of microseconds the thread should sleep
  */
-static inline void xtimer_usleep(uint32_t microseconds);
+void xtimer_usleep(uint32_t microseconds);
 
 /**
  * @brief Pause the execution of a thread for some microseconds
@@ -164,7 +164,7 @@ static inline void xtimer_usleep(uint32_t microseconds);
  *
  * @param[in] microseconds  the amount of microseconds the thread should sleep
  */
-static inline void xtimer_usleep64(uint64_t microseconds);
+void xtimer_usleep64(uint64_t microseconds);
 
 /**
  * @brief Stop execution of a thread for some time
@@ -177,7 +177,7 @@ static inline void xtimer_usleep64(uint64_t microseconds);
  *
  * @param[in] nanoseconds   the amount of nanoseconds the thread should sleep
  */
-static inline void xtimer_nanosleep(uint32_t nanoseconds);
+void xtimer_nanosleep(uint32_t nanoseconds);
 
 /**
  * @brief Stop execution of a thread for some time, 32bit version
@@ -188,7 +188,7 @@ static inline void xtimer_nanosleep(uint32_t nanoseconds);
  *
  * @param[in] ticks  number of ticks the thread should sleep
  */
-static inline void xtimer_tsleep32(xtimer_ticks32_t ticks);
+void xtimer_tsleep32(xtimer_ticks32_t ticks);
 
 /**
  * @brief Stop execution of a thread for some time, 64bit version
@@ -199,7 +199,7 @@ static inline void xtimer_tsleep32(xtimer_ticks32_t ticks);
  *
  * @param[in] ticks  number of ticks the thread should sleep
  */
-static inline void xtimer_tsleep64(xtimer_ticks64_t ticks);
+void xtimer_tsleep64(xtimer_ticks64_t ticks);
 
 /**
  * @brief Stop execution of a thread for some time, blocking
@@ -208,7 +208,7 @@ static inline void xtimer_tsleep64(xtimer_ticks64_t ticks);
  *
  * @param[in] ticks  the number of xtimer ticks the thread should spin for
  */
-static inline void xtimer_spin(xtimer_ticks32_t ticks);
+void xtimer_spin(xtimer_ticks32_t ticks);
 
 /**
  * @brief will cause the calling thread to be suspended until the absolute
@@ -227,7 +227,7 @@ static inline void xtimer_spin(xtimer_ticks32_t ticks);
  * @param[in] last_wakeup   base time stamp for the wakeup
  * @param[in] period        time in microseconds that will be added to last_wakeup
  */
-static inline void xtimer_periodic_wakeup(xtimer_ticks32_t *last_wakeup, uint32_t period);
+void xtimer_periodic_wakeup(xtimer_ticks32_t *last_wakeup, uint32_t period);
 
 /**
  * @brief Set a timer that wakes up a thread
@@ -239,7 +239,7 @@ static inline void xtimer_periodic_wakeup(xtimer_ticks32_t *last_wakeup, uint32_
  * @param[in] offset        microseconds from now
  * @param[in] pid           pid of the thread that will be woken up
  */
-static inline void xtimer_set_wakeup(xtimer_t *timer, uint32_t offset, kernel_pid_t pid);
+void xtimer_set_wakeup(xtimer_t *timer, uint32_t offset, kernel_pid_t pid);
 
 /**
  * @brief Set a timer that wakes up a thread, 64bit version
@@ -251,7 +251,7 @@ static inline void xtimer_set_wakeup(xtimer_t *timer, uint32_t offset, kernel_pi
  * @param[in] offset        microseconds from now
  * @param[in] pid           pid of the thread that will be woken up
  */
-static inline void xtimer_set_wakeup64(xtimer_t *timer, uint64_t offset, kernel_pid_t pid);
+void xtimer_set_wakeup64(xtimer_t *timer, uint64_t offset, kernel_pid_t pid);
 
 /**
  * @brief Set a timer to execute a callback at some time in the future
@@ -269,7 +269,7 @@ static inline void xtimer_set_wakeup64(xtimer_t *timer, uint64_t offset, kernel_
  * @param[in] offset    time in microseconds from now specifying that timer's
  *                      callback's execution time
  */
-static inline void xtimer_set(xtimer_t *timer, uint32_t offset);
+void xtimer_set(xtimer_t *timer, uint32_t offset);
 
 /**
  * @brief Set a timer to execute a callback at some time in the future, 64bit
@@ -288,7 +288,7 @@ static inline void xtimer_set(xtimer_t *timer, uint32_t offset);
  * @param[in] offset_us   time in microseconds from now specifying that timer's
  *                        callback's execution time
  */
-static inline void xtimer_set64(xtimer_t *timer, uint64_t offset_us);
+void xtimer_set64(xtimer_t *timer, uint64_t offset_us);
 
 /**
  * @brief remove a timer
@@ -306,7 +306,7 @@ void xtimer_remove(xtimer_t *timer);
  *
  * @return xtimer time stamp
  */
-static inline xtimer_ticks32_t xtimer_ticks_from_usec(uint32_t usec);
+xtimer_ticks32_t xtimer_ticks_from_usec(uint32_t usec);
 
 /**
  * @brief Convert microseconds to xtimer ticks, 64 bit version
@@ -315,7 +315,7 @@ static inline xtimer_ticks32_t xtimer_ticks_from_usec(uint32_t usec);
  *
  * @return xtimer time stamp
  */
-static inline xtimer_ticks64_t xtimer_ticks_from_usec64(uint64_t usec);
+xtimer_ticks64_t xtimer_ticks_from_usec64(uint64_t usec);
 
 /**
  * @brief Convert xtimer ticks to microseconds
@@ -324,7 +324,7 @@ static inline xtimer_ticks64_t xtimer_ticks_from_usec64(uint64_t usec);
  *
  * @return microseconds
  */
-static inline uint32_t xtimer_usec_from_ticks(xtimer_ticks32_t ticks);
+uint32_t xtimer_usec_from_ticks(xtimer_ticks32_t ticks);
 
 /**
  * @brief Convert xtimer ticks to microseconds, 64 bit version
@@ -333,7 +333,7 @@ static inline uint32_t xtimer_usec_from_ticks(xtimer_ticks32_t ticks);
  *
  * @return microseconds
  */
-static inline uint64_t xtimer_usec_from_ticks64(xtimer_ticks64_t ticks);
+uint64_t xtimer_usec_from_ticks64(xtimer_ticks64_t ticks);
 
 /**
  * @brief Create an xtimer time stamp
@@ -342,7 +342,7 @@ static inline uint64_t xtimer_usec_from_ticks64(xtimer_ticks64_t ticks);
  *
  * @return xtimer time stamp
  */
-static inline xtimer_ticks32_t xtimer_ticks(uint32_t ticks);
+xtimer_ticks32_t xtimer_ticks(uint32_t ticks);
 
 /**
  * @brief Create an xtimer time stamp, 64 bit version
@@ -351,7 +351,7 @@ static inline xtimer_ticks32_t xtimer_ticks(uint32_t ticks);
  *
  * @return xtimer time stamp
  */
-static inline xtimer_ticks64_t xtimer_ticks64(uint64_t ticks);
+xtimer_ticks64_t xtimer_ticks64(uint64_t ticks);
 
 /**
  * @brief Compute difference between two xtimer time stamps
@@ -361,7 +361,7 @@ static inline xtimer_ticks64_t xtimer_ticks64(uint64_t ticks);
  *
  * @return @p a - @p b
  */
-static inline xtimer_ticks32_t xtimer_diff(xtimer_ticks32_t a, xtimer_ticks32_t b);
+xtimer_ticks32_t xtimer_diff(xtimer_ticks32_t a, xtimer_ticks32_t b);
 
 /**
  * @brief Compute difference between two xtimer time stamps, 64 bit version
@@ -371,7 +371,7 @@ static inline xtimer_ticks32_t xtimer_diff(xtimer_ticks32_t a, xtimer_ticks32_t 
  *
  * @return @p a - @p b
  */
-static inline xtimer_ticks64_t xtimer_diff64(xtimer_ticks64_t a, xtimer_ticks64_t b);
+xtimer_ticks64_t xtimer_diff64(xtimer_ticks64_t a, xtimer_ticks64_t b);
 
 /**
  * @brief Compute 32 bit difference between two 64 bit xtimer time stamps
@@ -381,7 +381,7 @@ static inline xtimer_ticks64_t xtimer_diff64(xtimer_ticks64_t a, xtimer_ticks64_
  *
  * @return @p a - @p b cast truncated to 32 bit
  */
-static inline xtimer_ticks32_t xtimer_diff32_64(xtimer_ticks64_t a, xtimer_ticks64_t b);
+xtimer_ticks32_t xtimer_diff32_64(xtimer_ticks64_t a, xtimer_ticks64_t b);
 
 /**
  * @brief Compare two xtimer time stamps
@@ -391,7 +391,7 @@ static inline xtimer_ticks32_t xtimer_diff32_64(xtimer_ticks64_t a, xtimer_ticks
  *
  * @return @p a < @p b
  */
-static inline bool xtimer_less(xtimer_ticks32_t a, xtimer_ticks32_t b);
+bool xtimer_less(xtimer_ticks32_t a, xtimer_ticks32_t b);
 
 /**
  * @brief Compare two xtimer time stamps, 64 bit version
@@ -401,7 +401,7 @@ static inline bool xtimer_less(xtimer_ticks32_t a, xtimer_ticks32_t b);
  *
  * @return @p a < @p b
  */
-static inline bool xtimer_less64(xtimer_ticks64_t a, xtimer_ticks64_t b);
+bool xtimer_less64(xtimer_ticks64_t a, xtimer_ticks64_t b);
 
 /**
  * @brief lock a mutex but with timeout
@@ -474,7 +474,7 @@ uint64_t xtimer_left_usec(const xtimer_t *timer);
  * @param[in] msg           ptr to msg that will be sent
  * @param[in] target_pid    pid the message will be sent to
  */
-static inline void xtimer_set_msg(xtimer_t *timer, uint32_t offset, msg_t *msg, kernel_pid_t target_pid);
+void xtimer_set_msg(xtimer_t *timer, uint32_t offset, msg_t *msg, kernel_pid_t target_pid);
 
 /**
  * @brief Set a timer that sends a message, 64bit version
@@ -490,7 +490,7 @@ static inline void xtimer_set_msg(xtimer_t *timer, uint32_t offset, msg_t *msg, 
  * @param[in] msg           ptr to msg that will be sent
  * @param[in] target_pid    pid the message will be sent to
  */
-static inline void xtimer_set_msg64(xtimer_t *timer, uint64_t offset, msg_t *msg, kernel_pid_t target_pid);
+void xtimer_set_msg64(xtimer_t *timer, uint64_t offset, msg_t *msg, kernel_pid_t target_pid);
 
 /**
  * @brief receive a message blocking but with timeout
@@ -501,7 +501,7 @@ static inline void xtimer_set_msg64(xtimer_t *timer, uint64_t offset, msg_t *msg
  *
  * @return     < 0 on error, other value otherwise
  */
-static inline int xtimer_msg_receive_timeout(msg_t *msg, uint32_t timeout);
+int xtimer_msg_receive_timeout(msg_t *msg, uint32_t timeout);
 
 /**
  * @brief receive a message blocking but with timeout, 64bit version
@@ -512,7 +512,7 @@ static inline int xtimer_msg_receive_timeout(msg_t *msg, uint32_t timeout);
  *
  * @return     < 0 on error, other value otherwise
  */
-static inline int xtimer_msg_receive_timeout64(msg_t *msg, uint64_t timeout);
+int xtimer_msg_receive_timeout64(msg_t *msg, uint64_t timeout);
 #endif
 
 /**
@@ -639,8 +639,6 @@ static inline int xtimer_msg_receive_timeout64(msg_t *msg, uint64_t timeout);
 #endif
 
 #include "xtimer/tick_conversion.h"
-
-#include "xtimer/implementation.h"
 
 #ifdef __cplusplus
 }

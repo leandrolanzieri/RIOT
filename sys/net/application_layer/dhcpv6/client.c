@@ -23,7 +23,7 @@
 #include "random.h"
 #include "timex.h"
 #include "xtimer.h"
-#include "xtimer/implementation.h"
+//#include "xtimer/implementation.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"

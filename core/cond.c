@@ -21,6 +21,7 @@
 
 #include "cond.h"
 #include "irq.h"
+#include "irq_arch.h"
 #include "mutex.h"
 #include "thread.h"
 

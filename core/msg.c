@@ -32,6 +32,7 @@
 #include "thread_flags.h"
 #endif
 #include "irq.h"
+#include "irq_arch.h"
 #include "cib.h"
 
 #define ENABLE_DEBUG    (0)

@@ -1,5 +1,5 @@
 MODULE = shell_commands
-
+INCLUDE_BOARD_INCLUDES := 1
 SRC = shell_commands.c sc_sys.c
 
 ifneq (,$(filter app_metadata,$(USEMODULE)))

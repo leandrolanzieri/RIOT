@@ -28,6 +28,8 @@
 #include "event.h"
 #include "clist.h"
 #include "thread.h"
+#include "irq.h"
+#include "irq_arch.h"
 
 #ifdef MODULE_XTIMER
 #include "xtimer.h"

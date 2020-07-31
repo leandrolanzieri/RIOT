@@ -9,6 +9,9 @@ config CPU_ARCH_ARMV4T
     bool
     select HAS_ARCH_32BIT
     select HAS_ARCH_ARM
+    select HAS_BITARITHM_LSB_BUILTIN
+    select HAS_BITARITHM_LSB_LOOKUP
+    select HAS_BITARITHM_HAS_CLZ
     select HAS_CPP
     select HAS_LIBSTDCPP
 

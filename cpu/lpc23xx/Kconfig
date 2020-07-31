@@ -10,6 +10,7 @@ config CPU_FAM_LPC23XX
     select CPU_CORE_ARM7TDMI_S
     select HAS_BACKUP_RAM
     select HAS_CPU_LPC23XX
+    select HAS_IRQ_API_INLINED
     select HAS_PERIPH_DAC
     select HAS_PERIPH_GPIO
     select HAS_PERIPH_GPIO_IRQ

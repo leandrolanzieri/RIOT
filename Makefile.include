@@ -351,6 +351,8 @@ ifneq (,$(IOTLAB_NODE))
   FLASHFILE ?= $(ELFFILE)
 endif
 
+export BOARD_INCLUDES +=
+
 # Add standard include directories
 INCLUDES += -I$(RIOTBASE)/core/include -I$(RIOTBASE)/drivers/include -I$(RIOTBASE)/sys/include
 
@@ -368,9 +370,9 @@ USEMODULE += $(filter-out $(DISABLE_MODULE), $(DEFAULT_MODULE))
 include $(RIOTMAKE)/dependency_resolution.inc.mk
 
 # Include Board and CPU configuration
-INCLUDES += $(addprefix -I,$(wildcard $(BOARDDIR)/include))
+BOARD_INCLUDES += $(addprefix -I,$(wildcard $(BOARDDIR)/include))
 include $(BOARDDIR)/Makefile.include
-INCLUDES += -I$(RIOTCPU)/$(CPU)/include
+BOARD_INCLUDES += -I$(RIOTCPU)/$(CPU)/include
 include $(RIOTCPU)/$(CPU)/Makefile.include
 
 # Assume GCC/GNU as supported toolchain if CPU's Makefile.include doesn't
@@ -409,9 +411,16 @@ BOARDDEF = $(call uppercase_and_underscore,$(BOARD))
 CPUDEF = $(call uppercase_and_underscore,$(CPU))
 MCUDEF = $(call uppercase_and_underscore,$(MCU))
 CFLAGS += -DRIOT_APPLICATION=\"$(APPLICATION)\"
-CFLAGS += -DBOARD_$(BOARDDEF)=\"$(BOARD)\" -DRIOT_BOARD=BOARD_$(BOARDDEF)
-CFLAGS += -DCPU_$(CPUDEF)=\"$(CPU)\" -DRIOT_CPU=CPU_$(CPUDEF)
-CFLAGS += -DMCU_$(MCUDEF)=\"$(MCU)\" -DRIOT_MCU=MCU_$(MCUDEF)
+CFLAGS_WITH_MACROS += -DBOARD_$(BOARDDEF)=\"$(BOARD)\" -DRIOT_BOARD=BOARD_$(BOARDDEF)
+CFLAGS_WITH_MACROS += -DCPU_$(CPUDEF)=\"$(CPU)\" -DRIOT_CPU=CPU_$(CPUDEF)
+CFLAGS_WITH_MACROS += -DMCU_$(MCUDEF)=\"$(MCU)\" -DRIOT_MCU=MCU_$(MCUDEF)
+
+# pass stacksizes via macros in riotbuild.h
+CFLAGS_WITH_MACROS += -DTHREAD_EXTRA_STACKSIZE_PRINTF=$(THREAD_EXTRA_STACKSIZE_PRINTF)
+CFLAGS_WITH_MACROS += -DTHREAD_STACKSIZE_DEFAULT=$(THREAD_STACKSIZE_DEFAULT)
+CFLAGS_WITH_MACROS += -DTHREAD_STACKSIZE_IDLE=$(THREAD_STACKSIZE_IDLE)
+CFLAGS_WITH_MACROS += -DISR_STACKSIZE=$(ISR_STACKSIZE)
+
 
 # OSX fails to create empty archives. Provide a wrapper to catch that error.
 ifneq (0, $(shell mkdir -p $(BINDIR); $(AR) rc $(BINDIR)/empty-archive.a 2> /dev/null; \

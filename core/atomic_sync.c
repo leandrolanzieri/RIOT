@@ -28,6 +28,7 @@
 #include <stdatomic.h>
 #include <string.h>
 #include "irq.h"
+#include "irq_arch.h"
 
 /*
  * uncrustify mis-formats the macros in this file, so disable it globally.

@@ -24,6 +24,7 @@
 #include "assert.h"
 #include "thread.h"
 #include "irq.h"
+#include "irq_arch.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"

@@ -122,7 +122,6 @@
 #include "clist.h"
 #include "cib.h"
 #include "msg.h"
-#include "cpu_conf.h"
 #include "sched.h"
 
 #ifdef MODULE_CORE_THREAD_FLAGS

@@ -1,5 +1,5 @@
 MODULE = periph
-
+INCLUDE_BOARD_INCLUDES:=1
 # Select the specific implementation for `periph_i2c`
 ifneq (,$(filter periph_i2c,$(USEMODULE)))
   ifneq (,$(filter $(CPU_FAM),f0 f3 f7 g0 g4 l0 l4 wb))

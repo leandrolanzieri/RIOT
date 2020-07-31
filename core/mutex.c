@@ -27,6 +27,7 @@
 #include "thread.h"
 #include "sched.h"
 #include "irq.h"
+#include "irq_arch.h"
 #include "list.h"
 
 #define ENABLE_DEBUG    (0)

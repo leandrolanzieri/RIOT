@@ -23,7 +23,10 @@
  */
 
 #include "div.h"
+#include "sched.h"
+#include "thread.h"
 #include "irq.h"
+#include "irq_arch.h"
 #include "xtimer.h"
 
 #include "evtimer.h"
