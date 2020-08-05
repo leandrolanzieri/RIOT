@@ -3,6 +3,7 @@ MENUCONFIG ?= $(RIOTTOOLS)/kconfiglib/riot_menuconfig.py
 BASE_MENUCONFIG ?= $(RIOTTOOLS)/kconfiglib/menuconfig.py
 GENCONFIG ?= $(RIOTTOOLS)/kconfiglib/genconfig.py
 MERGECONFIG ?= $(RIOTTOOLS)/kconfiglib/merge_config.py
+RIOT_GENCONFIG = $(RIOTTOOLS)/kconfiglib/riot_genconfig.py
 
 $(BASE_MENUCONFIG):
 	@echo "[INFO] Kconfiglib not found - getting it"
@@ -12,3 +13,5 @@ $(BASE_MENUCONFIG):
 $(GENCONFIG): $(BASE_MENUCONFIG)
 
 $(MERGECONFIG): $(BASE_MENUCONFIG)
+
+$(RIOT_GENCONFIG): $(BASE_MENUCONFIG)
