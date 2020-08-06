@@ -85,7 +85,7 @@ information isn't needed.
 """)
 
     parser.add_argument(
-        "kconfig_filename",
+        "--kconfig-filename",
         metavar="KCONFIG_FILENAME",
         nargs="?",
         default="Kconfig",
@@ -125,9 +125,9 @@ only supported for backwards compatibility).
     parser.add_argument(
         "--config-sources",
         metavar="CONFIG_SOURCES",
-        nargs='+',
+        nargs='*',
         help="""
-Configuration sources to merge
+List of configuration files to merge and apply. May be empty.
 """
     )
 
@@ -138,20 +138,11 @@ Configuration sources to merge
     kconf = kconfiglib.Kconfig(args.kconfig_filename)
     merge_configs(kconf, args.config_sources)
 
-    if args.header_path is None:
-        if "KCONFIG_AUTOHEADER" in os.environ:
-            kconf.write_autoconf()
-        else:
-            # Kconfiglib defaults to include/generated/autoconf.h to be
-            # compatible with the C tools. 'config.h' is used here instead for
-            # backwards compatibility. It's probably a saner default for tools
-            # as well.
-            kconf.write_autoconf("config.h")
-    else:
-        kconf.write_autoconf(args.header_path)
-
     if args.config_out is not None:
         kconf.write_config(args.config_out, save_old=False)
+
+    if args.header_path is not None:
+        kconf.write_autoconf(args.header_path)
 
     if args.sync_deps is not None:
         kconf.sync_deps(args.sync_deps)
