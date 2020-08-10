@@ -11,4 +11,9 @@ EXTDEFINES = $(addprefix -D,$(call uppercase_and_underscore,$(ED)))
 # filter "pseudomodules" from "real modules", but not "no_pseudomodules"
 REALMODULES += $(filter-out $(PSEUDOMODULES), $(_ALLMODULES))
 REALMODULES += $(filter $(NO_PSEUDOMODULES), $(_ALLMODULES))
-BASELIBS += $(REALMODULES:%=$(BINDIR)/%.a)
+
+ifneq (1,$(TEST_REFACTOR))
+  BASELIBS += $(REALMODULES:%=$(BINDIR)/%.a)
+endif
+
+$(foreach mod,$(_ALLMODULES), $(eval MOD_$(call uppercase_and_underscore,$(mod)):=y))

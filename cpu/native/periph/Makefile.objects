@@ -1,0 +1,16 @@
+ifndef $(mkfile_path)
+$(mkfile_path):=y
+
+src-$(MOD_PERIPH_CPUID) += $(current_dir)/cpuid.c
+src-$(MOD_PERIPH_EEPROM) += $(current_dir)/eeprom.c
+src-$(MOD_PERIPH_GPIO) += $(current_dir)/gpio.c
+src-$(MOD_PERIPH_HWRNG) += $(current_dir)/hwrng.c
+src-$(MOD_PERIPH_PM) += $(current_dir)/pm.c
+src-$(MOD_PERIPH_PWM) += $(current_dir)/pwm.c
+src-$(MOD_PERIPH_QDEC) += $(current_dir)/qdec.c
+src-$(MOD_PERIPH_RTC) += $(current_dir)/rtc.c
+src-$(MOD_PERIPH_SPIDEV_LINUX) += $(current_dir)/spidev_linux.c
+src-$(MOD_PERIPH_TIMER) += $(current_dir)/timer.c
+src-$(MOD_PERIPH_UART) += $(current_dir)/uart.c
+
+endif

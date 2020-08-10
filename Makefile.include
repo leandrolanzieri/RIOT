@@ -476,6 +476,25 @@ include $(RIOTMAKE)/bindist.inc.mk
 # Add all USEMODULE modules to CFLAGS and populate BASELIBS
 include $(RIOTMAKE)/modules.inc.mk
 
+include $(RIOTMAKE)/source_fisher.inc.mk
+
+c_sources = $(filter %.c,$(src-y))
+S_sources = $(filter %.S,$(src-y))
+
+MY_OBJECTS_DIR = $(BINDIR)/my_objects
+
+OBJECTS += $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$(c_sources))
+OBJECTS += $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$(S_sources))
+
+TARGETS_C = $(c_sources:%=TARGET_C--%)
+TARGETS_AS = $(S_sources:%=TARGET_AS--%)
+
+.PHONY: $(TARGETS_C) $(TARGETS_AS)
+#$(info -> The OBJECTS: $(OBJECTS))
+
+BUILDDEPS += $(TARGETS_C) $(TARGETS_AS)
+
+
 
 .PHONY: all link clean flash flash-only termdeps term doc debug debug-server reset objdump help info-modules
 .PHONY: print-size elffile binfile hexfile flashfile
@@ -558,7 +577,11 @@ $(ELFFILE): FORCE
 ifeq ($(BUILDOSXNATIVE),1)
   _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $(UNDEF) $$(find $(BASELIBS) -size +8c) $(LINKFLAGS) $(LINKFLAGPREFIX)-no_pie
 else
-  _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $(UNDEF) $(LINKFLAGPREFIX)--start-group $(BASELIBS) -lm $(LINKFLAGPREFIX)--end-group $(LINKFLAGS) $(LINKFLAGPREFIX)-Map=$(BINDIR)/$(APPLICATION).map
+  ifeq (1,$(TEST_REFACTOR))
+    _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $(OBJECTS) $(LINKFLAGS) $(LINKFLAGPREFIX)-Map=$(BINDIR)/$(APPLICATION).map
+  else
+    _LINK = $(if $(CPPMIX),$(LINKXX),$(LINK)) $(UNDEF) $(LINKFLAGPREFIX)--start-group $(BASELIBS) -lm $(LINKFLAGPREFIX)--end-group $(LINKFLAGS) $(LINKFLAGPREFIX)-Map=$(BINDIR)/$(APPLICATION).map
+  endif
 endif # BUILDOSXNATIVE
 
 ifeq ($(BUILD_IN_DOCKER),1)
@@ -964,6 +987,21 @@ ifneq ($(_BASELIBS_VALUE_BEFORE_USAGE),$(BASELIBS))
 endif
 
 endif
+
+# TODO: Maybe we need to find a better place for this. Also, need to add .cpp,
+# split the targets and generate .d files
+$(TARGETS_C): TARGET_C--%.c: %.c $(RIOTBUILD_CONFIG_HEADER_C)
+	@mkdir -p $(dir $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<))
+	$(Q)$(CCACHE) $(CC) \
+	$(CFLAGS) $(INCLUDES) -c -o $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<) \
+	$<
+
+CCASFLAGS = $(filter-out $(CCASUWFLAGS), $(CFLAGS)) $(CCASEXFLAGS)
+
+$(TARGETS_AS): TARGET_AS--%.S: %.S $(RIOTBUILD_CONFIG_HEADER_C)
+	@mkdir -p $(dir $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<))
+	$(Q)$(CCAS) $(CCASFLAGS) $(INCLUDES) -c \
+	-o $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<) $<
 
 # include RIOT_MAKEFILES_GLOBAL_POST configuration files
 # allows setting user specific system wide configuration parsed after the body

@@ -1,0 +1,7 @@
+ifndef $(mkfile_path)
+$(mkfile_path):=y
+
+src-y += $(current_dir)/native-led.c
+src-y += $(current_dir)/native-qdec.c
+
+endif

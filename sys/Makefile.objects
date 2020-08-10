@@ -1,0 +1,6 @@
+ifndef $(mkfile_path)
+$(mkfile_path):=y
+
+src-$(MOD_AUTO_INIT) += $(current_dir)/auto_init/
+
+endif

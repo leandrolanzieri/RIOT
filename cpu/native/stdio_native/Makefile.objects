@@ -1,0 +1,6 @@
+ifndef $(mkfile_path)
+$(mkfile_path):=y
+
+src-y += $(current_dir)/stdio_native.c
+
+endif

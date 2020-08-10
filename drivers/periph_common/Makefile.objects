@@ -1,0 +1,15 @@
+ifndef $(mkfile_path)
+$(mkfile_path):=y
+
+src-y += $(current_dir)/cpuid.c
+src-y += $(current_dir)/eeprom.c
+src-y += $(current_dir)/flashpage.c
+src-y += $(current_dir)/gpio_util.c
+src-y += $(current_dir)/i2c.c
+src-y += $(current_dir)/init.c
+src-y += $(current_dir)/pm.c
+src-y += $(current_dir)/rtc.c
+src-y += $(current_dir)/spi.c
+src-y += $(current_dir)/timer.c
+
+endif
