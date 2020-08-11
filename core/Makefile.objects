@@ -2,6 +2,12 @@ sources := $(filter-out init.c mbox.c msg.c msg_bus.c panic.c thread_flags.c,$(n
 
 src-y += $(sources:%.c=$(current_dir)/%.c)
 
+# Example of CFLAG for a file
+# cflags-$(current_dir)/init.c += -DA_CFLAG_FOR_A_FILE
+
+# Example of a CFLAG for the directory
+# cflags-$(current_dir)/ += -DA_CFLAG_FOR_A_DIR
+
 src-$(MOD_CORE_INIT) += $(current_dir)/init.c
 src-$(MOD_CORE_MBOX) += $(current_dir)/mbox.c
 src-$(MOD_CORE_MSG) += $(current_dir)/msg.c

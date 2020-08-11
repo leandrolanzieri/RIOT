@@ -990,6 +990,10 @@ endif
 
 # TODO: Maybe we need to find a better place for this. Also, need to add .cpp,
 # split the targets and generate .d files
+
+# CFLAGS for the current c file: echo $(cflags-$*.c)
+# CFLAGS for the current directory: echo $(cflags-$(dir $*))
+
 $(TARGETS_C): TARGET_C--%.c: %.c $(RIOTBUILD_CONFIG_HEADER_C)
 	@mkdir -p $(dir $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<))
 	$(Q)$(CCACHE) $(CC) \

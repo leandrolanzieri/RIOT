@@ -19,12 +19,13 @@ MODULE ?= $(_MOD)
 
 .PHONY: all clean $(DIRS:%=ALL--%) $(DIRS:%=CLEAN--%)
 
-all: $(BINDIR)/$(MODULE).a ..nothing
+ifneq (1, $(TEST_REFACTOR))
+  all: $(BINDIR)/$(MODULE).a ..nothing
+  clean:: $(DIRS:%=CLEAN--%)
+endif
 
 ..nothing:
 	@:
-
-clean:: $(DIRS:%=CLEAN--%)
 
 $(DIRS:%=ALL--%):
 	$(QQ)"$(MAKE)" -C $(@:ALL--%=%)
