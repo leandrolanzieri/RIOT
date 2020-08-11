@@ -6,8 +6,7 @@ dirs := $(filter %/,$(src-y))
 src-y := $(filter-out $(dirs),$(src-y))
 makefiles := $(patsubst %/,%/Makefile.objects,$(dirs))
 
-$(info -> Including the following makefiles: $(makefiles))
--include $(makefiles)
+$(foreach m,$(makefiles),$(eval $(call source_fisher_include,$(m))))
 
 # include myself
 ifneq ($(old-src-y),$(src-y))

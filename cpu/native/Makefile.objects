@@ -1,5 +1,4 @@
-ifndef $(mkfile_path)
-$(mkfile_path):=y
+$(info ->> CPU Native Makefile.objects)
 
 src-y += $(current_dir)/async_read.c
 src-y += $(current_dir)/irq_cpu.c
@@ -18,5 +17,3 @@ src-$(MOD_STDIO_NATIVE) += $(current_dir)/stdio_native/
 src-$(MOD_MTD_NATIVE) += $(current_dir)/mtd/
 src-$(MOD_CAN_LINUX) += $(current_dir)/can/
 src-$(MOD_BACKTRACE) += $(current_dir)/backtrace/
-
-endif

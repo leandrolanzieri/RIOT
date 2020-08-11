@@ -1,6 +1,1 @@
-ifndef $(mkfile_path)
-$(mkfile_path):=y
-
 src-y += $(current_dir)/auto_init.c
-
-endif

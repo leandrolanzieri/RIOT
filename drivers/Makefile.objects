@@ -1,7 +1,2 @@
-ifndef $(mkfile_path)
-$(mkfile_path):=y
-
 src-$(MOD_PERIPH_COMMON) += $(current_dir)/periph_common/
 # TODO: Add the rest :-)
-
-endif

@@ -1,7 +1,2 @@
-ifndef $(mkfile_path)
-$(mkfile_path):=y
-
 src-y += $(current_dir)/board_init.c
 src-$(MOD_NATIVE_DRIVERS) += $(current_dir)/drivers/
-
-endif
