@@ -993,15 +993,19 @@ endif
 $(TARGETS_C): TARGET_C--%.c: %.c $(RIOTBUILD_CONFIG_HEADER_C)
 	@mkdir -p $(dir $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<))
 	$(Q)$(CCACHE) $(CC) \
-	$(CFLAGS) $(INCLUDES) -c -o $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<) \
-	$<
+	-DRIOT_FILE_RELATIVE=\"$(patsubst $(RIOTBASE)/%,%,$<)\" \
+	-DRIOT_FILE_NOPATH=\"$(notdir $<)\" \
+	$(CFLAGS) $(INCLUDES) \
+	-MQ '$(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<)' \
+	-MD -MP -c -o $(patsubst $(RIOTBASE)/%.c,$(MY_OBJECTS_DIR)/%.o,$<) $<
 
 CCASFLAGS = $(filter-out $(CCASUWFLAGS), $(CFLAGS)) $(CCASEXFLAGS)
 
 $(TARGETS_AS): TARGET_AS--%.S: %.S $(RIOTBUILD_CONFIG_HEADER_C)
 	@mkdir -p $(dir $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<))
-	$(Q)$(CCAS) $(CCASFLAGS) $(INCLUDES) -c \
-	-o $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<) $<
+	$(Q)$(CCAS) $(CCASFLAGS) $(INCLUDES) \
+	-MQ '$(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<)' \
+	-MD -MP -c -o $(patsubst $(RIOTBASE)/%.S,$(MY_OBJECTS_DIR)/%.o,$<) $<
 
 # include RIOT_MAKEFILES_GLOBAL_POST configuration files
 # allows setting user specific system wide configuration parsed after the body
