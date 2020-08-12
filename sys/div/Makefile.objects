@@ -1,0 +1,1 @@
+src-y += $(current_dir)/div.c

@@ -1,0 +1,3 @@
+src-y += $(current_dir)/gnrc_sixlowpan_nd.c
+
+src-$(MOD_GNRC_SIXLOWPAN_ND_ROUTER) += $(current_dir)/router/

@@ -1,0 +1,1 @@
+src-y += $(wildcard $(current_dir)/*.c)

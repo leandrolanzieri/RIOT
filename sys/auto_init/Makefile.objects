@@ -1,1 +1,9 @@
 src-y += $(current_dir)/auto_init.c
+
+src-$(MOD_GNRC_NETIF_INIT) += $(current_dir)/netif/
+src-$(MOD_SAUL_INIT) += $(current_dir)/saul/
+src-$(MOD_AUTO_INIT_CAN) += $(current_dir)/can/
+src-$(MOD_AUTO_INIT_LORAMAC) += $(current_dir)/loramac/
+src-$(MOD_AUTO_INIT_MULTIMEDIA) += $(current_dir)/multimedia/
+src-$(MOD_AUTO_INIT_USBUS) += $(current_dir)/usb/
+src-$(MOD_AUTO_INIT_SECURITY) += $(current_dir)/security/

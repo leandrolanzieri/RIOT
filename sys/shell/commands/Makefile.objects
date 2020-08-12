@@ -1,0 +1,37 @@
+src-y += $(current_dir)/shell_commands.c $(current_dir)/sc_sys.c
+
+src-$(MOD_APP_METADATA) += $(current_dir)/sc_app_metadata.c
+src-$(MOD_DFPLAYER) += $(current_dir)/sc_dfplayer.c
+src-$(MOD_MCI) += $(current_dir)/sc_disk.c
+src-$(MOD_PERIPH_PM) += $(current_dir)/sc_pm.c
+src-$(MOD_PS) += $(current_dir)/sc_ps.c
+src-$(MOD_HEAP_CMD) += $(current_dir)/sc_heap.c
+src-$(MOD_SHT1X) += $(current_dir)/sc_sht1x.c
+src-$(MOD_LPC2387) += $(current_dir)/sc_heap.c
+src-$(MOD_RANDOM) += $(current_dir)/sc_random.c
+src-$(MOD_AT30TSE75X) += $(current_dir)/sc_at30tse75x.c
+src-$(MOD_GNRC_NETIF) += $(current_dir)/sc_gnrc_netif.c
+src-$(MOD_FIB) += $(current_dir)/sc_fib.c
+src-$(MOD_GNRC_IPV6_EXT_FRAG_STATS) += $(current_dir)/sc_gnrc_ipv6_frag_stats.c
+src-$(MOD_GNRC_IPV6_NIB) += $(current_dir)/sc_gnrc_ipv6_nib.c
+src-$(MOD_GNRC_IPV6_WHITELIST) += $(current_dir)/sc_whitelist.c
+src-$(MOD_GNRC_IPV6_BLACKLIST) += $(current_dir)/sc_blacklist.c
+src-$(MOD_GNRC_ICMPV6_ECHO) += $(current_dir)/ += $(current_dir)/sc_gnrc_icmpv6_echo.c
+src-$(MOD_GNRC_PKTBUF_CMD) += $(current_dir)/sc_gnrc_pktbuf.c
+src-$(MOD_GNRC_RPL) += $(current_dir)/sc_gnrc_rpl.c
+src-$(MOD_GNRC_SIXLOWPAN_CTX) += $(current_dir)/sc_gnrc_6ctx.c
+src-$(MOD_GNRC_SIXLOWPAN_FRAG_STATS) += $(current_dir)/sc_gnrc_6lo_frag_stats.c
+src-$(MOD_SAUL_REG) += $(current_dir)/sc_saul_reg.c
+src-$(MOD_CCN) += $(current_dir)/sc_ccnl.c
+src-$(MOD_SNTP) += $(current_dir)/sc_sntp.c
+src-$(MOD_VFS) += $(current_dir)/sc_vfs.c
+src-$(MOD_CONN_CAN) += $(current_dir)/sc_can.c
+src-$(MOD_CORD_EP) += $(current_dir)/sc_cord_ep.c
+src-$(MOD_PERIPH_RTC) += $(current_dir)/sc_rtc.c
+src-$(MOD_RTT_CMD) += $(current_dir)/sc_rtt.c
+src-$(MOD_I2C_SCAN) += $(current_dir)/sc_i2c_scan.c
+src-$(MOD_SEMTECH) += $(current_dir)/sc_loramac.c
+src-$(MOD_NIMBLE_NETIF) += $(current_dir)/sc_nimble_netif.c
+src-$(MOD_NIMBLE_STATCONN) += $(current_dir)/sc_nimble_statconn.c
+src-$(MOD_SUIT_COAP) += $(current_dir)/sc_suit.c
+src-$(MOD_CRYPTOAUTHLIB) += $(current_dir)/sc_cryptoauthlib.c

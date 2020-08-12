@@ -1,0 +1,15 @@
+src-$(MOD_PERIPH_ADC) += $(current_dir)/adc.c
+src-$(MOD_PERIPH_CPUID) += $(current_dir)/cpuid.c
+src-$(MOD_PERIPH_DAC) += $(current_dir)/dac.c
+src-$(MOD_PERIPH_DMA) += $(current_dir)/dma.c
+src-$(MOD_PERIPH_FLASHPAGE) += $(current_dir)/flashpage.c
+src-$(MOD_PERIPH_GPIO) += $(current_dir)/gpio.c
+src-$(MOD_PERIPH_HWRNG) += $(current_dir)/hwrng.c
+src-$(MOD_PERIPH_I2C) += $(current_dir)/i2c.c
+src-$(MOD_PERIPH_PWM) += $(current_dir)/pwm.c
+src-$(MOD_PERIPH_RTC_RTT) += $(current_dir)/rtc_rtt.c
+src-$(MOD_PERIPH_SPI) += $(current_dir)/spi.c
+src-$(MOD_PERIPH_TIMER) += $(current_dir)/timer.c
+src-$(MOD_PERIPH_UART) += $(current_dir)/uart.c
+src-$(MOD_PERIPH_USBDEV) += $(current_dir)/usbdev.c
+src-$(MOD_PERIPH_WDT) += $(current_dir)/wdt.c

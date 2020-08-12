@@ -1,0 +1,10 @@
+src-y += $(current_dir)/gnrc_netif.c
+src-y += $(current_dir)/gnrc_netif_raw.c
+src-y += $(current_dir)/gnrc_netif_device_type.c
+src-y += $(current_dir)/_netif.c
+
+src-$(MOD_GNRC_NETIF_ETHERNET) += $(current_dir)/ethernet/
+src-$(MOD_GNRC_NETIF_IEEE802154) += $(current_dir)/ieee802154/
+src-$(MOD_GNRC_NETIF_INIT_DEVS) += $(current_dir)/init_devs/
+src-$(MOD_GNRC_NETIF_HDR) += $(current_dir)/hdr/
+src-$(MOD_GNRC_NETIF_LORAWAN) += $(current_dir)/lorawan/

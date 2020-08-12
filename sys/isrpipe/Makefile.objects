@@ -1,0 +1,3 @@
+src-y += $(current_dir)/isrpipe.c
+
+src-$(MOD_ISRPIPE_READ_TIMEOUT) += $(current_dir)/read_timeout/

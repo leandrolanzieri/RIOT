@@ -1,0 +1,5 @@
+src-y += $(current_dir)/mpu.c $(current_dir)/panic.c
+src-y += $(current_dir)/thread_arch.c $(current_dir)/vectors_cortexm.c
+src-y += $(current_dir)/cortexm_init.c
+
+src-$(MOD_CORTEXM_COMMON_PERIPH) += $(current_dir)/periph/

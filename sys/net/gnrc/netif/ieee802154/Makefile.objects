@@ -1,0 +1,1 @@
+src-y += $(current_dir)/gnrc_netif_ieee802154.c

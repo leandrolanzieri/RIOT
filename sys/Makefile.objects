@@ -1,1 +1,29 @@
 src-$(MOD_AUTO_INIT) += $(current_dir)/auto_init/
+src-$(MOD_DIV) += $(current_dir)/div/
+src-$(MOD_EVTIMER) += $(current_dir)/evtimer/
+src-$(MOD_FMT) += $(current_dir)/fmt/
+src-$(MOD_ISRPIPE) += $(current_dir)/isrpipe/
+src-$(MOD_LUID) += $(current_dir)/luid/
+src-$(MOD_INET_CSUM) += $(current_dir)/net/crosslayer/inet_csum/
+
+src-$(MOD_GNRC) += $(current_dir)/net/gnrc/
+src-$(MOD_IEEE802154) += $(current_dir)/net/link_layer/ieee802154/
+src-$(MOD_L2UTIL) += $(current_dir)/net/link_layer/l2util/
+src-$(MOD_NETIF) += $(current_dir)/net/netif/
+src-$(MOD_ICMPV6) += $(current_dir)/net/network_layer/icmpv6/
+
+src-$(MOD_IPV6_ADDR) += $(current_dir)/net/network_layer/ipv6/addr/
+src-$(MOD_IPV6_HDR) += $(current_dir)/net/network_layer/ipv6/hdr/
+src-$(MOD_SIXLOWPAN) += $(current_dir)/net/network_layer/sixlowpan/
+src-$(MOD_UDP) += $(current_dir)/net/transport_layer/udp/
+
+src-$(MOD_NEWLIB_SYSCALLS_DEFAULT) += $(current_dir)/newlib_syscalls_default/
+src-$(MOD_OD) += $(current_dir)/od/
+src-$(MOD_PM_LAYERED) += $(current_dir)/pm_layered/
+src-$(MOD_PS) += $(current_dir)/ps/
+src-$(MOD_RANDOM) += $(current_dir)/random/
+src-$(MOD_SHELL) += $(current_dir)/shell/
+src-$(MOD_STDIO_UART) += $(current_dir)/stdio_uart/
+src-$(MOD_TRICKLE) += $(current_dir)/trickle/
+src-$(MOD_TSRB) += $(current_dir)/tsrb/
+src-$(MOD_XTIMER) += $(current_dir)/xtimer/

@@ -1,0 +1,14 @@
+src-$(MOD_GNRC_NETAPI) += $(current_dir)/netapi/
+src-$(MOD_GNRC_NETIF) += $(current_dir)/netif/
+src-$(MOD_GNRC_NETREG) += $(current_dir)/netreg/
+src-$(MOD_GNRC_PKT) += $(current_dir)/pkt/
+src-$(MOD_GNRC_PKTBUF) += $(current_dir)/pktbuf/
+src-$(MOD_GNRC_PKTBUF_STATIC) += $(current_dir)/pktbuf_static/
+src-$(MOD_GNRC_PKTDUMP) += $(current_dir)/pktdump/
+
+src-$(MOD_GNRC_IPV6) += $(current_dir)/network_layer/ipv6/
+src-$(MOD_GNRC_ICMPV6) += $(current_dir)/network_layer/icmpv6/
+src-$(MOD_GNRC_NDP) += $(current_dir)/network_layer/ndp/
+src-$(MOD_GNRC_SIXLOWPAN) += $(current_dir)/network_layer/sixlowpan/
+src-$(MOD_GNRC_RPL) += $(current_dir)/routing/rpl/
+src-$(MOD_GNRC_UDP) += $(current_dir)/transport_layer/udp/

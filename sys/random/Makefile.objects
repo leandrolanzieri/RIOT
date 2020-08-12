@@ -1,0 +1,11 @@
+src-y += $(current_dir)/random.c
+
+src-$(MOD_PRNG_FORTUNA) += $(current_dir)/fortuna.c $(current_dir)/fortuna/
+src-$(MOD_PRNG_HWRNG) += $(current_dir)/hwrng.c
+src-$(MOD_PRNG_MERSENNE) += $(current_dir)/mersenne.c
+src-$(MOD_PRNG_MINSTD) += $(current_dir)/minstd.c
+src-$(MOD_PRNG_MUSL_LCG) += $(current_dir)/musl_lcg.c
+src-$(MOD_PRNG_SHAXPRNG) += $(current_dir)/shaxprng.c
+src-$(MOD_PRNG_TINYMT32) += $(current_dir)/tinymt32.c $(current_dir)/tinymt32/
+src-$(MOD_PRNG_XORSHIFT) += $(current_dir)/xorshift.c
+

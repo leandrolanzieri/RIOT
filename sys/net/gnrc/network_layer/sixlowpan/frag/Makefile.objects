@@ -1,0 +1,6 @@
+src-y += $(current_dir)/gnrc_sixlowpan_frag.c
+
+src-$(MOD_GNRC_SIXLOWPAN_FRAG_FB) += $(current_dir)/fb/
+src-$(MOD_GNRC_SIXLOWPAN_FRAG_RB) += $(current_dir)/rb/
+src-$(MOD_GNRC_SIXLOWPAN_FRAG_STATS) += $(current_dir)/stats/
+src-$(MOD_GNRC_SIXLOWPAN_FRAG_VRB) += $(current_dir)/vrb/

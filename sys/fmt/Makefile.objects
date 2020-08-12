@@ -1,0 +1,2 @@
+src-y += $(current_dir)/fmt.c
+src-$(MOD_FMT_TABLE) += $(current_dir)/table.c

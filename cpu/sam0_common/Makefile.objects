@@ -1,0 +1,1 @@
+src-$(MOD_SAM0_COMMON_PERIPH) += $(current_dir)/periph/

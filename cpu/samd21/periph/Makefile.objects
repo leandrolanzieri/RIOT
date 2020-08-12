@@ -1,0 +1,1 @@
+src-$(MOD_PERIPH_PM) += $(current_dir)/pm.c

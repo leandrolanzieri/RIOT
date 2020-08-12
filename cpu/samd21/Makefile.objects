@@ -1,0 +1,4 @@
+# TODO: NO LTO for vectors?
+src-y += $(current_dir)/cpu.c $(current_dir)/vectors.c
+src-$(MOD_PERIPH) += $(current_dir)/periph/
+src-y += $(RIOTCPU)/cortexm_common/ $(RIOTCPU)/sam0_common/

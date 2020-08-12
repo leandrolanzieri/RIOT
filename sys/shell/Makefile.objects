@@ -1,0 +1,3 @@
+src-y += $(current_dir)/shell.c
+
+src-$(MOD_SHELL_COMMANDS) += $(current_dir)/commands/

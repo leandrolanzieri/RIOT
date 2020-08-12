@@ -1,0 +1,6 @@
+src-y += $(current_dir)/gnrc_sixlowpan.c
+
+src-$(MOD_GNRC_SIXLOWPAN_CTX) += $(current_dir)/ctx/
+src-$(MOD_GNRC_SIXLOWPAN_FRAG) += $(current_dir)/frag/
+src-$(MOD_GNRC_SIXLOWPAN_IPHC) += $(current_dir)/iphc/
+src-$(MOD_GNRC_SIXLOWPAN_ND) += $(current_dir)/nd/

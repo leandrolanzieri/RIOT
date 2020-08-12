@@ -1,0 +1,4 @@
+src-y += $(current_dir)/gnrc_icmpv6.c
+
+src-$(MOD_GNRC_ICMPV6_ECHO) += $(current_dir)/echo/
+src-$(MOD_GNRC_ICMPV6_ERROR) += $(current_dir)/error/

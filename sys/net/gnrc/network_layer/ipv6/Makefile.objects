@@ -1,0 +1,4 @@
+src-y += $(current_dir)/gnrc_ipv6.c
+
+src-$(MOD_GNRC_IPV6_HDR) += $(current_dir)/hdr/
+src-$(MOD_GNRC_IPV6_NIB) += $(current_dir)/nib/

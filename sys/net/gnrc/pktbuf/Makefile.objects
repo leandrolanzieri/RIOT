@@ -1,0 +1,1 @@
+src-y += $(current_dir)/gnrc_pktbuf.c

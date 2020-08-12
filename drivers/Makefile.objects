@@ -1,2 +1,4 @@
+src-$(MOD_AT86RF2XX) += $(current_dir)/at86rf2xx/
+src-$(MOD_NETDEV_IEEE802154) += $(current_dir)/netdev_ieee802154/
 src-$(MOD_PERIPH_COMMON) += $(current_dir)/periph_common/
 # TODO: Add the rest :-)
