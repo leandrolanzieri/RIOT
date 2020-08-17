@@ -128,4 +128,7 @@ config CPU_MODEL
 config CPU
     default "kinetis" if CPU_COMMON_KINETIS
 
+rsource "mmacau_lib/Kconfig"
+rsource "periph/Kconfig"
+
 source "$(RIOTCPU)/cortexm_common/Kconfig"
