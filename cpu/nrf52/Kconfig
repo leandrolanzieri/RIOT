@@ -15,6 +15,9 @@ config CPU_FAM_NRF52
     select HAS_BLE_NIMBLE_NETIF
     select HAS_CORTEXM_MPU
     select HAS_CPU_NRF52
+    select HAS_HW_AES
+    select HAS_HW_HASH_SHA1
+    select HAS_HW_HASH_SHA256
 
 ## CPU Models
 config CPU_MODEL_NRF52832XXAA
@@ -42,5 +45,7 @@ config HAS_CPU_NRF52
     bool
     help
         Indicates that the current cpu is 'nrf52'.
+
+rsource "cryptocell_lib/Kconfig"
 
 source "$(RIOTCPU)/nrf5x_common/Kconfig"
