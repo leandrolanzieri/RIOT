@@ -28,9 +28,29 @@ endchoice
 
 endif # HASHES_SHA1
 
+menuconfig HASHES_SHA256
+    bool "SHA-256"
+
+if HASHES_SHA256
+
+choice
+    bool "SHA-256 implementation"
+    default MOD_PERIPH_HASH_SHA256
+
+config MOD_PERIPH_HASH_SHA256
+    bool "Hardware accelerated"
+    depends on HAS_HW_HASH_SHA256
+
+config MOD_HASHES_SHA256
+    bool "Software"
+    select MOD_HASHES
+
+endchoice
+
+endif # HASHES_SHA256
+
 config MOD_HASHES
     bool
-    depends on TEST_KCONFIG
     help
         Base module for software implemented hashes.
 

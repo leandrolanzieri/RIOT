@@ -1,0 +1,37 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Crypto"
+    depends on TEST_KCONFIG
+
+menuconfig CRYPTO_AES
+    bool "AES"
+
+if CRYPTO_AES
+
+choice
+    bool "AES implementation"
+    default MOD_PERIPH_CRYPTO_AES
+
+config MOD_PERIPH_CRYPTO_AES
+    bool "Hardware accelerated"
+    depends on HAS_HW_AES
+
+config MOD_CRYPTO_AES
+    bool "Software"
+    select MOD_CRYPTO
+
+endchoice
+
+endif # CRYPTO_AES
+
+config MOD_CRYPTO
+    bool
+    help
+        Base crypto module for software implementations.
+
+endmenu # Crypto

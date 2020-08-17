@@ -40,6 +40,9 @@
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 
+#ifdef AES_TIME
+#include "xtimer.h"
+#endif
 /**
  * Interface to the aes cipher
  */
@@ -795,6 +798,9 @@ static const u32 rcon[] = {
     0x1B000000, 0x36000000,
 };
 
+#ifdef AES_TIME
+uint32_t sta, sto, diff;
+#endif
 
 int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
 {
@@ -1036,8 +1042,18 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
+    #ifdef AES_TIME
+    sta = xtimer_now_usec();
     res = aes_set_encrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
+    sto = xtimer_now_usec();
+    diff = sto - sta;
+    printf("RIOT AES set encrypt key: %ld\n", diff);
+#else
+    res = aes_set_encrypt_key((unsigned char *)context->context,
+                              AES_KEY_SIZE * 8, &aeskey);
+#endif
+
     if (res < 0) {
         return res;
     }
@@ -1304,8 +1320,17 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
+#ifdef AES_TIME
+    sta = xtimer_now_usec();
     res = aes_set_decrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
+    sto = xtimer_now_usec();
+    diff = sto - sta;
+    printf("RIOT AES set decrypt key: %ld\n", diff);
+#else
+    res = aes_set_decrypt_key((unsigned char *)context->context,
+                              AES_KEY_SIZE * 8, &aeskey);
+#endif
 
     if (res < 0) {
         return res;

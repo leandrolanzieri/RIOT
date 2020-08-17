@@ -24,6 +24,11 @@
 
 #include <stdint.h>
 
+#include "kernel_defines.h"
+#if (IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) && !IS_ACTIVE(MODULE_GECKO_SDK))
+#include "aes_hwctx.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,13 +66,14 @@ extern "C" {
 /**  Returned by cipher_init upon successful initialization of a cipher. */
 #define CIPHER_INIT_SUCCESS            1
 
+#if (!IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) || IS_ACTIVE(MODULE_GECKO_SDK))
 /**
  * @brief   the context for cipher-operations
  */
 typedef struct {
     uint8_t context[CIPHER_MAX_CONTEXT_SIZE];  /**< buffer for cipher operations */
 } cipher_context_t;
-
+#endif /* MODULE_PERIPH_HASH_SHA1 */
 
 /**
  * @brief   BlockCipher-Interface for the Cipher-Algorithms

@@ -46,6 +46,7 @@ extern "C" {
  */
 #define SHA1_BLOCK_LENGTH   (64)
 
+#ifndef MODULE_PERIPH_HASH_SHA1
 /**
  * @brief SHA-1 algorithm context
  * @internal
@@ -65,7 +66,7 @@ typedef struct {
     /** temporary buffer for the inner hashing */
     uint8_t inner_hash[SHA1_DIGEST_LENGTH];
 } sha1_context;
-
+#endif /* MODULE_PERIPH_HASH_SHA1 */
 
 /**
  * @brief Initialize SHA-1 message digest context

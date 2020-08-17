@@ -52,6 +52,10 @@
 #include <stddef.h>
 
 #include "hashes/sha2xx_common.h"
+#include "kernel_defines.h"
+#if (IS_ACTIVE(MODULE_PERIPH_HASH_SHA256))
+#include "sha256_hwctx.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,6 +71,7 @@ extern "C" {
  */
 #define SHA256_INTERNAL_BLOCK_SIZE (64)
 
+#ifndef MODULE_PERIPH_HASH_SHA256
 /**
  * @brief Context for cipher operations based on sha256
  */
