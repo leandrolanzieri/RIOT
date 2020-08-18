@@ -26,7 +26,7 @@
 
 #include "vendor/MKW21D5.h"
 #include "hashes/sha1.h"
-#include "mmcau.h"
+#include "cau_api.h"
 #include "xtimer.h"
 
 #ifdef FREESCALE_MMCAU
