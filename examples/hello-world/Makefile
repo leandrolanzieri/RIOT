@@ -16,8 +16,8 @@ CFLAGS += -DCRYPTO_AES
 # CFLAGS+=-DFREESCALE_MMCAU
 
 # For Arm Cryptocell
-CFLAGS += -DARM_CRYPTOCELL
-USEMODULE += lib_cryptocell
+# CFLAGS += -DARM_CRYPTOCELL
+# USEMODULE += lib_cryptocell
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
