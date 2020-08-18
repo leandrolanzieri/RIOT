@@ -85,6 +85,19 @@ static const spi_dev_t spi_config[] = {
  * or two regular timers in cascade mode.
  * @{
  */
+#if IS_ACTIVE(CONFIG_EFM32_USE_LETIMER)
+static const timer_conf_t timer_config[] = {
+    {
+        .timer = {
+            .dev = LETIMER0,
+            .cmu = cmuClock_LETIMER0
+        },
+        .irq = LETIMER0_IRQn
+    }
+};
+#define TIMER_0_ISR         isr_letimer0
+
+#else
 static const timer_conf_t timer_config[] = {
     {
         .prescaler = {
@@ -112,8 +125,7 @@ static const timer_conf_t timer_config[] = {
     },
 };
 
-#define TIMER_0_ISR         isr_timer1
-#define TIMER_1_ISR         isr_letimer0
+#endif /* CONFIG_EFM32_USE_LETIMER */
 
 #define TIMER_NUMOF         ARRAY_SIZE(timer_config)
 /** @} */
