@@ -1,5 +1,3 @@
-PSEUDOMODULES += esp32_wrover_kit_camera
-
 # configure the serial interface
 PORT_LINUX ?= /dev/ttyUSB1
 

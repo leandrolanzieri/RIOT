@@ -19,18 +19,6 @@ INCLUDES += -I$(PKGDIRBASE)/openwsn \
 
 DIRS += $(RIOTBASE)/pkg/openwsn/contrib
 
-PSEUDOMODULES += openwsn_serial \
-                 openwsn_debugpins \
-                 openwsn_6lo_frag \
-                 openwsn_icmpv6_echo \
-                 openwsn_iee802154e_security \
-                 openwsn_leds \
-                 openwsn_sctimer \
-                 openwsn_sctimer_rtt \
-                 openwsn_sctimer_ztimer \
-                 openwsn_radio \
-                 #
-
 # Set OpenWSN configurations flags, see $(PKG_SOURCE_DIR)/openwsn-fw/inc/config.h
 
 ifneq (,$(filter openwsn_cjoin,$(USEMODULE)))

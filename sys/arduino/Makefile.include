@@ -10,10 +10,6 @@ ifneq (,$(SKETCHES))
   # Depends on module
   DIRS      += $(SKETCH_MODULE_DIR)
   BUILDDEPS += $(SKETCH_GENERATED_FILES)
-else
-  # arduino_sketches is now always included if arduino is, but if there
-  # are no sketches then no %.a will be present, so declare PSEUDOMODULE
-  PSEUDOMODULES += $(SKETCH_MODULE)
 endif
 
 # include the Arduino headers

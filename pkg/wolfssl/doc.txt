@@ -80,14 +80,14 @@
  * Features should be controlled with the header "user_settings.h" included with
  * the package.
  * On RIOT-OS, wolfSSL and wolfCrypt libraries can be configured using
- * PSEUDOMODULES. After selecting the wolfSSL package via:
+ * modules. After selecting the wolfSSL package via:
  *
  * ```makefile
  * USEPKG+=wolfssl
  * ```
  *
  * Single ciphers, algorithms and features can be selected by including the
- * associated pseudomodule, e.g.:
+ * associated module, e.g.:
  *
  * ```makefile
  * USEMODULE += wolfcrypt
@@ -107,7 +107,7 @@
  * is also included in the build.
  *
  * Alternatively, to enable full-POSIX TLS/DTLS, select the `wolfssl_socket` module by
- * adding the followint to the application's Makefile:
+ * adding the following to the application's Makefile:
  *
  * ```makefile
  * USEMODULE += wolfssl_socket

@@ -10,5 +10,3 @@ CFLAGS += -DU8X8_WITH_USER_PTR
 ifneq (,$(filter u8g2_sdl,$(USEMODULE)))
   LINKFLAGS += $(shell sdl2-config --libs)
 endif
-
-PSEUDOMODULES += u8g2

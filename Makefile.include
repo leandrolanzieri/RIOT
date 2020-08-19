@@ -360,7 +360,6 @@ INCLUDES += -I$(RIOTBASE)/core/include -I$(RIOTBASE)/drivers/include -I$(RIOTBAS
 include $(RIOTBASE)/Makefile.features
 
 # mandatory includes!
-include $(RIOTMAKE)/pseudomodules.inc.mk
 include $(RIOTMAKE)/defaultmodules.inc.mk
 
 # Include Kconfig functionalities

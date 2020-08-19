@@ -4,17 +4,6 @@
 # use flash mode dout by default to keep GPIO9 and GPIO10 free for use
 FLASH_MODE ?= dout
 
-# ESP* pseudomodules
-
-PSEUDOMODULES += esp_gdb
-PSEUDOMODULES += esp_i2c_sw
-PSEUDOMODULES += esp_log_colored
-PSEUDOMODULES += esp_log_tagged
-PSEUDOMODULES += esp_log_startup
-PSEUDOMODULES += esp_qemu
-PSEUDOMODULES += esp_spiffs
-PSEUDOMODULES += esp_wifi_any
-
 # Common includes
 
 INCLUDES += -I$(RIOTBOARD)/common/$(CPU)/include

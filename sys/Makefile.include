@@ -104,9 +104,3 @@ endif
 ifneq (,$(filter zptr,$(USEMODULE)))
   include $(RIOTBASE)/sys/zptr/Makefile.include
 endif
-
-# Convert xtimer into a pseudo module if its API is already implemented by
-# ztimer's compatibility wrapper
-ifneq (,$(filter ztimer_xtimer_compat,$(USEMODULE)))
-  PSEUDOMODULES += xtimer
-endif

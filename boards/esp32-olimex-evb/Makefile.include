@@ -1,3 +1,1 @@
-PSEUDOMODULES += olimex_esp32_gateway
-
 include $(RIOTBOARD)/common/esp32/Makefile.include

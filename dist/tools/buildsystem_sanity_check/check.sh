@@ -276,18 +276,6 @@ check_files_in_boards_not_reference_board_var() {
         | error_with_message 'Code in boards/ should not use $(BOARDS) to reference files since this breaks external BOARDS changing BOARDSDIR"'
 }
 
-check_no_pseudomodules_in_makefile_dep() {
-    local patterns=()
-    local pathspec=()
-
-    patterns+=(-e 'PSEUDOMODULES[\t ]*[+:]*=')
-
-    pathspec+=('**/Makefile.dep')
-
-    git -C "${RIOTBASE}" grep "${patterns[@]}" -- "${pathspec[@]}" \
-        | error_with_message "Don't define PSEUDOMODULES in Makefile.dep"
-}
-
 check_no_usemodules_in_makefile_include() {
     local patterns=()
     local pathspec=()
@@ -319,7 +307,6 @@ all_checks() {
     checks_tests_application_not_defined_in_makefile
     checks_develhelp_not_defined_via_cflags
     check_files_in_boards_not_reference_board_var
-    check_no_pseudomodules_in_makefile_dep
     check_no_usemodules_in_makefile_include
 }
 

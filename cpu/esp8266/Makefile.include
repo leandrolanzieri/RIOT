@@ -26,8 +26,6 @@ include $(RIOTCPU)/esp_common/Makefile.include
 
 TARGET_ARCH ?= xtensa-esp8266-elf
 
-PSEUDOMODULES += esp_sw_timer
-
 INCLUDES += -I$(RIOTCPU)/$(CPU)
 INCLUDES += -I$(RIOTCPU)/$(CPU)/include
 INCLUDES += -I$(RIOTCPU)/$(CPU)/vendor

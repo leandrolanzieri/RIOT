@@ -124,7 +124,7 @@ def build_all():
             stdout.flush()
             try:
                 app_dir = join(riotbase, folder, application)
-                subprocess = Popen((MAKE, 'buildtest'),
+                subprocess = Popen((MAKE, 'buildtest', '-j'),
                                    bufsize=1, stdin=null, stdout=PIPE, stderr=null,
                                    cwd=app_dir,
                                    env=subprocess_env)
