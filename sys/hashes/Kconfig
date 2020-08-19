@@ -23,6 +23,7 @@ config MOD_PERIPH_HASH_SHA1
 config MOD_HASHES_SHA1
     bool "Software implemented"
     select MOD_HASHES
+    select MOD_HASHES_SHA2XX_COMMON
 
 endchoice
 
@@ -44,6 +45,7 @@ config MOD_PERIPH_HASH_SHA256
 config MOD_HASHES_SHA256
     bool "Software"
     select MOD_HASHES
+    select MOD_HASHES_SHA2XX_COMMON
 
 endchoice
 
@@ -53,5 +55,10 @@ config MOD_HASHES
     bool
     help
         Base module for software implemented hashes.
+
+config MOD_HASHES_SHA2XX_COMMON
+    bool
+    help
+        Base module for sha2xx implementations.
 
 endmenu # Hashes
