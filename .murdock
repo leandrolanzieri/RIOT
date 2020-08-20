@@ -277,8 +277,17 @@ compile() {
         if [ $RUN_TESTS -eq 1 -o "$board" = "native" ]; then
             if [ -f "${BINDIR}/.test" ]; then
                 if [ "$board" = "native" ]; then
-                    BOARD=$board make -C${appdir} test
-                    RES=$?
+                    # get configuration files
+                    configs=$(BOARD=$board make -C${appdir} --no-print-directory test-configs)
+                    for config in $configs
+                    do
+                        BOARD=$board QUIET=0 KCONFIG_OVERLAY=${config} make -C${appdir} all
+                        BOARD=$board KCONFIG_OVERLAY=${config} make -C${appdir} test
+                        RES=$?
+                        if [ $RES -ne 0 ]; then
+                            break
+                        fi
+                    done
                 elif is_in_list "$board" "$TEST_BOARDS_AVAILABLE"; then
                     echo "-- test_hash=$test_hash"
                     if test_cache_get $test_hash; then
