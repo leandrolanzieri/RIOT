@@ -2,6 +2,8 @@
 
 BUILDTEST_MAKE_REDIRECT ?= >/dev/null 2>&1
 
+BOARDS:= native
+
 buildtest:
 	@ \
 	RESULT=true ; \

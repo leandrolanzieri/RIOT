@@ -27,6 +27,8 @@ from subprocess import CalledProcessError, check_call, check_output, PIPE, Popen
 from sys import argv, exit, stdout
 from io import StringIO
 from itertools import tee
+from multiprocessing import Pool
+from multiprocessing import freeze_support
 
 
 MAKE = environ.get("MAKE", "make")
@@ -117,48 +119,58 @@ def build_all():
         subprocess_env['RIOT_DO_RETRY'] = '1'
         subprocess_env['BUILDTEST_VERBOSE'] = '1'
 
-        for nth, application in enumerate(applications, 1):
-            stdout.write('\tBuilding application: {} ({}/{}) '.format(
-                colorize_str(application, Termcolor.blue),
-                nth, len(applications)))
-            stdout.flush()
-            try:
-                app_dir = join(riotbase, folder, application)
-                subprocess = Popen((MAKE, 'buildtest'),
-                                   bufsize=1, stdin=null, stdout=PIPE, stderr=null,
-                                   cwd=app_dir,
-                                   env=subprocess_env)
+        n_processors = 6
+        jobs = []
 
-                results, results_with_output = tee(get_results_and_output_from(subprocess.stdout))
-                results = groupby(sorted(results), lambda res: res[0])
-                results_with_output = list(filter(lambda res: res[2].getvalue(), results_with_output))
-                failed_with_output = list(filter(lambda res: 'failed' in res[0], results_with_output))
-                success_with_output = list(filter(lambda res: 'success' in res[0], results_with_output))
-                # check if bin-directory isn't in system's PATH to not accidentally
-                # delete some valuable system executable ;-)
-                if join(app_dir, "bin") not in environ.get("PATH", "/bin:/usr/bin:/usr/local/bin:"):
-                    check_call(["rm", "-rf", join(app_dir, "bin")])
-                print()
-                for group, result in results:
-                    print('\t\t{}: {}'.format(group, ', '.join(sorted(board for outcome, board, output in result))))
-                returncode = subprocess.wait()
-                if success_with_output:
-                    warnings.append((application, success_with_output))
-                if returncode == 0:
-                    success.append(application)
-                else:
-                    if not failed_with_output:
-                        print(colorize_str('\t\tmake buildtest error!', Termcolor.red))
-                    failed.append(application)
-                    errors.append((application, failed_with_output))
-            except Exception as e:
-                print('\n\t\tException: {}'.format(e))
-                exceptions.append(application)
-            finally:
-                try:
-                    subprocess.kill()
-                except Exception:
-                    pass
+        for nth, application in enumerate(applications, 1):
+            jobs.append((application, nth, subprocess_env, riotbase, folder))
+
+        with Pool(n_processors) as p:
+            p.map(build_application, jobs)
+
+
+def build_application(args):
+    (application, idx, subprocess_env, riotbase, folder) = args
+    out = ''
+    out+= ('\tBuilding application: {} ({})'.format(colorize_str(application, Termcolor.blue), idx))
+    try:
+        app_dir = join(riotbase, folder, application)
+        subprocess = Popen((MAKE, 'buildtest'),
+                           bufsize=1, stdin=null, stdout=PIPE, stderr=null,
+                           cwd=app_dir,
+                           env=subprocess_env)
+
+        results, results_with_output = tee(get_results_and_output_from(subprocess.stdout))
+        results = groupby(sorted(results), lambda res: res[0])
+        results_with_output = list(filter(lambda res: res[2].getvalue(), results_with_output))
+        failed_with_output = list(filter(lambda res: 'failed' in res[0], results_with_output))
+        success_with_output = list(filter(lambda res: 'success' in res[0], results_with_output))
+        # check if bin-directory isn't in system's PATH to not accidentally
+        # delete some valuable system executable ;-)
+        if join(app_dir, "bin") not in environ.get("PATH", "/bin:/usr/bin:/usr/local/bin:"):
+            check_call(["rm", "-rf", join(app_dir, "bin")])
+        out += '\n'
+        for group, result in results:
+            out += '\t\t{}: {}'.format(group, ', '.join(sorted(board for outcome, board, output in result)))
+        returncode = subprocess.wait()
+        if success_with_output:
+            warnings.append((application, success_with_output))
+        if returncode == 0:
+            success.append(application)
+        else:
+            if not failed_with_output:
+                out += colorize_str('\t\tmake buildtest error!', Termcolor.red)
+            failed.append(application)
+            errors.append((application, failed_with_output))
+    except Exception as e:
+        out += '\n\t\tException: {}'.format(e)
+        exceptions.append(application)
+    finally:
+        try:
+            subprocess.kill()
+        except Exception:
+            pass
+    print(out)
 
 
 def colorize_str(string, color):
