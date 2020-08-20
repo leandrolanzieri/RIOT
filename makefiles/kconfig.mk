@@ -43,6 +43,10 @@ KCONFIG_OUT_CONFIG = $(GENERATED_DIR)/out.config
 # whenever a change occurs on one of the previously used Kconfig files.
 KCONFIG_OUT_DEP = $(KCONFIG_OUT_CONFIG).d
 
+# This file keeps a list of the latest configuration source files used to
+# generate KCONFIG_OUT_CONFIG
+KCONFIG_SOURCES_LIST = $(GENERATED_DIR)/sources.txt
+
 # Include configuration symbols if available. This allows to check for Kconfig
 # symbols in makefiles. Make tries to 'remake' all included files (see
 # https://www.gnu.org/software/make/manual/html_node/Remaking-Makefiles.html).
@@ -59,6 +63,7 @@ endif
 
 MERGE_SOURCES += $(wildcard $(KCONFIG_APP_CONFIG))
 MERGE_SOURCES += $(wildcard $(KCONFIG_USER_CONFIG))
+MERGE_SOURCES += $(wildcard $(KCONFIG_OVERLAY))
 
 # Create directory to place generated files
 $(GENERATED_DIR): $(if $(MAKE_RESTARTS),,$(CLEAN))
@@ -126,10 +131,13 @@ $(KCONFIG_GENERATED_DEPENDENCIES): FORCE | $(GENERATED_DIR)
 	      printf "config %s\n\tbool\n\tdefault y\n", toupper($$0)}' \
 	  | $(LAZYSPONGE) $(LAZYSPONGE_FLAGS) $@
 
+$(KCONFIG_SOURCES_LIST): FORCE | $(GENERATED_DIR)
+	$(Q)echo "$(MERGE_SOURCES)" | $(LAZYSPONGE) $(LAZYSPONGE_FLAGS) $@
+
 # Generates a .config file by merging multiple sources specified in
 # MERGE_SOURCES. This will also generate KCONFIG_OUT_DEP with the list of used
 # Kconfig files.
-$(KCONFIG_OUT_CONFIG): $(GENERATED_DEPENDENCIES_DEP) $(GENCONFIG) $(MERGE_SOURCES) | $(GENERATED_DIR)
+$(KCONFIG_OUT_CONFIG): $(GENERATED_DEPENDENCIES_DEP) $(GENCONFIG) $(MERGE_SOURCES) $(KCONFIG_SOURCES_LIST) | $(GENERATED_DIR)
 	$(Q) $(GENCONFIG) \
 	  --config-out=$(KCONFIG_OUT_CONFIG) \
 	  --file-list $(KCONFIG_OUT_DEP) \
