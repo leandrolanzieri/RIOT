@@ -7,11 +7,14 @@
 # directory for more details.
 
 import sys
+import os
 from testrunner import run
 
 
 def testfunc(child):
-    child.expect_exact("Message 1 defined in app.config file")
+    config_file = os.path.basename(os.environ.get("KCONFIG_OVERLAY"))
+    print("Configuration overlay: {}".format(config_file))
+    child.expect_exact("Message 1 defined in {} file".format(config_file))
     child.expect_exact("MSG_2 is active")
 
 
