@@ -106,6 +106,15 @@ int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize);
 int aes_encrypt(const cipher_context_t *context, const uint8_t *plain_block,
                 uint8_t *cipher_block);
 
+// TODO document
+int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
+                       uint8_t nonce_len, const uint8_t *input, size_t length,
+                       uint8_t *output);
+// TODO document
+int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
+                       uint8_t nonce_len, const uint8_t *input, size_t length,
+                       uint8_t *output);
+
 /**
  * @brief   decrypts one cipher-block and saves the plain-block in plainBlock.
  *          decrypts one blocksize long block of ciphertext pointed to by
