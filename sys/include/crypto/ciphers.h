@@ -130,7 +130,7 @@ typedef struct {
  * @return  The command may return CIPHER_ERR_INVALID_KEY_SIZE if the
  *          key size is not valid.
  */
-int cipher_init(cipher_t *cipher, cipher_id_t cipher_id, const uint8_t *key,
+int cipher_init(cipher_context_t *context, cipher_id_t cipher_id, const uint8_t *key,
                 uint8_t key_size);
 
 
@@ -147,7 +147,7 @@ int cipher_init(cipher_t *cipher, cipher_id_t cipher_id, const uint8_t *key,
  *                   cipher, which is always 1 in case of success
  * @return           A negative value for an error
  */
-int cipher_encrypt(const cipher_t *cipher, const uint8_t *input,
+int cipher_encrypt(const cipher_context_t *context, cipher_id_t cipher_id, const uint8_t *input,
                    uint8_t *output);
 
 
@@ -164,7 +164,7 @@ int cipher_encrypt(const cipher_t *cipher, const uint8_t *input,
  *                   cipher, which is always 1 in case of success
  * @return           A negative value for an error
  */
-int cipher_decrypt(const cipher_t *cipher, const uint8_t *input,
+int cipher_decrypt(const cipher_context_t *cipher,  cipher_id_t cipher_id, const uint8_t *input,
                    uint8_t *output);
 
 
@@ -176,7 +176,7 @@ int cipher_decrypt(const cipher_t *cipher, const uint8_t *input,
  *
  * @return           The cipher's block size (in bytes)
  */
-int cipher_get_block_size(const cipher_t *cipher);
+int cipher_get_block_size(cipher_id_t cipher_id);
 
 
 #ifdef __cplusplus
