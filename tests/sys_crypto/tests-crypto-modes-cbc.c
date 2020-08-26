@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "embUnit.h"
+#include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "crypto/modes/cbc.h"
 #include "tests-crypto.h"
@@ -81,6 +82,26 @@ static void test_encrypt_op(uint8_t *key, uint8_t key_len, uint8_t iv[16],
 
 }
 
+static void test_encrypt_op_direct(uint8_t *key, uint8_t key_len, uint8_t iv[16],
+                            uint8_t *input, uint8_t input_len, uint8_t *output,
+                            uint8_t output_len)
+{
+    cipher_context_t cipher;
+    int len, err, cmp;
+    uint8_t data[64];
+
+    err = aes_init(&cipher, key, key_len);
+    TEST_ASSERT_EQUAL_INT(1, err);
+
+    len = aes_encrypt_cbc(&cipher, iv, input, input_len, data);
+    TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
+
+    TEST_ASSERT_EQUAL_INT(output_len, len);
+    cmp = compare(output, data, len);
+    TEST_ASSERT_MESSAGE(1 == cmp, "wrong ciphertext");
+
+}
+
 static void test_decrypt_op(uint8_t *key, uint8_t key_len, uint8_t iv[16],
                             uint8_t *input, uint8_t input_len, uint8_t *output,
                             uint8_t output_len)
@@ -101,9 +122,35 @@ static void test_decrypt_op(uint8_t *key, uint8_t key_len, uint8_t iv[16],
 
 }
 
+static void test_decrypt_op_direct(uint8_t *key, uint8_t key_len, uint8_t iv[16],
+                            uint8_t *input, uint8_t input_len, uint8_t *output,
+                            uint8_t output_len)
+{
+    cipher_context_t cipher;
+    int len, err, cmp;
+    uint8_t data[64];
+
+    err = aes_init(&cipher, key, key_len);
+    TEST_ASSERT_EQUAL_INT(1, err);
+
+    len = aes_decrypt_cbc(&cipher, iv, input, input_len, data);
+    TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
+
+    TEST_ASSERT_EQUAL_INT(output_len, len);
+    cmp = compare(output, data, len);
+    TEST_ASSERT_MESSAGE(1 == cmp, "wrong ciphertext");
+
+}
+
 static void test_crypto_modes_cbc_encrypt(void)
 {
     test_encrypt_op(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_IV, TEST_1_PLAIN,
+                    TEST_1_PLAIN_LEN, TEST_1_CIPHER, TEST_1_CIPHER_LEN);
+}
+
+static void test_crypto_modes_cbc_encrypt_direct(void)
+{
+    test_encrypt_op_direct(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_IV, TEST_1_PLAIN,
                     TEST_1_PLAIN_LEN, TEST_1_CIPHER, TEST_1_CIPHER_LEN);
 }
 
@@ -113,12 +160,19 @@ static void test_crypto_modes_cbc_decrypt(void)
                     TEST_1_CIPHER_LEN, TEST_1_PLAIN, TEST_1_PLAIN_LEN);
 }
 
+static void test_crypto_modes_cbc_decrypt_direct(void)
+{
+    test_decrypt_op_direct(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_IV, TEST_1_CIPHER,
+                    TEST_1_CIPHER_LEN, TEST_1_PLAIN, TEST_1_PLAIN_LEN);
+}
 
 Test *tests_crypto_modes_cbc_tests(void)
 {
     EMB_UNIT_TESTFIXTURES(fixtures) {
         new_TestFixture(test_crypto_modes_cbc_encrypt),
-        new_TestFixture(test_crypto_modes_cbc_decrypt)
+        new_TestFixture(test_crypto_modes_cbc_encrypt_direct),
+        new_TestFixture(test_crypto_modes_cbc_decrypt),
+        new_TestFixture(test_crypto_modes_cbc_decrypt_direct)
     };
 
     EMB_UNIT_TESTCALLER(crypto_modes_cbc_tests, NULL, NULL, fixtures);
