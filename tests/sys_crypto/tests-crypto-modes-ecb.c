@@ -60,14 +60,14 @@ static void test_encrypt_op(uint8_t *key, uint8_t key_len, uint8_t *input,
                             uint8_t input_len, uint8_t *output,
                             uint8_t output_len)
 {
-    cipher_t cipher;
+    cipher_context_t cipher;
     int len, err, cmp;
     uint8_t data[64];
 
     err = cipher_init(&cipher, CIPHER_AES_128, key, key_len);
     TEST_ASSERT_EQUAL_INT(1, err);
 
-    len = cipher_encrypt_ecb(&cipher, input, input_len, data);
+    len = cipher_encrypt_ecb(&cipher, CIPHER_AES_128, input, input_len, data);
     TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
 
     TEST_ASSERT_EQUAL_INT(output_len, len);
@@ -80,14 +80,14 @@ static void test_decrypt_op(uint8_t *key, uint8_t key_len, uint8_t *input,
                             uint8_t input_len, uint8_t *output,
                             uint8_t output_len)
 {
-    cipher_t cipher;
+    cipher_context_t cipher;
     int len, err, cmp;
     uint8_t data[64];
 
     err = cipher_init(&cipher, CIPHER_AES_128, key, key_len);
     TEST_ASSERT_EQUAL_INT(1, err);
 
-    len = cipher_decrypt_ecb(&cipher, input, input_len, data);
+    len = cipher_decrypt_ecb(&cipher, CIPHER_AES_128, input, input_len, data);
     TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
 
     TEST_ASSERT_EQUAL_INT(output_len, len);

@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "embUnit.h"
+#include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "crypto/modes/ctr.h"
 #include "tests-crypto.h"
@@ -65,14 +66,14 @@ static void test_encrypt_op(uint8_t *key, uint8_t key_len, uint8_t ctr[16],
                             uint8_t *input, uint8_t input_len, uint8_t *output,
                             uint8_t output_len)
 {
-    cipher_t cipher;
+    cipher_context_t cipher;
     int len, err, cmp;
     uint8_t data[64];
 
     err = cipher_init(&cipher, CIPHER_AES_128, key, key_len);
     TEST_ASSERT_EQUAL_INT(1, err);
 
-    len = cipher_encrypt_ctr(&cipher, ctr, 0, input, input_len, data);
+    len = cipher_encrypt_ctr(&cipher, CIPHER_AES_128, ctr, 0, input, input_len, data);
     TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
 
     TEST_ASSERT_EQUAL_INT(output_len, len);
@@ -85,20 +86,19 @@ static void test_decrypt_op(uint8_t *key, uint8_t key_len, uint8_t ctr[16],
                             uint8_t *input, uint8_t input_len, uint8_t *output,
                             uint8_t output_len)
 {
-    cipher_t cipher;
+    cipher_context_t cipher;
     int len, err, cmp;
     uint8_t data[64];
 
     err = cipher_init(&cipher, CIPHER_AES_128, key, key_len);
     TEST_ASSERT_EQUAL_INT(1, err);
 
-    len = cipher_decrypt_ctr(&cipher, ctr, 0, input, input_len, data);
+    len = cipher_decrypt_ctr(&cipher, CIPHER_AES_128, ctr, 0, input, input_len, data);
     TEST_ASSERT_MESSAGE(len > 0, "Encryption failed");
 
     TEST_ASSERT_EQUAL_INT(output_len, len);
     cmp = compare(output, data, len);
     TEST_ASSERT_MESSAGE(1 == cmp, "wrong ciphertext");
-
 }
 
 static void test_crypto_modes_ctr_encrypt(void)
@@ -118,7 +118,6 @@ static void test_crypto_modes_ctr_decrypt(void)
     test_decrypt_op(TEST_1_KEY, TEST_1_KEY_LEN, ctr, TEST_1_CIPHER,
                     TEST_1_CIPHER_LEN, TEST_1_PLAIN, TEST_1_PLAIN_LEN);
 }
-
 
 Test *tests_crypto_modes_ctr_tests(void)
 {
