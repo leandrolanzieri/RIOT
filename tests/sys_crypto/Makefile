@@ -13,4 +13,7 @@ SRC := main.c
 SRC += tests-crypto-modes-ctr.c
 SRC += tests-crypto-modes-cbc.c
 
+# Use Kconfig dependency resolution by default
+export TEST_KCONFIG ?= 1
+
 include $(RIOTBASE)/Makefile.include
