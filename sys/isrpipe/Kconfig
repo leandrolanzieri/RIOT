@@ -5,4 +5,10 @@
 # directory for more details.
 #
 
-rsource "interactive_sync/Kconfig"
+config MOD_ISRPIPE
+    bool "ISR Pipe module"
+    select MOD_TSRB
+
+config MOD_ISRPIPE_READ_TIMEOUT
+    bool "ISR Pipe read with timeout"
+    depends on MOD_ISRPIPE && MOD_XTIMER

@@ -27,4 +27,15 @@ config MOD_STDIO_UART
 
 endchoice
 
+config MOD_STDIO_UART_RX
+    bool "STDIO UART reception"
+    default y if MOD_STDIN
+    depends on MOD_STDIO_UART
+    select MOD_ISRPIPE
+    help
+        Reception when using UART-based (or ethos) STDIO needs to be enabled.
+
+config MOD_STDIN
+    bool "Standard Input support"
+
 endmenu # Standard Input/Ouput (STDIO)
