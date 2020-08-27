@@ -9,7 +9,7 @@ config CPU_FAM_EFM32PG12B
     select CPU_CORE_CORTEX_M4F
     select CPU_COMMON_EFM32
     select HAS_PERIPH_HWRNG
-    select HAS_HW_AES
+    select HAS_PERIPH_CRYPTO_AES
     select HAS_HW_HASH_SHA1
     select HAS_HW_HASH_SHA256
     select MOD_CPU_EFM32PG12B
