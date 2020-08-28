@@ -101,86 +101,56 @@ void sha256_init(sha256_context_t *ctx)
 {
     DEBUG("SHA256 init HW accelerated implementation\n");
     cau_sha256_initialize_output(ctx->sha256_state);
+    ctx->buffer_offset = 0;
+    ctx->byte_count = 0;
 }
 
-/* ATTENTION – The following padding function has been copy-pasted from a Freescale coding example, which can be downloaded here: https://www.nxp.com/docs/en/application-note-software/AN4307SW.zip
-
-The padding function implemented in RIOT can't be separated from the hashing function. To use the mmCAU hashing functions a separate padding function is needed. */
-static void *mmcau_sha_pad(const void *data, unsigned int *len, unsigned char endianess)
+static void sha_pad(sha256_context_t *s)
 {
-    unsigned char *padding_array;
-    signed char padding_length;
-    unsigned int temp_length;
-    unsigned int bits_length;
-    unsigned int final_length;
-
-    temp_length = *len % SHA256_INTERNAL_BLOCK_SIZE;
-
-    /*get padding length: padding special case when 448 mod 512*/
-    /*working with bytes rather than bits*/
-    if( !((padding_length = 56-(temp_length%SHA256_INTERNAL_BLOCK_SIZE)) > 0) )
-        padding_length = SHA256_INTERNAL_BLOCK_SIZE - (temp_length%56);
-
-    padding_length +=  temp_length/SHA256_INTERNAL_BLOCK_SIZE;
-    temp_length = *len;
-
-    /*reserve necessary memory*/
-    final_length = temp_length + padding_length + 8/*bits length*/;
-    if( (padding_array = (unsigned char *)malloc(final_length)) == NULL )
-        return (unsigned char *)NULL;/*not enough mem*/
-
-    /*copy original data to new padding array*/
-    memcpy((void*)padding_array,data,temp_length);
-
-    /*add padding*/
-    padding_array[temp_length++] = 0x80;/*first bit enabled*/
-    while((--padding_length != 0))
-        padding_array[temp_length++] = 0;/*clear the rest*/
-
-    /*add length depending on endianess: get number of bits*/
-    bits_length = *len << 3;
-    *len = final_length;
-
-    if( endianess == 0 )
-    {
-        padding_array[temp_length++] = bits_length     & 0xff;
-        padding_array[temp_length++] = bits_length>>8  & 0xff;
-        padding_array[temp_length++] = bits_length>>16 & 0xff;
-        padding_array[temp_length++] = bits_length>>24 & 0xff;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length  ] = 0;
-    }
-    else/*CRYPTO_BIG_ENDIAN*/
-    {
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = 0;
-        padding_array[temp_length++] = bits_length>>24 & 0xff;
-        padding_array[temp_length++] = bits_length>>16 & 0xff;
-        padding_array[temp_length++] = bits_length>>8  & 0xff;
-        padding_array[temp_length  ] = bits_length     & 0xff;
+    /* Implement SHA-1 padding (fips180-2 §5.1.1) */
+    /* Pad with 0x80 followed by 0x00 until the end of the block */
+    uint8_t* b = (uint8_t*) s->buffer;
+    b[s->buffer_offset] = 0x80;
+    s->buffer_offset++;
+    while (s->buffer_offset < 56) {
+        b[s->buffer_offset] = 0;
+        s->buffer_offset++;
     }
 
-    return padding_array;
-}
+    /* Append length in the last 8 bytes. We're only using 32 bit lengths, but SHA-1 supports 64 bit lengths, so zero pad the top bits */
+    for (int i = 0; i < 3; i++) {
+        b[s->buffer_offset] = 0;
+        s->buffer_offset++;
+    }
 
-static void mmcau_sha256(unsigned int *state, const void *data, unsigned int len)
-{
-    unsigned char *sha256_padded;
-    sha256_padded = mmcau_sha_pad(data, &len, 1);
-    int blocks = len/SHA256_INTERNAL_BLOCK_SIZE;
-    cau_sha256_update(sha256_padded, blocks, state);
+    for (int i = 0; i < 32; i += 8) {
+        b[s->buffer_offset] = s->byte_count >> (29 - i);
+        s->buffer_offset++;
+    }
+    b[s->buffer_offset++] = s->byte_count << 3;
 
-    free(sha256_padded);
+    cau_sha256_hash_n((const unsigned char*)b, 1, s->sha256_state);
 }
 
 /* Add bytes into the hash */
 void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
 {
-   mmcau_sha256(ctx->sha256_state, data, len);
+    /* Find out the number of full blocks to hash and pass them to hash function. Hash function will only hash full blocks */
+    int blocks = len/SHA256_INTERNAL_BLOCK_SIZE;
+    cau_sha256_hash_n((const unsigned char*)data, blocks, ctx->sha256_state);
+    /* Calculate number of bytes that didn't fit into the last block */
+    int rest = len%SHA256_INTERNAL_BLOCK_SIZE;
+
+    /* If len is not a multiple of 64, save the remaining bytes in buffer for padding and last hash in sha1_final */
+    if (rest > 0) {
+        uint8_t* input = (uint8_t*) data;
+        uint8_t* b = (uint8_t*) ctx->buffer;
+        for (int i = 0; i < rest; i++) {
+            b[i] = input[len-rest+i];
+            ctx->buffer_offset++;
+        }
+    }
+    ctx->byte_count = len;
 }
 
 /*
@@ -189,6 +159,8 @@ void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
  */
 void sha256_final(sha256_context_t *ctx, void *dst)
 {
+    sha_pad(ctx);
+
     /* Write the hash */
     be32enc_vect(dst, ctx->sha256_state, SHA256_DIGEST_LENGTH);
 
