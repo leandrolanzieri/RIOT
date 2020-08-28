@@ -5,4 +5,5 @@
 # directory for more details.
 #
 
-rsource "interactive_sync/Kconfig"
+config MOD_EMBUNIT
+    bool "EmbUnit unittests framework"
