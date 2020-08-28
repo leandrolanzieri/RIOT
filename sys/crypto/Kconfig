@@ -8,8 +8,11 @@
 menu "Crypto"
     depends on TEST_KCONFIG
 
+rsource "modes/Kconfig"
+
 menuconfig CRYPTO_AES
     bool "AES"
+    select MOD_CRYPTO
 
 if CRYPTO_AES
 
@@ -19,11 +22,10 @@ choice
 
 config MOD_PERIPH_CRYPTO_AES
     bool "Hardware accelerated"
-    depends on HAS_HW_AES
+    depends on HAS_PERIPH_CRYPTO_AES
 
 config MOD_CRYPTO_AES
     bool "Software"
-    select MOD_CRYPTO
 
 endchoice
 
@@ -32,6 +34,6 @@ endif # CRYPTO_AES
 config MOD_CRYPTO
     bool
     help
-        Base crypto module for software implementations.
+        Base crypto module.
 
 endmenu # Crypto

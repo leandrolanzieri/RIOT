@@ -15,7 +15,7 @@ config CPU_FAM_NRF52
     select HAS_BLE_NIMBLE_NETIF
     select HAS_CORTEXM_MPU
     select HAS_CPU_NRF52
-    select HAS_HW_AES
+    select HAS_PERIPH_CRYPTO_AES
     select HAS_HW_HASH_SHA1
     select HAS_HW_HASH_SHA256
 

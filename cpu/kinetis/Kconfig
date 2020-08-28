@@ -14,7 +14,7 @@ config CPU_COMMON_KINETIS
 # TODO: Check which families provide the following
     select HAS_HW_HASH_SHA1
     select HAS_HW_HASH_SHA256
-    select HAS_HW_AES
+    select HAS_PERIPH_CRYPTO_AES
 
 config CPU_FAM_EA
     bool
