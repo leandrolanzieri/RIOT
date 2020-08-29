@@ -137,10 +137,11 @@ void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
 {
     /* Find out the number of full blocks to hash and pass them to hash function. Hash function will only hash full blocks */
     int blocks = len/SHA256_INTERNAL_BLOCK_SIZE;
-    cau_sha256_hash_n((const unsigned char*)data, blocks, ctx->sha256_state);
+    if (blocks > 0) {
+        cau_sha256_hash_n((const unsigned char*)data, blocks, ctx->sha256_state);
+    }
     /* Calculate number of bytes that didn't fit into the last block */
     int rest = len%SHA256_INTERNAL_BLOCK_SIZE;
-
     /* If len is not a multiple of 64, save the remaining bytes in buffer for padding and last hash in sha1_final */
     if (rest > 0) {
         uint8_t* input = (uint8_t*) data;
@@ -236,7 +237,6 @@ void hmac_sha256_final(hmac_context_t *ctx, void *digest)
     if (digest == NULL) {
         digest = m;
     }
-
     sha256_final(&ctx->c_in, tmp);
     sha256_update(&ctx->c_out, tmp, SHA256_DIGEST_LENGTH);
     sha256_final(&ctx->c_out, digest);
