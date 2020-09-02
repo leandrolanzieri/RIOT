@@ -7,5 +7,10 @@ BOARD_BLACKLIST := stk3600 stk3700
 
 USEPKG += cryptoauthlib
 USEMODULE += hashes
+USEMODULE += xtimer
+USEMODULE += shell
+
+FEATURES_OPTIONAL = periph_i2c_reconfigure
+CFLAGS=-DTHREAD_STACKSIZE_MAIN=2048
 
 include $(RIOTBASE)/Makefile.include

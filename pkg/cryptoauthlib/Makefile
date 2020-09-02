@@ -1,4 +1,5 @@
-# PKG_SOURCE_LOCAL=../../../repos/cryptoauthlib
+# this is lenas path
+#PKG_SOURCE_LOCAL?=../../../repos/cryptoauthlib
 PKG_NAME=cryptoauthlib
 PKG_URL=https://github.com/MicrochipTech/cryptoauthlib
 PKG_VERSION=af8187776cd3f3faf8bed412eaf6ff7221862e19

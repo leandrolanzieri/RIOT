@@ -64,6 +64,7 @@ ATCA_STATUS hal_i2c_post_init(ATCAIface iface)
 
 ATCA_STATUS hal_i2c_send(ATCAIface iface, uint8_t *txdata, int txlength)
 {
+    puts("hal_i2c_send");
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
     int ret;
 
@@ -143,6 +144,7 @@ ATCA_STATUS hal_i2c_receive(ATCAIface iface, uint8_t *rxdata,
 
 ATCA_STATUS hal_i2c_wake(ATCAIface iface)
 {
+    puts("hal_i2c_wake");
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
     uint8_t data[4] = { 0 };
 
@@ -187,6 +189,7 @@ ATCA_STATUS hal_i2c_wake(ATCAIface iface)
 
 ATCA_STATUS hal_i2c_idle(ATCAIface iface)
 {
+    puts("hal_i2c_idle");
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
 
     i2c_acquire(cfg->atcai2c.bus);
@@ -198,6 +201,7 @@ ATCA_STATUS hal_i2c_idle(ATCAIface iface)
 
 ATCA_STATUS hal_i2c_sleep(ATCAIface iface)
 {
+    puts("hal_i2c_sleep");
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
 
     i2c_acquire(cfg->atcai2c.bus);
