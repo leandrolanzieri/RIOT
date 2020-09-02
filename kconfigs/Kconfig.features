@@ -123,6 +123,11 @@ config HAS_PERIPH_CRYPTO_AES_CTR
     help
         Indicates that there is AES in CTR mode hardware acceleration present.
 
+config HAS_PERIPH_CRYPTO_AES_ECB
+    bool
+    help
+        Indicates that there is AES in ECB mode hardware acceleration present.
+
 config HAS_PERIPH_DAC
     bool
     help

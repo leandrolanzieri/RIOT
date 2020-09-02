@@ -48,6 +48,31 @@ config MOD_PERIPH_CRYPTO_AES_CBC
 
 endchoice
 
+menuconfig CRYPTO_MODE_AES_ECB
+    bool "AES in Electronic Codebook mode (ECB)"
+    depends on CRYPTO_AES
+    select MOD_CRYPTO_MODE
+
+choice
+    bool "AES ECB implementation"
+    default MOD_PERIPH_CRYPTO_AES_ECB
+    depends on CRYPTO_MODE_AES_ECB
+
+config MOD_CRYPTO_MODE_AES_ECB
+    bool "Software implementation"
+    select MOD_CRYPTO_MODE_ECB
+
+config MOD_PERIPH_CRYPTO_AES_ECB
+    bool "Hardware accelerated implementation"
+    depends on HAS_PERIPH_CRYPTO_AES_ECB
+
+endchoice
+
+config MOD_CRYPTO_MODE_ECB
+    bool
+    help
+        Software implementation of the Electronic Codebook crypto mode.
+
 config MOD_CRYPTO_MODE_CBC
     bool
     help
