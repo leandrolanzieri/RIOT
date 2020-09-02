@@ -39,6 +39,10 @@ ifneq (,$(filter crypto_mode_aes_%,$(USEMODULE)))
   USEMODULE += crypto_aes
 endif
 
+ifneq (,$(filter crypto_mode_aes_ecb,$(USEMODULE)))
+  USEMODULE += crypto_mode_ecb
+endif
+
 ifneq (,$(filter crypto_mode_aes_ctr,$(USEMODULE)))
   USEMODULE += crypto_mode_ctr
 endif
