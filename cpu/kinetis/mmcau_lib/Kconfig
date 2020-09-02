@@ -7,7 +7,7 @@
 
 config MOD_LIB_MMCAU
     bool
-    default y if MOD_PERIPH_HASH_SHA1 || MOD_PERIPH_HASH_SHA256 || MOD_PERIPH_AES
+    default y if MOD_PERIPH_HASH_SHA1 || MOD_PERIPH_HASH_SHA256 || MOD_PERIPH_CRYPTO_AES
     depends on CPU_COMMON_KINETIS
     depends on TEST_KCONFIG
     help
