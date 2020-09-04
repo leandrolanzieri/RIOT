@@ -142,11 +142,11 @@ int aes_decrypt_cbc(cipher_context_t *context, uint8_t iv[16],
                        const uint8_t *input, size_t length, uint8_t *output);
 
 // TODO document
-int aes_encrypt_ecb(cipher_context_t *context, uint8_t *input,
+int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
                        size_t length, uint8_t *output);
 
 // TODO document
-int aes_decrypt_ecb(cipher_context_t *context, uint8_t *input,
+int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
                        size_t length, uint8_t *output);
 
 #ifdef __cplusplus
