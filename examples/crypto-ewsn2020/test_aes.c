@@ -231,7 +231,7 @@ void aes_ecb_test(gpio_t active_gpio)
     memset(data, 0, ECB_CIPHER_LEN);
 
     gpio_set(active_gpio);
-    ret = aes_decrypt_ecb(&ctx, PLAIN, PLAIN_LEN, data);
+    ret = aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);
     gpio_clear(active_gpio);
 
     if (ret < 0) {
@@ -244,5 +244,5 @@ void aes_ecb_test(gpio_t active_gpio)
         return;
     }
 
-    printf("AES CTR encrypt/decrypt successful\n");
+    printf("AES ECB encrypt/decrypt successful\n");
 }

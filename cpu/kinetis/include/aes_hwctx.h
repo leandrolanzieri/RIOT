@@ -3,12 +3,12 @@
 
 #include "kernel_defines.h"
 
-#define AES1280_CTX_SIZE    (20)
+#define AES128_CTX_SIZE    (20)
 
 #if (IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) && IS_ACTIVE(MODULE_LIB_MMCAU))
 
 typedef struct {
-    uint8_t context[AES1280_CTX_SIZE];
+    uint8_t context[AES128_CTX_SIZE];
 } cipher_context_t;
 
 #endif /* MODULE_PERIPH_HASH_AES */
