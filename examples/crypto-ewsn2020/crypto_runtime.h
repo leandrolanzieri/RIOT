@@ -8,5 +8,6 @@ void sha256_test(gpio_t);
 void hmac_sha256_test(gpio_t);
 void aes_cbc_test(gpio_t);
 void aes_ctr_test(gpio_t);
+void aes_ecb_test(gpio_t);
 
 #endif /* CRYPTO_RUNTIME_H */
