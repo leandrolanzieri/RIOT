@@ -115,6 +115,14 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
                 uint8_t *plainBlock)
 {
+#if 0
+    if ((unsigned int)cipherBlock % 4) {
+        puts("cipherBlock Bad cau_aes_decrypt alignment!!!");
+    }
+    if ((unsigned int)plainBlock % 4) {
+        puts("plainBlock Bad cau_aes_decrypt alignment!!!");
+    }
+#endif
     AES_KEY aeskey;
     AES_KEY *key = &aeskey;
     cau_aes_set_key((unsigned char *)context->context,
