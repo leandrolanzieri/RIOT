@@ -3,12 +3,17 @@ RIOTBASE ?= $(CURDIR)/../..
 
 APPLICATION = crypto-ewsn2020
 
-# Kinetis Hardware
-CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
-USEMODULE += lib_mmcau
+ifeq (pba-d-01-kw2x, $(BOARD))
+	# Kinetis Hardware
+	CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
+	USEMODULE += lib_mmcau
+endif
 
-# For Arm Cryptocell
-# CFLAGS += -DARM_CRYPTOCELL
-# USEMODULE += lib_cryptocell
+ifeq (nrf52840dk, $(BOARD))
+	CFLAGS += -DARM_CRYPTOCELL
+	USEMODULE += lib_cryptocell
+endif
+
+export TEST_KCONFIG ?= 1
 
 include $(RIOTBASE)/Makefile.include
