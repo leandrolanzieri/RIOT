@@ -29,8 +29,8 @@
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "aes_hwctx.h"
-#include "xtimer.h"
 
+#include "cryptocell_util.h"
 #include "vendor/nrf52840.h"
 #include "cryptocell_incl/sns_silib.h"
 #include "cryptocell_incl/ssi_aes.h"
@@ -98,10 +98,13 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
     }
 
+    cryptocell_enable();
     ret = SaSi_AesFinish(ctx, datain_size, (uint8_t*) plainBlock, datain_size, cipherBlock, &dataout_size);
+    cryptocell_disable();
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
     }
+
     return 1;
 }
 
@@ -131,9 +134,12 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
         printf("AES Decryption: SaSi_AesSetKey failed: 0x%x\n", ret);
     }
 
+    cryptocell_enable();
     ret = SaSi_AesFinish(ctx, datain_size, (uint8_t*) cipherBlock, datain_size, plainBlock, &dataout_size);
+    cryptocell_disable();
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Decryption: SaSi_AesFinish failed: 0x%x\n", ret);
     }
+
     return 1;
 }
