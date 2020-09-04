@@ -5,6 +5,12 @@ USEMODULE += embunit
 USEMODULE += crypto_mode_aes_ctr
 USEMODULE += crypto_mode_aes_cbc
 
+ifeq (pba-d-01-kw2x, $(BOARD))
+	# Kinetis Hardware
+	CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
+	USEMODULE += lib_mmcau
+endif
+
 # Avoid automatically including all .c files
 NO_AUTO_SRC := 1
 

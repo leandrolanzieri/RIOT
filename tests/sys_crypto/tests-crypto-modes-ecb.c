@@ -145,7 +145,7 @@ static void test_crypto_modes_ecb_encrypt(void)
 
 static void test_crypto_modes_ecb_encrypt_direct(void)
 {
-    test_encrypt_op(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_PLAIN, TEST_1_PLAIN_LEN,
+    test_encrypt_op_direct(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_PLAIN, TEST_1_PLAIN_LEN,
                     TEST_1_CIPHER, TEST_1_CIPHER_LEN);
 }
 
@@ -158,7 +158,7 @@ static void test_crypto_modes_ecb_decrypt(void)
 
 static void test_crypto_modes_ecb_decrypt_direct(void)
 {
-    test_decrypt_op(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_CIPHER,
+    test_decrypt_direct(TEST_1_KEY, TEST_1_KEY_LEN, TEST_1_CIPHER,
                     TEST_1_CIPHER_LEN,
                     TEST_1_PLAIN, TEST_1_PLAIN_LEN);
 }
