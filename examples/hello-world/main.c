@@ -44,6 +44,13 @@ uint8_t expected_result_sha256[] = { 0xfc, 0xbd, 0x7f, 0xe5, 0x12, 0x31, 0x1d, 0
 
 size_t teststring_size = (sizeof(teststring)-1);
 
+uint8_t teststring2[] = "chili cheese fries";
+uint16_t teststring_size2 = (sizeof(teststring2) - 1);
+uint8_t expected2[] =
+    {0x36, 0x46, 0xEF, 0xD6, 0x27, 0x6C, 0x0D, 0xCB, 0x4B, 0x07, 0x73, 0x41,
+     0x88, 0xF4, 0x17, 0xB4, 0x38, 0xAA, 0xCF, 0xC6, 0xAE, 0xEF, 0xFA, 0xBE,
+     0xF3, 0xA8, 0x5D, 0x67, 0x42, 0x0D, 0xFE, 0xE5};
+
 /* AES Test */
 static uint8_t TEST_0_KEY[] = {
     0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
@@ -84,14 +91,25 @@ static void sha1_test(void)
 
 static void sha256_test(void)
 {
-    start = xtimer_now_usec();
-    sha256((unsigned char*)teststring, teststring_size, sha256_result);
-    stop = xtimer_now_usec();
-    t_diff = stop - start;
-    printf("Sha256 Time: %ld us\n", t_diff);
+    // start = xtimer_now_usec();
+    // sha256((unsigned char*)teststring, teststring_size, sha256_result);
+    // stop = xtimer_now_usec();
+    // t_diff = stop - start;
+    // printf("Sha256 Time: %ld us\n", t_diff);
+
+    sha256_context_t ctx;
+    sha256_context_t ctx2;
+
+    sha256_init(&ctx);
+    sha256_update(&ctx, (void *)teststring, teststring_size);
+
+    sha256_init(&ctx2);
+    sha256_update(&ctx2, (void *)teststring2, teststring_size2);
+
+    sha256_final(&ctx, sha256_result);
 
     if (memcmp(sha256_result, expected_result_sha256, SHA256_DIGEST_LENGTH) != 0) {
-        printf("SHA-256 Failure\n");
+        printf("1 SHA-256 Failure\n");
 
         for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
             printf("%02x ", sha256_result[i]);
@@ -99,7 +117,24 @@ static void sha256_test(void)
         printf("\n");
     }
     else {
-        printf("SHA-256 Success\n");
+        printf("1 SHA-256 Success\n");
+    }
+
+    sha256_final(&ctx2, sha256_result);
+
+    if (memcmp(sha256_result, expected2, SHA256_DIGEST_LENGTH) != 0)
+    {
+        printf("2 SHA-256 Failure\n");
+
+        for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        {
+            printf("%02x ", sha256_result[i]);
+        }
+        printf("\n");
+    }
+    else
+    {
+        printf("2 SHA-256 Success\n");
     }
 }
 
