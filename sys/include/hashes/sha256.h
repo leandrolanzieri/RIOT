@@ -76,8 +76,9 @@ extern "C" {
  * @brief Context for cipher operations based on sha256
  */
 typedef sha2xx_context_t sha256_context_t;
-#endif
+#endif /* MODULE_PERIPH_HASH_SHA256 */
 
+#if !IS_ACTIVE(MODULE_PERIPH_HASH_SHA256) || !IS_ACTIVE(MODULE_LIB_CRYPTOCELL)
 /**
  * @brief Context for HMAC operations based on sha256
  */
@@ -87,7 +88,7 @@ typedef struct {
     /** Context for outer hash calculation */
     sha256_context_t c_out;
 } hmac_context_t;
-
+#endif /* ARM_CRYPTOCELL */
 /**
  * @brief sha256-chain indexed element
  */
