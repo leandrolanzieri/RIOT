@@ -64,15 +64,13 @@ static uint8_t KEY_LEN = 16;
 
     void aes_cbc_test(gpio_t active_gpio)
     {
-        (void) active_gpio;
-
         int ret;
-        cipher_context_t enc, dec;
+        cipher_context_t ctx;
         uint8_t data[CBC_CIPHER_LEN];
         memset(data, 0, CBC_CIPHER_LEN);
 
         gpio_set(active_gpio);
-        ret = aes_init(&enc, KEY, KEY_LEN);
+        ret = aes_init(&ctx, KEY, KEY_LEN);
         gpio_clear(active_gpio);
         if (ret < 1) {
             printf("AES CBC Enc Init failed: %d\n", ret);
@@ -80,7 +78,7 @@ static uint8_t KEY_LEN = 16;
         }
 
         gpio_set(active_gpio);
-        ret = aes_encrypt_cbc(&enc, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
+        ret = aes_encrypt_cbc(&ctx, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
         gpio_clear(active_gpio);
 
         if (ret < 0) {
@@ -94,16 +92,9 @@ static uint8_t KEY_LEN = 16;
         }
 
         memset(data, 0, CBC_CIPHER_LEN);
-        gpio_set(active_gpio);
-        ret = aes_init(&dec, KEY, KEY_LEN);
-        gpio_clear(active_gpio);
-        if (ret < 1) {
-            printf("AES CBC Dec Init failed: %d\n", ret);
-            return;
-        }
 
         gpio_set(active_gpio);
-        ret = aes_decrypt_cbc(&dec, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
+        ret = aes_decrypt_cbc(&ctx, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
         gpio_clear(active_gpio);
 
         if (ret < 0) {
