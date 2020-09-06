@@ -35,20 +35,40 @@
 #include "crypto/ciphers.h"
 
 #ifdef BOARD_PBA_D_01_KW2X
-    gpio_t active_gpio = GPIO_PIN(2,5);
+    gpio_t active_gpio = GPIO_PIN(2, 5);
+    gpio_t gpio_aes_key = GPIO_PIN(2, 6);
 #endif /* BOARD_PBA_D_01_KW2X */
 
+#ifdef BOARD_FRDM_K64F
+    gpio_t active_gpio = GPIO_PIN(3, 1);
+    gpio_t gpio_aes_key = GPIO_PIN(3, 3);
+#endif /* BOARD_FRDM_K64F */
+
 #ifdef BOARD_NRF52840DK
-    gpio_t active_gpio = GPIO_PIN(1,15);
+    gpio_t active_gpio = GPIO_PIN(1, 15);
+    gpio_t gpio_aes_key = GPIO_PIN(1, 14);
 #endif /* BOARD_NRF52840DK */
+
+#ifdef BOARD_SLSTK3402A
+    gpio_t active_gpio = GPIO_PIN(0, 8);
+    gpio_t gpio_aes_key = GPIO_PIN(0, 7);
+#endif /* BOARD_SLSTK3402A */
 
 int main(void)
 {
-    // sha1_test(active_gpio);
-    // sha256_test(active_gpio);
-    // aes_cbc_test(active_gpio);
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+
+#if SHA256
+    sha256_test(active_gpio);
+#elif HMAC
+    hmac_sha256_test(active_gpio);
+#elif AES_CBC
+    aes_cbc_test(active_gpio);
+#elif AES_ECB
     aes_ecb_test(active_gpio);
-    // aes_ctr_test(active_gpio);
-    // hmac_sha256_test(active_gpio);
+#elif AES_CTR
+    aes_ctr_test(active_gpio);
+#endif
     return 1;
 }

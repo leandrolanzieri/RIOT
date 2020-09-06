@@ -9,6 +9,12 @@ ifeq (pba-d-01-kw2x, $(BOARD))
 	USEMODULE += lib_mmcau
 endif
 
+ifeq (frdm-k64f, $(BOARD))
+	# Kinetis Hardware
+	CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
+	USEMODULE += lib_mmcau
+endif
+
 ifeq (nrf52840dk, $(BOARD))
 	CFLAGS += -DARM_CRYPTOCELL
 	USEMODULE += lib_cryptocell
