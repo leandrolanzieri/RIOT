@@ -41,9 +41,7 @@
 #include "crypto/ciphers.h"
 #include "crypto/modes/cbc.h"
 
-#ifdef AES_TIME
-#include "xtimer.h"
-#endif
+#include "periph/gpio.h"
 /**
  * Interface to the aes cipher
  */
@@ -1043,16 +1041,19 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
-    #ifdef AES_TIME
-    sta = xtimer_now_usec();
+#ifdef BOARD_PBA_D_01_KW2X
+    gpio_set(GPIO_PIN(2, 6));
+#endif
+#ifdef BOARD_NRF52840DK
+    gpio_set(GPIO_PIN(1, 8));
+#endif
     res = aes_set_encrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
-    sto = xtimer_now_usec();
-    diff = sto - sta;
-    printf("RIOT AES set encrypt key: %ld\n", diff);
-#else
-    res = aes_set_encrypt_key((unsigned char *)context->context,
-                              AES_KEY_SIZE * 8, &aeskey);
+#ifdef BOARD_PBA_D_01_KW2X
+    gpio_clear(GPIO_PIN(2, 6));
+#endif
+#ifdef BOARD_NRF52840DK
+    gpio_clear(GPIO_PIN(1, 8));
 #endif
 
     if (res < 0) {
@@ -1321,16 +1322,19 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
-#ifdef AES_TIME
-    sta = xtimer_now_usec();
+#ifdef BOARD_PBA_D_01_KW2X
+    gpio_set(GPIO_PIN(2, 6));
+#endif
+#ifdef BOARD_NRF52840DK
+    gpio_set(GPIO_PIN(1, 8));
+#endif
     res = aes_set_decrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
-    sto = xtimer_now_usec();
-    diff = sto - sta;
-    printf("RIOT AES set decrypt key: %ld\n", diff);
-#else
-    res = aes_set_decrypt_key((unsigned char *)context->context,
-                              AES_KEY_SIZE * 8, &aeskey);
+#ifdef BOARD_PBA_D_01_KW2X
+    gpio_clear(GPIO_PIN(2, 6));
+#endif
+#ifdef BOARD_NRF52840DK
+    gpio_clear(GPIO_PIN(1, 8));
 #endif
 
     if (res < 0) {
