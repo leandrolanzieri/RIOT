@@ -30,16 +30,10 @@
 
 #include "periph/gpio.h"
 
-#ifdef TIME_TEST
-    #include "xtimer.h"
-
-     /* Timer variables */
-    static uint32_t start, stop, t_diff;
-#endif /* TIME_TEST */
-
+#if SHA1 || SHA256
 static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
 static size_t SHA_TESTSTR_SIZE = 32;
-
+#endif
 
 #ifdef SHA1
     static uint8_t EXPECTED_RESULT_SHA1[] = {
@@ -54,13 +48,6 @@ static size_t SHA_TESTSTR_SIZE = 32;
         uint8_t sha1_result[SHA1_DIGEST_LENGTH];
         sha1_context ctx;
 
-    #ifdef TIME_TEST
-        start = xtimer_now_usec();
-        sha1(sha1_result, (unsigned char*)SHA_TESTSTRING, SHA_TESTSTR_SIZE);
-        stop = xtimer_now_usec();
-        t_diff = stop - start;
-        printf("Sha1 Time: %ld us\n", t_diff);
-    #else
         gpio_set(active_gpio);
         sha1_init(&ctx);
         gpio_clear(active_gpio);
@@ -72,7 +59,6 @@ static size_t SHA_TESTSTR_SIZE = 32;
         gpio_set(active_gpio);
         sha1_final(&ctx, sha1_result);
         gpio_clear(active_gpio);
-    #endif /* TIME_TEST */
 
         if (memcmp(sha1_result, EXPECTED_RESULT_SHA1, SHA1_DIGEST_LENGTH) != 0) {
             printf("SHA-1 Failure\n");
@@ -102,13 +88,6 @@ static size_t SHA_TESTSTR_SIZE = 32;
         uint8_t sha256_result[SHA256_DIGEST_LENGTH];
         sha256_context_t ctx;
 
-    #ifdef TIME_TEST
-        start = xtimer_now_usec();
-        sha256((unsigned char*)SHA_TESTSTRING, SHA_TESTSTR_SIZE, sha256_result);
-        stop = xtimer_now_usec();
-        t_diff = stop - start;
-        printf("Sha256 Time: %ld us\n", t_diff);
-    #else
         gpio_set(active_gpio);
         sha256_init(&ctx);
         gpio_clear(active_gpio);
@@ -120,7 +99,6 @@ static size_t SHA_TESTSTR_SIZE = 32;
         gpio_set(active_gpio);
         sha256_final(&ctx, sha256_result);
         gpio_clear(active_gpio);
-    #endif /* TIME_TEST */
 
         if (memcmp(sha256_result, EXPECTED_RESULT_SHA256, SHA256_DIGEST_LENGTH) != 0) {
             printf("SHA-256 Failure\n");
