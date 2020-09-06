@@ -26,18 +26,27 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#ifdef BOARD_PBA_D_01_KW2X
+#include "vendor/MKW21D5.h"
+#endif /* BOARD_PBA_D_01_KW2X */
+
+#ifdef BOARD_FRDM_K64F
+#include "vendor/MK64F12.h"
+#endif /* BOARD_FRDM_K64F */
+
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "aes_hwctx.h"
 #include "cau_api.h"
 
-#include "vendor/MKW21D5.h"
 #include "mmcau.h"
-#include "xtimer.h"
+#include "periph/gpio.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+static gpio_t gpio_aes_key = GPIO_PIN(1, 11);
 
 /**
  * Interface to the aes cipher
@@ -99,8 +108,10 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 #endif
     AES_KEY aeskey;
     AES_KEY* key = &aeskey;
+    gpio_set(gpio_aes_key);
     cau_aes_set_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, (unsigned char*)key->rd_key);
+    gpio_clear(gpio_aes_key);
     /* Currently only AES-128 is implemented, so the number of rounds is always 10 */
     key->rounds = 10;
 
@@ -125,8 +136,10 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
 #endif
     AES_KEY aeskey;
     AES_KEY *key = &aeskey;
+    gpio_set(gpio_aes_key);
     cau_aes_set_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, (unsigned char*)key->rd_key);
+    gpio_clear(gpio_aes_key);
     /* Currently only AES-128 is implemented, so the number of rounds is always 10 */
     key->rounds = 10;
 
