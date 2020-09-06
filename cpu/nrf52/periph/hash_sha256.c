@@ -46,11 +46,15 @@
 
 #include "hashes/sha256.h"
 #include "sha256_hwctx.h"
+#include "cryptocell_util.h"
 #include "cryptocell_incl/crys_hash.h"
-#include "cryptocell_incl/sns_silib.h"
+#include "cryptocell_incl/crys_hmac.h"
+#include "cryptocell_incl/crys_error.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
+
+#define CC310_MAX_HASH_INPUT_BLOCK       (0xFFF0)
 
 /* SHA-256 initialization.  Begins a SHA-256 operation. */
 void sha256_init(sha256_context_t *ctx)
@@ -58,7 +62,7 @@ void sha256_init(sha256_context_t *ctx)
     DEBUG("SHA256 init HW accelerated implementation\n");
     int ret = 0;
     ret = CRYS_HASH_Init(&ctx->cc310_ctx, CRYS_HASH_SHA256_mode);
-    if (ret != SA_SILIB_RET_OK) {
+    if (ret != CRYS_OK) {
         printf("SHA256: CRYS_HASH_Init failed: 0x%x\n", ret);
     }
 }
@@ -67,8 +71,27 @@ void sha256_init(sha256_context_t *ctx)
 void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
 {
     int ret = 0;
-    ret = CRYS_HASH_Update(&ctx->cc310_ctx, (uint8_t*)data, len);
-    if (ret != SA_SILIB_RET_OK) {
+    size_t offset = 0;
+    size_t size;
+
+    do {
+        if (len > CC310_MAX_HASH_INPUT_BLOCK) {
+            size = CC310_MAX_HASH_INPUT_BLOCK;
+            len -= CC310_MAX_HASH_INPUT_BLOCK;
+        }
+        else {
+            size = len;
+            len = 0;
+        }
+
+        cryptocell_enable();
+        ret = CRYS_HASH_Update(&ctx->cc310_ctx, (uint8_t*)(data + offset), size);
+        cryptocell_disable();
+
+        offset += size;
+    } while ((len > 0) && (ret == CRYS_OK));
+
+    if (ret != CRYS_OK) {
         printf("SHA256: CRYS_HASH_Update failed: 0x%x\n", ret);
     }
 }
@@ -80,8 +103,10 @@ void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
 void sha256_final(sha256_context_t *ctx, void *dst)
 {
     int ret = 0;
+    cryptocell_enable();
     ret = CRYS_HASH_Finish(&(ctx->cc310_ctx), dst);
-    if (ret != SA_SILIB_RET_OK) {
+    cryptocell_disable();
+    if (ret != CRYS_OK) {
         printf("SHA256: CRYS_HASH_Finish failed: 0x%x\n", ret);
     }
 }
@@ -97,33 +122,65 @@ void *sha256(const void *data, size_t len, void *digest)
 
 void hmac_sha256_init(hmac_context_t *ctx, const void *key, size_t key_length)
 {
-    (void) ctx;
-    (void) key;
-    (void) key_length;
+    int ret = 0;
+    cryptocell_enable();
+    CRYS_HMAC_Init(&ctx->cc310_hmac_ctx, CRYS_HASH_SHA256_mode, (uint8_t*)key, (uint16_t)key_length);
+    cryptocell_disable();
+    if (ret != CRYS_OK) {
+        printf("HMAC: CRYS_HMAC_Init failed: 0x%x\n", ret);
+    }
 }
 
 void hmac_sha256_update(hmac_context_t *ctx, const void *data, size_t len)
 {
-    (void) ctx;
-    (void) data;
-    (void) len;
+    int ret = 0;
+    size_t offset = 0;
+    size_t size;
+
+    do {
+        if (len > CC310_MAX_HASH_INPUT_BLOCK) {
+            size = CC310_MAX_HASH_INPUT_BLOCK;
+            len -= CC310_MAX_HASH_INPUT_BLOCK;
+        }
+        else {
+            size = len;
+            len = 0;
+        }
+
+        cryptocell_enable();
+        ret = CRYS_HMAC_Update(&ctx->cc310_hmac_ctx, (uint8_t*)(data + offset), size);
+        cryptocell_disable();
+
+        offset += size;
+    } while ((len > 0) && (ret == CRYS_OK));
+
+    if (ret != CRYS_OK) {
+        printf("HMAC: CRYS_HMAC_Update failed: 0x%x\n", ret);
+    }
 }
 
 void hmac_sha256_final(hmac_context_t *ctx, void *digest)
 {
-    (void) ctx;
-    (void) digest;
+    int ret = 0;
+    cryptocell_enable();
+    ret = CRYS_HMAC_Finish(&ctx->cc310_hmac_ctx, (uint32_t*)digest);
+    cryptocell_disable();
+    if (ret != CRYS_OK) {
+        printf("HMAC: CRYS_HMAC_Finish failed: 0x%x\n", ret);
+    }
 }
 
 const void *hmac_sha256(const void *key, size_t key_length,
                         const void *data, size_t len, void *digest)
 {
-    (void) key;
-    (void) key_length;
-    (void) data;
-    (void) len;
-    (void) digest;
-    return NULL;
+    int ret = 0;
+    cryptocell_enable();
+    ret = CRYS_HMAC(CRYS_HASH_SHA256_mode, (uint8_t*)key, (uint16_t)key_length, (uint8_t*) data, len, (uint32_t*)digest);
+    cryptocell_disable();
+    if (ret != CRYS_OK) {
+        printf("HMAC: CRYS_HMAC failed: 0x%x\n", ret);
+    }
+    return digest;
 }
 
 void *sha256_chain(const void *seed, size_t seed_length,
