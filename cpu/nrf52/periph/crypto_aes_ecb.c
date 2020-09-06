@@ -32,12 +32,15 @@
 #include "cryptocell_incl/sns_silib.h"
 #include "cryptocell_incl/ssi_aes.h"
 #include "cryptocell_util.h"
+#include "periph/gpio.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
 /* CC310 max AES input block is 64 KB */
 #define CC310_MAX_AES_INPUT_BLOCK       (0xFFF0)
+
+static gpio_t gpio_aes_key = GPIO_PIN(0, 19);
 
 /*
  * Encrypt a single block
@@ -63,7 +66,10 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
     }
+
+    gpio_set(gpio_aes_key);
     ret = SaSi_AesSetKey(ctx, SASI_AES_USER_KEY, &key, sizeof(key));
+    gpio_set(gpio_aes_key);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
     }
@@ -120,8 +126,10 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
     }
-
+    gpio_set(gpio_aes_key);
     ret = SaSi_AesSetKey(ctx, SASI_AES_USER_KEY, &key, sizeof(key));
+    gpio_clear(gpio_aes_key);
+
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
     }
