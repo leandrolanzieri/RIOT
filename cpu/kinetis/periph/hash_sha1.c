@@ -24,7 +24,14 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifdef BOARD_PBA_D_01_KW2X
 #include "vendor/MKW21D5.h"
+#endif /* BOARD_PBA_D_01_KW2X */
+
+#ifdef BOARD_FRDM_K64F
+#include "vendor/MK64F12.h"
+#endif /* BOARD_FRDM_K64F */
+
 #include "hashes/sha1.h"
 #include "sha1_hwctx.h"
 #include "cau_api.h"
@@ -78,7 +85,9 @@ void sha1_update(sha1_context *ctx, const void *data, size_t len)
 {
     /* Find out the number of full blocks to hash and pass them to hash function. Hash function will only hash full blocks */
     int blocks = len/SHA1_BLOCK_LENGTH;
-    cau_sha1_hash_n((const unsigned char*)data, blocks, ctx->sha1_state);
+    if (blocks > 0) {
+        cau_sha1_hash_n((const unsigned char*)data, blocks, ctx->sha1_state);
+    }
     /* Calculate number of bytes that didn't fit into the last block */
     int rest = len%SHA1_BLOCK_LENGTH;
 

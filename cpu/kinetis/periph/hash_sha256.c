@@ -44,7 +44,15 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
+
+#ifdef BOARD_PBA_D_01_KW2X
 #include "vendor/MKW21D5.h"
+#endif /* BOARD_PBA_D_01_KW2X */
+
+#ifdef BOARD_FRDM_K64F
+#include "vendor/MK64F12.h"
+#endif /* BOARD_FRDM_K64F */
+
 #include "hashes/sha256.h"
 #include "sha256_hwctx.h"
 #include "mmcau.h"
@@ -101,57 +109,74 @@ void sha256_init(sha256_context_t *ctx)
 {
     DEBUG("SHA256 init HW accelerated implementation\n");
     cau_sha256_initialize_output(ctx->sha256_state);
-    ctx->buffer_offset = 0;
-    ctx->byte_count = 0;
+    ctx->count[0] = ctx->count[1] = 0;
 }
 
-static void sha_pad(sha256_context_t *s)
+static unsigned char PAD[64] = {
+    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static void sha_pad(sha256_context_t *ctx)
 {
-    /* Implement SHA-1 padding (fips180-2 §5.1.1) */
-    /* Pad with 0x80 followed by 0x00 until the end of the block */
-    uint8_t* b = (uint8_t*) s->buffer;
-    b[s->buffer_offset] = 0x80;
-    s->buffer_offset++;
-    while (s->buffer_offset < 56) {
-        b[s->buffer_offset] = 0;
-        s->buffer_offset++;
-    }
+    unsigned char len[8];
 
-    /* Append length in the last 8 bytes. We're only using 32 bit lengths, but SHA-1 supports 64 bit lengths, so zero pad the top bits */
-    for (int i = 0; i < 3; i++) {
-        b[s->buffer_offset] = 0;
-        s->buffer_offset++;
-    }
+    be32enc_vect(len, ctx->count, 8);
 
-    for (int i = 0; i < 32; i += 8) {
-        b[s->buffer_offset] = s->byte_count >> (29 - i);
-        s->buffer_offset++;
-    }
-    b[s->buffer_offset++] = s->byte_count << 3;
+    /* Add 1--64 bytes so that the resulting length is 56 mod 64 */
+    uint32_t r = (ctx->count[1] >> 3) & 0x3f;
+    uint32_t plen = (r < 56) ? (56 - r) : (120 - r);
+    sha256_update(ctx, PAD, (size_t) plen);
 
-    cau_sha256_hash_n((const unsigned char*)b, 1, s->sha256_state);
+    /* Add the terminating bit-count */
+    sha256_update(ctx, len, 8);
+
 }
 
 /* Add bytes into the hash */
 void sha256_update(sha256_context_t *ctx, const void *data, size_t len)
 {
-    /* Find out the number of full blocks to hash and pass them to hash function. Hash function will only hash full blocks */
-    int blocks = len/SHA256_INTERNAL_BLOCK_SIZE;
-    if (blocks > 0) {
-        cau_sha256_hash_n((const unsigned char*)data, blocks, ctx->sha256_state);
+    /* Number of bytes left in the buffer from previous updates */
+    uint32_t r = (ctx->count[1] >> 3) & 0x3f;
+
+    /* Convert the length into a number of bits */
+    uint32_t bitlen1 = ((uint32_t) len) << 3;
+    uint32_t bitlen0 = ((uint32_t) len) >> 29;
+
+    /* Update number of bits */
+    if ((ctx->count[1] += bitlen1) < bitlen1) {
+        ctx->count[0]++;
     }
-    /* Calculate number of bytes that didn't fit into the last block */
-    int rest = len%SHA256_INTERNAL_BLOCK_SIZE;
-    /* If len is not a multiple of 64, save the remaining bytes in buffer for padding and last hash in sha1_final */
-    if (rest > 0) {
-        uint8_t* input = (uint8_t*) data;
-        uint8_t* b = (uint8_t*) ctx->buffer;
-        for (int i = 0; i < rest; i++) {
-            b[i] = input[len-rest+i];
-            ctx->buffer_offset++;
+
+    ctx->count[0] += bitlen0;
+
+    /* Handle the case where we don't need to perform any transforms */
+    if (len < 64 - r) {
+        if (len > 0) {
+            memcpy(&ctx->buf[r], data, len);
         }
+        return;
     }
-    ctx->byte_count = len;
+
+    /* Finish the current block */
+    const unsigned char *src = data;
+
+    memcpy(&ctx->buf[r], src, 64 - r);
+    cau_sha256_hash_n(ctx->buf, 1, ctx->sha256_state);
+    src += 64 - r;
+    len -= 64 - r;
+
+    /* Perform complete blocks */
+    while (len >= 64) {
+        cau_sha256_hash_n(src, 1, ctx->sha256_state);
+        src += 64;
+        len -= 64;
+    }
+
+    /* Copy left over data into buffer */
+    memcpy(ctx->buf, src, len);
 }
 
 /*
@@ -220,7 +245,6 @@ void hmac_sha256_init(hmac_context_t *ctx, const void *key, size_t key_length)
      */
     sha256_init(&ctx->c_out);
     sha256_update(&ctx->c_out, o_key_pad, SHA256_INTERNAL_BLOCK_SIZE);
-
 }
 
 void hmac_sha256_update(hmac_context_t *ctx, const void *data, size_t len)
@@ -240,6 +264,7 @@ void hmac_sha256_final(hmac_context_t *ctx, void *digest)
     sha256_final(&ctx->c_in, tmp);
     sha256_update(&ctx->c_out, tmp, SHA256_DIGEST_LENGTH);
     sha256_final(&ctx->c_out, digest);
+
 }
 
 const void *hmac_sha256(const void *key, size_t key_length,
