@@ -27,54 +27,47 @@
 
 #include "periph/gpio.h"
 
-#ifdef TIME_TEST
-    #include "xtimer.h"
+#ifdef HMAC
+    static char HMAC_INPUT[] = {
+        0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20,
+        0x61, 0x20, 0x74, 0x65, 0x73, 0x74, 0x73, 0x74,
+        0x72, 0x69, 0x6e, 0x67, 0x20, 0x66, 0x6f, 0x72,
+        0x20, 0x68, 0x6d, 0x61, 0x63, 0x32, 0x35, 0x36
+    };
+    size_t HMAC_INPUT_SIZE = 32;
 
-    /* Timer variables */
-    static uint32_t start, stop, t_diff;
-#endif /* TIME_TEST */
+    static uint8_t HMAC_KEY[] = { 'k', 'e', 'y' };
+    size_t KEY_SIZE = 3;
 
-static const unsigned char HMAC_TESTSTR[] = "This is a teststring to measure HMAC-SHA256 runtime with and without hardware acceleration";
-static size_t HMAC_TESTSTR_SIZE = (sizeof(HMAC_TESTSTR)-1);
+    static uint8_t EXPECTED_RESULT[] = {
+        0x17, 0xd5, 0xdf, 0xc8, 0x8d, 0x9d, 0xaa, 0x89,
+        0xf3, 0x34, 0x05, 0x04, 0x32, 0xf7, 0x93, 0xe2,
+        0x8d, 0x35, 0xe0, 0x4f, 0xf4, 0xe8, 0x18, 0x57,
+        0x52, 0xc3, 0x0b, 0xd3, 0xc2, 0x3c, 0x19, 0x0c
+    };
 
-static unsigned char HMAC_KEY[] = { 'k', 'e', 'y' };
-static uint8_t HMAC_KEY_LEN = 3;
+    void hmac_sha256_test(gpio_t active_gpio)
+    {
+        uint8_t hmac_result[SHA256_DIGEST_LENGTH];
+        hmac_context_t ctx;
 
-static uint8_t EXPECTED_RESULT[] = {
-    0x33, 0x30, 0xb6, 0xd9, 0xf1, 0xb0, 0x34, 0x69,
-    0xd9, 0x4e, 0xd8, 0xe7, 0x90, 0xda, 0x56, 0x32,
-    0xe1, 0x05, 0x38, 0x8f, 0xe1, 0xbc, 0x7d, 0xef,
-    0xe3, 0xe2, 0xa6, 0x13, 0x03, 0x08, 0xb8, 0xf7
-};
+        gpio_set(active_gpio);
+        hmac_sha256_init(&ctx, HMAC_KEY, KEY_SIZE);
+        gpio_clear(active_gpio);
 
-void hmac_sha256_test(gpio_t active_gpio)
-{
-    uint8_t hmac_result[SHA256_DIGEST_LENGTH];
-    hmac_context_t ctx;
+        gpio_set(active_gpio);
+        hmac_sha256_update(&ctx, HMAC_INPUT, HMAC_INPUT_SIZE );
+        gpio_clear(active_gpio);
 
-#ifdef TIME_TEST
-    start = xtimer_now_usec();
-    hmac_sha256(HMAC_KEY, HMAC_KEY_LEN, HMAC_TESTSTR, HMAC_TESTSTR_SIZE, hmac_result);
-    stop = xtimer_now_usec();
-    t_diff = stop - start;
-    printf("HMAC Sha256 Time: %ld us\n", t_diff);
-#else
-    gpio_set(active_gpio);
-    hmac_sha256_init(&ctx, HMAC_KEY, HMAC_KEY_LEN);
-    gpio_clear(active_gpio);
+        gpio_set(active_gpio);
+        hmac_sha256_final(&ctx, hmac_result);
+        gpio_clear(active_gpio);
 
-    gpio_set(active_gpio);
-    hmac_sha256_update(&ctx, HMAC_TESTSTR, HMAC_TESTSTR_SIZE);
-    gpio_clear(active_gpio);
-
-    gpio_set(active_gpio);
-    hmac_sha256_final(&ctx, hmac_result);
-    gpio_clear(active_gpio);
-#endif /* TIME_TEST */
-
-    if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
-        printf("HMAC SHA-256 Failure\n");
-        return;
+        if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
+            printf("HMAC SHA-256 Failure\n");
+        }
+        else {
+            printf("HMAC SHA-256 Success\n");
+        }
     }
-    printf("HMAC SHA-256 Success\n");
-}
+#endif /* HMAC */
