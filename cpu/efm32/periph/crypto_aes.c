@@ -30,8 +30,6 @@
 #include "crypto/ciphers.h"
 #include "crypto_util.h"
 
-#include "xtimer.h"
-
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
@@ -100,17 +98,11 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
                 uint8_t *plainBlock)
 {
-    uint32_t sta, sto, dif;
     uint8_t decrypt_key[AES_KEY_SIZE];
 
     CRYPTO_TypeDef* dev = crypto_acquire();
 
-    sta = xtimer_now_usec();
     CRYPTO_AES_DecryptKey128(dev, decrypt_key, context->context);
-    sto = xtimer_now_usec();
-    dif = sto - sta;
-    DEBUG("AES Set decrypt key: %ld\n", dif);
-
     CRYPTO_AES_ECB128(dev, plainBlock, cipherBlock, AES_BLOCK_SIZE, decrypt_key, false);
 
     crypto_release(dev);
