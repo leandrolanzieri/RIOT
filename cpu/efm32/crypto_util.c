@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "crypto_util.h"
 #include "mutex.h"
-
+#if CPU_MODEL_EFM32PG12B500F1024GL125
 static int acqu_count = 0;
 static bool crypto_lock_initialized = false;
 static mutex_t crypto_lock[CRYPTO_COUNT];
@@ -70,3 +70,4 @@ void crypto_release(CRYPTO_TypeDef* dev)
     CMU_ClockEnable(crypto_devs[devno].cmu, false);
     mutex_unlock(&crypto_lock[devno]);
 }
+#endif
