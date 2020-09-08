@@ -42,6 +42,10 @@
 #include "crypto/modes/cbc.h"
 
 #include "periph/gpio.h"
+
+#if TEST_AES_KEY
+#include "crypto_runtime.h"
+#endif
 /**
  * Interface to the aes cipher
  */
@@ -1041,25 +1045,13 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
-#ifdef BOARD_PBA_D_01_KW2X
-    gpio_set(GPIO_PIN(2, 6));
-#endif
-#ifdef BOARD_NRF52840DK
-    gpio_set(GPIO_PIN(1, 8));
-#endif
-#ifdef BOARD_SLSTK3402A
-    gpio_set(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
 #endif
     res = aes_set_encrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
-#ifdef BOARD_PBA_D_01_KW2X
-    gpio_clear(GPIO_PIN(2, 6));
-#endif
-#ifdef BOARD_NRF52840DK
-    gpio_clear(GPIO_PIN(1, 8));
-#endif
-#ifdef BOARD_SLSTK3402A
-    gpio_clear(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
 #endif
 
     if (res < 0) {
@@ -1328,25 +1320,13 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
 
-#ifdef BOARD_PBA_D_01_KW2X
-    gpio_set(GPIO_PIN(2, 6));
-#endif
-#ifdef BOARD_NRF52840DK
-    gpio_set(GPIO_PIN(1, 8));
-#endif
-#ifdef BOARD_SLSTK3402A
-    gpio_set(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
 #endif
     res = aes_set_decrypt_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, &aeskey);
-#ifdef BOARD_PBA_D_01_KW2X
-    gpio_clear(GPIO_PIN(2, 6));
-#endif
-#ifdef BOARD_NRF52840DK
-    gpio_clear(GPIO_PIN(1, 8));
-#endif
-#ifdef BOARD_SLSTK3402A
-    gpio_clear(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
 #endif
 
     if (res < 0) {
