@@ -52,6 +52,8 @@ int main(void)
 
 #if TEST_ENERGY_SHA256
     sha256_test_energy(active_gpio, gpio_aes_key);
+#elif TEST_ENERGY_HMAC_SHA256
+    hmac_sha256_test_energy(active_gpio, gpio_aes_key);
 #elif TEST_ENERGY_AES_CBC_ENC
     aes_cbc_enc_test_energy(active_gpio, gpio_aes_key);
 #elif TEST_ENERGY_AES_CBC_DEC
