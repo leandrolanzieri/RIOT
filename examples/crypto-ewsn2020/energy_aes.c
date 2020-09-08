@@ -26,7 +26,11 @@
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 
+#ifndef TEST_STACK
 #include "periph/gpio.h"
+#else
+#include "ps.h"
+#endif
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -62,7 +66,6 @@ static uint8_t __attribute__((aligned)) CBC_CIPHER[] = {
     0x95, 0xdb, 0x11, 0x3a, 0x91, 0x76, 0x78, 0xb2
 };
 static uint8_t CBC_CIPHER_LEN = 32;
-
 
 void aes_cbc_enc_test_energy(gpio_t start, gpio_t stop)
 {
@@ -109,6 +112,7 @@ void aes_ecb_dec_test_energy(gpio_t start, gpio_t stop)
 
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp)
 {
+#ifndef TEST_STACK
     // initial state of start pin is high
     gpio_set(start);
 
@@ -119,7 +123,7 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
     {
         // start measurement round
         gpio_clear(start);
-
+#endif
         cipher_context_t ctx;
 
 #if TEST_ENERGY_AES_CBC_ENC
@@ -135,6 +139,8 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
         aes_init(&ctx, KEY, KEY_LEN);
         aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);
 #endif
+
+#ifndef TEST_STACK
         // end measurement round
         gpio_set(stop);
 
@@ -148,6 +154,14 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
             LED0_ON;
         }
     }
+#else
+    // ps();
+    printf("sizeof(ctx): %i\n", sizeof(ctx));
+    (void)start;
+    (void)stop;
+    (void)data_exp;
+    (void)len_exp;
+#endif
     puts("DONE");
 }
 #endif

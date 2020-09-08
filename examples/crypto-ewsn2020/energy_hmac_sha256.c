@@ -27,7 +27,11 @@
 
 #include "board.h"
 #include "xtimer.h"
+#ifndef TEST_STACK
 #include "periph/gpio.h"
+#else
+#include "ps.h"
+#endif
 
     static char HMAC_INPUT[] = {
         0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20,
@@ -48,16 +52,17 @@
         0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b
     };
     size_t KEY_SIZE = 64;
-
+#ifndef TEST_STACK
     static uint8_t EXPECTED_RESULT[] = {
         0x39, 0x38, 0x66, 0x75, 0xdc, 0xc9, 0xe1, 0x86,
         0x58, 0xac, 0xfe, 0x34, 0x05, 0x79, 0xe5, 0x1b,
         0x20, 0x02, 0x8d, 0xc6, 0x3c, 0x70, 0xaf, 0x80,
         0xe5, 0x2d, 0xe4, 0x22, 0x7a, 0x41, 0x0c, 0x70
     };
-
+#endif
     void hmac_sha256_test_energy(gpio_t start, gpio_t stop)
     {
+#ifndef TEST_STACK
         // initial state of start pin is high
         gpio_set(start);
 
@@ -68,14 +73,14 @@
         {
             // start measurement round
             gpio_clear(start);
-
+#endif
             uint8_t hmac_result[SHA256_DIGEST_LENGTH];
             hmac_context_t ctx;
 
             hmac_sha256_init(&ctx, HMAC_KEY, KEY_SIZE);
             hmac_sha256_update(&ctx, HMAC_INPUT, HMAC_INPUT_SIZE );
             hmac_sha256_final(&ctx, hmac_result);
-
+#ifndef TEST_STACK
             // end measurement round
             gpio_set(stop);
 
@@ -89,5 +94,11 @@
                 LED0_ON;
             }
         }
+#else
+        // ps();
+        printf("sizeof(ctx): %i\n", sizeof(ctx));
+        (void)start;
+        (void)stop;
+#endif
         puts("DONE");
     }
