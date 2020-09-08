@@ -31,6 +31,7 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+#if TEST_ENERGY_AES_ECB || TEST_ENERGY_AES_CBC
 static uint8_t KEY[] = {
     0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
     0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
@@ -38,6 +39,7 @@ static uint8_t KEY[] = {
 static uint8_t KEY_LEN = 16;
 
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp);
+#endif
 
 #if TEST_ENERGY_AES_CBC
 static uint8_t CBC_IV[16] = {
@@ -103,6 +105,8 @@ void aes_ecb_dec_test_energy(gpio_t start, gpio_t stop)
 
 #endif /* TEST_ENERGY_AES_ECB */
 
+#if TEST_ENERGY_AES_ECB || TEST_ENERGY_AES_CBC
+
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp)
 {
     // initial state of start pin is high
@@ -142,8 +146,8 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
 
         if (memcmp(data, data_exp, len_exp)) {
             LED0_ON;
+        }
     }
     puts("DONE");
 }
-
-}
+#endif

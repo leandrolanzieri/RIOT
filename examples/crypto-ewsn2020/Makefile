@@ -5,6 +5,38 @@ APPLICATION = crypto-ewsn2020
 
 FEATURES_REQUIRED += periph_gpio
 
+ifeq (1, $(SHA256))
+	CFLAGS +=-DSHA256=1
+endif
+
+ifeq (1, $(HMAC))
+	CFLAGS +=-DHMAC=1
+endif
+
+ifeq (1, $(AES_CBC))
+	CFLAGS +=-DAES_CBC=1
+	CFLAGS +=-DTEST_AES_KEY=1
+endif
+
+ifeq (1, $(AES_ECB))
+	CFLAGS +=-DAES_ECB=1
+	CFLAGS +=-DTEST_AES_KEY=1
+endif
+
+ifeq (1, $(AES_CTR))
+	CFLAGS +=-DAES_CTR=1
+	CFLAGS +=-DTEST_AES_KEY=1
+endif
+
+ifeq (1, $(TEST_AES_KEY))
+	CFLAGS +=-DTEST_AES_KEY=1
+endif
+
+ifeq (1, $(TEST_ENERGY_AES_ECB_DEC))
+	CFLAGS +=-DTEST_ENERGY_AES_ECB_DEC=1
+	CFLAGS +=-DTEST_ENERGY_AES_ECB=1
+endif
+
 ifeq (1, $(TEST_ENERGY_SHA256))
 	CFLAGS +=-DTEST_ENERGY_SHA256=1
 endif

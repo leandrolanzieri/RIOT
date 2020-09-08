@@ -46,6 +46,10 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+#if TEST_AES_KEY
+#include "crypto_runtime.h"
+#endif
+
 /**
  * Interface to the aes cipher
  */
@@ -106,10 +110,14 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plainBlock,
 #endif
     AES_KEY aeskey;
     AES_KEY* key = &aeskey;
-    gpio_set(GPIO_PIN(2, 6));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
+#endif
     cau_aes_set_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, (unsigned char*)key->rd_key);
-    gpio_clear(GPIO_PIN(2, 6));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
+#endif
     /* Currently only AES-128 is implemented, so the number of rounds is always 10 */
     key->rounds = 10;
 
@@ -134,10 +142,14 @@ int aes_decrypt(const cipher_context_t *context, const uint8_t *cipherBlock,
 #endif
     AES_KEY aeskey;
     AES_KEY *key = &aeskey;
-    gpio_set(GPIO_PIN(2, 6));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
+#endif
     cau_aes_set_key((unsigned char *)context->context,
                               AES_KEY_SIZE * 8, (unsigned char*)key->rd_key);
-    gpio_clear(GPIO_PIN(2, 6));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
+#endif
     /* Currently only AES-128 is implemented, so the number of rounds is always 10 */
     key->rounds = 10;
 
