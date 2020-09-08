@@ -54,7 +54,10 @@
 int main(void)
 {
     gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
     gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_clear(gpio_aes_key);
+
 #if SHA256
     sha256_test(active_gpio);
 #elif HMAC
@@ -65,6 +68,18 @@ int main(void)
     aes_ecb_test(active_gpio);
 #elif AES_CTR
     aes_ctr_test(active_gpio);
+#endif
+
+#if TEST_ENERGY_SHA256
+    sha256_test_energy(active_gpio, gpio_aes_key);
+#elif TEST_ENERGY_AES_CBC_ENC
+    aes_cbc_enc_test_energy(active_gpio, gpio_aes_key);
+#elif TEST_ENERGY_AES_CBC_DEC
+    aes_cbc_dec_test_energy(active_gpio, gpio_aes_key);
+#elif TEST_ENERGY_AES_ECB_ENC
+    aes_ecb_enc_test_energy(active_gpio, gpio_aes_key);
+#elif TEST_ENERGY_AES_ECB_DEC
+    aes_ecb_dec_test_energy(active_gpio, gpio_aes_key);
 #endif
     return 1;
 }
