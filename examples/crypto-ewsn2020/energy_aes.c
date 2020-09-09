@@ -155,7 +155,7 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
         }
     }
 #else
-    // ps();
+    ps();
     printf("sizeof(ctx): %i\n", sizeof(ctx));
     (void)start;
     (void)stop;
