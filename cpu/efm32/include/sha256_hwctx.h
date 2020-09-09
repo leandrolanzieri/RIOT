@@ -9,7 +9,12 @@
 #if (IS_ACTIVE(MODULE_PERIPH_HASH_SHA256) && IS_ACTIVE(MODULE_GECKO_SDK))
 
 typedef struct {
-    CRYPTO_SHA256_Digest_TypeDef digest;
+    /** global state */
+    uint32_t state[8];
+    /** processed bytes counter */
+    uint32_t count[2];
+    /** data buffer */
+    unsigned char buf[64];
 } sha256_context_t;
 
 #endif /* MODULE_PERIPH_HASH_SHA256 */
