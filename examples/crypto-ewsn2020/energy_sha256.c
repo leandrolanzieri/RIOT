@@ -26,18 +26,18 @@
 #include "sha256_hwctx.h"
 
 #include "board.h"
-#include "xtimer.h"
-
-#ifndef TEST_STACK
 #include "periph/gpio.h"
+
+#if !defined(TEST_STACK) && !defined(TEST_MEM)
+#include "xtimer.h"
 #else
 #include "ps.h"
 #endif
 
 static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
-static size_t SHA_TESTSTR_SIZE = 32;
+#define SHA_TESTSTR_SIZE 32
 
-#ifndef TEST_STACK
+#if !defined(TEST_STACK) && !defined(TEST_MEM)
     static uint8_t EXPECTED_RESULT_SHA256[] = {
         0x65, 0x0C, 0x3A, 0xC7, 0xF9, 0x33, 0x17, 0xD3,
         0x96, 0x31, 0xD3, 0xF5, 0xC5, 0x5B, 0x0A, 0x1E,
@@ -47,7 +47,7 @@ static size_t SHA_TESTSTR_SIZE = 32;
 #endif
     void sha256_test_energy(gpio_t start, gpio_t stop)
     {
-#ifndef TEST_STACK
+#if !defined(TEST_STACK) && !defined(TEST_MEM)
         // initial state of start pin is high
         gpio_set(start);
 
@@ -65,7 +65,7 @@ static size_t SHA_TESTSTR_SIZE = 32;
             sha256_init(&ctx);
             sha256_update(&ctx, SHA_TESTSTRING, SHA_TESTSTR_SIZE);
             sha256_final(&ctx, sha256_result);
-#ifndef TEST_STACK
+#if !defined(TEST_STACK) && !defined(TEST_MEM)
             // end measurement round
             gpio_set(stop);
 
@@ -79,11 +79,12 @@ static size_t SHA_TESTSTR_SIZE = 32;
                 LED0_ON;
             }
         }
-#else
-        // ps();
+#endif
+#ifdef TEST_STACK
+        ps();
         printf("sizeof(ctx): %i\n", sizeof(ctx));
+#endif
         (void)start;
         (void)stop;
-#endif
         puts("DONE");
     }

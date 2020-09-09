@@ -38,6 +38,10 @@ ifeq (1, $(TEST_STACK))
 	USEMODULE += ps
 endif
 
+ifeq (1, $(TEST_MEM))
+	CFLAGS +=-DTEST_MEM=1
+endif
+
 ifneq (, $(TEST_ENERGY%))
 	USEMODULE += xtimer
 endif
