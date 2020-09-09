@@ -39,6 +39,11 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+#if TEST_AES_KEY
+#include "crypto_runtime.h"
+#endif
+
+
 /* CC310 max AES input block is 64 KB */
 #define CC310_MAX_AES_INPUT_BLOCK       (0xFFF0)
 
@@ -68,9 +73,13 @@ int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
     }
 
-    gpio_set(GPIO_PIN(1, 8));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
+#endif
     ret = SaSi_AesSetKey(ctx, SASI_AES_USER_KEY, &key, sizeof(key));
-    gpio_clear(GPIO_PIN(1, 8));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
+#endif
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
@@ -134,9 +143,13 @@ int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
     }
 
-    gpio_set(GPIO_PIN(1, 8));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
+#endif
     ret = SaSi_AesSetKey(ctx, SASI_AES_USER_KEY, &key, sizeof(key));
-    gpio_clear(GPIO_PIN(1, 8));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
+#endif
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
