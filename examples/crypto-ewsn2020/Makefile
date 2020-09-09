@@ -34,6 +34,7 @@ endif
 
 ifeq (1, $(TEST_STACK))
 	CFLAGS +=-DTEST_STACK=1
+	CFLAGS +=-DDEVELHELP=1
 	USEMODULE += ps
 endif
 
