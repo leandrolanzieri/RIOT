@@ -1,7 +1,7 @@
 include ../Makefile.tests_common
 
 # Default stack with printf + the tests buffer uint32_t[32]/uint8_t[256]
-MAIN_THREAD_SIZE = THREAD_STACKSIZE_DEFAULT+1024+256
+MAIN_THREAD_SIZE = THREAD_STACKSIZE_DEFAULT+1024+1024
 CFLAGS += -DTHREAD_STACKSIZE_MAIN=\($(MAIN_THREAD_SIZE)\)
 
 # override PRNG if desired (see sys/random for alternatives)
