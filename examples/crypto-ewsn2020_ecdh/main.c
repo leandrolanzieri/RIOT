@@ -33,15 +33,6 @@ typedef struct
 static key_struct_t keyA;
 static key_struct_t keyB;
 
-void print_mem(void *mem, int len) {
-  int i;
-  unsigned char *p = (unsigned char *)mem;
-  for (i=0;i<len;i++) {
-    printf("0x%02x ", p[i]);
-  }
-  printf("\n");
-}
-
 void _init_mem(key_struct_t *key)
 {
     // set up memory
