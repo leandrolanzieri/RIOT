@@ -33,6 +33,11 @@
 #if SHA1 || SHA256
 static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
 static size_t SHA_TESTSTR_SIZE = 32;
+
+// 512 bytes teststring
+// static const unsigned char SHA_TESTSTRING[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+// static size_t SHA_TESTSTR_SIZE = 512;
+
 #endif
 
 #ifdef SHA1
