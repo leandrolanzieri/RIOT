@@ -37,6 +37,8 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+#if defined(TEST_ENERGY_AES_CBC) || defined(TEST_ENERGY_AES_ECB)
+
 static uint8_t KEY[] = {
     0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
     0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
@@ -176,3 +178,5 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
     (void)len_exp;
     puts("DONE");
 }
+
+#endif /* #if defined(TEST_ENERGY_AES_CBC) || defined(TEST_ENERGY_AES_ECB) */
