@@ -33,8 +33,8 @@ void aes_ecb_dec_test_energy(gpio_t, gpio_t);
 #endif /* BOARD_NRF52840DK */
 
 #ifdef BOARD_SLSTK3402A
-    gpio_t active_gpio = GPIO_PIN(2, 6);
-    gpio_t gpio_aes_key = GPIO_PIN(2, 7);
+    gpio_t active_gpio = GPIO_PIN(0, 6);
+    gpio_t gpio_aes_key = GPIO_PIN(0, 7);
 #endif /* BOARD_SLSTK3402A */
 
 #endif /* CRYPTO_RUNTIME_H */
