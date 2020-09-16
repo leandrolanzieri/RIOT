@@ -34,6 +34,11 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+#if TEST_AES_KEY
+extern gpio_t gpio_aes_key;
+// // fixme
+// #include "crypto_runtime.h"
+#endif
 
 /*
  * Encrypt a single block
@@ -61,9 +66,13 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     CRYPTO_TypeDef* dev = crypto_acquire();
 
-    gpio_set(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_set(gpio_aes_key);
+#endif
     CRYPTO_AES_DecryptKey128(dev, decrypt_key, context->context);
-    gpio_clear(GPIO_PIN(2, 7));
+#if TEST_AES_KEY
+    gpio_clear(gpio_aes_key);
+#endif
     CRYPTO_AES_ECB128(dev, output, input, length, decrypt_key, false);
 
     crypto_release(dev);
