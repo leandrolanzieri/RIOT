@@ -30,7 +30,7 @@
 #ifdef HMAC
 
 #ifdef INPUT_512
-    static const unsigned char HMAC_INPUT[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+    static unsigned char HMAC_INPUT[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
     static size_t HMAC_INPUT_SIZE = 512;
 #else
     static char HMAC_INPUT[] = {
@@ -54,7 +54,14 @@
     };
     size_t KEY_SIZE = 64;
 
-#ifndef INPUT_512
+#ifdef INPUT_512
+    static uint8_t EXPECTED_RESULT[] = {
+        0xa1, 0x7f, 0x58, 0x90, 0xf8, 0x76, 0xd1, 0xb5,
+        0xb4, 0xaa, 0x5e, 0xf2, 0x8f, 0xad, 0xd4, 0x55,
+        0x24, 0xb0, 0x69, 0xe2, 0x42, 0x07, 0x6a, 0x91,
+        0x1b, 0x73, 0x57, 0xe5, 0x6e, 0xff, 0x20, 0x51
+    };
+#else
     static uint8_t EXPECTED_RESULT[] = {
         0x39, 0x38, 0x66, 0x75, 0xdc, 0xc9, 0xe1, 0x86,
         0x58, 0xac, 0xfe, 0x34, 0x05, 0x79, 0xe5, 0x1b,
@@ -78,14 +85,12 @@
         gpio_set(active_gpio);
         hmac_sha256_final(&ctx, hmac_result);
         gpio_clear(active_gpio);
-#ifndef INPUT_512
+
         if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
             printf("HMAC SHA-256 Failure\n");
         }
         else {
             printf("HMAC SHA-256 Success\n");
         }
-#endif
-        printf("HMAC SHA-256 Done\n");
     }
 #endif /* HMAC */
