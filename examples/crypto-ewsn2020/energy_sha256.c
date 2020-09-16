@@ -34,16 +34,30 @@
 #include "ps.h"
 #endif
 
-static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
-#define SHA_TESTSTR_SIZE 32
+#ifdef INPUT_512
+    static unsigned char SHA_TESTSTRING[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+    #define SHA_TESTSTR_SIZE 512
+#else
+    static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
+    #define SHA_TESTSTR_SIZE 32
+#endif
 
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
+#ifndef INPUT_512
     static uint8_t EXPECTED_RESULT_SHA256[] = {
         0x65, 0x0C, 0x3A, 0xC7, 0xF9, 0x33, 0x17, 0xD3,
         0x96, 0x31, 0xD3, 0xF5, 0xC5, 0x5B, 0x0A, 0x1E,
         0x96, 0x68, 0x04, 0xE2, 0x73, 0xC3, 0x8F, 0x93,
         0x9C, 0xB1, 0x45, 0x4D, 0xC2, 0x69, 0x7D, 0x20
     };
+#else
+    static uint8_t EXPECTED_RESULT_SHA256[] = {
+        0xB5, 0xB7, 0x56, 0xD2, 0x6F, 0x8C, 0xDF, 0x6B,
+        0xA3, 0xCC, 0xB8, 0x12, 0x5C, 0xE4, 0x4D, 0x0F,
+        0xDD, 0x1C, 0x4C, 0xF1, 0x6E, 0x41, 0x9F, 0xED,
+        0x52, 0x79, 0x2E, 0x1A, 0x9C, 0x47, 0xDF, 0x2B
+    };
+#endif /* INPUT_512 */
 #endif
     void sha256_test_energy(gpio_t start, gpio_t stop)
     {
