@@ -41,9 +41,6 @@ CRYS_ECDH_TempData_t signOutBuff;
 CRYS_ECDSA_SignUserContext_t SignUserContext;
 CRYS_ECDSA_VerifyUserContext_t VerifyUserContext;
 CRYS_ECPKI_Domain_t* pDomain;
-CRYS_ECDH_TempData_t* TempDHBuffptr;
-CRYS_ECPKI_KG_TempData_t* TempECCKGBuffptr;
-CRYS_ECDH_TempData_t TempDHBuff;
 CRYS_ECPKI_KG_TempData_t TempECCKGBuff;
 CRYS_ECPKI_KG_FipsContext_t FipsBuff;
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
@@ -52,8 +49,6 @@ uint32_t ecdsa_sig_size = 64;
 void _init_vars(void)
 {
     rndGenerateVectFunc = CRYS_RND_GenerateVector;
-    TempDHBuffptr = (CRYS_ECDH_TempData_t*)&TempDHBuff;
-    TempECCKGBuffptr = (CRYS_ECPKI_KG_TempData_t*)&TempECCKGBuff;
     pDomain = (CRYS_ECPKI_Domain_t*)CRYS_ECPKI_GetEcDomain(CRYS_ECPKI_DomainID_secp224r1);
 }
 
@@ -64,7 +59,7 @@ void _gen_keypair(void)
 
     cryptocell_enable();
     ret = CRYS_ECPKI_GenKeyPair (rndState_ptr, rndGenerateVectFunc, pDomain, &UserPrivKey,
-    &UserPublKey, TempECCKGBuffptr, &FipsBuff);
+    &UserPublKey, &TempECCKGBuff, &FipsBuff);
     cryptocell_disable();
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECPKI_GenKeyPair for key pair 1 failed with 0x%x \n",ret);
