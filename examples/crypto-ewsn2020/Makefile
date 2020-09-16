@@ -5,6 +5,10 @@ APPLICATION = crypto-ewsn2020
 
 FEATURES_REQUIRED += periph_gpio
 
+ifeq (1, $(INPUT_512))
+	CFLAGS +=-DINPUT_512=1
+endif
+
 ifeq (1, $(SHA256))
 	CFLAGS +=-DSHA256=1
 endif

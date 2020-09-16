@@ -32,11 +32,17 @@
 
 /* AES Test */
 #if AES_CBC || AES_CTR || AES_ECB
-static uint8_t KEY[] = {
-    0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
-    0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
-};
-static uint8_t KEY_LEN = 16;
+    static uint8_t KEY[] = {
+        0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
+        0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
+    };
+    static uint8_t KEY_LEN = 16;
+
+#ifdef INPUT_512
+    static const unsigned char PLAIN[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+    static size_t PLAIN_LEN = 512;
+#endif /* INPUT_512 */
+
 #endif
 
 #ifdef AES_CBC
@@ -45,7 +51,7 @@ static uint8_t KEY_LEN = 16;
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
     };
-
+#ifndef INPUT_512
     static uint8_t __attribute__((aligned)) CBC_PLAIN[] = {
         0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
         0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,
@@ -61,13 +67,22 @@ static uint8_t KEY_LEN = 16;
         0x95, 0xdb, 0x11, 0x3a, 0x91, 0x76, 0x78, 0xb2
     };
     static uint8_t CBC_CIPHER_LEN = 32;
+#endif /* INPUT_512 */
 
     void aes_cbc_test(gpio_t active_gpio)
     {
         int ret;
         cipher_context_t ctx;
-        uint8_t data[CBC_CIPHER_LEN];
-        memset(data, 0, CBC_CIPHER_LEN);
+
+#ifdef INPUT_512
+        uint8_t data_enc[PLAIN_LEN];
+        uint8_t data_dec[PLAIN_LEN];
+        memset(data_enc, 0, PLAIN_LEN);
+        memset(data_dec, 0, PLAIN_LEN);
+#else
+        uint8_t data[CBC_PLAIN_LEN];
+        memset(data, 0, CBC_PLAIN_LEN);
+#endif /* INPUT_512 */
 
         gpio_set(active_gpio);
         ret = aes_init(&ctx, KEY, KEY_LEN);
@@ -77,6 +92,25 @@ static uint8_t KEY_LEN = 16;
             return;
         }
 
+#ifdef INPUT_512
+        gpio_set(active_gpio);
+        ret = aes_encrypt_cbc(&ctx, CBC_IV, PLAIN, PLAIN_LEN, data_enc);
+        gpio_clear(active_gpio);
+
+        if (ret < 0) {
+            printf("AES CBC Encrypt failed: %d\n", ret);
+            return;
+        }
+
+        gpio_set(active_gpio);
+        ret = aes_decrypt_cbc(&ctx, CBC_IV, data_enc, PLAIN_LEN, data_dec);
+        gpio_clear(active_gpio);
+
+        if (ret < 0) {
+            printf("AES CBC Decrypt failed: %d\n", ret);
+            return;
+        }
+#else
         gpio_set(active_gpio);
         ret = aes_encrypt_cbc(&ctx, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
         gpio_clear(active_gpio);
@@ -91,8 +125,6 @@ static uint8_t KEY_LEN = 16;
             // return;
         }
 
-        memset(data, 0, CBC_CIPHER_LEN);
-
         gpio_set(active_gpio);
         ret = aes_decrypt_cbc(&ctx, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
         gpio_clear(active_gpio);
@@ -106,9 +138,9 @@ static uint8_t KEY_LEN = 16;
             printf("AES CBC decryption wrong plain text\n");
             return;
         }
-        printf("AES CBC encrypt/decrypt successful\n");
+#endif /* INPUT_512 */
+        printf("AES CBC encrypt/decrypt Done\n");
     }
-
 #endif /* AES_CBC */
 
 #ifdef AES_CTR
@@ -118,6 +150,7 @@ static uint8_t KEY_LEN = 16;
     };
     static uint8_t CTR_COUNTER_LEN = 16;
 
+#ifndef INPUT_512
     static uint8_t __attribute__((aligned)) CTR_PLAIN[] = {
         0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
         0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,
@@ -133,15 +166,23 @@ static uint8_t KEY_LEN = 16;
         0x86, 0x17, 0x18, 0x7b, 0xb9, 0xff, 0xfd, 0xff
     };
     static uint8_t CTR_CIPHER_LEN = 32;
+#endif /* INPUT_512 */
 
     void aes_ctr_test(gpio_t active_gpio)
     {
         int ret;
         cipher_context_t ctx;
         uint8_t ctr[CTR_COUNTER_LEN];
-        uint8_t data[CTR_CIPHER_LEN];
-        memset(data, 0, CTR_CIPHER_LEN);
         memcpy(ctr, CTR_COUNTER, CTR_COUNTER_LEN);
+#ifdef INPUT_512
+        uint8_t data_enc[PLAIN_LEN];
+        uint8_t data_dec[PLAIN_LEN];
+        memset(data_enc, 0, PLAIN_LEN);
+        memset(data_dec, 0, PLAIN_LEN);
+#else
+        uint8_t data[CTR_PLAIN_LEN];
+        memset(data, 0, CTR_PLAIN_LEN);
+#endif /* INPUT_512 */
 
         gpio_set(active_gpio);
         ret = aes_init(&ctx, KEY, KEY_LEN);
@@ -151,6 +192,26 @@ static uint8_t KEY_LEN = 16;
             return;
         }
 
+#ifdef INPUT_512
+        gpio_set(active_gpio);
+        ret = aes_encrypt_ctr(&ctx, ctr, 0, CTR_PLAIN, CTR_PLAIN_LEN, data_enc);
+        gpio_clear(active_gpio);
+
+        if (ret < 0) {
+            printf("AES CTR Enryption failed: %d\n", ret);
+            return;
+        }
+        memcpy(ctr, CTR_COUNTER, CTR_COUNTER_LEN);
+
+        gpio_set(active_gpio);
+        ret = aes_decrypt_ctr(&ctx, ctr, 0, data_enc, CTR_CIPHER_LEN, data_dec);
+        gpio_clear(active_gpio);
+
+        if (ret < 0) {
+            printf("AES CTR Decryption failed: %d\n", ret);
+            return;
+        }
+#else
         gpio_set(active_gpio);
         ret = aes_encrypt_ctr(&ctx, ctr, 0, CTR_PLAIN, CTR_PLAIN_LEN, data);
         gpio_clear(active_gpio);
@@ -176,15 +237,18 @@ static uint8_t KEY_LEN = 16;
             printf("AES CTR Decryption failed: %d\n", ret);
             return;
         }
-        if (memcmp(data, CTR_PLAIN, CBC_CIPHER_LEN)) {
+        if (memcmp(data, CTR_PLAIN, CTR_CIPHER_LEN)) {
             printf("AES CTR decryption wrong plain text\n");
             return;
         }
-        printf("AES CTR encrypt/decrypt successful\n");
+#endif /* INPUT_512 */
+        printf("AES CTR encrypt/decrypt done\n");
     }
 #endif /* AES_CTR */
 
 #ifdef AES_ECB
+
+#ifndef INPUT_512
     static uint8_t __attribute__((aligned)) ECB_PLAIN[] = {
         0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
         0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a
@@ -196,13 +260,21 @@ static uint8_t KEY_LEN = 16;
         0xa8, 0x9e, 0xca, 0xf3, 0x24, 0x66, 0xef, 0x97
     };
     static uint8_t ECB_CIPHER_LEN = 16;
+#endif /* INPUT_512 */
 
     void aes_ecb_test(gpio_t active_gpio)
     {
         int ret;
         cipher_context_t ctx;
-        uint8_t data[ECB_CIPHER_LEN];
-        memset(data, 0, ECB_CIPHER_LEN);
+#ifdef INPUT_512
+        uint8_t data_enc[PLAIN_LEN];
+        uint8_t data_dec[PLAIN_LEN];
+        memset(data_enc, 0, PLAIN_LEN);
+        memset(data_dec, 0, PLAIN_LEN);
+#else
+        uint8_t data[ECB_PLAIN_LEN];
+        memset(data, 0, ECB_PLAIN_LEN);
+#endif /* INPUT_512 */
 
         gpio_set(active_gpio);
         ret = aes_init(&ctx, KEY, KEY_LEN);
@@ -210,6 +282,25 @@ static uint8_t KEY_LEN = 16;
         if (ret < 1) {
             printf("AES Init failed: %d\n", ret);
         }
+
+#ifdef INPUT_512
+        gpio_set(active_gpio);
+        ret = aes_encrypt_ecb(&ctx, PLAIN, PLAIN_LEN, data_enc);
+        gpio_clear(active_gpio);
+        if (ret < 0) {
+            printf("AES ECB Enryption failed: %d\n", ret);
+            return;
+        }
+
+        gpio_set(active_gpio);
+        ret = aes_decrypt_ecb(&ctx, data_enc, PLAIN_LEN, data_dec);
+        gpio_clear(active_gpio);
+
+        if (ret < 0) {
+            printf("AES ECB Deryption failed: %d\n", ret);
+            return;
+        }
+#else
 
         gpio_set(active_gpio);
         ret = aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
@@ -231,10 +322,11 @@ static uint8_t KEY_LEN = 16;
         }
 
         if (memcmp(data, ECB_PLAIN, ECB_PLAIN_LEN)) {
-            printf("AES ECB decryption wrong cipher\n");
+            printf("AES ECB decryption wrong plain\n");
             return;
         }
+#endif /* INPUT_512 */
 
-        printf("AES ECB encrypt/decrypt successful\n");
+        printf("AES ECB encrypt/decrypt done\n");
     }
 #endif /* AES_ECB */

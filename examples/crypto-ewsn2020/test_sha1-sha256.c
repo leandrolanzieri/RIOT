@@ -31,13 +31,15 @@
 #include "periph/gpio.h"
 
 #if SHA1 || SHA256
-static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
-static size_t SHA_TESTSTR_SIZE = 32;
 
 // 512 bytes teststring
-// static const unsigned char SHA_TESTSTRING[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
-// static size_t SHA_TESTSTR_SIZE = 512;
-
+#if INPUT_512
+    static const unsigned char SHA_TESTSTRING[] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Ste";
+    static size_t SHA_TESTSTR_SIZE = 512;
+#else
+    static const unsigned char SHA_TESTSTRING[] = "This is a teststring fore sha256";
+    static size_t SHA_TESTSTR_SIZE = 32;
+#endif /* INPUT_512 */
 #endif
 
 #ifdef SHA1
@@ -81,13 +83,14 @@ static size_t SHA_TESTSTR_SIZE = 32;
 
 
 #ifdef SHA256
+#if !defined(INPUT_512)
     static uint8_t EXPECTED_RESULT_SHA256[] = {
         0x65, 0x0C, 0x3A, 0xC7, 0xF9, 0x33, 0x17, 0xD3,
         0x96, 0x31, 0xD3, 0xF5, 0xC5, 0x5B, 0x0A, 0x1E,
         0x96, 0x68, 0x04, 0xE2, 0x73, 0xC3, 0x8F, 0x93,
         0x9C, 0xB1, 0x45, 0x4D, 0xC2, 0x69, 0x7D, 0x20
     };
-
+#endif
     void sha256_test(gpio_t active_gpio)
     {
         uint8_t sha256_result[SHA256_DIGEST_LENGTH];
@@ -105,11 +108,15 @@ static size_t SHA_TESTSTR_SIZE = 32;
         sha256_final(&ctx, sha256_result);
         gpio_clear(active_gpio);
 
+#if !defined(INPUT_512)
         if (memcmp(sha256_result, EXPECTED_RESULT_SHA256, SHA256_DIGEST_LENGTH) != 0) {
             printf("SHA-256 Failure\n");
         }
         else {
             printf("SHA-256 Success\n");
         }
+#endif /* INPUT_512 */
+
+        printf("SHA-256 Done\n");
     }
 #endif /* SHA256 */
