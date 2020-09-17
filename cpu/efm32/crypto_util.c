@@ -44,6 +44,7 @@ CRYPTO_TypeDef* crypto_acquire(void) {
     CMU_ClockEnable(cmuClock_HFPER, true);
     CMU_ClockEnable(crypto_devs[devno].cmu, true);
 
+    acqu_count++;
     return dev;
 }
 
@@ -68,6 +69,8 @@ void crypto_release(CRYPTO_TypeDef* dev)
         return;
     }
     CMU_ClockEnable(crypto_devs[devno].cmu, false);
+
+    acqu_count--;
     mutex_unlock(&crypto_lock[devno]);
 }
 #endif
