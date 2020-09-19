@@ -35,7 +35,7 @@
 #define SHA256_HASH_SIZE (32)
 
 #ifndef NUM_ITER
-#define NUM_ITER 2000
+#define NUM_ITER 10
 #endif
 
 uint32_t start, stop;
@@ -135,17 +135,35 @@ static void ata_with_ctx_save(void)
     atecc_wake();
 #endif
 
-    atcab_hw_sha2_256_init(&ctx);
-    atcab_sha_read_context(context, &context_size);
 
     for (int i = 0; i < NUM_ITER; i++) {
-        atcab_sha_write_context(context, context_size);
-        atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1);
-        atcab_sha_read_context(context, &context_size);
+        // printf("LOOP #%i\n", i);
+        if (atcab_hw_sha2_256_init(&ctx) != ATCA_SUCCESS) {
+            puts("atcab_hw_sha2_256_initERROR");
+        }
+        if (atcab_sha_read_context(context, &context_size) != ATCA_SUCCESS) {
+            puts("1atcab_sha_read_contextERROR");
+        }
 
-        atcab_sha_write_context(context, context_size);
-        atcab_hw_sha2_256_finish(&ctx, res);
-        atcab_sha_read_context(context, &context_size);
+        if (atcab_sha_write_context(context, context_size) != ATCA_SUCCESS) {
+        puts("atcab_sha_write_contextERROR");
+        }
+        if (atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1) != ATCA_SUCCESS) {
+        puts("atcab_hw_sha2_256_updateERROR");
+        }
+        if (atcab_sha_read_context(context, &context_size) != ATCA_SUCCESS) {
+        puts("2atcab_sha_read_contextERROR");
+        }
+
+        if (atcab_sha_write_context(context, context_size) != ATCA_SUCCESS) {
+        puts("atcab_sha_write_contextERROR");
+    }
+        if (atcab_hw_sha2_256_finish(&ctx, res) != ATCA_SUCCESS) {
+        puts("atcab_hw_sha2_256_finishERROR");
+    }
+    //     if (atcab_sha_read_context(context, &context_size) != ATCA_SUCCESS) {
+    //     puts("3atcab_sha_read_contextERROR");
+    // }
     }
 
 #ifdef ATCA_MANUAL_ONOFF
@@ -154,7 +172,7 @@ static void ata_with_ctx_save(void)
     stop = xtimer_now_usec();
     printf("ata_with_ctx_save: %i Bytes int %"PRIu32 " us\n", (NUM_ITER*SHA256_HASH_SIZE), (stop-start));
 
-    // if(!memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
+    // if (!memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
     //     puts("ata_with_ctx_save ERROR");
     // }
     // else {
@@ -172,11 +190,18 @@ static void ata_without_ctx_save(void)
     atecc_wake();
 #endif
 
-    atcab_hw_sha2_256_init(&ctx);
 
     for (int i = 0; i < NUM_ITER; i++) {
-        atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1);
-        atcab_hw_sha2_256_finish(&ctx, res);
+        // printf("LOOP #%i\n", i);
+        if (atcab_hw_sha2_256_init(&ctx) != ATCA_SUCCESS) {
+            puts("atcab_hw_sha2_256_initERROR");
+        }
+        if (atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1) != ATCA_SUCCESS) {
+        puts("atcab_hw_sha2_256_updateERROR");
+        }
+        if (atcab_hw_sha2_256_finish(&ctx, res) != ATCA_SUCCESS) {
+        puts("atcab_hw_sha2_256_finishERROR");
+        }
     }
 
 #ifdef ATCA_MANUAL_ONOFF
@@ -209,7 +234,7 @@ static void ata_without_ctx_save(void)
 //     // finalize first operation and compare with expected result
 //     sha256_final(&ctx, res);
 
-//     if(memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
+//     if (memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
 //         puts("RIOT SHA SW 2 contexts OK");
 //     }
 //     else {
@@ -239,7 +264,7 @@ static void ata_without_ctx_save(void)
 //     // atcab_sha_read_context(actx.block, &context_size);
 
 //     // printf("CONTEXT: \n");
-//     // for(int i=0;i<context_size;i++){
+//     // for(int i=0;i<context_size;i++) {
 //     //     printf("%i ", context[i]);
 //     // }
 //     // printf("\n");
@@ -256,7 +281,7 @@ static void ata_without_ctx_save(void)
 //     // finalize first context and compare with expected value
 //     ret = atcab_hw_sha2_256_finish(&actx, ares);
 
-//     if(memcmp(expected, ares, SHA256_HASH_SIZE) == 0) {
+//     if (memcmp(expected, ares, SHA256_HASH_SIZE) == 0) {
 //         puts("ATA SHA SW 2 contexts OK");
 //     }
 //     else {
@@ -271,7 +296,7 @@ static void ata_without_ctx_save(void)
 //     ret = atcab_hw_sha2_256_finish(&actx2, ares);
 //     printf("2 atcab_hw_sha2_256_finish returned: %x\n", ret);
 
-//     if(memcmp(res, ares, SHA256_HASH_SIZE) == 0) {
+//     if (memcmp(res, ares, SHA256_HASH_SIZE) == 0) {
 //         puts("RIOT & ATA digest EQUAL");
 //     }
 //     else {
@@ -360,7 +385,7 @@ static int ata_serial(int argc, char **argv)
         return -1;
     }
     printf("SERIAl NO: ");
-    for (unsigned i=0;i<sizeof(sn);i++){
+    for (unsigned i=0;i<sizeof(sn);i++) {
         printf("0x%x ", sn[i]);
     }
     printf("\n");
@@ -430,17 +455,17 @@ int main(void)
     puts("ATCA_MANUAL_OFF");
 #endif
 
-    ata_with_ctx_save();
-    ata_without_ctx_save();
-
-    // test_2_contexts();
-
     if (test_atca_sha(teststring, test_string_size, expected, result) == 0) {
         printf("ATCA SHA256: Success\n");
     }
     else {
         printf("ATCA SHA256: Failure.\n");
     }
+    ata_with_ctx_save();
+    ata_without_ctx_save();
+
+    // test_2_contexts();
+
 
      /* define buffer to be used by the shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
