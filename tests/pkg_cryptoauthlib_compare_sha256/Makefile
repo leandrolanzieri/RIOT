@@ -10,6 +10,8 @@ USEMODULE += hashes
 USEMODULE += xtimer
 USEMODULE += shell
 
+# FEATURES_REQUIRED += periph_rtt
+
 FEATURES_OPTIONAL = periph_i2c_reconfigure
 CFLAGS=-DTHREAD_STACKSIZE_MAIN=2048
 

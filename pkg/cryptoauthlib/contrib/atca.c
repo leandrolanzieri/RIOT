@@ -26,6 +26,9 @@
 #include "atca.h"
 #include "atca_params.h"
 
+// #include "periph/rtt.h"
+// #include "periph/pm.h"
+
 
 /* Timer functions */
 void atca_delay_us(uint32_t delay)
@@ -38,10 +41,32 @@ void atca_delay_10us(uint32_t delay)
     xtimer_usleep(delay * 10);
 }
 
+void cb(void *arg)
+{
+    (void)arg;
+    // pm_block(1);
+    puts("wake");
+}
+
 void atca_delay_ms(uint32_t delay)
 {
     xtimer_usleep(delay * 1000);
+
+    // // ATTENTION! THIS EXPECTS THE RTT TO RUN WITH 1kHz
+    // delay = ( delay << 8);
+    // printf("atca_delay_ms: %i\n", (int)delay);
+    // uint32_t now = rtt_get_counter();
+    // rtt_set_alarm((now + delay) & RTT_MAX_VALUE, cb, 0);
+
+    // // struct tm time;
+    // // rtc_get_time(&time);
+    // // time.tm_sec += duration;
+    // // mktime(&time);
+    // // rtc_set_alarm(&time, cb_rtc, (void *)mode);
+
+    // pm_unblock(1);
 }
+
 
 /* Hal I2C implementation */
 ATCA_STATUS hal_i2c_init(void *hal, ATCAIfaceCfg *cfg)
