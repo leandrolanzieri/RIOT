@@ -35,7 +35,11 @@ static const i2c_conf_t i2c_config[] = {
         .dev = NRF_TWIM1,
         .scl = 27,
         .sda = 26,
+#ifdef NO_I2C_RECONF
+        .speed = I2C_SPEED_NORMAL
+#else
         .speed = I2C_SPEED_FAST
+#endif
     }
 };
 #define I2C_NUMOF           ARRAY_SIZE(i2c_config)

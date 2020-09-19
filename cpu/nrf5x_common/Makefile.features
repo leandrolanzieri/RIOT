@@ -8,7 +8,9 @@ FEATURES_PROVIDED += periph_temperature
 FEATURES_PROVIDED += periph_uart_modecfg
 FEATURES_PROVIDED += periph_wdt periph_wdt_cb
 
-FEATURES_PROVIDED += periph_i2c_reconfigure
+ifeq (, $(NO_I2C_RECONF))
+    FEATURES_PROVIDED += periph_i2c_reconfigure
+endif
 
 # Various other features (if any)
 FEATURES_PROVIDED += ble_nimble

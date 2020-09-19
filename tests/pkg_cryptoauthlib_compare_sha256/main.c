@@ -30,19 +30,27 @@
 #include "shell.h"
 #include "xtimer.h"
 #include "periph/gpio.h"
+#include "periph/i2c.h"
 
 #define SHA256_HASH_SIZE (32)
 
-uint32_t start;
+#ifndef NUM_ITER
+#define NUM_ITER 2000
+#endif
 
-uint8_t teststring[] = "chili cheese fries";
-uint8_t teststring2[] = "einealtedamegehthonigessen";
+uint32_t start, stop;
+
+uint8_t teststring[] =  "This is a teststring fore sha256";
+uint8_t teststring2[] = "einealtedamegehthonigessenxxxxxx";
 uint16_t test_string_size = (sizeof(teststring) - 1);   /* -1 to ignore \0 */
 
 uint8_t expected[] =
-{ 0x36, 0x46, 0xEF, 0xD6, 0x27, 0x6C, 0x0D, 0xCB, 0x4B, 0x07, 0x73, 0x41,
-    0x88, 0xF4, 0x17, 0xB4, 0x38, 0xAA, 0xCF, 0xC6, 0xAE, 0xEF, 0xFA, 0xBE,
-    0xF3, 0xA8, 0x5D, 0x67, 0x42, 0x0D, 0xFE, 0xE5 };
+{
+0x65, 0x0C, 0x3A, 0xC7, 0xF9, 0x33, 0x17, 0xD3,
+0x96, 0x31, 0xD3, 0xF5, 0xC5, 0x5B, 0x0A, 0x1E,
+0x96, 0x68, 0x04, 0xE2, 0x73, 0xC3, 0x8F, 0x93,
+0x9C, 0xB1, 0x45, 0x4D, 0xC2, 0x69, 0x7D, 0x20
+};
 
 uint8_t result[SHA256_HASH_SIZE];                       /* +3 to fit 1 byte length and 2 bytes checksum */
 
@@ -55,7 +63,6 @@ void atecc_wake(void)
     uint8_t data[4] = { 0 };
 
 #if IS_USED(MODULE_PERIPH_I2C_RECONFIGURE)
-
     /* switch I2C peripheral to GPIO function */
     i2c_deinit_pins(cfg->atcai2c.bus);
     gpio_init(i2c_pin_sda(cfg->atcai2c.bus), GPIO_OUT);
@@ -113,22 +120,15 @@ void atecc_sleep(void)
     i2c_release(cfg->atcai2c.bus);
 }
 
-    // finalize second operation and keep digest in "res"
-    memset(res, 0, SHA256_HASH_SIZE);
-    sha256_final(&ctx2, res);
+static void ata_with_ctx_save(void)
+{
 
-    /* ATA */
-    atca_sha256_ctx_t actx, actx2;
-    uint8_t ares[SHA256_HASH_SIZE];
-    memset(ares, 0, SHA256_HASH_SIZE);
+    atca_sha256_ctx_t ctx;
+    uint8_t res[SHA256_HASH_SIZE];
     uint8_t context[SHA_CONTEXT_MAX_SIZE];
-    uint8_t context2[SHA_CONTEXT_MAX_SIZE];
+    memset(context, 0, SHA_CONTEXT_MAX_SIZE);
     uint16_t context_size=sizeof(context);
-    uint16_t context_size2 = sizeof(context2);
 
-    // init first ATA context
-    atcab_hw_sha2_256_init(&actx);
-    atcab_hw_sha2_256_update(&actx, teststring, sizeof(teststring)-1);
 
     start = xtimer_now_usec();
 #ifdef ATCA_MANUAL_ONOFF
@@ -137,18 +137,16 @@ void atecc_sleep(void)
 
     atcab_hw_sha2_256_init(&ctx);
     atcab_sha_read_context(context, &context_size);
-    // context_size = sizeof(actx.block);
-    // atcab_sha_read_context(actx.block, &context_size);
 
-    // printf("CONTEXT: \n");
-    // for(int i=0;i<context_size;i++){
-    //     printf("%i ", context[i]);
-    // }
-    // printf("\n");
+    for (int i = 0; i < NUM_ITER; i++) {
+        atcab_sha_write_context(context, context_size);
+        atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1);
+        atcab_sha_read_context(context, &context_size);
 
-    // init second ATA context
-    atcab_hw_sha2_256_init(&actx2);
-    atcab_hw_sha2_256_update(&actx2, teststring2, sizeof(teststring2)-1);
+        atcab_sha_write_context(context, context_size);
+        atcab_hw_sha2_256_finish(&ctx, res);
+        atcab_sha_read_context(context, &context_size);
+    }
 
 #ifdef ATCA_MANUAL_ONOFF
     atecc_sleep();
@@ -156,30 +154,29 @@ void atecc_sleep(void)
     stop = xtimer_now_usec();
     printf("ata_with_ctx_save: %i Bytes int %"PRIu32 " us\n", (NUM_ITER*SHA256_HASH_SIZE), (stop-start));
 
-    // finalize first context and compare with expected value
-    ret = atcab_hw_sha2_256_finish(&actx, ares);
+    // if(!memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
+    //     puts("ata_with_ctx_save ERROR");
+    // }
+    // else {
+    //     puts("ata_without_ctx_save alrido");
+    // }
+}
 
-    if(memcmp(expected, ares, SHA256_HASH_SIZE) == 0) {
-        puts("ATA SHA SW 2 contexts OK");
-    }
-    else {
-        puts("ATA SHA SW 2 contexts SHICE");
-    }
+static void ata_without_ctx_save(void)
+{
+    atca_sha256_ctx_t ctx;
+    uint8_t res[SHA256_HASH_SIZE];
 
     start = xtimer_now_usec();
 #ifdef ATCA_MANUAL_ONOFF
     atecc_wake();
 #endif
 
-    // finalize second context and compare with RIOT results
-    ret = atcab_hw_sha2_256_finish(&actx2, ares);
-    printf("2 atcab_hw_sha2_256_finish returned: %x\n", ret);
+    atcab_hw_sha2_256_init(&ctx);
 
-    if(memcmp(res, ares, SHA256_HASH_SIZE) == 0) {
-        puts("RIOT & ATA digest EQUAL");
-    }
-    else {
-        puts("RIOT & ATA digest SHOICE");
+    for (int i = 0; i < NUM_ITER; i++) {
+        atcab_hw_sha2_256_update(&ctx, teststring, sizeof(teststring)-1);
+        atcab_hw_sha2_256_finish(&ctx, res);
     }
 
 #ifdef ATCA_MANUAL_ONOFF
@@ -194,26 +191,105 @@ void atecc_sleep(void)
 /**
  * Function to call RIOT software implementation of SHA-256
  */
-static int test_riot_sha256(uint8_t *teststring, uint16_t len,
-                            uint8_t *expected,
-                            uint8_t *result)
-{
+// static int test_2_contexts(void)
+// {
+//     int ret;
+//     sha256_context_t ctx, ctx2;
+//     uint8_t res[SHA256_HASH_SIZE];
+//     memset(res, 0, SHA256_HASH_SIZE);
 
-    sha256_context_t ctx;
-    start = xtimer_now_usec();
-    sha256_init(&ctx);
-    printf("sha256_init: %"PRIu32"\n", xtimer_now_usec()-start);
+//     // init first SW context
+//     sha256_init(&ctx);
+//     sha256_update(&ctx, (void *)teststring, sizeof(teststring)-1);
 
-    start = xtimer_now_usec();
-    sha256_update(&ctx, (void *)teststring, len);
-    printf("sha256_update: %"PRIu32"\n", xtimer_now_usec()-start);
+//     // init second SW context
+//     sha256_init(&ctx2);
+//     sha256_update(&ctx2, (void *)teststring2, sizeof(teststring2)-1);
 
-    start = xtimer_now_usec();
-    sha256_final(&ctx, result);
-    printf("sha256_final: %"PRIu32"\n", xtimer_now_usec()-start);
+//     // finalize first operation and compare with expected result
+//     sha256_final(&ctx, res);
 
-    return memcmp(expected, result, SHA256_HASH_SIZE);
-}
+//     if(memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
+//         puts("RIOT SHA SW 2 contexts OK");
+//     }
+//     else {
+//         puts("RIOT SHA SW 2 contexts SHICE");
+//     }
+
+//     // finalize second operation and keep digest in "res"
+//     memset(res, 0, SHA256_HASH_SIZE);
+//     sha256_final(&ctx2, res);
+
+//     /* ATA */
+//     atca_sha256_ctx_t actx, actx2;
+//     uint8_t ares[SHA256_HASH_SIZE];
+//     memset(ares, 0, SHA256_HASH_SIZE);
+//     uint8_t context[SHA_CONTEXT_MAX_SIZE];
+//     uint8_t context2[SHA_CONTEXT_MAX_SIZE];
+//     uint16_t context_size=sizeof(context);
+//     uint16_t context_size2 = sizeof(context2);
+
+//     // init first ATA context
+//     atcab_hw_sha2_256_init(&actx);
+//     atcab_hw_sha2_256_update(&actx, teststring, sizeof(teststring)-1);
+
+//     // save first context to reapply later
+//     atcab_sha_read_context(context, &context_size);
+//     // context_size = sizeof(actx.block);
+//     // atcab_sha_read_context(actx.block, &context_size);
+
+//     // printf("CONTEXT: \n");
+//     // for(int i=0;i<context_size;i++){
+//     //     printf("%i ", context[i]);
+//     // }
+//     // printf("\n");
+
+//     // init second ATA context
+//     atcab_hw_sha2_256_init(&actx2);
+//     atcab_hw_sha2_256_update(&actx2, teststring2, sizeof(teststring2)-1);
+
+//     // save second context and apply first one
+//     atcab_sha_read_context(context2, &context_size2);
+//     atcab_sha_write_context(context, context_size);
+//     // atcab_sha_write_context(actx.block, context_size);
+
+//     // finalize first context and compare with expected value
+//     ret = atcab_hw_sha2_256_finish(&actx, ares);
+
+//     if(memcmp(expected, ares, SHA256_HASH_SIZE) == 0) {
+//         puts("ATA SHA SW 2 contexts OK");
+//     }
+//     else {
+//         puts("ATA SHA SW 2 contexts SHICE");
+//     }
+
+//     // repally second context
+//     memset(ares, 0, SHA256_HASH_SIZE);
+//     atcab_sha_write_context(context2, context_size);
+
+//     // finalize second context and compare with RIOT results
+//     ret = atcab_hw_sha2_256_finish(&actx2, ares);
+//     printf("2 atcab_hw_sha2_256_finish returned: %x\n", ret);
+
+//     if(memcmp(res, ares, SHA256_HASH_SIZE) == 0) {
+//         puts("RIOT & ATA digest EQUAL");
+//     }
+//     else {
+//         puts("RIOT & ATA digest SHOICE");
+//     }
+
+//     atcab_hw_sha2_256(teststring2, sizeof(teststring2) - 1, ares);
+//     if (memcmp(res, ares, SHA256_HASH_SIZE) == 0)
+//     {
+//         puts("ATA convenience func OK");
+//     }
+//     else
+//     {
+//         puts("ATA convenience func SHOICE");
+//     }
+//     return 0;
+// }
+
 
 /**
  * Function to call CryptoAuth hardware implementation of SHA-256
@@ -326,16 +402,38 @@ int main(void)
 
     memset(result, 0, SHA256_HASH_SIZE);                    /* alles in result auf 0 setzen */
 
-    test_2_contexts();
+#ifdef NO_I2C_RECONF
+    puts("SLOW I2C");
+#else
+    puts("FAST I2C");
+#endif
 
-    if (test_riot_sha256(teststring, test_string_size, expected, result) == 0) {
-        printf("RIOT SHA256: Success\n");
+#ifdef MODULE_PERIPH_I2C_RECONFIGURE
+    puts("GPIO WAKEUP");
+#else
+    puts("I2C WAKEUP");
+#endif
+
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    if (i2c_config[cfg->atcai2c.bus].speed == I2C_SPEED_NORMAL) {
+        puts("I2C_SPEED_NORMAL");
     }
-    else {
-        printf("RIOT SHA256: Failure.\n");
+    if (i2c_config[cfg->atcai2c.bus].speed == I2C_SPEED_FAST) {
+        puts("I2C_SPEED_FAST");
     }
-    atca_delay_us(10);
-    memset(result, 0, SHA256_HASH_SIZE);
+
+#ifdef ATCA_MANUAL_ONOFF
+    // sleep initially
+    atecc_sleep();
+    puts("ATCA_MANUAL_ON");
+#else
+    puts("ATCA_MANUAL_OFF");
+#endif
+
+    ata_with_ctx_save();
+    ata_without_ctx_save();
+
+    // test_2_contexts();
 
     if (test_atca_sha(teststring, test_string_size, expected, result) == 0) {
         printf("ATCA SHA256: Success\n");

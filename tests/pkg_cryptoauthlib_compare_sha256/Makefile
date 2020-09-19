@@ -11,13 +11,17 @@ USEMODULE += xtimer
 USEMODULE += shell
 
 # FEATURES_REQUIRED += periph_rtt
-
-FEATURES_OPTIONAL = periph_i2c_reconfigure
 CFLAGS=-DTHREAD_STACKSIZE_MAIN=2048
+
+ifneq (, $(NO_I2C_RECONF))
+	CFLAGS+=-DNO_I2C_RECONF=1
+else
+	FEATURES_OPTIONAL += periph_i2c_reconfigure
+endif
 
 
 ifneq (, $(ATCA_MANUAL_ONOFF))
-	CFLAGS=-DATCA_MANUAL_ONOFF=1
+	CFLAGS+=-DATCA_MANUAL_ONOFF=1
 endif
 
 include $(RIOTBASE)/Makefile.include
