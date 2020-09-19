@@ -49,33 +49,69 @@ uint8_t result[SHA256_HASH_SIZE];                       /* +3 to fit 1 byte leng
 atca_sha256_ctx_t ctx;
 
 
-/**
- * Function to call RIOT software implementation of SHA-256
- */
-static int test_2_contexts(void)
+void atecc_wake(void)
 {
-    int ret;
-    sha256_context_t ctx, ctx2;
-    uint8_t res[SHA256_HASH_SIZE];
-    memset(res, 0, SHA256_HASH_SIZE);
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    uint8_t data[4] = { 0 };
 
-    // init first SW context
-    sha256_init(&ctx);
-    sha256_update(&ctx, (void *)teststring, sizeof(teststring)-1);
+#if IS_USED(MODULE_PERIPH_I2C_RECONFIGURE)
 
-    // init second SW context
-    sha256_init(&ctx2);
-    sha256_update(&ctx2, (void *)teststring2, sizeof(teststring2)-1);
+    /* switch I2C peripheral to GPIO function */
+    i2c_deinit_pins(cfg->atcai2c.bus);
+    gpio_init(i2c_pin_sda(cfg->atcai2c.bus), GPIO_OUT);
 
-    // finalize first operation and compare with expected result
-    sha256_final(&ctx, res);
+    /* send wake pulse of 100us (t_WOL) */
+    gpio_clear(i2c_pin_sda(cfg->atcai2c.bus));
+    atca_delay_us(100);
 
-    if(memcmp(expected, res, SHA256_HASH_SIZE) == 0) {
-        puts("RIOT SHA SW 2 contexts OK");
+    /* reinit I2C peripheral */
+    i2c_init_pins(cfg->atcai2c.bus);
+#else
+    /* send wake pulse by sending byte 0x00 */
+    /* this requires the I2C clock to be 100kHz at a max */
+    i2c_acquire(cfg->atcai2c.bus);
+    i2c_write_byte(cfg->atcai2c.bus, ATCA_WAKE_ADDR, data[0], 0);
+    i2c_release(cfg->atcai2c.bus);
+#endif
+
+    atca_delay_us(cfg->wake_delay);
+
+    uint8_t retries = cfg->rx_retries;
+    int status = -1;
+
+    i2c_acquire(cfg->atcai2c.bus);
+    while (retries-- > 0 && status != 0) {
+        status = i2c_read_bytes(cfg->atcai2c.bus,
+                                (cfg->atcai2c.slave_address >> 1),
+                                &data[0], 4, 0);
     }
-    else {
-        puts("RIOT SHA SW 2 contexts SHICE");
+    i2c_release(cfg->atcai2c.bus);
+
+    if (status != ATCA_SUCCESS) {
+        printf("Communication with device failed\n");
+        return;
     }
+
+    if (hal_check_wake(data, 4)) {
+        printf("Wake up failed\n");
+    }
+}
+
+void atecc_idle(void)
+{
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    i2c_acquire(cfg->atcai2c.bus);
+    i2c_write_byte(cfg->atcai2c.bus, (cfg->atcai2c.slave_address >> 1), ATCA_IDLE_ADDR, 0);
+    i2c_release(cfg->atcai2c.bus);
+}
+
+void atecc_sleep(void)
+{
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    i2c_acquire(cfg->atcai2c.bus);
+    i2c_write_byte(cfg->atcai2c.bus, (cfg->atcai2c.slave_address >> 1), ATCA_SLEEP_ADDR, 0);
+    i2c_release(cfg->atcai2c.bus);
+}
 
     // finalize second operation and keep digest in "res"
     memset(res, 0, SHA256_HASH_SIZE);
@@ -94,7 +130,12 @@ static int test_2_contexts(void)
     atcab_hw_sha2_256_init(&actx);
     atcab_hw_sha2_256_update(&actx, teststring, sizeof(teststring)-1);
 
-    // save first context to reapply later
+    start = xtimer_now_usec();
+#ifdef ATCA_MANUAL_ONOFF
+    atecc_wake();
+#endif
+
+    atcab_hw_sha2_256_init(&ctx);
     atcab_sha_read_context(context, &context_size);
     // context_size = sizeof(actx.block);
     // atcab_sha_read_context(actx.block, &context_size);
@@ -109,10 +150,11 @@ static int test_2_contexts(void)
     atcab_hw_sha2_256_init(&actx2);
     atcab_hw_sha2_256_update(&actx2, teststring2, sizeof(teststring2)-1);
 
-    // save second context and apply first one
-    atcab_sha_read_context(context2, &context_size2);
-    atcab_sha_write_context(context, context_size);
-    // atcab_sha_write_context(actx.block, context_size);
+#ifdef ATCA_MANUAL_ONOFF
+    atecc_sleep();
+#endif
+    stop = xtimer_now_usec();
+    printf("ata_with_ctx_save: %i Bytes int %"PRIu32 " us\n", (NUM_ITER*SHA256_HASH_SIZE), (stop-start));
 
     // finalize first context and compare with expected value
     ret = atcab_hw_sha2_256_finish(&actx, ares);
@@ -124,9 +166,10 @@ static int test_2_contexts(void)
         puts("ATA SHA SW 2 contexts SHICE");
     }
 
-    // repally second context
-    memset(ares, 0, SHA256_HASH_SIZE);
-    atcab_sha_write_context(context2, context_size);
+    start = xtimer_now_usec();
+#ifdef ATCA_MANUAL_ONOFF
+    atecc_wake();
+#endif
 
     // finalize second context and compare with RIOT results
     ret = atcab_hw_sha2_256_finish(&actx2, ares);
@@ -139,17 +182,14 @@ static int test_2_contexts(void)
         puts("RIOT & ATA digest SHOICE");
     }
 
-    atcab_hw_sha2_256(teststring, sizeof(teststring) - 1, ares);
-    if (memcmp(res, ares, SHA256_HASH_SIZE) == 0)
-    {
-        puts("ATA convenience func OK");
-    }
-    else
-    {
-        puts("ATA convenience func SHOICE");
-    }
-    return 0;
+#ifdef ATCA_MANUAL_ONOFF
+    atecc_sleep();
+#endif
+
+    stop = xtimer_now_usec();
+    printf("ata_without_ctx_save: %i Bytes int %"PRIu32 " us\n", (NUM_ITER*SHA256_HASH_SIZE), (stop-start));
 }
+
 
 /**
  * Function to call RIOT software implementation of SHA-256
@@ -220,15 +260,13 @@ static int ata_sha_finish(int argc, char **argv)
     return 0;
 }
 
-
 static int ata_wake(int argc, char **argv)
 {
     (void) argc;
     (void) argv;
     start = xtimer_now_usec();
-    int ret = atcab_wakeup();
-    // atcab_idle();// prevents auto going to sleep
-    printf("atcab_wakeup: %"PRIu32"; ret: %i\n", xtimer_now_usec()-start, ret);
+    atecc_wake();
+    printf("atecc_wake: %"PRIu32";\n", xtimer_now_usec()-start);
     return 0;
 }
 
@@ -253,14 +291,13 @@ static int ata_serial(int argc, char **argv)
     return 0;
 }
 
-
 static int ata_idle(int argc, char **argv)
 {
     (void) argc;
     (void) argv;
     start = xtimer_now_usec();
-    int ret = atcab_idle();
-    printf("atcab_idle: %"PRIu32"; ret: %i\n", xtimer_now_usec()-start, ret);
+    atecc_idle();
+    printf("atecc_idle: %"PRIu32";\n", xtimer_now_usec()-start);
     return 0;
 }
 static int ata_sleep(int argc, char **argv)
@@ -268,8 +305,8 @@ static int ata_sleep(int argc, char **argv)
     (void) argc;
     (void) argv;
     start = xtimer_now_usec();
-    int ret = atcab_sleep();
-    printf("atcab_sleep: %"PRIu32"; ret: %i\n", xtimer_now_usec()-start, ret);
+    atecc_sleep();
+    printf("atecc_sleep: %"PRIu32";\n", xtimer_now_usec()-start);
 
     return 0;
 }

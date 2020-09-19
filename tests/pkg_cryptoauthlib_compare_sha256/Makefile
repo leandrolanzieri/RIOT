@@ -15,4 +15,9 @@ USEMODULE += shell
 FEATURES_OPTIONAL = periph_i2c_reconfigure
 CFLAGS=-DTHREAD_STACKSIZE_MAIN=2048
 
+
+ifneq (, $(ATCA_MANUAL_ONOFF))
+	CFLAGS=-DATCA_MANUAL_ONOFF=1
+endif
+
 include $(RIOTBASE)/Makefile.include
