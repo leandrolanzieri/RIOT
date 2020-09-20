@@ -33,6 +33,10 @@
 #include "cryptocell_incl/crys_ecpki_kg.h"
 #include "cryptocell_incl/crys_ecpki_domain.h"
 
+#include "periph/gpio.h"
+
+gpio_t active_gpio = GPIO_PIN(1, 7);
+
 #define SHARED_SECRET_MAX_LENGHT         (250)
 
 extern CRYS_RND_State_t*     rndState_ptr;
@@ -66,24 +70,33 @@ void _init_vars(void)
     pDomain = (CRYS_ECPKI_Domain_t*)CRYS_ECPKI_GetEcDomain(CRYS_ECPKI_DomainID_secp224r1);
 }
 
-
 void _gen_keypair(void)
 {
     int ret = 0;
 
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECPKI_GenKeyPair (rndState_ptr, rndGenerateVectFunc, pDomain, &UserPrivKey1,
     &UserPublKey1, TempECCKGBuffptr, &FipsBuff);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECPKI_GenKeyPair for key pair 1 failed with 0x%x \n",ret);
         return;
     }
 
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECPKI_GenKeyPair (rndState_ptr, rndGenerateVectFunc, pDomain, &UserPrivKey2,
     &UserPublKey2, TempECCKGBuffptr, &FipsBuff);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECPKI_GenKeyPair for key pair 2 failed with 0x%x \n",ret);
         return;
@@ -97,8 +110,13 @@ void _derive_shared_secret(void)
     /* Generating the Secret for user 1*/
     /*---------------------------------*/
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECDH_SVDP_DH(&UserPublKey2, &UserPrivKey1,sharedSecret1ptr, &sharedSecret1Size, TempDHBuffptr);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf(" CRYS_ECDH_SVDP_DH for secret 1 failed with 0x%x \n",ret);
         return;
@@ -107,7 +125,11 @@ void _derive_shared_secret(void)
     /* Generating the Secret for user 2*/
     /*---------------------------------*/
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECDH_SVDP_DH(&UserPublKey1, &UserPrivKey2, sharedSecret2ptr, &sharedSecret2Size, TempDHBuffptr);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
 
     if (ret != SA_SILIB_RET_OK){
@@ -126,8 +148,9 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-   puts("'crypto-ewsn2020_ecdh_cryptocell'");
-
+    puts("'crypto-ewsn2020_ecdh_cryptocell'");
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
     _init_vars();
 
     // generate two instances of keypairs
