@@ -1,0 +1,54 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+config PACK_CRYPTOAUTHLIB
+    bool "Microchip CryptoAuth library"
+
+choice CRYPTO_AES_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_CRYPTO_AES
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_CRYPTO
+
+endchoice
+
+
+choice CRYPTO_MODE_AES_CTR_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_CRYPTO_AES_CTR
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_CRYPTO
+
+endchoice
+
+
+choice CRYPTO_MODE_AES_CBC_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_CRYPTO_AES_CBC
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_CRYPTO
+
+endchoice
+
+
+choice CRYPTO_MODE_AES_ECB_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_CRYPTO_AES_ECB
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_CRYPTO
+
+endchoice
+
+config MOD_CRYPTOAUTHLIB_CRYPTO
+    bool
+    select HAVE_OWN_CIPHER_CONTEXT_T
+    help
+        Basic module containing crypto implementations using CryptoAuth.

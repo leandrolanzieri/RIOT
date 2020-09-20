@@ -16,7 +16,7 @@ menuconfig CRYPTO_AES
 
 if CRYPTO_AES
 
-choice
+choice CRYPTO_AES_IMPLEMENTATION
     bool "AES implementation"
     default MOD_PERIPH_CRYPTO_AES
 
@@ -35,5 +35,10 @@ config MOD_CRYPTO
     bool
     help
         Base crypto module.
+
+config HAVE_OWN_CIPHER_CONTEXT_T
+    bool
+    help
+        Select to override the definition of cipher_context_t.
 
 endmenu # Crypto

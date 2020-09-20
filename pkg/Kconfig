@@ -6,6 +6,7 @@
 #
 menu "Packages"
 
+rsource "cryptoauthlib/Kconfig"
 rsource "gecko_sdk/Kconfig"
 rsource "tinydtls/Kconfig"
 rsource "wakaama/Kconfig"
