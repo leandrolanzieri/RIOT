@@ -32,6 +32,10 @@
 #include "cryptocell_incl/crys_ecpki_kg.h"
 #include "cryptocell_incl/crys_ecpki_domain.h"
 
+#include "periph/gpio.h"
+
+gpio_t active_gpio = GPIO_PIN(1, 7);
+
 extern CRYS_RND_State_t*     rndState_ptr;
 extern CRYS_RND_WorkBuff_t*  rndWorkBuff_ptr;
 
@@ -58,9 +62,14 @@ void _gen_keypair(void)
     int ret = 0;
 
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECPKI_GenKeyPair (rndState_ptr, rndGenerateVectFunc, pDomain, &UserPrivKey,
     &UserPublKey, &TempECCKGBuff, &FipsBuff);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECPKI_GenKeyPair for key pair 1 failed with 0x%x \n",ret);
         return;
@@ -75,18 +84,28 @@ void _sign_verify(void)
 
     /*Call CRYS_ECDSA_Sign to create signature from input buffer using created private key*/
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret = CRYS_ECDSA_Sign (rndState_ptr, rndGenerateVectFunc, &SignUserContext,
     &UserPrivKey, CRYS_ECPKI_HASH_SHA256_mode, m, sizeof(m), (uint8_t*)&signOutBuff, &ecdsa_sig_size);
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECDSA_Sign failed with 0x%x \n",ret);
         return;
     }
 
     cryptocell_enable();
+
+    gpio_set(active_gpio);
     ret =  CRYS_ECDSA_Verify (&VerifyUserContext, &UserPublKey, CRYS_ECPKI_HASH_SHA256_mode,
     (uint8_t*)&signOutBuff, ecdsa_sig_size, m, sizeof(m));
+    gpio_clear(active_gpio);
+
     cryptocell_disable();
+
     if (ret != SA_SILIB_RET_OK){
         printf("CRYS_ECDSA_Verify failed with 0x%x \n",ret);
         return;
@@ -97,7 +116,8 @@ void _sign_verify(void)
 int main(void)
 {
     puts("'crypto-ewsn2020_ecdsa cryptocell'");
-
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
     // init memory
     _init_vars();
 
