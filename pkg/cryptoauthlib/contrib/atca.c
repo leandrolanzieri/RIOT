@@ -166,9 +166,8 @@ ATCA_STATUS hal_i2c_receive(ATCAIface iface, uint8_t *rxdata,
     return ATCA_SUCCESS;
 }
 
-ATCA_STATUS hal_i2c_wake(ATCAIface iface)
+static ATCA_STATUS _hal_i2c_wake_cfg(ATCAIfaceCfg *cfg)
 {
-    ATCAIfaceCfg *cfg = atgetifacecfg(iface);
     uint8_t data[4] = { 0 };
 
 #if IS_USED(MODULE_PERIPH_I2C_RECONFIGURE)
@@ -208,12 +207,17 @@ ATCA_STATUS hal_i2c_wake(ATCAIface iface)
     }
 
     return hal_check_wake(data, 4);
+
 }
 
-ATCA_STATUS hal_i2c_idle(ATCAIface iface)
+ATCA_STATUS hal_i2c_wake(ATCAIface iface)
 {
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
+    return _hal_i2c_wake_cfg(cfg);
+}
 
+static ATCA_STATUS _hal_i2c_idle_cfg(ATCAIfaceCfg *cfg)
+{
     i2c_acquire(cfg->atcai2c.bus);
     i2c_write_byte(cfg->atcai2c.bus, (cfg->atcai2c.slave_address >> 1),
                    ATCA_IDLE_ADDR, 0);
@@ -221,15 +225,25 @@ ATCA_STATUS hal_i2c_idle(ATCAIface iface)
     return ATCA_SUCCESS;
 }
 
-ATCA_STATUS hal_i2c_sleep(ATCAIface iface)
+ATCA_STATUS hal_i2c_idle(ATCAIface iface)
 {
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
+    return _hal_i2c_idle_cfg(cfg);
+}
 
+static ATCA_STATUS _hal_i2c_sleep_cfg(ATCAIfaceCfg *cfg)
+{
     i2c_acquire(cfg->atcai2c.bus);
     i2c_write_byte(cfg->atcai2c.bus, (cfg->atcai2c.slave_address >> 1),
                    ATCA_SLEEP_ADDR, 0);
     i2c_release(cfg->atcai2c.bus);
     return ATCA_SUCCESS;
+}
+
+ATCA_STATUS hal_i2c_sleep(ATCAIface iface)
+{
+    ATCAIfaceCfg *cfg = atgetifacecfg(iface);
+    return _hal_i2c_sleep_cfg(cfg);
 }
 
 ATCA_STATUS hal_i2c_release(void *hal_data)
@@ -254,4 +268,22 @@ ATCA_STATUS hal_i2c_discover_devices(int bus_num, ATCAIfaceCfg *cfg, int *found)
     (void)cfg;
     (void)found;
     return ATCA_UNIMPLEMENTED;
+}
+
+void atecc_wake(void)
+{
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    _hal_i2c_wake_cfg(cfg);
+}
+
+void atecc_idle(void)
+{
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    _hal_i2c_idle_cfg(cfg);
+}
+
+void atecc_sleep(void)
+{
+    ATCAIfaceCfg *cfg = (ATCAIfaceCfg *)&atca_params[I2C_DEV(0)];
+    _hal_i2c_sleep_cfg(cfg);
 }
