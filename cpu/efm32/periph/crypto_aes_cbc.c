@@ -52,7 +52,7 @@ int aes_encrypt_cbc(cipher_context_t *context, uint8_t iv[16],
     CRYPTO_AES_CBC128(dev, output, input, length, context->context, iv, true);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }
 
 /*
@@ -76,5 +76,5 @@ int aes_decrypt_cbc(cipher_context_t *context, uint8_t iv[16],
     CRYPTO_AES_CBC128(dev, output, input, length, decrypt_key, iv, false);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }

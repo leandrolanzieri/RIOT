@@ -49,7 +49,7 @@ int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
     CRYPTO_AES_CTR128(dev, output, input, length, context->context, nonce_counter, NULL);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }
 
 /*
@@ -67,5 +67,5 @@ int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
     CRYPTO_AES_CTR128(dev, output, input, length, context->context, nonce_counter, NULL);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }

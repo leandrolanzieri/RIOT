@@ -52,7 +52,7 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
     CRYPTO_AES_ECB128(dev, output, input, length, context->context, true);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }
 
 /*
@@ -76,5 +76,5 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
     CRYPTO_AES_ECB128(dev, output, input, length, decrypt_key, false);
 
     crypto_release(dev);
-    return 1;
+    return length;
 }
