@@ -49,6 +49,23 @@ config HAS_CPU_NRF52
     help
         Indicates that the current cpu is 'nrf52'.
 
+## The crypto implementations define their own structure
+config MOD_PERIPH_CRYPTO_AES
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_CIPHER_CONTEXT_T
+
+config MOD_PERIPH_CRYPTO_AES_CBC
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_CIPHER_CONTEXT_T
+
+config MOD_PERIPH_CRYPTO_AES_CTR
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_CIPHER_CONTEXT_T
+
+config MOD_PERIPH_CRYPTO_AES_ECB
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_CIPHER_CONTEXT_T
+
 rsource "cryptocell_lib/Kconfig"
 
 source "$(RIOTCPU)/nrf5x_common/Kconfig"

@@ -8,6 +8,11 @@ INCLUDES += -I$(RIOTPKG)/cryptoauthlib/include
 
 DIRS += $(RIOTPKG)/cryptoauthlib/contrib
 
+ifneq (,$(filter cryptoauthlib_crypto, $(USEMODULE)))
+  DIRS += $(RIOTPKG)/cryptoauthlib/crypto
+  INCLUDES += -I$(RIOTPKG)/cryptoauthlib/crypto/include
+endif
+
 ifneq (,$(filter cryptoauthlib_test,$(USEMODULE)))
   INCLUDES += -I$(PKG_TESTINCLDIR)
   INCLUDES += -I$(PKG_TESTINCLDIR)/jwt

@@ -28,7 +28,9 @@
 #if (IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) && !IS_ACTIVE(MODULE_GECKO_SDK))
 #include "aes_hwctx.h"
 #endif
-
+#if (IS_ACTIVE(MODULE_CRYPTOAUTHLIB_CRYPTO))
+#include "cryptoauthlib_crypto_hwctx.h"
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,14 +68,15 @@ extern "C" {
 /**  Returned by cipher_init upon successful initialization of a cipher. */
 #define CIPHER_INIT_SUCCESS            1
 
-#if (!IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) || IS_ACTIVE(MODULE_GECKO_SDK))
+//#if (!IS_ACTIVE(MODULE_PERIPH_CRYPTO_AES) || IS_ACTIVE(MODULE_GECKO_SDK)) || (!IS_ACTIVE(MODULE_CRYPTOAUTHLIB_CRYPTO))
+#if !IS_ACTIVE(CONFIG_HAVE_OWN_CIPHER_CONTEXT_T)
 /**
  * @brief   the context for cipher-operations
  */
 typedef struct {
     uint8_t context[CIPHER_MAX_CONTEXT_SIZE];  /**< buffer for cipher operations */
 } cipher_context_t;
-#endif /* MODULE_PERIPH_HASH_SHA1 */
+#endif /* CONFIG_HAVE_OWN_CIPHER_CONTEXT_T */
 
 /**
  * @brief   BlockCipher-Interface for the Cipher-Algorithms

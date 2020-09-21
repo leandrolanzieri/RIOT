@@ -21,4 +21,8 @@ config MOD_PERIPH_WDOG
     bool "Kinetis Watchdog peripheral support"
     default y
 
+config MOD_PERIPH_CRYPTO_AES
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_CIPHER_CONTEXT_T
+
 endif # CPU_COMMON_KINETIS && TEST_KCONFIG
