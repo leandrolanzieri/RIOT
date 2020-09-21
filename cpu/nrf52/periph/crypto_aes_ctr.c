@@ -40,9 +40,8 @@
 #include "debug.h"
 
 #if TEST_AES_KEY
-#include "crypto_runtime.h"
+    extern gpio_t gpio_aes_key;
 #endif
-
 
 /* CC310 max AES input block is 64 KB */
 #define CC310_MAX_AES_INPUT_BLOCK       (0xFFF0)
@@ -71,6 +70,7 @@ int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
     ret = SaSi_AesInit(ctx, SASI_AES_ENCRYPT, SASI_AES_MODE_CTR, SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
 
 #if TEST_AES_KEY
@@ -83,10 +83,12 @@ int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
     ret = SaSi_AesSetIv(ctx, nonce_counter);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetIV failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -111,8 +113,9 @@ int aes_encrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
     cryptocell_disable();
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }
 
 /*
@@ -141,6 +144,7 @@ int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
     ret = SaSi_AesInit(ctx, SASI_AES_DECRYPT, SASI_AES_MODE_CTR,SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
 
 #if TEST_AES_KEY
@@ -153,10 +157,12 @@ int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
     ret = SaSi_AesSetIv(ctx, nonce_counter);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetIV failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -183,6 +189,7 @@ int aes_decrypt_ctr(cipher_context_t *context, uint8_t nonce_counter[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }

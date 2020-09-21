@@ -39,7 +39,7 @@
 #include "debug.h"
 
 #if TEST_AES_KEY
-#include "crypto_runtime.h"
+    extern gpio_t gpio_aes_key;
 #endif
 
 /* CC310 max AES input block is 64 KB */
@@ -67,6 +67,7 @@ int aes_encrypt_cbc(cipher_context_t *context, uint8_t iv[16],
     ret = SaSi_AesInit(ctx, SASI_AES_ENCRYPT, SASI_AES_MODE_CBC, SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
 #if TEST_AES_KEY
     gpio_set(gpio_aes_key);
@@ -78,10 +79,12 @@ int aes_encrypt_cbc(cipher_context_t *context, uint8_t iv[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
     ret = SaSi_AesSetIv(ctx, iv);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetIV failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -108,8 +111,9 @@ int aes_encrypt_cbc(cipher_context_t *context, uint8_t iv[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }
 
 /*
@@ -134,6 +138,7 @@ int aes_decrypt_cbc(cipher_context_t *context, uint8_t iv[16],
     ret = SaSi_AesInit(ctx, SASI_AES_DECRYPT, SASI_AES_MODE_CBC,SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
 
 #if TEST_AES_KEY
@@ -145,10 +150,12 @@ int aes_decrypt_cbc(cipher_context_t *context, uint8_t iv[16],
 #endif
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
     ret = SaSi_AesSetIv(ctx, iv);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetIV failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -174,6 +181,7 @@ int aes_decrypt_cbc(cipher_context_t *context, uint8_t iv[16],
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }

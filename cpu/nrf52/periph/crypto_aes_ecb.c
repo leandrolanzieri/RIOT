@@ -38,7 +38,7 @@
 #include "debug.h"
 
 #if TEST_AES_KEY
-#include "crypto_runtime.h"
+    extern gpio_t gpio_aes_key;
 #endif
 
 /* CC310 max AES input block is 64 KB */
@@ -67,6 +67,7 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
     ret = SaSi_AesInit(ctx, SASI_AES_ENCRYPT, SASI_AES_MODE_ECB,SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
 
 #if TEST_AES_KEY
@@ -78,6 +79,7 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
 #endif
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -104,8 +106,9 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }
 
 /*
@@ -131,6 +134,7 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
     ret = SaSi_AesInit(ctx, SASI_AES_DECRYPT, SASI_AES_MODE_ECB,SASI_AES_PADDING_NONE);
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesInit failed: 0x%x\n", ret);
+        return -1;
     }
   #if TEST_AES_KEY
     gpio_set(gpio_aes_key);
@@ -142,6 +146,7 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesSetKey failed: 0x%x\n", ret);
+        return -1;
     }
 
     do {
@@ -167,6 +172,7 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     if (ret != SA_SILIB_RET_OK) {
         printf("AES Encryption: SaSi_AesFinish failed: 0x%x\n", ret);
+        return -1;
     }
-    return 1;
+    return offset;
 }
