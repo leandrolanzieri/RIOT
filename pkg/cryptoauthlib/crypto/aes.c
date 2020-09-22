@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include "cryptoauthlib.h"
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "cryptoauthlib_crypto_hwctx.h"
@@ -16,26 +17,58 @@ const cipher_id_t CIPHER_AES_128 = &aes_interface;
 
 int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
 {
-    (void) context;
-    (void) key;
-    (void) keySize;
-    return -1;
+    uint8_t i;
+
+    /* This implementation only supports a single key size (defined in AES_KEY_SIZE) */
+    if (keySize != AES_KEY_SIZE) {
+        return CIPHER_ERR_INVALID_KEY_SIZE;
+    }
+
+    /* Make sure that context is large enough. If this is not the case,
+       you should build with -DAES */
+    if (CIPHER_MAX_CONTEXT_SIZE < AES_KEY_SIZE) {
+        return CIPHER_ERR_BAD_CONTEXT_SIZE;
+    }
+
+    /* key must be at least CIPHERS_MAX_KEY_SIZE Bytes long */
+    if (keySize < CIPHERS_MAX_KEY_SIZE) {
+        /* fill up by concatenating key to as long as needed */
+        for (i = 0; i < CIPHERS_MAX_KEY_SIZE; i++) {
+            context->key[i] = key[(i % keySize)];
+        }
+    }
+    else {
+        for (i = 0; i < CIPHERS_MAX_KEY_SIZE; i++) {
+            context->key[i] = key[i];
+        }
+    }
+
+    return CIPHER_INIT_SUCCESS;
 }
 
 int aes_encrypt(const cipher_context_t *context, const uint8_t *plain_block,
                 uint8_t *cipher_block)
 {
-    (void) context;
-    (void) plain_block;
-    (void) cipher_block;
-    return -1;
+    int status;
+    atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, (uint8_t*) &(context->key), 32);
+    status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, plain_block, cipher_block);
+    if(status != ATCA_SUCCESS) {
+        puts("ERROR: ATCA AES Encrypt failed");
+        return CIPHER_ERR_ENC_FAILED;
+    }
+    return 1;
 }
 
 int aes_decrypt(const cipher_context_t *context, const uint8_t *cipher_block,
                 uint8_t *plain_block)
 {
-    (void) context;
-    (void) cipher_block;
-    (void) plain_block;
-    return -1;
+    int status;
+    atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, (uint8_t*)&(context->key), 32);
+
+    status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, cipher_block, plain_block);
+    if(status != ATCA_SUCCESS) {
+        puts("ERROR: ATCA AES Decrypt failed");
+        return CIPHER_ERR_ENC_FAILED;
+    }
+    return 1;
 }
