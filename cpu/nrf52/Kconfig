@@ -66,6 +66,14 @@ config MOD_PERIPH_CRYPTO_AES_ECB
     depends on HAS_CPU_NRF52
     select HAVE_OWN_CIPHER_CONTEXT_T
 
+config MOD_PERIPH_HASH_SHA1
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_SHA1_CTX
+
+config MOD_PERIPH_HASH_SHA256
+    depends on HAS_CPU_NRF52
+    select HAVE_OWN_SHA256_CTX
+
 rsource "cryptocell_lib/Kconfig"
 
 source "$(RIOTCPU)/nrf5x_common/Kconfig"

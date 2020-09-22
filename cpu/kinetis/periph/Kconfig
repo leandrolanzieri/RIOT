@@ -22,7 +22,15 @@ config MOD_PERIPH_WDOG
     default y
 
 config MOD_PERIPH_CRYPTO_AES
-    depends on HAS_CPU_NRF52
+    depends on CPU_COMMON_KINETIS
     select HAVE_OWN_CIPHER_CONTEXT_T
+
+config MOD_PERIPH_HASH_SHA1
+    depends on CPU_COMMON_KINETIS
+    select HAVE_OWN_SHA1_CTX
+
+config MOD_PERIPH_HASH_SHA256
+    depends on CPU_COMMON_KINETIS
+    select HAVE_OWN_SHA256_CTX
 
 endif # CPU_COMMON_KINETIS && TEST_KCONFIG

@@ -31,5 +31,13 @@ config HAS_CPU_EFM32
 config CPU
     default "efm32" if CPU_COMMON_EFM32
 
+config MOD_PERIPH_HASH_SHA1
+    depends on CPU_COMMON_EFM32
+    select HAVE_OWN_SHA1_CTX
+
+config MOD_PERIPH_HASH_SHA256
+    depends on CPU_COMMON_EFM32
+    select HAVE_OWN_SHA256_CTX
+
 orsource "families/*/Kconfig"
 source "$(RIOTCPU)/cortexm_common/Kconfig"

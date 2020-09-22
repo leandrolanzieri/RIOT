@@ -53,7 +53,7 @@
 
 #include "hashes/sha2xx_common.h"
 #include "kernel_defines.h"
-#if (IS_ACTIVE(MODULE_PERIPH_HASH_SHA256))
+#if IS_ACTIVE(CONFIG_HAVE_OWN_SHA256_CTX) || IS_ACTIVE(CONFIG_HAVE_OWN_HMAC_CTX)
 #include "sha256_hwctx.h"
 #endif
 
@@ -71,14 +71,14 @@ extern "C" {
  */
 #define SHA256_INTERNAL_BLOCK_SIZE (64)
 
-#ifndef MODULE_PERIPH_HASH_SHA256
+#if !IS_ACTIVE(CONFIG_HAVE_OWN_SHA256_CTX)
 /**
  * @brief Context for cipher operations based on sha256
  */
 typedef sha2xx_context_t sha256_context_t;
-#endif /* MODULE_PERIPH_HASH_SHA256 */
+#endif /* !CONFIG_HAVE_OWN_SHA256_CTX */
 
-#if !IS_ACTIVE(MODULE_PERIPH_HASH_SHA256) || !IS_ACTIVE(MODULE_LIB_CRYPTOCELL)
+#if !IS_ACTIVE(CONFIG_HAVE_OWN_HMAC_CTX)
 /**
  * @brief Context for HMAC operations based on sha256
  */
@@ -88,7 +88,8 @@ typedef struct {
     /** Context for outer hash calculation */
     sha256_context_t c_out;
 } hmac_context_t;
-#endif /* ARM_CRYPTOCELL */
+#endif /* CONFIG_HAVE_OWN_HMAC_CTX */
+
 /**
  * @brief sha256-chain indexed element
  */

@@ -12,7 +12,7 @@ menuconfig HASHES_SHA1
 
 if HASHES_SHA1
 
-choice
+choice HASHES_SHA1_IMPLEMENTATION
     bool "SHA-1 implementation"
     default MOD_PERIPH_HASH_SHA1
 
@@ -34,7 +34,7 @@ menuconfig HASHES_SHA256
 
 if HASHES_SHA256
 
-choice
+choice HASHES_SHA256_IMPLEMENTATION
     bool "SHA-256 implementation"
     default MOD_PERIPH_HASH_SHA256
 
@@ -60,5 +60,15 @@ config MOD_HASHES_SHA2XX_COMMON
     bool
     help
         Base module for sha2xx implementations.
+
+config HAVE_OWN_SHA1_CTX
+    bool
+    help
+        Select to override the definition of sha1_context.
+
+config HAVE_OWN_SHA256_CTX
+    bool
+    help
+        Select to override the definition of sha256_context.
 
 endmenu # Hashes
