@@ -71,4 +71,9 @@ config HAVE_OWN_SHA256_CTX
     help
         Select to override the definition of sha256_context.
 
+config HAVE_OWN_HMAC_CTX
+    bool
+    help
+        Select to override the definition of hmac_context_t.
+
 endmenu # Hashes
