@@ -73,6 +73,7 @@ config MOD_PERIPH_HASH_SHA1
 config MOD_PERIPH_HASH_SHA256
     depends on HAS_CPU_NRF52
     select HAVE_OWN_SHA256_CTX
+    select HAVE_OWN_HMAC_CTX
 
 rsource "cryptocell_lib/Kconfig"
 
