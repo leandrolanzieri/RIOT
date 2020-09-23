@@ -64,6 +64,7 @@ config MOD_CRYPTOAUTHLIB_HASHES_SHA256
     depends on PACK_CRYPTOAUTHLIB
     select MOD_CRYPTOAUTHLIB_HASHES
     select HAVE_OWN_SHA256_CTX
+    select HAVE_OWN_HMAC_CTX
 
 endchoice
 
