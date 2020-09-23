@@ -5,8 +5,7 @@
 # directory for more details.
 #
 
-config MOD_CRYPTOAUTHLIB_CONTRIB
-    bool
-    select MOD_AUTO_INIT_SECURITY if MOD_AUTO_INIT
-    help
-        HAL implementation for the library Microchip CryptoAuth devices.
+config MOD_AUTO_INIT_SECURITY
+    bool "Auto-initialization for security sub-systems"
+    depends on MOD_AUTO_INIT
+    depends on TEST_KCONFIG
