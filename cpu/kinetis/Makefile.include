@@ -37,6 +37,14 @@ CFLAGS += \
   -DKINETIS_ROMSIZE=$(KINETIS_ROMSIZE) \
   #
 
+ifneq (,$(filter periph_hash_sha1,$(USEMODULE)))
+  INCLUDES += -I$(RIOTCPU)/kinetis/include/sha1_incl
+endif
+
+ifneq (,$(filter periph_hash_sha256,$(USEMODULE)))
+  INCLUDES += -I$(RIOTCPU)/kinetis/include/sha256_incl
+endif
+
 # add the CPU specific flash configuration field for the linker
 UNDEF += $(BINDIR)/cpu/fcfield.o
 

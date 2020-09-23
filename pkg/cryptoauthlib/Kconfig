@@ -47,8 +47,33 @@ config MOD_CRYPTOAUTHLIB_CRYPTO_AES_ECB
 
 endchoice
 
+choice HASHES_SHA1_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_HASHES_SHA1
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_HASHES
+    select HAVE_OWN_SHA1_CTX
+
+endchoice
+
+choice HASHES_SHA256_IMPLEMENTATION
+
+config MOD_CRYPTOAUTHLIB_HASHES_SHA256
+    bool "Microchip CryptoAuth library"
+    depends on PACK_CRYPTOAUTHLIB
+    select MOD_CRYPTOAUTHLIB_HASHES
+    select HAVE_OWN_SHA256_CTX
+
+endchoice
+
 config MOD_CRYPTOAUTHLIB_CRYPTO
     bool
     select HAVE_OWN_CIPHER_CONTEXT_T
     help
         Basic module containing crypto implementations using CryptoAuth.
+
+config MOD_CRYPTOAUTHLIB_HASHES
+    bool
+    help
+        Basic module containing hash implementations using CryptoAuth.
