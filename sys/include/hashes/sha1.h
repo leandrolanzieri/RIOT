@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 #include "kernel_defines.h"
-#if IS_ACTIVE(MODULE_PERIPH_HASH_SHA1)
+#if IS_ACTIVE(CONFIG_HAVE_OWN_SHA1_CTX)
 #include "sha1_hwctx.h"
 #endif
 
@@ -46,7 +46,7 @@ extern "C" {
  */
 #define SHA1_BLOCK_LENGTH   (64)
 
-#ifndef MODULE_PERIPH_HASH_SHA1
+#if !IS_ACTIVE(CONFIG_HAVE_OWN_SHA1_CTX)
 /**
  * @brief SHA-1 algorithm context
  * @internal
@@ -66,7 +66,7 @@ typedef struct {
     /** temporary buffer for the inner hashing */
     uint8_t inner_hash[SHA1_DIGEST_LENGTH];
 } sha1_context;
-#endif /* MODULE_PERIPH_HASH_SHA1 */
+#endif /* !CONFIG_HAVE_OWN_SHA1_CTX */
 
 /**
  * @brief Initialize SHA-1 message digest context
