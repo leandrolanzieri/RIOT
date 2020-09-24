@@ -30,6 +30,7 @@ void aes_ecb_dec_test_energy(gpio_t, gpio_t);
 #ifdef BOARD_NRF52840DK
     gpio_t active_gpio = GPIO_PIN(1, 7);
     gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+    gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 #endif /* BOARD_NRF52840DK */
 
 #ifdef BOARD_SLSTK3402A
