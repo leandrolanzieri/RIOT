@@ -5,6 +5,18 @@ APPLICATION = crypto-ewsn2020
 
 FEATURES_REQUIRED += periph_gpio
 
+# this has to be anabled in menuconfig now!
+# ifneq (, $(NO_I2C_RECONF))
+# 	CFLAGS+=-DNO_I2C_RECONF=1
+# else
+# 	FEATURES_OPTIONAL += periph_i2c_reconfigure
+# endif
+
+# special requirements on cryptoauth branch?
+ifneq (, $(ATCA_MANUAL_ONOFF))
+	CFLAGS+=-DATCA_MANUAL_ONOFF=1
+endif
+
 ifeq (1, $(INPUT_512))
 	CFLAGS +=-DINPUT_512=1
 endif

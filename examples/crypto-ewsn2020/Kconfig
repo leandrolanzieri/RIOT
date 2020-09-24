@@ -1,0 +1,4 @@
+config APPLICATION
+    bool
+    default y
+    imply MOD_PERIPH_I2C_RECONFIGURE

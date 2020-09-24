@@ -35,10 +35,10 @@ static const i2c_conf_t i2c_config[] = {
         .dev = NRF_TWIM1,
         .scl = 27,
         .sda = 26,
-#ifdef NO_I2C_RECONF
-        .speed = I2C_SPEED_NORMAL
-#else
+#if IS_USED(MODULE_PERIPH_I2C_RECONFIGURE)
         .speed = I2C_SPEED_FAST
+#else
+        .speed = I2C_SPEED_NORMAL
 #endif
     }
 };
