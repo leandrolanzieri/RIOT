@@ -59,17 +59,22 @@
     };
 #endif /* INPUT_512 */
 #endif
+extern gpio_t gpio_sync_pin;
     void sha256_test_energy(gpio_t start, gpio_t stop)
     {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
         // initial state of start pin is high
         gpio_set(start);
+        gpio_init(gpio_sync_pin, GPIO_IN);
 
         // delay to start current measuremnt tool
-        xtimer_sleep(5);
+        // xtimer_sleep(5);
 
         for (int i=0; i < TEST_ENERGY_ITER; i++)
         {
+            while(gpio_read(gpio_sync_pin)) {};
+            while(!gpio_read(gpio_sync_pin)) {};
+
             // start measurement round
             gpio_clear(start);
 #endif
@@ -87,7 +92,8 @@
             gpio_set(start);
             gpio_clear(stop);
 
-            xtimer_usleep(100 * 1000);
+            // xtimer_usleep(100 * 1000);
+            // xtimer_sleep(1);
 
             if (memcmp(sha256_result, EXPECTED_RESULT_SHA256, SHA256_DIGEST_LENGTH) != 0) {
                 LED0_ON;

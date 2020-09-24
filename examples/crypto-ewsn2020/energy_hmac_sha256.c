@@ -76,17 +76,22 @@ static uint8_t HMAC_KEY[] = {
     };
 #endif /* INPUT_512 */
 #endif
+extern gpio_t gpio_sync_pin;
     void hmac_sha256_test_energy(gpio_t start, gpio_t stop)
     {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
         // initial state of start pin is high
         gpio_set(start);
+        gpio_init(gpio_sync_pin, GPIO_IN);
 
         // delay to start current measuremnt tool
-        xtimer_sleep(5);
+        // xtimer_sleep(5);
 
         for (int i=0; i < TEST_ENERGY_ITER; i++)
         {
+            while(gpio_read(gpio_sync_pin)) {};
+            while(!gpio_read(gpio_sync_pin)) {};
+
             // start measurement round
             gpio_clear(start);
 #endif
@@ -104,7 +109,8 @@ static uint8_t HMAC_KEY[] = {
             gpio_set(start);
             gpio_clear(stop);
 
-            xtimer_usleep(200 * 1000);
+            // xtimer_usleep(500 * 1000);
+            // xtimer_sleep(1);
 
             if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH) != 0) {
                 LED0_ON;

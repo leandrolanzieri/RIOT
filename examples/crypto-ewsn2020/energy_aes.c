@@ -272,18 +272,22 @@ void aes_ecb_dec_test_energy(gpio_t start, gpio_t stop)
 
 #endif /* TEST_ENERGY_AES_ECB */
 
-
+extern gpio_t gpio_sync_pin;
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp)
 {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
     // initial state of start pin is high
     gpio_set(start);
+    gpio_init(gpio_sync_pin, GPIO_IN);
 
     // delay to start current measuremnt tool
-    xtimer_sleep(5);
+    // xtimer_sleep(5); // old before measurement sync pin
 
     for (int i=0; i < TEST_ENERGY_ITER; i++)
     {
+        while(gpio_read(gpio_sync_pin)) {};
+        while(!gpio_read(gpio_sync_pin)) {};
+
         // start measurement round
         gpio_clear(start);
         cipher_context_t ctx;
@@ -308,7 +312,8 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
         // reset I/O pins for next round
         gpio_set(start);
         gpio_clear(stop);
-        xtimer_usleep(100 * 1000);
+        // xtimer_usleep(100 * 1000);
+        // xtimer_usleep(500 * 1000);
         if (memcmp(data, data_exp, len_exp)) {
             LED0_ON;
         }
