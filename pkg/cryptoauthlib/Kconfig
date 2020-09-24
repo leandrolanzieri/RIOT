@@ -14,6 +14,7 @@ config PACK_CRYPTOAUTHLIB
     imply MOD_PERIPH_I2C_RECONFIGURE
 
 choice CRYPTO_AES_IMPLEMENTATION
+    default MOD_CRYPTOAUTHLIB_CRYPTO_AES
 
 config MOD_CRYPTOAUTHLIB_CRYPTO_AES
     bool "Microchip CryptoAuth library"
@@ -24,7 +25,7 @@ endchoice
 
 
 choice CRYPTO_MODE_AES_CTR_IMPLEMENTATION
-
+    default MOD_CRYPTOAUTHLIB_CRYPTO_AES_CTR
 config MOD_CRYPTOAUTHLIB_CRYPTO_AES_CTR
     bool "Microchip CryptoAuth library"
     depends on PACK_CRYPTOAUTHLIB
@@ -34,6 +35,7 @@ endchoice
 
 
 choice CRYPTO_MODE_AES_CBC_IMPLEMENTATION
+    default MOD_CRYPTOAUTHLIB_CRYPTO_AES_CBC
 
 config MOD_CRYPTOAUTHLIB_CRYPTO_AES_CBC
     bool "Microchip CryptoAuth library"
@@ -53,6 +55,7 @@ config MOD_CRYPTOAUTHLIB_CRYPTO_AES_ECB
 endchoice
 
 choice HASHES_SHA1_IMPLEMENTATION
+    default MOD_CRYPTOAUTHLIB_HASHES_SHA1
 
 config MOD_CRYPTOAUTHLIB_HASHES_SHA1
     bool "Microchip CryptoAuth library"
@@ -63,6 +66,7 @@ config MOD_CRYPTOAUTHLIB_HASHES_SHA1
 endchoice
 
 choice HASHES_SHA256_IMPLEMENTATION
+    default MOD_CRYPTOAUTHLIB_HASHES_SHA256
 
 config MOD_CRYPTOAUTHLIB_HASHES_SHA256
     bool "Microchip CryptoAuth library"
