@@ -13,7 +13,8 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     for (unsigned data_block = 0; data_block < length / AES_DATA_SIZE; data_block++)
     {
-        status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, &input[data_block * AES_DATA_SIZE], output);
+        int idx=data_block * AES_DATA_SIZE;
+        status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, &input[idx], &output[idx]);
         if(status != ATCA_SUCCESS) {
             puts("ERROR: ATCA AES ECB Encrypt failed");
             return CIPHER_ERR_ENC_FAILED;
@@ -31,7 +32,8 @@ int aes_decrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     for (unsigned data_block = 0; data_block < length / AES_DATA_SIZE; data_block++)
     {
-        status = atcab_aes_decrypt(ATCA_TEMPKEY_KEYID, 0, &input[data_block * AES_DATA_SIZE], output);
+        int idx=data_block * AES_DATA_SIZE;
+        status = atcab_aes_decrypt(ATCA_TEMPKEY_KEYID, 0, &input[idx], &output[idx]);
         if(status != ATCA_SUCCESS) {
             puts("ERROR: ATCA AES ECB Decrypt failed");
             return CIPHER_ERR_DEC_FAILED;
