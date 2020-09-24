@@ -23,7 +23,7 @@ ifneq (,$(TEST_ENERGY_SHA256))
 endif
 
 # HMAC SHA256 energy tests
-ifneq (,$(TEST_ENERGY_SHA256))
+ifneq (,$(TEST_ENERGY_HMAC_SHA256))
   SRC += energy_hmac_sha256.c
 endif
 
