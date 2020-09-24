@@ -7,6 +7,11 @@
 
 config PACK_CRYPTOAUTHLIB
     bool "Microchip CryptoAuth library"
+    select MOD_CRYPTOAUTHLIB_CONTRIB
+    depends on HAS_PERIPH_I2C
+    select MOD_PERIPH_I2C
+    select MOD_XTIMER
+    imply MOD_PERIPH_I2C_RECONFIGURE
 
 choice CRYPTO_AES_IMPLEMENTATION
 
@@ -64,6 +69,7 @@ config MOD_CRYPTOAUTHLIB_HASHES_SHA256
     depends on PACK_CRYPTOAUTHLIB
     select MOD_CRYPTOAUTHLIB_HASHES
     select HAVE_OWN_SHA256_CTX
+    select HAVE_OWN_HMAC_CTX
 
 endchoice
 
@@ -77,3 +83,5 @@ config MOD_CRYPTOAUTHLIB_HASHES
     bool
     help
         Basic module containing hash implementations using CryptoAuth.
+
+rsource "contrib/Kconfig"
