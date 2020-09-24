@@ -5,7 +5,7 @@
 #include "hashes/sha256.h"
 #include "sha256_hwctx.h"
 
-#define ENABLE_DEBUG    (1)
+#define ENABLE_DEBUG    (0)
 #include "debug.h"
 
 void sha256_init(sha256_context_t *ctx)
