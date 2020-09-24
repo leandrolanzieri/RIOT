@@ -276,6 +276,12 @@ extern gpio_t gpio_sync_pin;
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp)
 {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
+        cipher_context_t ctx;
+// for atecc608 initialize only once. key stays in non-volatile slot on device
+#ifdef MODULE_CRYPTOAUTHLIB
+        aes_init(&ctx, KEY, KEY_LEN);
+#endif
+
     // initial state of start pin is high
     gpio_set(start);
     gpio_init(gpio_sync_pin, GPIO_IN);
@@ -290,19 +296,19 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
 
         // start measurement round
         gpio_clear(start);
-        cipher_context_t ctx;
+
+// dont repeat initialization for atecc608a
+#ifndef MODULE_CRYPTOAUTHLIB
+        aes_init(&ctx, KEY, KEY_LEN);
+#endif
 
 #if TEST_ENERGY_AES_CBC_ENC
-        aes_init(&ctx, KEY, KEY_LEN);
         aes_encrypt_cbc(&ctx, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
 #elif TEST_ENERGY_AES_CBC_DEC
-        aes_init(&ctx, KEY, KEY_LEN);
         aes_decrypt_cbc(&ctx, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
 #elif TEST_ENERGY_AES_ECB_ENC
-        aes_init(&ctx, KEY, KEY_LEN);
         aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
 #elif TEST_ENERGY_AES_ECB_DEC
-        aes_init(&ctx, KEY, KEY_LEN);
         aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);
 #endif
 
