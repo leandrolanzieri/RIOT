@@ -26,6 +26,7 @@
 #include "crypto/ciphers.h"
 
 #include "periph/gpio.h"
+#include "xtimer.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -144,40 +145,48 @@
         uint8_t data[CBC_PLAIN_LEN];
         memset(data, 0, CBC_PLAIN_LEN);
 
-        gpio_set(active_gpio);
-        ret = aes_init(&ctx, KEY, KEY_LEN);
-        gpio_clear(active_gpio);
-        if (ret < 1) {
-            printf("AES CBC Enc Init failed: %d\n", ret);
-            return;
-        }
+        xtimer_sleep(1);
+        for(int i=0;i<TEST_ENERGY_ITER;i++) {
+            printf("Iteration %i/%i\n", i, TEST_ENERGY_ITER);
 
-        gpio_set(active_gpio);
-        ret = aes_encrypt_cbc(&ctx, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
-        gpio_clear(active_gpio);
+            gpio_set(active_gpio);
+            ret = aes_init(&ctx, KEY, KEY_LEN);
+            gpio_clear(active_gpio);
+            if (ret < 1) {
+                printf("AES CBC Enc Init failed: %d\n", ret);
+                return;
+            }
 
-        if (ret < 0) {
-            printf("AES CBC Encrypt failed: %d\n", ret);
-            return;
-        }
+            gpio_set(active_gpio);
+            ret = aes_encrypt_cbc(&ctx, CBC_IV, CBC_PLAIN, CBC_PLAIN_LEN, data);
+            gpio_clear(active_gpio);
 
-        if (memcmp(data, CBC_CIPHER, CBC_CIPHER_LEN)) {
-            printf("AES CBC encryption wrong cipher\n");
-            // return;
-        }
+            if (ret < 0) {
+                printf("AES CBC Encrypt failed: %d\n", ret);
+                return;
+            }
 
-        gpio_set(active_gpio);
-        ret = aes_decrypt_cbc(&ctx, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
-        gpio_clear(active_gpio);
+            if (memcmp(data, CBC_CIPHER, CBC_CIPHER_LEN)) {
+                printf("AES CBC encryption wrong cipher\n");
+                // return;
+            }
 
-        if (ret < 0) {
-            printf("AES CBC Decrypt failed: %d\n", ret);
-            return;
-        }
+            gpio_set(active_gpio);
+            ret = aes_decrypt_cbc(&ctx, CBC_IV, CBC_CIPHER, CBC_CIPHER_LEN, data);
+            gpio_clear(active_gpio);
 
-        if (memcmp(data, CBC_PLAIN, CBC_CIPHER_LEN)) {
-            printf("AES CBC decryption wrong plain text\n");
-            return;
+            if (ret < 0) {
+                printf("AES CBC Decrypt failed: %d\n", ret);
+                return;
+            }
+
+            if (memcmp(data, CBC_PLAIN, CBC_CIPHER_LEN)) {
+                printf("AES CBC decryption wrong plain text\n");
+                return;
+            }
+            else {
+                puts("SUCCESS");
+            }
         }
         printf("AES CBC encrypt/decrypt done\n");
     }
@@ -396,35 +405,43 @@
         uint8_t data[ECB_PLAIN_LEN];
         memset(data, 0, ECB_PLAIN_LEN);
 
-        gpio_set(active_gpio);
-        ret = aes_init(&ctx, KEY, KEY_LEN);
-        gpio_clear(active_gpio);
-        if (ret < 1) {
-            printf("AES Init failed: %d\n", ret);
-        }
+        xtimer_sleep(1);
+        for(int i=0;i<TEST_ENERGY_ITER;i++) {
+            printf("Iteration %i/%i\n", i, TEST_ENERGY_ITER);
 
-        gpio_set(active_gpio);
-        ret = aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
-        gpio_clear(active_gpio);
-        if (ret < 0) {
-            printf("AES ECB Enryption failed: %d\n", ret);
-            return;
-        }
+            gpio_set(active_gpio);
+            ret = aes_init(&ctx, KEY, KEY_LEN);
+            gpio_clear(active_gpio);
+            if (ret < 1) {
+                printf("AES Init failed: %d\n", ret);
+            }
 
-        memset(data, 0, ECB_CIPHER_LEN);
+            gpio_set(active_gpio);
+            ret = aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
+            gpio_clear(active_gpio);
+            if (ret < 0) {
+                printf("AES ECB Enryption failed: %d\n", ret);
+                return;
+            }
 
-        gpio_set(active_gpio);
-        ret = aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);
-        gpio_clear(active_gpio);
+            // memset(data, 0, ECB_CIPHER_LEN);
 
-        if (ret < 0) {
-            printf("AES ECB Deryption failed: %d\n", ret);
-            return;
-        }
+            gpio_set(active_gpio);
+            ret = aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);
+            gpio_clear(active_gpio);
 
-        if (memcmp(data, ECB_PLAIN, ECB_PLAIN_LEN)) {
-            printf("AES ECB decryption wrong plain\n");
-            return;
+            if (ret < 0) {
+                printf("AES ECB Deryption failed: %d\n", ret);
+                return;
+            }
+
+            if (memcmp(data, ECB_PLAIN, ECB_PLAIN_LEN)) {
+                printf("AES ECB decryption wrong plain\n");
+                return;
+            }
+            else {
+                puts("success");
+            }
         }
 
         printf("AES ECB encrypt/decrypt done\n");

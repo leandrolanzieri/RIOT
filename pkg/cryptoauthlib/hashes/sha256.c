@@ -35,15 +35,15 @@ void *sha256(const void *data, size_t len, void *digest)
 void hmac_sha256_init(hmac_context_t *ctx, const void *key, size_t key_length)
 {
     if (key_length > 32) {
-        puts("ERROR: ATCA HMAC key can't be larger than 32 Bytes");
+        DEBUG("ERROR: ATCA HMAC key can't be larger than 32 Bytes\n");
     }
 
     if (atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, key, key_length) != ATCA_SUCCESS) {
-        puts("ERROR: ATCA Loading key into TempKey register failed");
+        DEBUG("ERROR: ATCA Loading key into TempKey register failed\n");
     }
 
     if (atcab_sha_hmac_init(&ctx->atca_hmac_ctx, ATCA_TEMPKEY_KEYID) != ATCA_SUCCESS) {
-        puts("ERROR: ATCA HMAC init failed");
+        DEBUG("ERROR: ATCA HMAC init failed");
     }
 
 }
@@ -51,14 +51,14 @@ void hmac_sha256_init(hmac_context_t *ctx, const void *key, size_t key_length)
 void hmac_sha256_update(hmac_context_t *ctx, const void *data, size_t len)
 {
     if (atcab_sha_hmac_update(&ctx->atca_hmac_ctx, data, len) != ATCA_SUCCESS) {
-        puts("ERROR: ATCA HMAC Update failed");
+        DEBUG("ERROR: ATCA HMAC Update failed\n");
     }
 }
 
 void hmac_sha256_final(hmac_context_t *ctx, void *digest)
 {
     if (atcab_sha_hmac_finish(&ctx->atca_hmac_ctx, digest, SHA_MODE_TARGET_OUT_ONLY) != ATCA_SUCCESS) {
-        puts("ERROR: ATCA HMAC Finish failed");
+        DEBUG("ERROR: ATCA HMAC Finish failed\n");
     }
 }
 

@@ -29,6 +29,7 @@
 #include "sha256_hwctx.h"
 
 #include "periph/gpio.h"
+#include "xtimer.h"
 
 #if SHA1 || SHA256
 
@@ -102,23 +103,27 @@
     {
         uint8_t sha256_result[SHA256_DIGEST_LENGTH];
         sha256_context_t ctx;
-        gpio_set(active_gpio);
-        sha256_init(&ctx);
-        gpio_clear(active_gpio);
+        xtimer_sleep(1);
+        for(int i=0;i<TEST_ENERGY_ITER;i++) {
+            printf("Iteration %i/%i\n", i, TEST_ENERGY_ITER);
+            gpio_set(active_gpio);
+            sha256_init(&ctx);
+            gpio_clear(active_gpio);
 
-        gpio_set(active_gpio);
-        sha256_update(&ctx, SHA_TESTSTRING, SHA_TESTSTR_SIZE);
-        gpio_clear(active_gpio);
+            gpio_set(active_gpio);
+            sha256_update(&ctx, SHA_TESTSTRING, SHA_TESTSTR_SIZE);
+            gpio_clear(active_gpio);
 
-        gpio_set(active_gpio);
-        sha256_final(&ctx, sha256_result);
-        gpio_clear(active_gpio);
+            gpio_set(active_gpio);
+            sha256_final(&ctx, sha256_result);
+            gpio_clear(active_gpio);
 
-        if (memcmp(sha256_result, EXPECTED_RESULT_SHA256, SHA256_DIGEST_LENGTH) != 0) {
-            printf("SHA-256 Failure\n");
-        }
-        else {
-            printf("SHA-256 Success\n");
+            if (memcmp(sha256_result, EXPECTED_RESULT_SHA256, SHA256_DIGEST_LENGTH) != 0) {
+                printf("SHA-256 Failure\n");
+            }
+            else {
+                printf("SHA-256 Success\n");
+            }
         }
     }
 #endif /* SHA256 */

@@ -5,6 +5,8 @@
 #include "crypto/ciphers.h"
 #include "cryptoauthlib_crypto_hwctx.h"
 
+#define ENABLE_DEBUG    (0)
+#include "debug.h"
 // TODO: define, this is copied from NRF52
 static const cipher_interface_t aes_interface = {
     AES_BLOCK_SIZE,
@@ -43,17 +45,25 @@ int aes_init(cipher_context_t *context, const uint8_t *key, uint8_t keySize)
         }
     }
 
+    int status;
+    status = atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, key, 32);
+    if(status != ATCA_SUCCESS) {
+        printf("init status %i\n", status);
+        return -1;
+    }
+
     return CIPHER_INIT_SUCCESS;
 }
 
 int aes_encrypt(const cipher_context_t *context, const uint8_t *plain_block,
                 uint8_t *cipher_block)
 {
+    (void)context;
     int status;
-    atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, (uint8_t*) &(context->key), 32);
+
     status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, plain_block, cipher_block);
     if(status != ATCA_SUCCESS) {
-        puts("ERROR: ATCA AES Encrypt failed");
+        DEBUG("ERROR: ATCA AES Encrypt failed");
         return CIPHER_ERR_ENC_FAILED;
     }
     return 1;
@@ -62,12 +72,13 @@ int aes_encrypt(const cipher_context_t *context, const uint8_t *plain_block,
 int aes_decrypt(const cipher_context_t *context, const uint8_t *cipher_block,
                 uint8_t *plain_block)
 {
+    (void)context;
     int status;
     atcab_nonce_load(NONCE_MODE_TARGET_TEMPKEY, (uint8_t*)&(context->key), 32);
 
     status = atcab_aes_encrypt(ATCA_TEMPKEY_KEYID, 0, cipher_block, plain_block);
     if(status != ATCA_SUCCESS) {
-        puts("ERROR: ATCA AES Decrypt failed");
+        DEBUG("ERROR: ATCA AES Decrypt failed");
         return CIPHER_ERR_ENC_FAILED;
     }
     return 1;

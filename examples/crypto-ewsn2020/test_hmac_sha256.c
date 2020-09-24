@@ -27,6 +27,8 @@
 
 #include "periph/gpio.h"
 
+#include "xtimer.h"
+
 #ifdef HMAC
 
 #ifdef INPUT_512
@@ -55,12 +57,19 @@
     size_t KEY_SIZE = 32;
 
 #ifdef INPUT_512
-    static uint8_t EXPECTED_RESULT[] = {
-        0xa1, 0x7f, 0x58, 0x90, 0xf8, 0x76, 0xd1, 0xb5,
-        0xb4, 0xaa, 0x5e, 0xf2, 0x8f, 0xad, 0xd4, 0x55,
-        0x24, 0xb0, 0x69, 0xe2, 0x42, 0x07, 0x6a, 0x91,
-        0x1b, 0x73, 0x57, 0xe5, 0x6e, 0xff, 0x20, 0x51
-    };
+    // static uint8_t EXPECTED_RESULT[] = {
+    //     0xa1, 0x7f, 0x58, 0x90, 0xf8, 0x76, 0xd1, 0xb5,
+    //     0xb4, 0xaa, 0x5e, 0xf2, 0x8f, 0xad, 0xd4, 0x55,
+    //     0x24, 0xb0, 0x69, 0xe2, 0x42, 0x07, 0x6a, 0x91,
+    //     0x1b, 0x73, 0x57, 0xe5, 0x6e, 0xff, 0x20, 0x51
+    // };
+ static uint8_t EXPECTED_RESULT[] = {
+    0x61, 0xdc, 0x98, 0xc4, 0xaa, 0xa5, 0xab, 0xa6,
+    0x3a, 0x54, 0xc7, 0xaa, 0xe8, 0x56, 0xbc, 0xd3,
+    0x9d, 0x3e, 0xc4, 0x5e, 0x7c, 0x71, 0xe2, 0x9f,
+    0x5f, 0x51, 0x18, 0x6f, 0x39, 0x5b, 0xac, 0xef
+ };
+
 #else
     /* Expected result 64 Byte key, 32 Byte Input */
     // static uint8_t EXPECTED_RESULT[] = {
@@ -81,24 +90,27 @@
     {
         uint8_t hmac_result[SHA256_DIGEST_LENGTH];
         hmac_context_t ctx;
+        xtimer_sleep(1);
+        for(int i=0;i<TEST_ENERGY_ITER;i++) {
+            printf("Iteration %i/%i\n", i, TEST_ENERGY_ITER);
+            gpio_set(active_gpio);
+            hmac_sha256_init(&ctx, HMAC_KEY, KEY_SIZE);
+            gpio_clear(active_gpio);
 
-        gpio_set(active_gpio);
-        hmac_sha256_init(&ctx, HMAC_KEY, KEY_SIZE);
-        gpio_clear(active_gpio);
+            gpio_set(active_gpio);
+            hmac_sha256_update(&ctx, HMAC_INPUT, HMAC_INPUT_SIZE );
+            gpio_clear(active_gpio);
 
-        gpio_set(active_gpio);
-        hmac_sha256_update(&ctx, HMAC_INPUT, HMAC_INPUT_SIZE );
-        gpio_clear(active_gpio);
+            gpio_set(active_gpio);
+            hmac_sha256_final(&ctx, hmac_result);
+            gpio_clear(active_gpio);
 
-        gpio_set(active_gpio);
-        hmac_sha256_final(&ctx, hmac_result);
-        gpio_clear(active_gpio);
-
-        if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
-            printf("HMAC SHA-256 Failure\n");
-        }
-        else {
-            printf("HMAC SHA-256 Success\n");
+            if (memcmp(hmac_result, EXPECTED_RESULT, SHA256_DIGEST_LENGTH)) {
+                printf("HMAC SHA-256 Failure\n");
+            }
+            else {
+                printf("HMAC SHA-256 Success\n");
+            }
         }
     }
 #endif /* HMAC */
