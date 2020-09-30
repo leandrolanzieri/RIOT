@@ -20,32 +20,41 @@
  */
 
 #include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
 
-#include "atca_util.h"
 #include "atca_command.h"
 #include "host/atca_host.h"
 #include "basic/atca_basic.h"
 #include "atca_execution.h"
 
-ATCA_STATUS status;
+#ifndef COSY_TEST
+#include "periph/gpio.h"
+#include "xtimer.h"
+#include "ps.h"
+
+gpio_t active_gpio = GPIO_PIN(1, 7);
+
+#define ITERATIONS                  (50)
+#endif
+
+#define ECDSA_MESSAGE_SIZE          (127)
+
 uint8_t UserPubKey[ATCA_PUB_KEY_SIZE];
 uint8_t key_id = 1; /* This is the number of the slot used */
 
 void _gen_keypair(void)
 {
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
+#ifndef COSY_TEST
+    ATCA_STATUS status;
+    gpio_set(active_gpio);
     status = atcab_genkey(key_id, UserPubKey);
-    atecc_sleep();
-#else
-    status = atcab_genkey(key_id, UserPubKey);
-#endif
+    gpio_clear(active_gpio);
     if (status != ATCA_SUCCESS){
         printf(" atcab_genkey for PubKey1 failed with 0x%x \n",status);
         return;
     }
+#else
+    atcab_genkey(key_id, UserPubKey);
+#endif
 }
 
 void _sign_verify(void)
@@ -54,48 +63,69 @@ void _sign_verify(void)
     bool is_verified = false;
 
     /* atcab_sign expects the message to be pre hashed and only computes input with the size of a SHA256 digest correctly */
-    uint8_t msg[ATCA_SHA_DIGEST_SIZE] = { 0x0b };
+    uint8_t msg[ECDSA_MESSAGE_SIZE] = { 0x0b };
+    uint8_t hash[ATCA_SHA_DIGEST_SIZE];
 
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
+#ifndef COSY_TEST
+    ATCA_STATUS status;
+    gpio_set(active_gpio);
+    atcab_hw_sha2_256(msg, ECDSA_MESSAGE_SIZE, hash);
+    gpio_clear(active_gpio);
+
+    gpio_set(active_gpio);
     status = atcab_sign(key_id, msg, signature);
-    atecc_sleep();
-#else
-    status = atcab_sign(key_id, msg, signature);
-#endif
+    gpio_clear(active_gpio);
     if (status != ATCA_SUCCESS){
         printf(" Signing failed with 0x%x \n",status);
         return;
     }
 
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
+    gpio_set(active_gpio);
     status = atcab_verify_extern(msg, signature, UserPubKey, &is_verified);
-    atecc_sleep();
-#else
-    status = atcab_verify_extern(msg, signature, UserPubKey, &is_verified);
-#endif
+    gpio_clear(active_gpio);
     if (status != ATCA_SUCCESS){
         printf(" Verifying failed with 0x%x \n",status);
         return;
     }
-
     if (is_verified) {
         puts("VALID");
     }
     else {
         puts("INVALID");
     }
+#else
+    atcab_hw_sha2_256(msg, ECDSA_MESSAGE_SIZE, hash);
+    atcab_sign(key_id, msg, signature);
+    atcab_verify_extern(msg, signature, UserPubKey, &is_verified);
+#endif
 }
 
 int main(void)
 {
+#ifndef COSY_TEST
     puts("'crypto-ewsn2020_ecdsa'");
 
-    // generate two instances of keypairs
-    _gen_keypair();
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
 
-    // derive and compare secrets generated on both
-    _sign_verify();
+    xtimer_sleep(1);
+
+    for (int i = 0; i < ITERATIONS; i++) {
+        gpio_set(active_gpio);
+        // Empty gpio set instead of init
+        gpio_clear(active_gpio);
+#endif
+        // generate two instances of keypairs
+        _gen_keypair();
+
+        // derive and compare secrets generated on both
+        _sign_verify();
+#ifndef COSY_TEST
+    }
+
+    ps();
+    printf("sizeof(UserPubKey): %i\n", sizeof(UserPubKey));
+#endif
+    puts("DONE");
     return 0;
 }
