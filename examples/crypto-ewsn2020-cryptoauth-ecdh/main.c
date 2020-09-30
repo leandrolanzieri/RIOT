@@ -20,80 +20,73 @@
  */
 
 #include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
 
 #include "atca.h"
-#include "atca_util.h"
 #include "atca_params.h"
 #include "atca_command.h"
 #include "host/atca_host.h"
 #include "basic/atca_basic.h"
 #include "atca_execution.h"
+
+#ifndef COSY_TEST
+#include "xtimer.h"
+#include "ps.h"
 #include "periph/gpio.h"
 
-ATCA_STATUS status;
-uint8_t SharedSecret1[ECDH_KEY_SIZE];
-uint8_t SharedSecret2[ECDH_KEY_SIZE];
+gpio_t active_gpio = GPIO_PIN(1, 7);
+
+#define ITERATIONS                  (50)
+#endif
+
 uint8_t UserPubKey1[ATCA_PUB_KEY_SIZE];
-uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
-uint8_t read_key[ATCA_KEY_SIZE];
 uint8_t key_id_1 = 2;
+
+#ifndef COSY_TEST
+uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
 uint8_t key_id_2 = 1;
+#endif
 
 void _gen_keypair(void)
 {
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
+#ifndef COSY_TEST
+    ATCA_STATUS status;
+    gpio_set(active_gpio);
     status = atcab_genkey(key_id_1, UserPubKey1);
-    atecc_idle();
-#else
-    status = atcab_genkey(key_id_1, UserPubKey1);
-#endif
+    gpio_clear(active_gpio);
     if (status != ATCA_SUCCESS){
         printf(" atcab_genkey for PubKey1 failed with 0x%x \n",status);
         return;
     }
-
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
     status = atcab_genkey(key_id_2, UserPubKey2);
-    atecc_idle();
-#else
-    status = atcab_genkey(key_id_2, UserPubKey2);
-#endif
     if (status != ATCA_SUCCESS){
         printf(" atcab_genkey for PubKey2 failed with 0x%x \n",status);
         return;
     }
+#else
+    atcab_genkey(key_id_1, UserPubKey1);
+#endif
 }
 
 void _derive_shared_secret(void)
 {
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
+    uint8_t SharedSecret1[ECDH_KEY_SIZE];
+
+#ifndef COSY_TEST
+    uint8_t SharedSecret2[ECDH_KEY_SIZE];
+
+    ATCA_STATUS status;
+    gpio_set(active_gpio);
     status = atcab_ecdh(key_id_1, UserPubKey2, SharedSecret1);
-    atecc_idle();
-#else
-    status = atcab_ecdh(key_id_1, UserPubKey2, SharedSecret1);
-#endif
+    gpio_clear(active_gpio);
     if (status != ATCA_SUCCESS){
         printf(" atcab_ecdh for secret 2 failed with 0x%x \n",status);
         return;
     }
-
-#ifdef ATCA_MANUAL_ONOFF
-    atecc_wake();
     status = atcab_ecdh(key_id_2, UserPubKey1, SharedSecret2);
-    atecc_sleep();
-#else
-    status = atcab_ecdh(key_id_2, UserPubKey1, SharedSecret2);
-#endif
     if (status != ATCA_SUCCESS){
         printf(" atcab_ecdh for secret 2 failed with 0x%x \n",status);
         return;
     }
-
     // generated secret should be the same on both
     if (memcmp(SharedSecret1, SharedSecret2, sizeof(SharedSecret1))) {
         puts("ERROR");
@@ -101,16 +94,37 @@ void _derive_shared_secret(void)
     else {
         puts("SUCCESS");
     }
+#else
+    atcab_ecdh(key_id_1, UserPubKey1, SharedSecret1);
+#endif
 }
 
 int main(void)
 {
-    puts("'crypto-ewsn2020_ecdh'");
+#ifndef COSY_TEST
+    puts("'crypto-ewsn2020_cryptocell_ecdh'");
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
 
-    // generate two instances of keypairs
-    _gen_keypair();
+    xtimer_sleep(1);
+    for (int i = 0; i < ITERATIONS; i++) {
 
-    // derive and compare secrets generated on both
-    _derive_shared_secret();
+        gpio_set(active_gpio);
+        // Empty gpio set instead of init
+        gpio_clear(active_gpio);
+#endif
+        // generate two instances of keypairs
+        _gen_keypair();
+
+        // derive and compare secrets generated on both
+        _derive_shared_secret();
+#ifndef COSY_TEST
+    }
+
+    ps();
+    printf("sizeof(UserPubKey1): %i\n", sizeof(UserPubKey1));
+    printf("sizeof(UserPubKey2): %i\n", sizeof(UserPubKey2));
+#endif
+    puts("DONE");
     return 0;
 }
