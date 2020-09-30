@@ -18,11 +18,20 @@
  * @}
  */
 
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
+#ifndef COSY_TEST
+#include "xtimer.h"
+#include "ps.h"
+#include "periph/gpio.h"
 
+gpio_t active_gpio = GPIO_PIN(1, 7);
+#endif
+
+#include <stdio.h>
 #include "relic.h"
+
+#ifndef COSY_TEST
+#define ITERATIONS                  (50)
+#endif
 
 typedef struct
 {
@@ -31,7 +40,10 @@ typedef struct
 } key_struct_t;
 
 static key_struct_t keyA;
+
+#ifndef COSY_TEST
 static key_struct_t keyB;
+#endif
 
 void _init_mem(key_struct_t *key)
 {
@@ -45,39 +57,47 @@ void _init_mem(key_struct_t *key)
 
 void _gen_keypair(void)
 {
+#ifndef COSY_TEST
     // generate pubkey pair A
+    gpio_set(active_gpio);
     int ret = cp_ecdh_gen(keyA.priv, keyA.pub);
+    gpio_clear(active_gpio);
     if (ret == STS_ERR) {
-        printf("ECDH key pair creation failed. Not good :( \n");
+        puts("ECDH key pair creation failed. Not good :( \n");
         return;
     }
 
     // generate pubkey pair B
     ret = cp_ecdh_gen(keyB.priv, keyB.pub);
     if (ret == STS_ERR) {
-        printf("ECDH key pair creation failed. Not good :( \n");
+        puts("ECDH key pair creation failed. Not good :( \n");
         return;
     }
+#else
+    cp_ecdh_gen(keyA.priv, keyA.pub);
+#endif
 }
 
 void _derive_shared_secret(void)
 {
-    printf("Length of shared secret: %i\n", MD_LEN);
-
     uint8_t sharedKeyA[MD_LEN];
+
+#ifndef COSY_TEST
     uint8_t sharedKeyB[MD_LEN];
 
     // generate shared secred on A, based on priv key B
+    gpio_set(active_gpio);
     int ret = cp_ecdh_key(sharedKeyA, MD_LEN, keyA.priv, keyB.pub);
+    gpio_clear(active_gpio);
     if (ret == STS_ERR) {
-        printf("ECDH secret A creation failed. Not good :( \n");
+        puts("ECDH secret A creation failed. Not good :( \n");
         return;
     }
 
     // generate shared secred on B, based on priv key A
     ret = cp_ecdh_key(sharedKeyB, MD_LEN, keyB.priv, keyA.pub);
-        if (ret == STS_ERR) {
-        printf("ECDH secret B creation failed. Not good :( \n");
+    if (ret == STS_ERR) {
+        puts("ECDH secret B creation failed. Not good :( \n");
         return;
     }
 
@@ -88,27 +108,51 @@ void _derive_shared_secret(void)
     else {
         puts("SUCCESS");
     }
+#else
+    cp_ecdh_key(sharedKeyA, MD_LEN, keyA.priv, keyA.pub);
+#endif
 }
 
 int main(void)
 {
-    puts("'crypto-ewsn2020_ecdh'");
     core_init();
 
-    // set NIST P-256 elliptic curve
-    ep_param_set(NIST_P256);
-    ec_param_print();
+#ifndef COSY_TEST
+    puts("'crypto-ewsn2020_ecdh'");
 
-    // init memory
-    _init_mem(&keyA);
-    _init_mem(&keyB);
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
 
-    // generate two instances of keypairs
-    _gen_keypair();
+    xtimer_sleep(1);
 
-    // derive and compare secrets generated on both
-    _derive_shared_secret();
+    for (int i = 0; i < ITERATIONS; i++) {
+        // Init Curve and KeyA
+        gpio_set(active_gpio);
+        ep_param_set(NIST_P256);
+        _init_mem(&keyA);
+        gpio_clear(active_gpio);
+
+        // Init KeyB
+        _init_mem(&keyB);
+#else
+        ep_param_set(NIST_P256);
+        _init_mem(&keyA);
+#endif
+        // generate two instances of keypairs
+        _gen_keypair();
+
+        // derive and compare secrets generated on both
+        _derive_shared_secret();
+
+#ifndef COSY_TEST
+    }
+
+    ps();
+    printf("sizeof(keyA): %i\n", sizeof(keyA));
+    printf("sizeof(keyB): %i\n", sizeof(keyB));
+#endif
 
     core_clean();
+    puts("DONE");
     return 0;
 }
