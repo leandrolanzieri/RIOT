@@ -3,9 +3,15 @@ RIOTBASE ?= $(CURDIR)/../..
 
 APPLICATION = crypto-ewsn2020_ecdh_cryptocell
 
-FEATURES_REQUIRED += periph_gpio
+ifeq (1, $(COSY_TEST))
+	CFLAGS += -DCOSY_TEST=1
+else
+	CFLAGS +=-DDEVELHELP=1
+	USEMODULE += ps
+	USEMODULE += xtimer
+	FEATURES_REQUIRED += periph_gpio
+endif
 
-CFLAGS += -DARM_CRYPTOCELL
 USEMODULE += lib_cryptocell
 
 include $(RIOTBASE)/Makefile.include
