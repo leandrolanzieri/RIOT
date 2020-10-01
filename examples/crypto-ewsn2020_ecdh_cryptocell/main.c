@@ -23,17 +23,18 @@
 
 #include "cryptocell_incl/sns_silib.h"
 #include "cryptocell_incl/crys_ecpki_build.h"
-// #include "cryptocell_incl/crys_ecpki_ecdsa.h"
 #include "cryptocell_incl/crys_ecpki_dh.h"
 #include "cryptocell_incl/crys_ecpki_kg.h"
 #include "cryptocell_incl/crys_ecpki_domain.h"
 
-#ifndef COSY_TEST
-#include <stdio.h>
+#ifdef TEST_STACK
+#include "ps.h"
+#endif
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #include <string.h>
 #include "periph/gpio.h"
 #include "xtimer.h"
-#include "ps.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
 
@@ -57,7 +58,7 @@ SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
 uint8_t sharedSecret1ptr[SHARED_SECRET_MAX_LENGHT];
 uint32_t sharedSecret1Size = SHARED_SECRET_MAX_LENGHT;
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 CRYS_ECPKI_UserPrivKey_t UserPrivKey2;
 CRYS_ECPKI_UserPublKey_t UserPublKey2;
 uint8_t sharedSecret2ptr[SHARED_SECRET_MAX_LENGHT];
@@ -69,12 +70,12 @@ void _init_vars(void)
     rndGenerateVectFunc = CRYS_RND_GenerateVector;
     TempDHBuffptr = (CRYS_ECDH_TempData_t*)&TempDHBuff;
     TempECCKGBuffptr = (CRYS_ECPKI_KG_TempData_t*)&TempECCKGBuff;
-    pDomain = (CRYS_ECPKI_Domain_t*)CRYS_ECPKI_GetEcDomain(CRYS_ECPKI_DomainID_secp224r1);
+    pDomain = (CRYS_ECPKI_Domain_t*)CRYS_ECPKI_GetEcDomain(CRYS_ECPKI_DomainID_secp256r1);
 }
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret = 0;
 
     cryptocell_enable();
@@ -102,7 +103,7 @@ void _gen_keypair(void)
 
 void _derive_shared_secret(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret = 0;
     /* Generating the Secret for user 1*/
     /*---------------------------------*/
@@ -145,7 +146,7 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh_cryptocell'");
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);
@@ -163,14 +164,14 @@ int main(void)
 
         // derive and compare secrets generated on both
         _derive_shared_secret();
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
+#endif
 
+#if defined(TEST_STACK)
     ps();
     printf("sizeof(UserPrivKey1): %i\n", sizeof(UserPrivKey1));
     printf("sizeof(UserPubKey1): %i\n", sizeof(UserPublKey1));
-    printf("sizeof(UserPrivKey2): %i\n", sizeof(UserPrivKey2));
-    printf("sizeof(UserPubKey2): %i\n", sizeof(UserPublKey2));
 #endif
     puts("DONE");
     return 0;
