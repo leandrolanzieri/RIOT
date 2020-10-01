@@ -7,10 +7,14 @@ FEATURES_REQUIRED = periph_hwrng
 ifeq (1, $(COSY_TEST))
 	CFLAGS += -DCOSY_TEST=1
 else
-	CFLAGS +=-DDEVELHELP=1
-	USEMODULE += ps
-	USEMODULE += xtimer
-	FEATURES_REQUIRED += periph_gpio
+	ifeq (1, $(TEST_STACK))
+		CFLAGS+=-DTEST_STACK=1
+		USEMODULE += ps
+		CFLAGS +=-DDEVELHELP=1
+	else
+		USEMODULE += xtimer
+		FEATURES_REQUIRED += periph_gpio
+	endif
 endif
 
 CFLAGS += -DTHREAD_STACKSIZE_MAIN=\(5*THREAD_STACKSIZE_DEFAULT\)

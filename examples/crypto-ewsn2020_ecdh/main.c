@@ -18,18 +18,22 @@
  * @}
  */
 
-#ifndef COSY_TEST
+#include <stdio.h>
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #include "xtimer.h"
-#include "ps.h"
 #include "periph/gpio.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
 #endif
 
-#include <stdio.h>
+#ifdef TEST_STACK
+#include "ps.h"
+#endif
+
 #include "relic.h"
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #define ITERATIONS                  (50)
 #endif
 
@@ -41,7 +45,7 @@ typedef struct
 
 static key_struct_t keyA;
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 static key_struct_t keyB;
 #endif
 
@@ -57,7 +61,7 @@ void _init_mem(key_struct_t *key)
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     // generate pubkey pair A
     gpio_set(active_gpio);
     int ret = cp_ecdh_gen(keyA.priv, keyA.pub);
@@ -82,7 +86,7 @@ void _derive_shared_secret(void)
 {
     uint8_t sharedKeyA[MD_LEN];
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     uint8_t sharedKeyB[MD_LEN];
 
     // generate shared secred on A, based on priv key B
@@ -117,7 +121,7 @@ int main(void)
 {
     core_init();
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh'");
 
     gpio_init(active_gpio, GPIO_OUT);
@@ -144,12 +148,13 @@ int main(void)
         // derive and compare secrets generated on both
         _derive_shared_secret();
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
+#endif
 
+#if defined(TEST_STACK)
     ps();
     printf("sizeof(keyA): %i\n", sizeof(keyA));
-    printf("sizeof(keyB): %i\n", sizeof(keyB));
 #endif
 
     core_clean();
