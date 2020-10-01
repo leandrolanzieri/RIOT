@@ -25,10 +25,13 @@
 #include "periph/hwrng.h"
 #include "uECC.h"
 
-#ifndef COSY_TEST
+#ifdef TEST_STACK
+#include "ps.h"
+#endif
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #include "periph/gpio.h"
 #include "xtimer.h"
-#include "ps.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
 #define ITERATIONS                  (50)
@@ -45,7 +48,7 @@ uint8_t userPubKey1[PUB_KEY_SIZE];
 
 void _init_curve(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     gpio_set(active_gpio);
     curve = (struct uECC_Curve_t*)uECC_secp256r1();
     gpio_clear(active_gpio);
@@ -56,7 +59,7 @@ void _init_curve(void)
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
     gpio_set(active_gpio);
     ret = uECC_make_key(userPubKey1, userPrivKey1, curve);
@@ -76,7 +79,7 @@ void _sign_verify(void)
     uint8_t hash[SHA256_DIGEST_SIZE];
     uint8_t signature[PUB_KEY_SIZE];
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
     gpio_set(active_gpio);
     sha256(msg, ECDSA_MESSAGE_SIZE, hash);
@@ -108,7 +111,7 @@ void _sign_verify(void)
 
 int main(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh uECC'");
 
     gpio_init(active_gpio, GPIO_OUT);
@@ -124,9 +127,10 @@ int main(void)
 
         // derive and compare secrets generated on both
         _sign_verify();
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
-
+#endif
+#ifdef TEST_STACK
     ps();
     printf("sizeof(userPrivKey1): %i\n", sizeof(userPrivKey1));
     printf("sizeof(userPubKey1): %i\n", sizeof(userPubKey1));
