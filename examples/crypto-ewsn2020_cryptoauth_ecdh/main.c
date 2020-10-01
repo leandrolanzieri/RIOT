@@ -28,9 +28,12 @@
 #include "basic/atca_basic.h"
 #include "atca_execution.h"
 
-#ifndef COSY_TEST
-#include "xtimer.h"
+#ifdef TEST_STACK
 #include "ps.h"
+#endif
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#include "xtimer.h"
 #include "periph/gpio.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
@@ -41,14 +44,14 @@ gpio_t active_gpio = GPIO_PIN(1, 7);
 uint8_t UserPubKey1[ATCA_PUB_KEY_SIZE];
 uint8_t key_id_1 = 2;
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
 uint8_t key_id_2 = 1;
 #endif
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     ATCA_STATUS status;
     gpio_set(active_gpio);
     status = atcab_genkey(key_id_1, UserPubKey1);
@@ -71,7 +74,7 @@ void _derive_shared_secret(void)
 {
     uint8_t SharedSecret1[ECDH_KEY_SIZE];
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     uint8_t SharedSecret2[ECDH_KEY_SIZE];
 
     ATCA_STATUS status;
@@ -101,7 +104,7 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_cryptocell_ecdh'");
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);
@@ -118,12 +121,12 @@ int main(void)
 
         // derive and compare secrets generated on both
         _derive_shared_secret();
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
-
+#endif
+#if defined(TEST_STACK)
     ps();
     printf("sizeof(UserPubKey1): %i\n", sizeof(UserPubKey1));
-    printf("sizeof(UserPubKey2): %i\n", sizeof(UserPubKey2));
 #endif
     puts("DONE");
     return 0;
