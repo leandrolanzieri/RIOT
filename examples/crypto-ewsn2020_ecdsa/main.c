@@ -18,18 +18,22 @@
  * @}
  */
 
-#ifndef COSY_TEST
 #include <stdio.h>
+
+#ifdef TEST_STACK
+#include "ps.h"
+#endif
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #include "periph/gpio.h"
 #include "xtimer.h"
-#include "ps.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
 #endif
 
 #include "relic.h"
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #define ITERATIONS          (50)
 #endif
 
@@ -57,7 +61,7 @@ void _init_mem(key_struct_t *key)
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     // generate pubkey pair A
     gpio_set(active_gpio);
     int ret = cp_ecdsa_gen(keyA.priv, keyA.pub);
@@ -80,7 +84,7 @@ void _sign_verify(void)
     bn_new(r);
     bn_new(s);
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
     gpio_set(active_gpio);
     md_map_sh256(hash, msg, ECDSA_MESSAGE_SIZE);
@@ -113,7 +117,7 @@ int main(void)
 {
     core_init();
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa'");
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);
@@ -134,9 +138,11 @@ int main(void)
         // sign data and verify with public ley
         _sign_verify();
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
+#endif
 
+#ifdef TEST_STACK
     ps();
     printf("sizeof(keyA): %i\n", sizeof(keyA));
 #endif
