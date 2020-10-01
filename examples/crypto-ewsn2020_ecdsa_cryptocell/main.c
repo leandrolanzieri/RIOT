@@ -28,9 +28,12 @@
 #include "cryptocell_incl/crys_ecpki_kg.h"
 #include "cryptocell_incl/crys_ecpki_domain.h"
 
-#ifndef COSY_TEST
-#include "xtimer.h"
+#ifdef TEST_STACK
 #include "ps.h"
+#endif
+
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#include "xtimer.h"
 #include "periph/gpio.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
@@ -67,7 +70,7 @@ void _init_vars(void)
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret = 0;
 
     cryptocell_enable();
@@ -93,7 +96,7 @@ void _sign_verify(void)
 {
     uint8_t msg[ECDSA_MESSAGE_SIZE] = { 0x0b };
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret = 0;
     /*Call CRYS_ECDSA_Sign to create signature from input buffer using created private key*/
     cryptocell_enable();
@@ -121,7 +124,7 @@ void _sign_verify(void)
         printf("CRYS_ECDSA_Verify failed with 0x%x \n",ret);
         return;
     }
-    puts("VALID\n");
+    puts("VALID");
 #else
     cryptocell_enable();
     CRYS_ECDSA_Sign (rndState_ptr, rndGenerateVectFunc,
@@ -136,7 +139,7 @@ void _sign_verify(void)
 
 int main(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa cryptocell'");
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);
@@ -156,8 +159,10 @@ int main(void)
         // sign data and verify with public ley
         _sign_verify();
 
-#ifndef CORY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
+#endif
+#ifdef TEST_STACK
     ps();
     printf("sizeof(UserPrivKey): %i\n", sizeof(UserPrivKey));
     printf("sizeof(UserPubKey): %i\n", sizeof(UserPublKey));
