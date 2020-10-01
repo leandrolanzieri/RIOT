@@ -21,15 +21,18 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 #include <string.h>
 #include "periph/gpio.h"
 #include "xtimer.h"
-#include "ps.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
 
 #define ITERATIONS                  (50)
+#endif
+
+#ifdef TEST_STACK
+#include "ps.h"
 #endif
 
 #include "periph/hwrng.h"
@@ -43,7 +46,7 @@ uint8_t userPrivKey1[CURVE_256_SIZE];
 uint8_t userPubKey1[PUB_KEY_SIZE];
 uint8_t sharedSecret_01[CURVE_256_SIZE];
 
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
 uint8_t userPrivKey2[CURVE_256_SIZE];
 uint8_t userPubKey2[PUB_KEY_SIZE];
 uint8_t sharedSecret_02[CURVE_256_SIZE];
@@ -51,7 +54,7 @@ uint8_t sharedSecret_02[CURVE_256_SIZE];
 
 void _init_curve(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     gpio_set(active_gpio);
     curve = (struct uECC_Curve_t*)uECC_secp256r1();
     gpio_clear(active_gpio);
@@ -62,7 +65,7 @@ void _init_curve(void)
 
 void _gen_keypair(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
     gpio_set(active_gpio);
     ret = uECC_make_key(userPubKey1, userPrivKey1, curve);
@@ -71,6 +74,8 @@ void _gen_keypair(void)
         puts("ERROR generating Key 1");
         return;
     }
+    gpio_set(active_gpio);
+    gpio_clear(active_gpio);
     ret = uECC_make_key(userPubKey2, userPrivKey2, curve);
     if(!ret) {
         puts("ERROR generating Key 2");
@@ -83,7 +88,7 @@ void _gen_keypair(void)
 
 void _derive_shared_secret(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
 
     gpio_set(active_gpio);
@@ -93,6 +98,9 @@ void _derive_shared_secret(void)
         puts("ERROR generating shared secret 1");
         return;
     }
+
+    gpio_set(active_gpio);
+    gpio_clear(active_gpio);
 
     ret = uECC_shared_secret(userPubKey2, userPrivKey1, sharedSecret_02, curve);
     if(!ret) {
@@ -113,30 +121,29 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh uECC'");
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);
 
-    xtimer_sleep(1);
+    xtimer_sleep(2);
 
     for (int i = 0; i < ITERATIONS; i++) {
 #endif
         _init_curve();
-
         // generate two instances of keypairs
         _gen_keypair();
 
         // derive and compare secrets generated on both
         _derive_shared_secret();
-#ifndef COSY_TEST
+#if !defined(COSY_TEST) && !defined(TEST_STACK)
     }
+#endif
 
+#if defined(TEST_STACK)
     ps();
     printf("sizeof(userPrivKey1): %i\n", sizeof(userPrivKey1));
     printf("sizeof(userPubKey1): %i\n", sizeof(userPubKey1));
-    printf("sizeof(userPrivKey2): %i\n", sizeof(userPrivKey2));
-    printf("sizeof(userPubKey2): %i\n", sizeof(userPubKey2));
 #endif
     puts("DONE");
     return 0;

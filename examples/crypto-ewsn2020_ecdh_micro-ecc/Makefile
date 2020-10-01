@@ -1,19 +1,19 @@
 # name of the application
-APPLICATION = crypto-ewsn2020_ecdh
-
-FEATURES_REQUIRED = periph_hwrng
-
-USEPKG += micro-ecc
+APPLICATION = crypto-ewsn2020_ecdh_micro-ecc
 
 ifeq (1, $(COSY_TEST))
 	CFLAGS += -DCOSY_TEST=1
 else
-	CFLAGS +=-DDEVELHELP=1
-	USEMODULE += ps
-	USEMODULE += xtimer
-	FEATURES_REQUIRED += periph_gpio
+	ifeq (1, $(TEST_STACK))
+		CFLAGS+=-DTEST_STACK=1
+		USEMODULE += ps
+		CFLAGS +=-DDEVELHELP=1
+	else
+		FEATURES_REQUIRED += periph_gpio
+	endif
 endif
 
+export TEST_KCONFIG ?= 1
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
 
