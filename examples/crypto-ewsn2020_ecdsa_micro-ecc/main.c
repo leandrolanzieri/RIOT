@@ -112,7 +112,7 @@ void _sign_verify(void)
 int main(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
-    puts("'crypto-ewsn2020_ecdh uECC'");
+    puts("'crypto-ewsn2020_ecdsa uECC'");
 
     gpio_init(active_gpio, GPIO_OUT);
     gpio_clear(active_gpio);

@@ -74,8 +74,6 @@ void _gen_keypair(void)
         puts("ERROR generating Key 1");
         return;
     }
-    gpio_set(active_gpio);
-    gpio_clear(active_gpio);
     ret = uECC_make_key(userPubKey2, userPrivKey2, curve);
     if(!ret) {
         puts("ERROR generating Key 2");
@@ -98,9 +96,6 @@ void _derive_shared_secret(void)
         puts("ERROR generating shared secret 1");
         return;
     }
-
-    gpio_set(active_gpio);
-    gpio_clear(active_gpio);
 
     ret = uECC_shared_secret(userPubKey2, userPrivKey1, sharedSecret_02, curve);
     if(!ret) {
