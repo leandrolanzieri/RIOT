@@ -19,4 +19,5 @@ else
 	endif
 endif
 
+export TEST_KCONFIG ?= 1
 include $(RIOTBASE)/Makefile.include
