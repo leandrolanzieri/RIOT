@@ -23,10 +23,8 @@
 #include <string.h>
 
 #include "hashes/sha1.h"
-#include "sha1_hwctx.h"
 
 #include "hashes/sha256.h"
-#include "sha256_hwctx.h"
 
 #include "periph/gpio.h"
 #include "xtimer.h"

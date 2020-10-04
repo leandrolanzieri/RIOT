@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "hashes/sha256.h"
-#include "sha256_hwctx.h"
 
 #include "board.h"
 #include "periph/gpio.h"
