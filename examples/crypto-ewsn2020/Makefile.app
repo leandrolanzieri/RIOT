@@ -13,7 +13,7 @@ ifneq (,$(HMAC))
 endif
 
 # AES tests
-ifneq (,$(AES_CBC)$(AES_ECB)$(AES_CTR))
+ifneq (,$(AES_CBC)$(AES_ECB)$(AES_CTR)$(TEST_AES_ECB_PARALLEL))
   SRC += test_aes.c
 endif
 

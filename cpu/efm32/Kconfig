@@ -39,5 +39,9 @@ config MOD_PERIPH_HASH_SHA256
     depends on CPU_COMMON_EFM32
     select HAVE_OWN_SHA256_CTX
 
+config EFM32_AES_ECB_NONBLOCKING
+    bool "Non blocking version of AES ECB encrypt (Test only!)"
+    depends on MOD_PERIPH_CRYPTO_AES_ECB
+
 orsource "families/*/Kconfig"
 source "$(RIOTCPU)/cortexm_common/Kconfig"

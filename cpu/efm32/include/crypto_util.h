@@ -3,6 +3,8 @@
 
 #include "em_cmu.h"
 #include "em_crypto.h"
+#include "mutex.h"
+#include "periph/gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +13,10 @@ extern "C" {
 typedef struct {
     CRYPTO_TypeDef* dev;
     CMU_Clock_TypeDef cmu;
+    IRQn_Type irq;
+    mutex_t sequence_lock;
+    mutex_t lock;
+    gpio_t pin;
 } crypto_device_t;
 
 /**
@@ -23,6 +29,8 @@ typedef struct {
  *
  */
 CRYPTO_TypeDef* crypto_acquire(void);
+
+void crypto_wait_for_sequence(CRYPTO_TypeDef *dev);
 
 /**
  * @brief   Release the hardware crypto peripheral to be used by others.

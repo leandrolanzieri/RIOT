@@ -27,7 +27,7 @@
 #endif
 
 #include "crypto_runtime.h"
-
+#include "xtimer.h"
 #include "periph/gpio.h"
 #include "periph_conf.h"
 
@@ -37,6 +37,10 @@ int main(void)
     gpio_clear(active_gpio);
     gpio_init(gpio_aes_key, GPIO_OUT);
     gpio_clear(gpio_aes_key);
+
+#ifdef TEST_AES_ECB_PARALLEL
+    aes_ecb_parallel_test(&thread1_pin, &thread2_pin);
+#endif
 
 #if SHA256
     sha256_test(active_gpio);

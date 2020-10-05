@@ -39,6 +39,10 @@ ifeq (1, $(AES_ECB))
 	CFLAGS +=-DTEST_AES_KEY=1
 endif
 
+ifeq (1, $(TEST_AES_ECB_PARALLEL))
+	CFLAGS += -DTEST_AES_ECB_PARALLEL=1
+endif
+
 ifeq (1, $(AES_CTR))
 	CFLAGS +=-DAES_CTR=1
 	CFLAGS +=-DTEST_AES_KEY=1

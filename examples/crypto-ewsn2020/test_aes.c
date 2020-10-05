@@ -32,7 +32,7 @@
 #include "debug.h"
 
 /* AES Test */
-#if AES_CBC || AES_CTR || AES_ECB
+#if AES_CBC || AES_CTR || AES_ECB || TEST_AES_ECB_PARALLEL
     static uint8_t KEY[] = {
         0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
         0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
@@ -296,7 +296,7 @@
     }
 #endif /* AES_CTR */
 
-#ifdef AES_ECB
+#if defined(AES_ECB) || defined(TEST_AES_ECB_PARALLEL)
 
 #ifndef INPUT_512
     // static uint8_t __attribute__((aligned)) ECB_PLAIN[] = {
@@ -397,7 +397,9 @@
         };
     #define ECB_CIPHER_LEN 512
 #endif /* INPUT_512 */
+#endif /* AES_ECB || TEST_AES_ECB_PARALLEL */
 
+#ifdef AES_ECB
     void aes_ecb_test(gpio_t active_gpio)
     {
         int ret;
@@ -447,3 +449,85 @@
         printf("AES ECB encrypt/decrypt done\n");
     }
 #endif /* AES_ECB */
+
+#ifdef TEST_AES_ECB_PARALLEL
+
+#include "thread.h"
+
+#ifndef TEST_AES_ECB_PARALLEL_ITER
+#define TEST_AES_ECB_PARALLEL_ITER 1000
+#endif
+
+typedef struct {
+    gpio_t *pin;
+    const char* name;
+} thread_info_t;
+
+char aes_ecb_thread_1_stack[THREAD_STACKSIZE_MAIN];
+char aes_ecb_thread_2_stack[THREAD_STACKSIZE_MAIN];
+
+void *aes_ecb_thread(void *arg)
+{
+    thread_info_t *info = (thread_info_t *)arg;
+    gpio_t *pin = info->pin;
+    int ret;
+    (void) ECB_CIPHER;
+    (void) ECB_CIPHER_LEN;
+    (void) ECB_PLAIN;
+    (void) ret;
+    (void) pin;
+    cipher_context_t ctx;
+    uint8_t data[ECB_PLAIN_LEN];
+    memset(data, 0, ECB_PLAIN_LEN);
+
+    printf("=======[%s]: START========\n", info->name);
+    aes_init(&ctx, KEY, KEY_LEN);
+
+    for (unsigned i = 0; i < 1000; i++) {
+        gpio_set(*pin);
+        ret = aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
+        gpio_clear(*pin);
+
+        if (ret < 0) {
+            printf("AES ECB Enryption failed: %d\n", ret);
+            return NULL;
+        }
+    }
+
+    printf("=======[%s]: DONE========\n", info->name);
+
+    return NULL;
+}
+
+thread_info_t info1 = {
+    .pin = NULL,
+    .name = "Thread 1"
+};
+
+thread_info_t info2 = {
+    .pin = NULL,
+    .name = "Thread 2"
+};
+
+void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin)
+{
+    gpio_init(*thread1_pin, GPIO_OUT);
+    gpio_clear(*thread1_pin);
+    gpio_init(*thread2_pin, GPIO_OUT);
+    gpio_clear(*thread2_pin);
+
+    info1.pin = thread1_pin;
+    info2.pin = thread2_pin;
+
+    xtimer_sleep(1);
+
+    thread_create(aes_ecb_thread_1_stack, sizeof(aes_ecb_thread_1_stack),
+                  THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,
+                  aes_ecb_thread, &info1, "AES ECB 1");
+
+    thread_create(aes_ecb_thread_2_stack, sizeof(aes_ecb_thread_2_stack),
+                  THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,
+                  aes_ecb_thread, &info2, "AES ECB 2");
+}
+
+#endif /* TEST_AES_ECB_PARALLEL */

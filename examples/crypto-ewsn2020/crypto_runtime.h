@@ -17,6 +17,8 @@ void aes_cbc_dec_test_energy(gpio_t, gpio_t);
 void aes_ecb_enc_test_energy(gpio_t, gpio_t);
 void aes_ecb_dec_test_energy(gpio_t, gpio_t);
 
+void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin);
+
 #ifdef BOARD_PBA_D_01_KW2X
     gpio_t active_gpio = GPIO_PIN(2, 5);
     gpio_t gpio_aes_key = GPIO_PIN(2, 6);
@@ -36,6 +38,8 @@ void aes_ecb_dec_test_energy(gpio_t, gpio_t);
 #ifdef BOARD_SLSTK3402A
     gpio_t active_gpio = GPIO_PIN(0, 6);
     gpio_t gpio_aes_key = GPIO_PIN(0, 7);
+    gpio_t thread1_pin = GPIO_PIN(2, 9);
+    gpio_t thread2_pin = GPIO_PIN(3, 9);
 #endif /* BOARD_SLSTK3402A */
 
 #endif /* CRYPTO_RUNTIME_H */
