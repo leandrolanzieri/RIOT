@@ -45,7 +45,6 @@ gpio_t active_gpio = GPIO_PIN(1, 7);
 #define ECDSA_MESSAGE_SIZE          (127)
 
 extern CRYS_RND_State_t*     rndState_ptr;
-extern CRYS_RND_WorkBuff_t*  rndWorkBuff_ptr;
 
 CRYS_ECPKI_UserPrivKey_t UserPrivKey;
 CRYS_ECPKI_UserPublKey_t UserPublKey;
@@ -53,9 +52,6 @@ CRYS_ECDH_TempData_t signOutBuff;
 CRYS_ECDSA_SignUserContext_t SignUserContext;
 CRYS_ECDSA_VerifyUserContext_t VerifyUserContext;
 CRYS_ECPKI_Domain_t* pDomain;
-CRYS_ECDH_TempData_t* TempDHBuffptr;
-CRYS_ECPKI_KG_TempData_t* TempECCKGBuffptr;
-CRYS_ECDH_TempData_t TempDHBuff;
 CRYS_ECPKI_KG_TempData_t TempECCKGBuff;
 CRYS_ECPKI_KG_FipsContext_t FipsBuff;
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
