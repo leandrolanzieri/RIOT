@@ -41,10 +41,9 @@ gpio_t active_gpio = GPIO_PIN(1, 7);
 #define ITERATIONS                  (50)
 #endif
 
-#define SHARED_SECRET_MAX_LENGHT    (250)
+#define SHARED_SECRET_LENGHT    (32)
 
 extern CRYS_RND_State_t*     rndState_ptr;
-extern CRYS_RND_WorkBuff_t*  rndWorkBuff_ptr;
 
 CRYS_ECPKI_UserPrivKey_t UserPrivKey1;
 CRYS_ECPKI_UserPublKey_t UserPublKey1;
@@ -55,14 +54,14 @@ CRYS_ECDH_TempData_t TempDHBuff;
 CRYS_ECPKI_KG_TempData_t TempECCKGBuff;
 CRYS_ECPKI_KG_FipsContext_t FipsBuff;
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
-uint8_t sharedSecret1ptr[SHARED_SECRET_MAX_LENGHT];
-uint32_t sharedSecret1Size = SHARED_SECRET_MAX_LENGHT;
+uint8_t sharedSecret1ptr[SHARED_SECRET_LENGHT];
+uint32_t sharedSecret1Size = SHARED_SECRET_LENGHT;
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
 CRYS_ECPKI_UserPrivKey_t UserPrivKey2;
 CRYS_ECPKI_UserPublKey_t UserPublKey2;
-uint8_t sharedSecret2ptr[SHARED_SECRET_MAX_LENGHT];
-uint32_t sharedSecret2Size = SHARED_SECRET_MAX_LENGHT;
+uint8_t sharedSecret2ptr[SHARED_SECRET_LENGHT];
+uint32_t sharedSecret2Size = SHARED_SECRET_LENGHT;
 #endif
 
 void _init_vars(void)
@@ -131,7 +130,7 @@ void _derive_shared_secret(void)
         return;
     }
     // generated secret should be the same on both
-    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_MAX_LENGHT)) {
+    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_LENGHT)) {
         puts("ERROR");
     }
     else {
