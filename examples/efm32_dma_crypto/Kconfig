@@ -1,0 +1,2 @@
+config AES_WITH_DMA
+    bool "Test AES using DMA"

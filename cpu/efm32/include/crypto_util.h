@@ -17,6 +17,8 @@ typedef struct {
     mutex_t sequence_lock;
     mutex_t lock;
     gpio_t pin;
+    int write_dma_ch;
+    int read_dma_ch;
 } crypto_device_t;
 
 /**
@@ -29,6 +31,10 @@ typedef struct {
  *
  */
 CRYPTO_TypeDef* crypto_acquire(void);
+
+crypto_device_t* crypto_acquire_dev(void);
+
+crypto_device_t* crypto_get_dev_by_crypto(CRYPTO_TypeDef* crypto);
 
 void crypto_wait_for_sequence(CRYPTO_TypeDef *dev);
 
