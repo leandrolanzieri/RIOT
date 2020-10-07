@@ -1,0 +1,13 @@
+config AES_WITH_DMA
+    bool "Test AES using DMA"
+
+choice
+    bool "Number of bytes to encrypt"
+
+config AES_NUMBYTES_16
+    bool "16"
+
+config AES_NUMBYTES_32
+    bool "32"
+
+endchoice
