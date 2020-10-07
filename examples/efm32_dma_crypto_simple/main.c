@@ -257,7 +257,7 @@ void isr_crypto0(void)
     CRYPTO0->IFC = 0xFFFFFFFF;
     iterations++;
     puts("c!");
-    if (iterations >= 1) {
+    if (iterations >= 2) {
         mutex_unlock(&dma_lock);
     }
     else {
