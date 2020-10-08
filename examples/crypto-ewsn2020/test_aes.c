@@ -483,7 +483,7 @@ void *aes_ecb_thread(void *arg)
     printf("=======[%s]: START========\n", info->name);
     aes_init(&ctx, KEY, KEY_LEN);
 
-    for (unsigned i = 0; i < 1000; i++) {
+    for (unsigned i = 0; i < TEST_AES_ECB_PARALLEL_ITER; i++) {
         gpio_set(*pin);
         ret = aes_encrypt_ecb(&ctx, ECB_PLAIN, ECB_PLAIN_LEN, data);
         gpio_clear(*pin);
@@ -511,6 +511,15 @@ thread_info_t info2 = {
 
 void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin)
 {
+    puts("== Performing parallel test ==");
+    printf("=> Encrypting [%d] blocks of [%d] bytes\n", TEST_AES_ECB_PARALLEL_ITER, ECB_PLAIN_LEN);
+    if (IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)) {
+        puts("=> Using DMA");
+    }
+    else {
+        puts("=> NOT using DMA");
+    }
+
     gpio_init(*thread1_pin, GPIO_OUT);
     gpio_clear(*thread1_pin);
     gpio_init(*thread2_pin, GPIO_OUT);
@@ -518,8 +527,6 @@ void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin)
 
     info1.pin = thread1_pin;
     info2.pin = thread2_pin;
-
-    xtimer_sleep(1);
 
     thread_create(aes_ecb_thread_1_stack, sizeof(aes_ecb_thread_1_stack),
                   THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,

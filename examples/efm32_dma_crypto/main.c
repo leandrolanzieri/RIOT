@@ -25,7 +25,6 @@
 #include "kernel_defines.h"
 #include "crypto_util.h"
 #include "mutex.h"
-#include "em_ldma.h"
 #include "em_device.h"
 
 /* This header will define, according to the Kconfig configuration:

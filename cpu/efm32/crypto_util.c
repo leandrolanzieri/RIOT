@@ -3,6 +3,7 @@
 #include "crypto_util.h"
 #include "mutex.h"
 #include "xtimer.h"
+#include "em_ldma.h"
 
 #include "periph/gpio.h"
 
@@ -96,8 +97,6 @@ crypto_device_t* crypto_acquire_dev(void) {
     mutex_lock(&crypto_devs[devno].lock);
     dev = &crypto_devs[devno];
 
-    gpio_set(crypto_devs[devno].pin);
-
     CMU_ClockEnable(cmuClock_HFPER, true);
     CMU_ClockEnable(crypto_devs[devno].cmu, true);
 
@@ -133,7 +132,6 @@ void crypto_release(CRYPTO_TypeDef* dev)
     }
     CMU_ClockEnable(crypto_devs[devno].cmu, false);
 
-    gpio_clear(crypto_devs[devno].pin);
     acqu_count--;
     mutex_unlock(&crypto_devs[devno].lock);
 }
@@ -182,7 +180,7 @@ static inline uint32_t _get_dma_source_and_signal_data0_write(crypto_device_t *c
     }
 }
 
-static void _init_read_dma_channel(crypto_device_t *crypto, uint8_t *out)
+static void _init_read_dma_channel(crypto_device_t *crypto, const uint8_t *out)
 {
     LDMA->IEN    |= 1UL << (crypto->read_dma_ch);    /* enable DONE interrupt for read channel on LDMA peripheral */
     LDMA->IFC    |= 1UL << (crypto->read_dma_ch);    /* clear DONE interrupt flag of read channel */
@@ -204,7 +202,7 @@ static void _init_read_dma_channel(crypto_device_t *crypto, uint8_t *out)
     LDMA->CH[crypto->read_dma_ch].SRC = (uint32_t)&(crypto->dev->DATA0BYTE); /* set source address to the DATA0 register of the used CRYPTO device */
 }
 
-static void _init_write_dma_channel(crypto_device_t *crypto, uint8_t *in)
+static void _init_write_dma_channel(crypto_device_t *crypto, const uint8_t *in)
 {
     LDMA->IEN    |= 1UL << (crypto->write_dma_ch);    /* enable DONE interrupt for write channel on LDMA peripheral */
     LDMA->IFC    |= 1UL << (crypto->write_dma_ch);    /* clear DONE interrupt flag of write channel */
@@ -243,7 +241,8 @@ static void _init_aes_128_encrypt(crypto_device_t* crypto)
                       CRYPTO_CMD_INSTR_DATATODMA0); /* move from configured DATA register to DMA, request DMA0RD signal */
 }
 
-void crypto_aes_128_encrypt(crypto_device_t *crypto, uint8_t *in, uint8_t *out, size_t length)
+void crypto_aes_128_encrypt(crypto_device_t *crypto, const uint8_t *in,
+                            const uint8_t *out, size_t length)
 {
     LDMA_Init_t ldma_init = LDMA_INIT_DEFAULT;
     LDMA_Init(&ldma_init);
