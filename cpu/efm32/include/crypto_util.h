@@ -52,6 +52,12 @@ void crypto_wait_for_sequence(CRYPTO_TypeDef *dev);
 void crypto_aes_128_encrypt(crypto_device_t *crypto, const uint8_t *in,
                             const uint8_t *out, size_t length);
 
+
+void crypto_release_dev(crypto_device_t *crypto);
+
+
+void crypto_init(void);
+
 /**
  * @brief   Release the hardware crypto peripheral to be used by others.
  *

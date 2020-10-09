@@ -11,7 +11,6 @@
 #include "debug.h"
 
 #if CPU_MODEL_EFM32PG12B500F1024GL125
-static int acqu_count = 0;
 static bool crypto_lock_initialized = false;
 static crypto_device_t crypto_devs[CRYPTO_COUNT] =
 {
@@ -53,7 +52,13 @@ static crypto_device_t crypto_devs[CRYPTO_COUNT] =
 };
 
 CRYPTO_TypeDef* crypto_acquire(void) {
-    CRYPTO_TypeDef* dev = NULL;
+    crypto_device_t *crypto = NULL;
+
+    crypto = crypto_acquire_dev();
+    return crypto->dev;
+}
+
+void crypto_init(void) {
     if (!crypto_lock_initialized) {
         /* initialize lock */
         for (int i = 0; i < CRYPTO_COUNT; i++) {
@@ -62,45 +67,33 @@ CRYPTO_TypeDef* crypto_acquire(void) {
             mutex_lock(&crypto_devs[i].ctx.sequence_lock);
             NVIC_ClearPendingIRQ(crypto_devs[i].irq);
             NVIC_EnableIRQ(crypto_devs[i].irq);
+            if (IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)) {
+                LDMA_Init_t ldma_init = LDMA_INIT_DEFAULT;
+                LDMA_Init(&ldma_init);
+            }
         }
         crypto_lock_initialized = true;
     }
-
-    int devno = acqu_count % CRYPTO_COUNT;
-    mutex_lock(&crypto_devs[devno].lock);
-    dev = crypto_devs[devno].dev;
-
-    gpio_set(crypto_devs[devno].pin);
-
-    CMU_ClockEnable(cmuClock_HFPER, true);
-    CMU_ClockEnable(crypto_devs[devno].cmu, true);
-
-    acqu_count++;
-    return dev;
 }
 
 crypto_device_t* crypto_acquire_dev(void) {
     crypto_device_t* dev = NULL;
-    if (!crypto_lock_initialized) {
-        /* initialize lock */
-        for (int i = 0; i < CRYPTO_COUNT; i++) {
-            mutex_init(&crypto_devs[i].lock);
-            mutex_init(&crypto_devs[i].ctx.sequence_lock);
-            mutex_lock(&crypto_devs[i].ctx.sequence_lock);
-            NVIC_ClearPendingIRQ(crypto_devs[i].irq);
-            NVIC_EnableIRQ(crypto_devs[i].irq);
+
+    for (unsigned i = 0; i < CRYPTO_COUNT; i++) {
+        if (mutex_trylock(&crypto_devs[i].lock)) {
+            /* found free dev */
+            dev = &crypto_devs[i];
+            break;
         }
-        crypto_lock_initialized = true;
     }
 
-    int devno = acqu_count % CRYPTO_COUNT;
-    mutex_lock(&crypto_devs[devno].lock);
-    dev = &crypto_devs[devno];
+    if (!dev) {
+        mutex_lock(&crypto_devs[0].lock);
+        dev = &crypto_devs[0];
+    }
 
     CMU_ClockEnable(cmuClock_HFPER, true);
-    CMU_ClockEnable(crypto_devs[devno].cmu, true);
-
-    acqu_count++;
+    CMU_ClockEnable(dev->cmu, true);
     return dev;
 }
 
@@ -130,34 +123,14 @@ void crypto_release(CRYPTO_TypeDef* dev)
     if (devno < 0) {
         return;
     }
-    CMU_ClockEnable(crypto_devs[devno].cmu, false);
-
-    acqu_count--;
-    mutex_unlock(&crypto_devs[devno].lock);
+    crypto_device_t *crypto = &crypto_devs[devno];
+    crypto_release_dev(crypto);
 }
 
-void crypto_wait_for_sequence(CRYPTO_TypeDef *dev)
+void crypto_release_dev(crypto_device_t *crypto)
 {
-    /* enable interrupt on sequence done */
-    CRYPTO_IntEnable(dev, CRYPTO_IEN_SEQDONE);
-
-    /* get the sequence lock */
-    int devno = get_devno(dev);
-    if (devno < 0) {
-        return;
-    }
-
-    mutex_t *lock = &(crypto_devs[devno].ctx.sequence_lock);
-
-    /* start the sequence */
-    dev->CMD = CRYPTO_CMD_SEQSTART;
-
-    /* wait for the sequence to finish */
-    mutex_lock(lock);
-    //xtimer_usleep(100);
-
-    /* disable interrupt on sequence done */
-    CRYPTO_IntDisable(dev, CRYPTO_IEN_SEQDONE);
+    CMU_ClockEnable(crypto->cmu, false);
+    mutex_unlock(&crypto->lock);
 }
 
 static inline uint32_t _get_dma_source_and_signal_data0_read(crypto_device_t *crypto)
@@ -244,9 +217,6 @@ static void _init_aes_128_encrypt(crypto_device_t* crypto)
 void crypto_aes_128_encrypt(crypto_device_t *crypto, const uint8_t *in,
                             const uint8_t *out, size_t length)
 {
-    LDMA_Init_t ldma_init = LDMA_INIT_DEFAULT;
-    LDMA_Init(&ldma_init);
-
     _init_read_dma_channel(crypto, out);
     _init_write_dma_channel(crypto, in);
     _init_aes_128_encrypt(crypto);

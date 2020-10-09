@@ -24,6 +24,7 @@
 
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
+#include "crypto_util.h"
 
 #include "periph/gpio.h"
 #include "xtimer.h"
@@ -480,8 +481,9 @@ void *aes_ecb_thread(void *arg)
     uint8_t data[ECB_PLAIN_LEN];
     memset(data, 0, ECB_PLAIN_LEN);
 
-    printf("=======[%s]: START========\n", info->name);
+    //printf("=======[%s]: START========\n", info->name);
     aes_init(&ctx, KEY, KEY_LEN);
+    //thread_yield();
 
     for (unsigned i = 0; i < TEST_AES_ECB_PARALLEL_ITER; i++) {
         gpio_set(*pin);
@@ -494,7 +496,7 @@ void *aes_ecb_thread(void *arg)
         }
     }
 
-    printf("=======[%s]: DONE========\n", info->name);
+    //printf("=======[%s]: DONE========\n", info->name);
 
     return NULL;
 }
@@ -527,6 +529,8 @@ void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin)
 
     info1.pin = thread1_pin;
     info2.pin = thread2_pin;
+
+    crypto_init();
 
     thread_create(aes_ecb_thread_1_stack, sizeof(aes_ecb_thread_1_stack),
                   THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,

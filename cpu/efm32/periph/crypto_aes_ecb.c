@@ -73,7 +73,7 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
 
     gpio_clear(crypto->pin);
 
-    crypto_release(crypto->dev);
+    crypto_release_dev(crypto);
     return length;
 }
 
