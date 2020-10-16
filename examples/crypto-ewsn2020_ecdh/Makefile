@@ -4,6 +4,10 @@ APPLICATION = crypto-ewsn2020_ecdh
 USEPKG += relic
 FEATURES_REQUIRED = periph_hwrng
 
+ifeq (1, $(TEST_ENERGY))
+	CFLAGS += -DTEST_ENERGY=1
+endif
+
 ifeq (1, $(COSY_TEST))
 	CFLAGS += -DCOSY_TEST=1
 else

@@ -25,6 +25,8 @@
 #include "periph/gpio.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
+gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 #endif
 
 #ifdef TEST_STACK
@@ -49,6 +51,44 @@ static key_struct_t keyA;
 static key_struct_t keyB;
 #endif
 
+static inline void _init_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_init(gpio_sync_pin, GPIO_IN);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
+#endif
+}
+
+static inline void _start_trigger(void)
+{
+#if TEST_ENERGY
+    while(gpio_read(gpio_sync_pin)) {};
+    while(!gpio_read(gpio_sync_pin)) {};
+    gpio_clear(active_gpio);
+#else
+    gpio_set(active_gpio);
+#endif
+}
+
+static inline void _stop_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_set(gpio_aes_key);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_clear(active_gpio);
+#endif
+}
+
 void _init_mem(key_struct_t *key)
 {
     // set up memory
@@ -63,9 +103,9 @@ void _gen_keypair(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     // generate pubkey pair A
-    gpio_set(active_gpio);
+    _start_trigger();
     int ret = cp_ecdh_gen(keyA.priv, keyA.pub);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (ret == STS_ERR) {
         puts("ECDH key pair creation failed. Not good :( \n");
         return;
@@ -90,9 +130,9 @@ void _derive_shared_secret(void)
     uint8_t sharedKeyB[MD_LEN];
 
     // generate shared secred on A, based on priv key B
-    gpio_set(active_gpio);
+    _start_trigger();
     int ret = cp_ecdh_key(sharedKeyA, MD_LEN, keyA.priv, keyB.pub);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (ret == STS_ERR) {
         puts("ECDH secret A creation failed. Not good :( \n");
         return;
@@ -124,17 +164,16 @@ int main(void)
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh'");
 
-    gpio_init(active_gpio, GPIO_OUT);
-    gpio_clear(active_gpio);
+    _init_trigger();
 
-    xtimer_sleep(1);
+    // xtimer_sleep(1);
 
     for (int i = 0; i < ITERATIONS; i++) {
         // Init Curve and KeyA
-        gpio_set(active_gpio);
+        _start_trigger();
         ep_param_set(NIST_P256);
         _init_mem(&keyA);
-        gpio_clear(active_gpio);
+       _stop_trigger();
 
         // Init KeyB
         _init_mem(&keyB);

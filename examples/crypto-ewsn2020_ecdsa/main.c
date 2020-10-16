@@ -29,6 +29,46 @@
 #include "xtimer.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
+gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
+
+static inline void _init_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_init(gpio_sync_pin, GPIO_IN);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
+#endif
+}
+
+static inline void _start_trigger(void)
+{
+#if TEST_ENERGY
+    while(gpio_read(gpio_sync_pin)) {};
+    while(!gpio_read(gpio_sync_pin)) {};
+    gpio_clear(active_gpio);
+#else
+    gpio_set(active_gpio);
+#endif
+}
+
+static inline void _stop_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_set(gpio_aes_key);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_clear(active_gpio);
+#endif
+}
 #endif
 
 #include "relic.h"
@@ -63,9 +103,9 @@ void _gen_keypair(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     // generate pubkey pair A
-    gpio_set(active_gpio);
+    _start_trigger();
     int ret = cp_ecdsa_gen(keyA.priv, keyA.pub);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (ret == STS_ERR) {
         puts("ECDH key pair creation failed. Not good :( \n");
         return;
@@ -86,19 +126,21 @@ void _sign_verify(void)
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
-    gpio_set(active_gpio);
+    _start_trigger();
     md_map_sh256(hash, msg, ECDSA_MESSAGE_SIZE);
-    gpio_clear(active_gpio);
+    _stop_trigger();
+
 
     // "0" selects message format without hashing. "1" would indicatehashing is needed
-    gpio_set(active_gpio);
-    cp_ecdsa_sig(r, s, hash, sizeof(hash), 0, keyA.priv);
-    gpio_clear(active_gpio);
+    _start_trigger();
+    cp_ecdsa_sig(r, s, hash, sizeof(hash), 1, keyA.priv);
+    _stop_trigger();
+
 
     // verify
-    gpio_set(active_gpio);
-    ret = cp_ecdsa_ver(r, s, hash, sizeof(hash), 0, keyA.pub);
-    gpio_clear(active_gpio);
+    _start_trigger();
+    ret = cp_ecdsa_ver(r, s, hash, sizeof(hash), 1, keyA.pub);
+    _stop_trigger();
 
     if (ret == 1) {
         puts("VALID");
@@ -116,25 +158,46 @@ void _sign_verify(void)
 int main(void)
 {
     core_init();
+#ifdef TEST_STACK
+printf("EP_SIM: %d\n",EP_SIM);
+
+#ifdef EP_PLAIN
+    puts("EP_PLAIN on");
+#endif
+#ifdef EP_SUPER
+    puts("EP_SUPER on");
+#endif
+#ifdef EP_ENDOM
+    puts("EP_ENDOM on");
+#endif
+#ifdef EP_MIXED
+    puts("EP_MIXED on");
+#endif
+#ifdef EP_PRECO
+    puts("EP_PRECO on");
+#else
+    puts("EP_PRECO off");
+#endif
+printf("EP_DEPTH: %d\n",EP_DEPTH);
+printf("EP_WIDTH: %d\n",EP_WIDTH);
+printf("EP_METHD: %s\n",EP_METHD);
+#endif
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa'");
-    gpio_init(active_gpio, GPIO_OUT);
-    gpio_clear(active_gpio);
+    _init_trigger();
 
-    xtimer_sleep(1);
+    // xtimer_sleep(1);
 
     for (int i = 0; i < ITERATIONS; i++){
-
-        gpio_set(active_gpio);
+        _start_trigger();
         _init_mem(&keyA);
-        gpio_clear(active_gpio);
+        _stop_trigger();
 #else
         _init_mem(&keyA);
 #endif
         // generate keypairs
         _gen_keypair();
-
         // sign data and verify with public ley
         _sign_verify();
 
@@ -144,7 +207,8 @@ int main(void)
 
 #ifdef TEST_STACK
     ps();
-    printf("sizeof(keyA): %i\n", sizeof(keyA));
+    printf("sizeof(keyA.pub): %i\n", sizeof(keyA.pub));
+    printf("sizeof(keyA.priv): %i\n", sizeof(keyA.priv));
 #endif
 
     core_clean();

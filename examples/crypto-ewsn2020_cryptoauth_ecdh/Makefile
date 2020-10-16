@@ -6,6 +6,10 @@ APPLICATION = crypto-ewsn2020_cryptoauth-ecdh
 
 USEPKG += cryptoauthlib
 
+ifeq (1, $(TEST_ENERGY))
+	CFLAGS += -DTEST_ENERGY=1
+endif
+
 ifeq (1, $(COSY_TEST))
 	CFLAGS += -DCOSY_TEST=1
 else

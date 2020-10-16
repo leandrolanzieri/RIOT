@@ -35,8 +35,48 @@
 #include "xtimer.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
+gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 
 #define ITERATIONS                  (50)
+static inline void _init_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_init(gpio_sync_pin, GPIO_IN);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
+#endif
+}
+
+static inline void _start_trigger(void)
+{
+#if TEST_ENERGY
+    while(gpio_read(gpio_sync_pin)) {};
+    while(!gpio_read(gpio_sync_pin)) {};
+    gpio_clear(active_gpio);
+#else
+    gpio_set(active_gpio);
+#endif
+}
+
+static inline void _stop_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_set(gpio_aes_key);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_clear(active_gpio);
+#endif
+}
+
 #endif
 
 #define ECDSA_MESSAGE_SIZE          (127)
@@ -44,13 +84,15 @@ gpio_t active_gpio = GPIO_PIN(1, 7);
 uint8_t UserPubKey[ATCA_PUB_KEY_SIZE];
 uint8_t key_id = 1; /* This is the number of the slot used */
 
+
+
 void _gen_keypair(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     ATCA_STATUS status;
-    gpio_set(active_gpio);
+    _start_trigger();
     status = atcab_genkey(key_id, UserPubKey);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (status != ATCA_SUCCESS){
         printf(" atcab_genkey for PubKey1 failed with 0x%x \n",status);
         return;
@@ -71,21 +113,21 @@ void _sign_verify(void)
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     ATCA_STATUS status;
-    gpio_set(active_gpio);
+    _start_trigger();
     atcab_hw_sha2_256(msg, ECDSA_MESSAGE_SIZE, hash);
-    gpio_clear(active_gpio);
+    _stop_trigger();
 
-    gpio_set(active_gpio);
+    _start_trigger();
     status = atcab_sign(key_id, msg, signature);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (status != ATCA_SUCCESS){
         printf(" Signing failed with 0x%x \n",status);
         return;
     }
 
-    gpio_set(active_gpio);
+    _start_trigger();
     status = atcab_verify_extern(msg, signature, UserPubKey, &is_verified);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if (status != ATCA_SUCCESS){
         printf(" Verifying failed with 0x%x \n",status);
         return;
@@ -108,15 +150,14 @@ int main(void)
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa'");
 
-    gpio_init(active_gpio, GPIO_OUT);
-    gpio_clear(active_gpio);
+    _init_trigger();
 
-    xtimer_sleep(1);
+    // xtimer_sleep(1);
 
     for (int i = 0; i < ITERATIONS; i++) {
-        gpio_set(active_gpio);
+        _start_trigger();
         // Empty gpio set instead of init
-        gpio_clear(active_gpio);
+        _stop_trigger();
 #endif
         // generate two instances of keypairs
         _gen_keypair();

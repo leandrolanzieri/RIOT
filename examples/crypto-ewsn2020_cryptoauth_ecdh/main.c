@@ -37,6 +37,8 @@
 #include "periph/gpio.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
+gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 
 #define ITERATIONS                  (50)
 #endif
@@ -49,13 +51,51 @@ uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
 uint8_t key_id_2 = 1;
 #endif
 
+static inline void _init_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_init(gpio_sync_pin, GPIO_IN);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
+#endif
+}
+
+static inline void _start_trigger(void)
+{
+#if TEST_ENERGY
+    while(gpio_read(gpio_sync_pin)) {};
+    while(!gpio_read(gpio_sync_pin)) {};
+    gpio_clear(active_gpio);
+#else
+    gpio_set(active_gpio);
+#endif
+}
+
+static inline void _stop_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_set(gpio_aes_key);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_clear(active_gpio);
+#endif
+}
+
 void _gen_keypair(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     ATCA_STATUS status;
-    gpio_set(active_gpio);
+    _start_trigger();
     status = atcab_genkey(key_id_1, UserPubKey1);
-    gpio_clear(active_gpio);
+     _stop_trigger();
     if (status != ATCA_SUCCESS){
         printf(" atcab_genkey for PubKey1 failed with 0x%x \n",status);
         return;
@@ -78,9 +118,9 @@ void _derive_shared_secret(void)
     uint8_t SharedSecret2[ECDH_KEY_SIZE];
 
     ATCA_STATUS status;
-    gpio_set(active_gpio);
+    _start_trigger();
     status = atcab_ecdh(key_id_1, UserPubKey2, SharedSecret1);
-    gpio_clear(active_gpio);
+     _stop_trigger();
     if (status != ATCA_SUCCESS){
         printf(" atcab_ecdh for secret 2 failed with 0x%x \n",status);
         return;
@@ -106,15 +146,16 @@ int main(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_cryptocell_ecdh'");
-    gpio_init(active_gpio, GPIO_OUT);
-    gpio_clear(active_gpio);
 
-    xtimer_sleep(1);
+    _init_trigger();
+
+    // xtimer_sleep(1);
+
     for (int i = 0; i < ITERATIONS; i++) {
 
-        gpio_set(active_gpio);
+        _start_trigger();
         // Empty gpio set instead of init
-        gpio_clear(active_gpio);
+         _stop_trigger();
 #endif
         // generate two instances of keypairs
         _gen_keypair();

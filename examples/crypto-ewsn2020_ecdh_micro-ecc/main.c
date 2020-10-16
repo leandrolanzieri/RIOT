@@ -27,6 +27,8 @@
 #include "xtimer.h"
 
 gpio_t active_gpio = GPIO_PIN(1, 7);
+gpio_t gpio_aes_key = GPIO_PIN(1, 8);
+gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 
 #define ITERATIONS                  (50)
 #endif
@@ -41,6 +43,7 @@ gpio_t active_gpio = GPIO_PIN(1, 7);
 #define CURVE_256_SIZE              (32)
 #define PUB_KEY_SIZE                (CURVE_256_SIZE * 2)
 
+
 struct uECC_Curve_t *curve;
 uint8_t userPrivKey1[CURVE_256_SIZE];
 uint8_t userPubKey1[PUB_KEY_SIZE];
@@ -52,12 +55,50 @@ uint8_t userPubKey2[PUB_KEY_SIZE];
 uint8_t sharedSecret_02[CURVE_256_SIZE];
 #endif
 
+static inline void _init_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_init(gpio_aes_key, GPIO_OUT);
+    gpio_init(gpio_sync_pin, GPIO_IN);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_init(active_gpio, GPIO_OUT);
+    gpio_clear(active_gpio);
+#endif
+}
+
+static inline void _start_trigger(void)
+{
+#if TEST_ENERGY
+    while(gpio_read(gpio_sync_pin)) {};
+    while(!gpio_read(gpio_sync_pin)) {};
+    gpio_clear(active_gpio);
+#else
+    gpio_set(active_gpio);
+#endif
+}
+
+static inline void _stop_trigger(void)
+{
+#if TEST_ENERGY
+    gpio_set(gpio_aes_key);
+
+    gpio_set(active_gpio);
+    gpio_clear(gpio_aes_key);
+#else
+    gpio_clear(active_gpio);
+#endif
+}
+
 void _init_curve(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
-    gpio_set(active_gpio);
+    _start_trigger();
     curve = (struct uECC_Curve_t*)uECC_secp256r1();
-    gpio_clear(active_gpio);
+    _stop_trigger();
 #else
     curve = (struct uECC_Curve_t*)uECC_secp256r1();
 #endif
@@ -67,9 +108,9 @@ void _gen_keypair(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
-    gpio_set(active_gpio);
+    _start_trigger();
     ret = uECC_make_key(userPubKey1, userPrivKey1, curve);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if(!ret) {
         puts("ERROR generating Key 1");
         return;
@@ -89,9 +130,9 @@ void _derive_shared_secret(void)
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     int ret;
 
-    gpio_set(active_gpio);
+    _start_trigger();
     ret = uECC_shared_secret(userPubKey1, userPrivKey2, sharedSecret_01, curve);
-    gpio_clear(active_gpio);
+    _stop_trigger();
     if(!ret) {
         puts("ERROR generating shared secret 1");
         return;
@@ -118,10 +159,10 @@ int main(void)
 {
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh uECC'");
-    gpio_init(active_gpio, GPIO_OUT);
-    gpio_clear(active_gpio);
 
-    xtimer_sleep(2);
+    _init_trigger();
+
+    // xtimer_sleep(2);
 
     for (int i = 0; i < ITERATIONS; i++) {
 #endif
