@@ -85,7 +85,6 @@ static inline void _stop_trigger(void)
 #define SHARED_SECRET_MAX_LENGHT    (32)
 
 extern CRYS_RND_State_t*     rndState_ptr;
-extern CRYS_RND_WorkBuff_t*  rndWorkBuff_ptr;
 
 CRYS_ECPKI_UserPrivKey_t UserPrivKey1;
 CRYS_ECPKI_UserPublKey_t UserPublKey1;
@@ -93,14 +92,14 @@ CRYS_ECPKI_UserPublKey_t UserPublKey1;
 CRYS_ECPKI_Domain_t* pDomain;
 
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
-uint8_t sharedSecret1ptr[SHARED_SECRET_MAX_LENGHT];
-uint32_t sharedSecret1Size = SHARED_SECRET_MAX_LENGHT;
+uint8_t sharedSecret1ptr[SHARED_SECRET_LENGHT];
+uint32_t sharedSecret1Size = SHARED_SECRET_LENGHT;
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
 CRYS_ECPKI_UserPrivKey_t UserPrivKey2;
 CRYS_ECPKI_UserPublKey_t UserPublKey2;
-uint8_t sharedSecret2ptr[SHARED_SECRET_MAX_LENGHT];
-uint32_t sharedSecret2Size = SHARED_SECRET_MAX_LENGHT;
+uint8_t sharedSecret2ptr[SHARED_SECRET_LENGHT];
+uint32_t sharedSecret2Size = SHARED_SECRET_LENGHT;
 #endif
 
 
@@ -178,7 +177,7 @@ void _derive_shared_secret(void)
         return;
     }
     // generated secret should be the same on both
-    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_MAX_LENGHT)) {
+    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_LENGHT)) {
         puts("ERROR");
     }
     else {

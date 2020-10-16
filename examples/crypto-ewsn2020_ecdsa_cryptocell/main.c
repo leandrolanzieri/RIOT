@@ -87,13 +87,11 @@ static inline void _stop_trigger(void)
 #define ECDSA_MESSAGE_SIZE          (127)
 
 extern CRYS_RND_State_t*     rndState_ptr;
-extern CRYS_RND_WorkBuff_t*  rndWorkBuff_ptr;
 
 CRYS_ECPKI_UserPrivKey_t UserPrivKey;
 CRYS_ECPKI_UserPublKey_t UserPublKey;
 
 CRYS_ECPKI_Domain_t* pDomain;
-
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
 uint32_t ecdsa_sig_size = 64;
 
