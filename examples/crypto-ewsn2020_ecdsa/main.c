@@ -154,11 +154,13 @@ void _sign_verify(void)
     cp_ecdsa_ver(r, s, hash, sizeof(hash), 0, keyA.pub);
 #endif
 }
-
 int main(void)
 {
     core_init();
-#ifdef TEST_STACK
+#ifndef TEST_STACK
+extern ctx_t first_ctx;
+// size of the precomputation table
+printf("sizeof(first_ctx.ep_pre):%i\n", sizeof(first_ctx.ep_pre));
 printf("EP_SIM: %d\n",EP_SIM);
 
 #ifdef EP_PLAIN
@@ -181,6 +183,7 @@ printf("EP_SIM: %d\n",EP_SIM);
 printf("EP_DEPTH: %d\n",EP_DEPTH);
 printf("EP_WIDTH: %d\n",EP_WIDTH);
 printf("EP_METHD: %s\n",EP_METHD);
+printf("RELIC_EP_TABLE: %i\n", RELIC_EP_TABLE);
 #endif
 
 #if !defined(COSY_TEST) && !defined(TEST_STACK)
