@@ -29,6 +29,11 @@ ifeq (1, $(HMAC))
 	CFLAGS +=-DHMAC=1
 endif
 
+ifeq (1, $(HMAC_64))
+	CFLAGS +=-DHMAC=1
+	CFLAGS +=-DHMAC_64=1
+endif
+
 ifeq (1, $(AES_CBC))
 	CFLAGS +=-DAES_CBC=1
 	CFLAGS +=-DTEST_AES_KEY=1

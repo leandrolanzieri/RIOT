@@ -12,6 +12,11 @@ ifneq (,$(HMAC))
   SRC += test_hmac_sha256.c
 endif
 
+# HMAC SHA256 test
+ifneq (,$(HMAC_64))
+  SRC += test_hmac_sha256.c
+endif
+
 # AES tests
 ifneq (,$(AES_CBC)$(AES_ECB)$(AES_CTR))
   SRC += test_aes.c
