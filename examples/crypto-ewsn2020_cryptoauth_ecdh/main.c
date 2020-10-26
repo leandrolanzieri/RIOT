@@ -32,7 +32,7 @@
 #include "ps.h"
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include "xtimer.h"
 #include "periph/gpio.h"
 
@@ -41,15 +41,6 @@ gpio_t gpio_aes_key = GPIO_PIN(1, 8);
 gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 
 #define ITERATIONS                  (50)
-#endif
-
-uint8_t UserPubKey1[ATCA_PUB_KEY_SIZE];
-uint8_t key_id_1 = 2;
-
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
-uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
-uint8_t key_id_2 = 1;
-#endif
 
 static inline void _init_trigger(void)
 {
@@ -89,9 +80,17 @@ static inline void _stop_trigger(void)
 #endif
 }
 
+uint8_t UserPubKey2[ATCA_PUB_KEY_SIZE];
+uint8_t key_id_2 = 1;
+
+#endif
+
+uint8_t UserPubKey1[ATCA_PUB_KEY_SIZE];
+uint8_t key_id_1 = 2;
+
 void _gen_keypair(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     ATCA_STATUS status;
     _start_trigger();
     status = atcab_genkey(key_id_1, UserPubKey1);
@@ -114,7 +113,7 @@ void _derive_shared_secret(void)
 {
     uint8_t SharedSecret1[ECDH_KEY_SIZE];
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     uint8_t SharedSecret2[ECDH_KEY_SIZE];
 
     ATCA_STATUS status;
@@ -144,12 +143,10 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_cryptocell_ecdh'");
 
     _init_trigger();
-
-    // xtimer_sleep(1);
 
     for (int i = 0; i < ITERATIONS; i++) {
 
@@ -162,7 +159,7 @@ int main(void)
 
         // derive and compare secrets generated on both
         _derive_shared_secret();
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 #if defined(TEST_STACK)
