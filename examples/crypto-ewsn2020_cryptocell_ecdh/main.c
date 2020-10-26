@@ -31,7 +31,7 @@
 #include "ps.h"
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include <string.h>
 #include "periph/gpio.h"
 #include "xtimer.h"
@@ -82,7 +82,7 @@ static inline void _stop_trigger(void)
 
 #endif
 
-#define SHARED_SECRET_MAX_LENGHT    (32)
+#define SHARED_SECRET_LENGTH    (32)
 
 extern CRYS_RND_State_t*     rndState_ptr;
 
@@ -92,14 +92,14 @@ CRYS_ECPKI_UserPublKey_t UserPublKey1;
 CRYS_ECPKI_Domain_t* pDomain;
 
 SaSiRndGenerateVectWorkFunc_t rndGenerateVectFunc;
-uint8_t sharedSecret1ptr[SHARED_SECRET_LENGHT];
-uint32_t sharedSecret1Size = SHARED_SECRET_LENGHT;
+uint8_t sharedSecret1ptr[SHARED_SECRET_LENGTH];
+uint32_t sharedSecret1Size = SHARED_SECRET_LENGTH;
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 CRYS_ECPKI_UserPrivKey_t UserPrivKey2;
 CRYS_ECPKI_UserPublKey_t UserPublKey2;
-uint8_t sharedSecret2ptr[SHARED_SECRET_LENGHT];
-uint32_t sharedSecret2Size = SHARED_SECRET_LENGHT;
+uint8_t sharedSecret2ptr[SHARED_SECRET_LENGTH];
+uint32_t sharedSecret2Size = SHARED_SECRET_LENGTH;
 #endif
 
 
@@ -117,7 +117,7 @@ void _gen_keypair(void)
     CRYS_ECPKI_KG_TempData_t TempECCKGBuff;
     TempECCKGBuffptr = (CRYS_ECPKI_KG_TempData_t*)&TempECCKGBuff;
     CRYS_ECPKI_KG_FipsContext_t FipsBuff;
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     int ret = 0;
 
     _start_trigger();
@@ -151,7 +151,7 @@ void _derive_shared_secret(void)
     CRYS_ECDH_TempData_t TempDHBuff;
     TempDHBuffptr = (CRYS_ECDH_TempData_t*)&TempDHBuff;
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     int ret = 0;
     /* Generating the Secret for user 1*/
     /*---------------------------------*/
@@ -177,7 +177,7 @@ void _derive_shared_secret(void)
         return;
     }
     // generated secret should be the same on both
-    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_LENGHT)) {
+    if (memcmp(sharedSecret1ptr, sharedSecret2ptr, SHARED_SECRET_LENGTH)) {
         puts("ERROR");
     }
     else {
@@ -192,7 +192,7 @@ void _derive_shared_secret(void)
 
 int main(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh_cryptocell'");
     _init_trigger();
 
@@ -210,7 +210,7 @@ int main(void)
 
         // derive and compare secrets generated on both
         _derive_shared_secret();
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 
