@@ -69,6 +69,10 @@ ifneq (, $(TEST_ENERGY%))
 endif
 
 # this is only used by gecko board to disable board init stuff that consumes much current
+ifeq (1, $(USE_XTIMER))
+	CFLAGS += -DUSE_XTIMER
+endif
+
 ifneq (, $(TEST_ENERGY))
 	CFLAGS+=-DTEST_ENERGY=1
 endif

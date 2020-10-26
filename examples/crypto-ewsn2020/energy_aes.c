@@ -28,7 +28,7 @@
 
 #include "periph/gpio.h"
 
-#if !defined(TEST_STACK) && !defined(TEST_MEM)
+#if (!defined(TEST_STACK) && !defined(TEST_MEM)) || defined(USE_XTIMER)
 #include "xtimer.h"
 #else
 #include "ps.h"
@@ -272,7 +272,10 @@ void aes_ecb_dec_test_energy(gpio_t start, gpio_t stop)
 
 #endif /* TEST_ENERGY_AES_ECB */
 
+#ifndef USE_XTIMER
 extern gpio_t gpio_sync_pin;
+#endif
+
 void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size_t len_exp)
 {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
@@ -284,16 +287,18 @@ void exp_frame(gpio_t start, gpio_t stop, uint8_t *data, uint8_t *data_exp, size
 
     // initial state of start pin is high
     gpio_set(start);
+#ifndef USE_XTIMER
     gpio_init(gpio_sync_pin, GPIO_IN);
-
+#else
     // delay to start current measuremnt tool
-    // xtimer_sleep(5); // old before measurement sync pin
-
+    xtimer_sleep(5); // old before measurement sync pin
+#endif
     for (int i=0; i < TEST_ENERGY_ITER; i++)
     {
+#ifndef USE_XTIMER
         while(gpio_read(gpio_sync_pin)) {};
         while(!gpio_read(gpio_sync_pin)) {};
-
+#endif
         // start measurement round
         gpio_clear(start);
 

@@ -27,7 +27,7 @@
 #include "board.h"
 #include "periph/gpio.h"
 
-#if !defined(TEST_STACK) && !defined(TEST_MEM)
+#if (!defined(TEST_STACK) && !defined(TEST_MEM)) || defined(USE_XTIMER)
 #include "xtimer.h"
 #else
 #include "ps.h"
@@ -75,22 +75,27 @@ static uint8_t HMAC_KEY[] = {
     };
 #endif /* INPUT_512 */
 #endif
+
+#ifndef USE_XTIMER
 extern gpio_t gpio_sync_pin;
+#endif
     void hmac_sha256_test_energy(gpio_t start, gpio_t stop)
     {
 #if !defined(TEST_STACK) && !defined(TEST_MEM)
         // initial state of start pin is high
         gpio_set(start);
+#ifndef USE_XTIMER
         gpio_init(gpio_sync_pin, GPIO_IN);
-
+#else
         // delay to start current measuremnt tool
-        // xtimer_sleep(5);
-
+        xtimer_sleep(5);
+#endif
         for (int i=0; i < TEST_ENERGY_ITER; i++)
         {
+#ifndef USE_XTIMER
             while(gpio_read(gpio_sync_pin)) {};
             while(!gpio_read(gpio_sync_pin)) {};
-
+#endif
             // start measurement round
             gpio_clear(start);
 #endif
