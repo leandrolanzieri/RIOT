@@ -24,7 +24,6 @@
 #include "cryptocell_incl/sns_silib.h"
 #include "cryptocell_incl/crys_ecpki_build.h"
 #include "cryptocell_incl/crys_ecpki_ecdsa.h"
-// #include "cryptocell_incl/crys_ecpki_dh.h"
 #include "cryptocell_incl/crys_ecpki_kg.h"
 #include "cryptocell_incl/crys_ecpki_domain.h"
 
