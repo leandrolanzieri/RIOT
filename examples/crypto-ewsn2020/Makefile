@@ -44,11 +44,6 @@ ifeq (1, $(AES_ECB))
 	CFLAGS +=-DTEST_AES_KEY=1
 endif
 
-ifeq (1, $(AES_CTR))
-	CFLAGS +=-DAES_CTR=1
-	CFLAGS +=-DTEST_AES_KEY=1
-endif
-
 ifeq (1, $(TEST_AES_KEY))
 	CFLAGS +=-DTEST_AES_KEY=1
 endif
@@ -118,12 +113,6 @@ ifeq (1, $(TEST_ENERGY_AES_ECB_DEC))
 endif
 
 ifeq (pba-d-01-kw2x, $(BOARD))
-	# Kinetis Hardware
-	CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
-	USEMODULE += lib_mmcau
-endif
-
-ifeq (frdm-k64f, $(BOARD))
 	# Kinetis Hardware
 	CFLAGS += -DFREESCALE_MMCAU -Wno-unused-function
 	USEMODULE += lib_mmcau

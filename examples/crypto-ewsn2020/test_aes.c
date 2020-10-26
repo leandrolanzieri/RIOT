@@ -168,7 +168,6 @@
 
             if (memcmp(data, CBC_CIPHER, CBC_CIPHER_LEN)) {
                 printf("AES CBC encryption wrong cipher\n");
-                // return;
             }
 
             gpio_set(active_gpio);
@@ -191,110 +190,6 @@
         printf("AES CBC encrypt/decrypt done\n");
     }
 #endif /* AES_CBC */
-
-#ifdef AES_CTR
-    static uint8_t CTR_COUNTER[16] = {
-        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7,
-        0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
-    };
-    static uint8_t CTR_COUNTER_LEN = 16;
-
-#ifndef INPUT_512
-    static uint8_t __attribute__((aligned)) CTR_PLAIN[] = {
-        0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96,
-        0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,
-        0xae, 0x2d, 0x8a, 0x57, 0x1e, 0x03, 0xac, 0x9c,
-        0x9e, 0xb7, 0x6f, 0xac, 0x45, 0xaf, 0x8e, 0x51
-    };
-    static uint8_t CTR_PLAIN_LEN = 32;
-
-    static uint8_t CTR_CIPHER[] = {
-        0x87, 0x4d, 0x61, 0x91, 0xb6, 0x20, 0xe3, 0x26,
-        0x1b, 0xef, 0x68, 0x64, 0x99, 0x0d, 0xb6, 0xce,
-        0x98, 0x06, 0xf6, 0x6b, 0x79, 0x70, 0xfd, 0xff,
-        0x86, 0x17, 0x18, 0x7b, 0xb9, 0xff, 0xfd, 0xff
-    };
-    static uint8_t CTR_CIPHER_LEN = 32;
-
-#endif /* INPUT_512 */
-
-    void aes_ctr_test(gpio_t active_gpio)
-    {
-        int ret;
-        cipher_context_t ctx;
-        uint8_t ctr[CTR_COUNTER_LEN];
-        memcpy(ctr, CTR_COUNTER, CTR_COUNTER_LEN);
-#ifdef INPUT_512
-        uint8_t data_enc[PLAIN_LEN];
-        uint8_t data_dec[PLAIN_LEN];
-        memset(data_enc, 0, PLAIN_LEN);
-        memset(data_dec, 0, PLAIN_LEN);
-#else
-        uint8_t data[CTR_PLAIN_LEN];
-        memset(data, 0, CTR_PLAIN_LEN);
-#endif /* INPUT_512 */
-
-        gpio_set(active_gpio);
-        ret = aes_init(&ctx, KEY, KEY_LEN);
-        gpio_clear(active_gpio);
-        if (ret < 1) {
-            printf("AES CTR Init failed: %d\n", ret);
-            return;
-        }
-
-#ifdef INPUT_512
-        gpio_set(active_gpio);
-        ret = aes_encrypt_ctr(&ctx, ctr, 0, CTR_PLAIN, CTR_PLAIN_LEN, data_enc);
-        gpio_clear(active_gpio);
-
-        if (ret < 0) {
-            printf("AES CTR Enryption failed: %d\n", ret);
-            return;
-        }
-        memcpy(ctr, CTR_COUNTER, CTR_COUNTER_LEN);
-
-        gpio_set(active_gpio);
-        ret = aes_decrypt_ctr(&ctx, ctr, 0, data_enc, CTR_CIPHER_LEN, data_dec);
-        gpio_clear(active_gpio);
-
-        if (ret < 0) {
-            printf("AES CTR Decryption failed: %d\n", ret);
-            return;
-        }
-#else
-        gpio_set(active_gpio);
-        ret = aes_encrypt_ctr(&ctx, ctr, 0, CTR_PLAIN, CTR_PLAIN_LEN, data);
-        gpio_clear(active_gpio);
-
-        if (ret < 0) {
-            printf("AES CTR Enryption failed: %d\n", ret);
-            return;
-        }
-
-        if (memcmp(data, CTR_CIPHER, CTR_CIPHER_LEN)) {
-            printf("AES CTR encryption wrong cipher\n");
-            return;
-        }
-
-        memset(data, 0, CTR_CIPHER_LEN);
-        memcpy(ctr, CTR_COUNTER, CTR_COUNTER_LEN);
-
-        gpio_set(active_gpio);
-        ret = aes_decrypt_ctr(&ctx, ctr, 0, CTR_CIPHER, CTR_CIPHER_LEN, data);
-        gpio_clear(active_gpio);
-
-        if (ret < 0) {
-            printf("AES CTR Decryption failed: %d\n", ret);
-            return;
-        }
-        if (memcmp(data, CTR_PLAIN, CTR_CIPHER_LEN)) {
-            printf("AES CTR decryption wrong plain text\n");
-            return;
-        }
-#endif /* INPUT_512 */
-        printf("AES CTR encrypt/decrypt done\n");
-    }
-#endif /* AES_CTR */
 
 #ifdef AES_ECB
 
@@ -423,8 +318,6 @@
                 printf("AES ECB Enryption failed: %d\n", ret);
                 return;
             }
-
-            // memset(data, 0, ECB_CIPHER_LEN);
 
             gpio_set(active_gpio);
             ret = aes_decrypt_ecb(&ctx, ECB_CIPHER, ECB_CIPHER_LEN, data);

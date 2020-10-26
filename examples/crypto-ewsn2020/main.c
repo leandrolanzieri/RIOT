@@ -46,8 +46,6 @@ int main(void)
     aes_cbc_test(active_gpio);
 #elif AES_ECB
     aes_ecb_test(active_gpio);
-#elif AES_CTR
-    aes_ctr_test(active_gpio);
 #endif
 
 #if TEST_ENERGY_SHA256
