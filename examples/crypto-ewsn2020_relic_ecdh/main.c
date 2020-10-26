@@ -20,7 +20,7 @@
 
 #include <stdio.h>
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include "xtimer.h"
 #include "periph/gpio.h"
 
@@ -35,7 +35,7 @@ gpio_t gpio_sync_pin = GPIO_PIN(1, 6);
 
 #include "relic.h"
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #define ITERATIONS                  (50)
 #endif
 
@@ -47,9 +47,8 @@ typedef struct
 
 static key_struct_t keyA;
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 static key_struct_t keyB;
-#endif
 
 static inline void _init_trigger(void)
 {
@@ -88,7 +87,7 @@ static inline void _stop_trigger(void)
     gpio_clear(active_gpio);
 #endif
 }
-
+#endif
 void _init_mem(key_struct_t *key)
 {
     // set up memory
@@ -101,7 +100,7 @@ void _init_mem(key_struct_t *key)
 
 void _gen_keypair(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     // generate pubkey pair A
     _start_trigger();
     int ret = cp_ecdh_gen(keyA.priv, keyA.pub);
@@ -126,7 +125,7 @@ void _derive_shared_secret(void)
 {
     uint8_t sharedKeyA[MD_LEN];
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     uint8_t sharedKeyB[MD_LEN];
 
     // generate shared secred on A, based on priv key B
@@ -161,7 +160,7 @@ int main(void)
 {
     core_init();
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdh'");
 
     _init_trigger();
@@ -187,7 +186,7 @@ int main(void)
         // derive and compare secrets generated on both
         _derive_shared_secret();
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 
