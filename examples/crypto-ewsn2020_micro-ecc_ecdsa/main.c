@@ -29,7 +29,7 @@
 #include "ps.h"
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include "periph/gpio.h"
 #include "xtimer.h"
 
@@ -92,7 +92,7 @@ uint8_t userPubKey1[PUB_KEY_SIZE];
 
 void _init_curve(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     _start_trigger();
     curve = (struct uECC_Curve_t*)uECC_secp256r1();
     _stop_trigger();
@@ -103,7 +103,7 @@ void _init_curve(void)
 
 void _gen_keypair(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     int ret;
     _start_trigger();
     ret = uECC_make_key(userPubKey1, userPrivKey1, curve);
@@ -123,7 +123,7 @@ void _sign_verify(void)
     uint8_t hash[SHA256_DIGEST_SIZE];
     uint8_t signature[PUB_KEY_SIZE];
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     int ret;
     _start_trigger();
     sha256(msg, ECDSA_MESSAGE_SIZE, hash);
@@ -155,7 +155,7 @@ void _sign_verify(void)
 
 int main(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa uECC'");
 
     _init_trigger();
@@ -170,7 +170,7 @@ int main(void)
 
         // derive and compare secrets generated on both
         _sign_verify();
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 #ifdef TEST_STACK
