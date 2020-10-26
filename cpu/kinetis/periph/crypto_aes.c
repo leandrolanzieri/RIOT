@@ -31,10 +31,6 @@
 #include "vendor/MKW21D5.h"
 #endif /* BOARD_PBA_D_01_KW2X */
 
-#ifdef BOARD_FRDM_K64F
-#include "vendor/MK64F12.h"
-#endif /* BOARD_FRDM_K64F */
-
 #include "crypto/aes.h"
 #include "crypto/ciphers.h"
 #include "aes_hwctx.h"
@@ -46,8 +42,9 @@
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
+/* Import gpio definition to measure AES key expansion separately */
 #if TEST_AES_KEY
-#include "crypto_runtime.h"
+extern gpio_t gpio_aes_key;
 #endif
 
 /**
