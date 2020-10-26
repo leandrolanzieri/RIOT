@@ -30,7 +30,7 @@
 #include "ps.h"
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include "periph/gpio.h"
 #include "xtimer.h"
 
@@ -88,7 +88,7 @@ uint8_t key_id = 1; /* This is the number of the slot used */
 
 void _gen_keypair(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     ATCA_STATUS status;
     _start_trigger();
     status = atcab_genkey(key_id, UserPubKey);
@@ -111,7 +111,7 @@ void _sign_verify(void)
     uint8_t msg[ECDSA_MESSAGE_SIZE] = { 0x0b };
     uint8_t hash[ATCA_SHA_DIGEST_SIZE];
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     ATCA_STATUS status;
     _start_trigger();
     atcab_hw_sha2_256(msg, ECDSA_MESSAGE_SIZE, hash);
@@ -147,12 +147,10 @@ void _sign_verify(void)
 
 int main(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa'");
 
     _init_trigger();
-
-    // xtimer_sleep(1);
 
     for (int i = 0; i < ITERATIONS; i++) {
         _start_trigger();
@@ -164,7 +162,7 @@ int main(void)
 
         // derive and compare secrets generated on both
         _sign_verify();
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 
