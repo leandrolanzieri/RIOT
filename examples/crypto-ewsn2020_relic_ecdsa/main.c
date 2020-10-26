@@ -24,7 +24,7 @@
 #include "ps.h"
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #include "periph/gpio.h"
 #include "xtimer.h"
 
@@ -73,7 +73,7 @@ static inline void _stop_trigger(void)
 
 #include "relic.h"
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
 #define ITERATIONS          (50)
 #endif
 
@@ -101,7 +101,7 @@ void _init_mem(key_struct_t *key)
 
 void _gen_keypair(void)
 {
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     // generate pubkey pair A
     _start_trigger();
     int ret = cp_ecdsa_gen(keyA.priv, keyA.pub);
@@ -124,7 +124,7 @@ void _sign_verify(void)
     bn_new(r);
     bn_new(s);
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     int ret;
     _start_trigger();
     md_map_sh256(hash, msg, ECDSA_MESSAGE_SIZE);
@@ -186,7 +186,7 @@ printf("EP_METHD: %s\n",EP_METHD);
 printf("RELIC_EP_TABLE: %i\n", RELIC_EP_TABLE);
 #endif
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     puts("'crypto-ewsn2020_ecdsa'");
     _init_trigger();
 
@@ -204,7 +204,7 @@ printf("RELIC_EP_TABLE: %i\n", RELIC_EP_TABLE);
         // sign data and verify with public ley
         _sign_verify();
 
-#if !defined(COSY_TEST) && !defined(TEST_STACK)
+#if !defined(TEST_MEM) && !defined(TEST_STACK)
     }
 #endif
 
