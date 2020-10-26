@@ -36,8 +36,6 @@
 
 #if TEST_AES_KEY
 extern gpio_t gpio_aes_key;
-// // fixme
-// #include "crypto_runtime.h"
 #endif
 
 /*
