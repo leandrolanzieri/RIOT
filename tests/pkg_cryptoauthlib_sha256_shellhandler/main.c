@@ -11,9 +11,9 @@
  * @{
  *
  * @file
- * @brief       This test was written to compare the runtime of the RIOT software
- *              implementation and the CryptoAuth hardware implementation of SHA-256.
+ * @brief       Example to measure processing time of ATECC608A SHA256 Operations with the shellhandler
  *
+ * @author      Peter Kietzmann <peter.kietzmann@haw-hamburg.de>
  * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
  *
  * @}

@@ -3,11 +3,6 @@
 On this branch there are several examples to support the paper about cryptographic hardware acceleration in RIOT submitted for the EWSN2021.
 See specific application readme for more information.
 
-###  Relevant Branches:
-**RIOT**:
-- Main: https://github.com/Einhornhool/RIOT/tree/crypto-ewsn2020
-- Cryptoauth: https://github.com/Einhornhool/RIOT/tree/cryptoauthlib-extract-wake-sleep
-
 ### Relevant Applications
 **Main branch**:
 - examples/crypto-ewsn2020
@@ -19,8 +14,6 @@ See specific application readme for more information.
 - examples/crypto-ewsn2020_cryptocell_ecdsa
 - examples/crypto-ewsn2020_micro-ecc_ecdh
 - examples/crypto-ewsn2020_micro-ecc_ecdsa
-
-**Cryptoauth Extract Wake Sleep**:
 - examples/crypto-ewsn2020-cryptoauth_config-lock
 - tests/pkg_cryptoauthlib_compare_sha256
 

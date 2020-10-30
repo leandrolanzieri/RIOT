@@ -1,7 +1,28 @@
+/*
+ * Copyright (C) 2020 HAW Hamburg
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     cpu_efm32
+ * @{
+ *
+ * @file
+ * @brief       Implementation of some management functions for the efm32 Crypto module
+ *
+ * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
+ *
+ * @}
+ */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include "crypto_util.h"
 #include "mutex.h"
+
 #if CPU_MODEL_EFM32PG12B500F1024GL125
 static int acqu_count = 0;
 static bool crypto_lock_initialized = false;

@@ -14,7 +14,7 @@
  * @brief       Application to measure and compare crypto runtime
  *
  * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
- *
+ * @author      Peter Kietzmann <peter.kietzmann@haw-hamburg.de>
  * @}
  */
 

@@ -13,7 +13,7 @@
  * @file
  * @brief       this is an ecdsa test application for cryptocell
  *
- * @author
+ * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
  *
  * @}
  */

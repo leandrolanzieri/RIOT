@@ -12,9 +12,9 @@
  * @{
  *
  * @file
- * @brief       this is an ecdh test application
+ * @brief       Is an application to configure and lock CryptoAuth Device zones
  *
- * @author      PeterKietzmann <peter.kietzmann@haw-hamburg.de>
+ * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
  *
  * @}
  */

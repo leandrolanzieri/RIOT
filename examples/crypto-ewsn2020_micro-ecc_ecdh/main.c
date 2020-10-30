@@ -13,7 +13,7 @@
  * @file
  * @brief       this is an ecdh test application
  *
- * @author      PeterKietzmann <peter.kietzmann@haw-hamburg.de>
+ * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
  *
  * @}
  */

@@ -15,6 +15,7 @@
  *              implementation and the CryptoAuth hardware implementation of SHA-256.
  *
  * @author      Lena Boeckmann <lena.boeckmann@haw-hamburg.de>
+ * @author      Peter Kietzmann <peter.kietzmann@haw-hamburg.de>
  *
  * @}
  */
