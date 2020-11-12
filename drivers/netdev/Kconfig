@@ -1,0 +1,76 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Network Devices API (Netdev)"
+    depends on TEST_KCONFIG
+
+config MODULE_NETDEV_DEFAULT
+    bool "Enable the platform default network device"
+
+menuconfig MODULE_NETDEV
+    bool "Network device driver API"
+    depends on MODULE_EUI_PROVIDER
+    default y if MODULE_NETDEV_DEFAULT
+    help
+        This interface provides a uniform API for network stacks to interact
+        with network device drivers. This interface is designed in a way, that
+        it is completely agnostic to the used network stack. This way, device
+        drivers for network devices (e.g. IEEE802.15.4 radios,
+        Ethernet devices, ...) have to implemented once and can be used with any
+        supported network stack in RIOT.
+
+if MODULE_NETDEV
+
+config MODULE_NETDEV_REGISTER
+    bool "Register of network devices"
+    default y
+    # TODO: disable when only one interface is there
+
+config MODULE_NETDEV_ETH
+    bool "Ethernet drivers"
+    default y if HAVE_NETDEV_ETH
+    help
+        Common functionalities for Ethernet drivers.
+
+config MODULE_NETDEV_IEEE802154
+    bool "IEEE 802.15.4 drivers"
+    select MODULE_RANDOM
+    select MODULE_IEEE802154
+    default y if HAVE_NETDEV_IEEE802154
+    help
+        Common functionalities for IEEE 802.15.4 drivers.
+
+config MODULE_NETDEV_IEEE802154_OQPSK
+    bool "Support OQPSK modulation"
+    depends on MODULE_NETDEV_IEEE802154
+    default y if HAVE_NETDEV_IEEE802154_OQPSK
+
+config MODULE_NETDEV_LAYER
+    bool "Netdev Layer"
+    help
+        Netdev layer helper functions.
+
+endif # MODULE_NETDEV
+
+endmenu # Network Devices API (Netdev)
+
+## Netdev features
+config HAVE_NETDEV_ETH
+    bool
+    help
+        Indicates that there is an Ethernet device present.
+
+config HAVE_NETDEV_IEEE802154
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present.
+
+config HAVE_NETDEV_IEEE802154_OQPSK
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present, with supports
+        OQPSK modulation.
