@@ -1,0 +1,87 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menuconfig MODULE_RANDOM
+    bool "Random number generation"
+    depends on TEST_KCONFIG
+
+if MODULE_RANDOM
+
+config MODULE_AUTO_INIT_RANDOM
+    bool "Auto initialize the Random subsystem"
+    depends on MODULE_AUTO_INIT
+    default y
+
+menuconfig MODULE_PRNG
+    bool "Pseudo-random number generator API"
+    default y
+    help
+        Access different pseudo-random number generators via the PRNG interface.
+
+choice
+    bool "Random API implementation"
+    depends on MODULE_PRNG
+    default MODULE_PRNG_HWRNG if HAS_PERIPH_HWRNG
+    default MODULE_PRNG_TINYMT32
+
+config MODULE_PRNG_TINYMT32
+    bool "TinyMT32"
+    select MODULE_TINYMT32
+    help
+        Tiny Mersenne Twister only 127 bit internal state.
+
+config MODULE_PRNG_FORTUNA
+    bool "Fortuna"
+    depends on MODULE_HASHES
+    depends on MODULE_CRYPTO_AES
+    select MODULE_FORTUNA
+    select MODULE_XTIMER
+
+config MODULE_PRNG_HWRNG
+    bool "Hardware random number generator"
+    depends on HAS_PERIPH_HWRNG
+    select MODULE_PERIPH_HWRNG
+    select HAVE_CRYPTO_SECURE_PRNG
+
+config MODULE_PRNG_MARSENNE
+    bool "Marsenne"
+
+config MODULE_PRNG_MINSTD
+    bool "Minimal Standard"
+    help
+        Simple Park & Miller "minimal standard" PRNG.
+
+config MODULE_PRNG_MUSL_LCG
+    bool "Musl C library"
+
+config MODULE_PRNG_SHA1PRNG
+    bool "SHA-1"
+    depends on MODULE_HASHES
+    select HAVE_CRYPTO_SECURE_PRNG
+
+config MODULE_PRNG_SHA256PRNG
+    bool "SHA-256"
+    depends on MODULE_HASHES
+    select HAVE_CRYPTO_SECURE_PRNG
+
+endchoice
+
+config MODULE_PRNG_SHAXPRNG
+    bool
+    help
+        Common code for SHA-1 and SHA-256 PRNG implementations.
+
+rsource "fortuna/Kconfig"
+rsource "tinymt32/Kconfig"
+
+endif # MODULE_RANDOM
+
+config HAVE_CRYPTO_SECURE_PRNG
+    bool
+    help
+        Indicates that the current PRNG implementation is cryptographically
+        secure.
