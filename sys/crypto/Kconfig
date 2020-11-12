@@ -1,0 +1,51 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Cryptography"
+
+config MODULE_CRYPTO
+    bool "General cryptography support"
+    depends on TEST_KCONFIG
+    help
+        RIOT provides a collection of block cipher ciphers, different operation
+        modes and cryptographic hash algorithms.
+
+choice
+    bool "Block cipher API"
+    optional
+
+menuconfig MODULE_CRYPTO_AES
+    bool "AES-128"
+    select MODULE_CRYPTO
+
+if MODULE_CRYPTO_AES
+
+config MODULE_CRYPTO_AES_PRECALCULATED
+    bool "Use pre-calculated T-tables"
+    help
+        This improved speed at the expense of increased program size.
+        The default is to calculate most tables on the fly.
+
+config MODULE_CRYPTO_AES_UNROLL
+    bool "Manually-unrolled loops"
+
+endif # MODULE_CRYPTO_AES
+
+config MODULE_CRYPTO_3DES
+    bool "3DES"
+    select MODULE_CRYPTO
+    help
+        This cipher is deprecated.
+
+endchoice
+
+comment "3DES is deprecated. Consider using AES-128"
+    depends on MODULE_CRYPTO_3DES
+
+rsource "modes/Kconfig"
+
+endmenu # Cryptography
