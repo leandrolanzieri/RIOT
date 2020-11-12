@@ -17,3 +17,4 @@ config BOARD_COMMON_IOTLAB
 
     # Put other features for this board (in alphabetical order)
     select HAS_RIOTBOOT
+    select HAVE_AT86RF231

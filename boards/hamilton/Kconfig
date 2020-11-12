@@ -20,3 +20,4 @@ config BOARD_HAMILTON
     select HAS_PERIPH_RTT
     select HAS_PERIPH_SPI
     select HAS_PERIPH_TIMER
+    select HAVE_AT86RF231

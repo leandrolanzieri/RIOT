@@ -1,0 +1,122 @@
+# Copyright (c) 2020 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menuconfig MODULE_AT86RF2XX
+    bool "AT86RF2XX IEEE 802.15.4 compatible radios"
+    depends on MODULE_NETDEV_IEEE802154
+    depends on TEST_KCONFIG
+    select MODULE_IEEE802154
+    select MODULE_XTIMER
+    select HAVE_NETDEV_IEEE802154_OQPSK
+    default y if MODULE_NETDEV_DEFAULT
+
+if MODULE_AT86RF2XX
+
+choice
+    bool "Device model"
+    default MODULE_AT86RF212 if HAVE_AT86RF212
+    default MODULE_AT86RF212B if HAVE_AT86RF212B
+    default MODULE_AT86RF233 if HAVE_AT86RF233
+    default MODULE_AT86RFA1 if HAVE_AT86RFA1
+    default MODULE_AT86RFR2 if HAVE_AT86RFR2
+    default MODULE_AT86RF231
+
+config MODULE_AT86RF212
+    bool "AT86RF212"
+    depends on HAS_PERIPH_GPIO
+    depends on HAS_PERIPH_GPIO_IRQ
+    depends on HAS_PERIPH_SPI
+    select MODULE_PERIPH_GPIO
+    select MODULE_PERIPH_GPIO_IRQ
+    select MODULE_PERIPH_SPI
+
+config MODULE_AT86RF212B
+    bool "AT86RF212B"
+    depends on HAS_PERIPH_GPIO
+    depends on HAS_PERIPH_GPIO_IRQ
+    depends on HAS_PERIPH_SPI
+    select MODULE_PERIPH_GPIO
+    select MODULE_PERIPH_GPIO_IRQ
+    select MODULE_PERIPH_SPI
+
+config MODULE_AT86RF231
+    bool "AT86RF231"
+    depends on HAS_PERIPH_GPIO
+    depends on HAS_PERIPH_GPIO_IRQ
+    depends on HAS_PERIPH_SPI
+    select MODULE_PERIPH_GPIO
+    select MODULE_PERIPH_GPIO_IRQ
+    select MODULE_PERIPH_SPI
+
+config MODULE_AT86RF233
+    bool "AT86RF233"
+    depends on HAS_PERIPH_GPIO
+    depends on HAS_PERIPH_GPIO_IRQ
+    depends on HAS_PERIPH_SPI
+    select MODULE_PERIPH_GPIO
+    select MODULE_PERIPH_GPIO_IRQ
+    select MODULE_PERIPH_SPI
+
+config MODULE_AT86RFA1
+    bool "AT86RFA1"
+
+config MODULE_AT86RFR2
+    bool "AT86RFR2"
+
+endchoice
+
+config MODULE_AT86RF2XX_AES_SPI
+    bool "at86rf2xx AES SPI security"
+
+config MODULE_AUTO_INIT_AT86RF2XX
+    bool "Auto initialize AT86RF2XX driver"
+    depends on MODULE_AUTO_INIT
+    default y
+
+endif # MODULE_AT86RF2XX
+
+# features to indicate that the hardware is present
+config HAVE_AT86RF2XX
+    bool
+    help
+        Indicates that an AT86RF2XX radio is present.
+
+config HAVE_AT86RF212
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an AT86RF212 radio is present.
+
+config HAVE_AT86RF212B
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an radio AT86RF212B is present.
+
+config HAVE_AT86RF231
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an AT86RF231 radio is present.
+
+config HAVE_AT86RF233
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an AT86RF233 radio is present.
+
+config HAVE_AT86RFA1
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an AT86RFA1 radio is present.
+
+config HAVE_AT86RFR2
+    bool
+    select HAVE_AT86RF2XX
+    help
+        Indicates that an AT86RFR2 radio is present.

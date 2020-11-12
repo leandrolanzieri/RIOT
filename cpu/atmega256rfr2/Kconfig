@@ -8,6 +8,7 @@
 config CPU_FAM_ATMEGA256RF
     bool
     select CPU_COMMON_ATMEGA
+    select HAVE_AT86RFR2
 
 ## CPU Models
 config CPU_MODEL_ATMEGA256RFR2
