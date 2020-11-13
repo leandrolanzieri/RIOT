@@ -1,0 +1,22 @@
+# enable netdev IEEE 802.15.4
+CONFIG_MODULE_NETDEV=y
+CONFIG_MODULE_NETDEV_IEEE802154=y
+
+# the driver needs an EUI provider
+CONFIG_MODULE_EUI_PROVIDER=y
+
+# enable the radio module
+CONFIG_MODULE_AT86RF2XX=y
+
+# disable the driver auto initialization
+CONFIG_MODULE_AUTO_INIT_AT86RF2XX=n
+
+# object dumpt to print packets
+CONFIG_MODULE_OD=y
+
+# shell and commands
+CONFIG_MODULE_SHELL=y
+CONFIG_MODULE_SHELL_COMMANDS=y
+
+# ps command
+CONFIG_MODULE_PS=y
