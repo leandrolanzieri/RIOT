@@ -36,7 +36,7 @@ config MODULE_NETDEV_ETH
     help
         Common functionalities for Ethernet drivers.
 
-config MODULE_NETDEV_IEEE802154
+menuconfig MODULE_NETDEV_IEEE802154
     bool "IEEE 802.15.4 drivers"
     select MODULE_RANDOM
     select MODULE_IEEE802154
@@ -44,10 +44,25 @@ config MODULE_NETDEV_IEEE802154
     help
         Common functionalities for IEEE 802.15.4 drivers.
 
+if MODULE_NETDEV_IEEE802154
+
 config MODULE_NETDEV_IEEE802154_OQPSK
-    bool "Support OQPSK modulation"
-    depends on MODULE_NETDEV_IEEE802154
+    bool "Support OQPSK PHY"
     default y if HAVE_NETDEV_IEEE802154_OQPSK
+
+config MODULE_NETDEV_IEEE802154_MR_OQPSK
+    bool "Support MR-OQPSK PHY"
+    default y if HAVE_NETDEV_IEEE802154_MR_OQPSK
+
+config MODULE_NETDEV_IEEE802154_MR_OFDM
+    bool "Support MR-OFDM PHY"
+    default y if HAVE_NETDEV_IEEE802154_MR_OFDM
+
+config MODULE_NETDEV_IEEE802154_MR_FSK
+    bool "Support MR-FSK PHY"
+    default y if HAVE_NETDEV_IEEE802154_MR_FSK
+
+endif # MODULE_NETDEV _IEEE802154
 
 config MODULE_NETDEV_LAYER
     bool "Netdev Layer"
@@ -72,5 +87,29 @@ config HAVE_NETDEV_IEEE802154
 config HAVE_NETDEV_IEEE802154_OQPSK
     bool
     help
-        Indicates that there is an IEEE 802.15.4 device present, with supports
+        Indicates that there is an IEEE 802.15.4 device present, which supports
         OQPSK modulation.
+
+config HAVE_NETDEV_IEEE802154_MR_OQPSK
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present, which has
+        Multi-Rate and Multi-Regional OQPSK PHY.
+
+config HAVE_NETDEV_IEEE802154_MR_OFDM
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present, which has
+        Multi-Rate and Multi-Regional OFDM PHY.
+
+config HAVE_NETDEV_IEEE802154_MR_FSK
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present, which has
+        Multi-Rate and Multi-Regional FSK PHY.
+
+config HAVE_NETDEV_IEEE802154_MULTIMODE
+    bool
+    help
+        Indicates that there is an IEEE 802.15.4 device present, which supports
+        multiple PHYs.
