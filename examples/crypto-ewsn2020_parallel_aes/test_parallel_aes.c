@@ -120,8 +120,6 @@ void aes_ecb_parallel_test(gpio_t *thread1_pin, gpio_t *thread2_pin)
     info1.pin = thread1_pin;
     info2.pin = thread2_pin;
 
-    crypto_init();
-
     thread_create(aes_ecb_thread_1_stack, sizeof(aes_ecb_thread_1_stack),
                   THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST,
                   aes_ecb_thread, &info1, "AES ECB 1");
