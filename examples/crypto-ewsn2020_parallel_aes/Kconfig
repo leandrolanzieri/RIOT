@@ -1,0 +1,9 @@
+config APPLICATION
+    bool
+    default y
+    imply MOD_PERIPH_I2C_RECONFIGURE
+
+config INPUT_512
+    bool "Encrypt a block of 512 bytes"
+    help
+        The default is to use 32 bytes.
