@@ -49,24 +49,21 @@ int aes_encrypt_ecb(cipher_context_t *context, const uint8_t *input,
 {
     crypto_device_t *crypto = crypto_acquire_dev();
 
+#if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
     gpio_set(crypto->pin);
+    /* set the key value */
+    uint32_t key[AES_SIZE_WORDS];
+    /* as we are using AES-128, 16 bytes are copied */
+    memcpy(key, context->context, 16);
 
-    if (IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)) {
-        /* set the key value */
-        uint32_t key[AES_SIZE_WORDS];
-        /* as we are using AES-128, 16 bytes are copied */
-        memcpy(key, context->context, 16);
-
-        for (unsigned i = 0; i < AES_SIZE_WORDS; i++) {
-            crypto->dev->KEYBUF = key[i];
-        }
-        crypto_aes_128_encrypt(crypto, input, output, length);
+    for (unsigned i = 0; i < AES_SIZE_WORDS; i++) {
+        crypto->dev->KEYBUF = key[i];
     }
-    else {
-        CRYPTO_AES_ECB128(crypto->dev, output, input, length, context->context, true);
-    }
-
+    crypto_aes_128_encrypt(crypto, input, output, length);
     gpio_clear(crypto->pin);
+#else
+    CRYPTO_AES_ECB128(crypto->dev, output, input, length, context->context, true);
+#endif /* CONFIG_EFM32_AES_ECB_NONBLOCKING */
 
     crypto_release_dev(crypto);
     return length;

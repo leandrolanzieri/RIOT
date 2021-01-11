@@ -39,35 +39,41 @@ static crypto_device_t crypto_devs[CRYPTO_COUNT] =
         {
             CRYPTO0,
             cmuClock_CRYPTO0,
-            CRYPTO0_IRQn,
             MUTEX_INIT,
+        #if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
+            CRYPTO0_IRQn,
             GPIO_PIN(0, 6),
             1,
             0,
             CRYPTO_CTX_INIT
+        #endif
         },
     #elif defined(CRYPTO)
         {
             CRYPTO,
             cmuClock_CRYPTO,
-            CRYPTO_IRQn,
             MUTEX_INIT,
+        #if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
+            CRYPTO_IRQn,
             GPIO_UNDEF,
             3,
             2,
             CRYPTO_CTX_INIT
+        #endif
         },
     #endif
     #if defined(CRYPTO1)
         {
             CRYPTO1,
             cmuClock_CRYPTO1,
-            CRYPTO1_IRQn,
             MUTEX_INIT,
+        #if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
+            CRYPTO1_IRQn,
             GPIO_PIN(0, 7),
             3,
             2,
             CRYPTO_CTX_INIT
+        #endif
         }
     #endif
 };
@@ -84,18 +90,21 @@ void crypto_init(void) {
         /* initialize lock */
         for (int i = 0; i < CRYPTO_COUNT; i++) {
             mutex_init(&crypto_devs[i].lock);
+#if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
             mutex_init(&crypto_devs[i].ctx.sequence_lock);
             mutex_lock(&crypto_devs[i].ctx.sequence_lock);
+
             NVIC_ClearPendingIRQ(crypto_devs[i].irq);
             NVIC_EnableIRQ(crypto_devs[i].irq);
-            if (IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)) {
-                LDMA_Init_t ldma_init = LDMA_INIT_DEFAULT;
-                LDMA_Init(&ldma_init);
-            }
+
+            LDMA_Init_t ldma_init = LDMA_INIT_DEFAULT;
+            LDMA_Init(&ldma_init);
+
             if (crypto_devs[i].pin != GPIO_UNDEF) {
                 gpio_init(crypto_devs[i].pin, GPIO_OUT);
                 gpio_clear(crypto_devs[i].pin);
             }
+#endif
         }
         crypto_lock_initialized = true;
     }
@@ -157,6 +166,8 @@ void crypto_release_dev(crypto_device_t *crypto)
     CMU_ClockEnable(crypto->cmu, false);
     mutex_unlock(&crypto->lock);
 }
+
+#if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
 
 static inline uint32_t _get_dma_source_and_signal_data0_read(crypto_device_t *crypto)
 {
@@ -299,5 +310,7 @@ void isr_crypto1(void)
     CRYPTO1->IFC = 0xFFFFFFFF;
     _crypto_irq(CRYPTO1);
 }
+
+#endif /* CONFIG_EFM32_AES_ECB_NONBLOCKING */
 
 #endif

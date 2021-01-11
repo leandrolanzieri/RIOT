@@ -44,12 +44,14 @@ typedef struct {
 typedef struct {
     CRYPTO_TypeDef* dev;
     CMU_Clock_TypeDef cmu;
-    IRQn_Type irq;
     mutex_t lock;
+#if IS_ACTIVE(CONFIG_EFM32_AES_ECB_NONBLOCKING)
+    IRQn_Type irq;
     gpio_t pin;
     int write_dma_ch;
     int read_dma_ch;
     crypto_ctx_t ctx;
+#endif
 } crypto_device_t;
 
 /**
