@@ -47,4 +47,9 @@ config CPU_MODEL
 config CPU
     default "cc2538" if CPU_FAM_CC2538
 
+config MODULE_PERIPH_UART_NONBLOCKING
+    bool
+    depends on HAS_PERIPH_UART_NONBLOCKING
+    select MODULE_TSRB
+
 source "$(RIOTCPU)/cortexm_common/Kconfig"
