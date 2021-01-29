@@ -31,6 +31,11 @@ extern "C" {
 #include "sys/uio.h"
 #include "byteorder.h"
 #include "net/eui64.h"
+#include "kernel_defines.h"
+
+#if IS_USED(MODULE_IEEE802154_SECURITY)
+#include "net/ieee802154_security.h"
+#endif
 
 /**
  * @brief Forward declaration of the radio ops structure.
@@ -730,64 +735,6 @@ struct ieee802154_radio_ops {
      * @return negative errno on error
      */
     int (*set_rx_mode)(ieee802154_dev_t *dev, ieee802154_rx_mode_t mode);
-};
-
-/**
- * @brief Forward declaration of the radio cipher ops structure
- */
-typedef struct ieee802154_radio_cipher_ops ieee802154_radio_cipher_ops_t;
-
-/**
- * @brief Forward declaration of the IEEE802.15.4 security device descriptor
- */
-typedef struct ieee802154_sec_dev ieee802154_sec_dev_t;
-
-/**
- * @brief IEEE802.15.4 security device descriptor
- */
-struct ieee802154_sec_dev {
-    /**
-     * @brief Pointer to the operations of the device
-     */
-    const struct ieee802154_radio_cipher_ops *cipher_ops;
-    /**
-     * @brief pointer to the context of the device
-     */
-    void *ctx;
-};
-
-struct ieee802154_radio_cipher_ops {
-    /**
-     * @brief   Function to set the encryption key for the
-     *          next cipher operation
-     *
-     * @param[in]       dev         Security device descriptor
-     * @param[in]       key         Key to be used for the next cipher operation
-     * @param[in]       key_size    key size in bytes
-     */
-    void (*set_key)(ieee802154_sec_dev_t *dev,
-                    const uint8_t *key, uint8_t key_size);
-    /**
-     * @brief   Function to perform ECB encryption
-     *
-     * @param[in]       dev         Security device descriptor
-     * @param[out]      cipher      Output cipher blocks
-     * @param[in]       plain       Input plain blocks
-     * @param[in]       nblocks     Number of blocks
-     */
-    void (*ecb)(const ieee802154_sec_dev_t *dev, uint8_t *cipher,
-                const uint8_t *plain, uint8_t nblocks);
-    /**
-     * @brief   Function to compute CBC-MAC
-     *
-     * @param[in]       dev         Security device descriptor
-     * @param[in]       cipher      Output cipher blocks
-     * @param[in, out]  iv          in: IV; out: computed MIC
-     * @param[in]       plain       Input plain blocks
-     * @param[in]       nblocks     Number of blocks
-     */
-    void (*cbc)(const ieee802154_sec_dev_t *dev, uint8_t *cipher,
-                uint8_t *iv, const uint8_t *plain, uint8_t nblocks);
 };
 
 /**
