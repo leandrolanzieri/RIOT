@@ -76,6 +76,7 @@ struct sock_dtls {
     } buffer;
     credman_tag_t tag;                      /**< Credential tag of a registered
                                                 (D)TLS credential */
+    char psk_hint[CONFIG_DTLS_PSK_ID_HINT_MAX_SIZE]; /**< PSK Identity hint */
     dtls_peer_type role;                    /**< DTLS role of the socket */
 };
 

@@ -519,6 +519,13 @@ extern "C" {
 #ifndef CONFIG_DTLS_HANDSHAKE_BUFSIZE_EXP
 #define CONFIG_DTLS_HANDSHAKE_BUFSIZE_EXP  8
 #endif
+
+/**
+ * @brief   Default maximum size for the PSK Identity hint string
+ */
+#ifndef CONFIG_DTLS_PSK_ID_HINT_MAX_SIZE
+#define CONFIG_DTLS_PSK_ID_HINT_MAX_SIZE    32
+#endif
 /** @} */
 
 /**
@@ -622,6 +629,20 @@ void sock_dtls_init(void);
  */
 int sock_dtls_create(sock_dtls_t *sock, sock_udp_t *udp_sock,
                      credman_tag_t tag, unsigned version, unsigned role);
+
+/**
+ * @brief Sets the PSK Identity hint to be sent to clients during handshake.
+ *
+ * This hint is optional. It helps clients to decide which PSK Identity to use.
+ *
+ * @param[in, out] sock The DTLS sock object to set the hint to.
+ * @param[in] hint      PSK Identity hint as NULL-terminated string.
+ *
+ * @return 0 on success
+ * @return -1 on error
+ */
+int sock_dtls_set_psk_identity_hint(sock_dtls_t *sock, const char *hint);
+
 
 /**
  * @brief   Get underlying UDP sock.
