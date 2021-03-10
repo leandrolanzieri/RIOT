@@ -583,6 +583,23 @@ typedef struct sock_dtls sock_dtls_t;
 #endif
 
 /**
+ * @brief Pre-Shared Key client callback. Called during handshake to determine session credential.
+ *
+ * @param[in] sock      DTLS sock object
+ * @param[in] ep        Remove UDP endpoint representing the session
+ * @param[in] tags      List of credential tags available for @p sock
+ * @param[in] tags_len  Number of credentials in @p tags
+ * @param[in] hint      Hint sent by the server. May be NULL
+ * @param[in] hint_len  Length of @p hint
+ *
+ * @return Tag of the credential to use when a suitable one is found
+ * @return @ref CREDMAN_TAG_EMPTY otherwise
+ */
+typedef credman_tag_t (*sock_dtls_client_psk_cb_t)(sock_dtls_t *sock, sock_udp_ep_t *ep,
+                                                   credman_tag_t tags[], unsigned tags_len,
+                                                   const char* hint, size_t hint_len);
+
+/**
  * @brief Information about a created session.
  */
 typedef struct sock_dtls_session sock_dtls_session_t;
@@ -675,6 +692,15 @@ int sock_dtls_create(sock_dtls_t *sock, sock_udp_t *udp_sock,
  * @return -1 on error
  */
 int sock_dtls_set_psk_identity_hint(sock_dtls_t *sock, const char *hint);
+
+/**
+ * @brief Sets the callback function for clients to specify a credential to use
+ *        for a given connection.
+ *
+ * @param[in] sock      The DTLS sock object to set the callback to.
+ * @param[in] cb        Callback to set.
+ */
+void sock_dtls_set_client_psk_cb(sock_dtls_t *sock, sock_dtls_client_psk_cb_t cb);
 
 
 /**
