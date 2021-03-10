@@ -521,6 +521,13 @@ extern "C" {
 #endif
 
 /**
+ * @brief   Default buffer size for TLS credential tags
+ */
+#ifndef CONFIG_DTLS_CREDENTIALS_MAX
+#define CONFIG_DTLS_CREDENTIALS_MAX     4
+#endif
+
+/**
  * @brief   Default maximum size for the PSK Identity hint string
  */
 #ifndef CONFIG_DTLS_PSK_ID_HINT_MAX_SIZE
@@ -606,6 +613,32 @@ typedef sock_udp_aux_tx_t sock_dtls_aux_tx_t;
  * Calls the initialization function required by the DTLS stack used.
  */
 void sock_dtls_init(void);
+
+/**
+ * @brief Adds a credential tag to list of available credentials for @p sock.
+ *
+ * @pre sock != NULL
+ *
+ * @param[in] sock      DTLS sock object
+ * @param[in] tag       Tag of the credential to add
+ *
+ * @return 0 on success
+ * @return -1 otherwise
+ */
+int sock_dtls_add_credential(sock_dtls_t *sock, credman_tag_t tag);
+
+/**
+ * @brief Removes a credential tag of the list of available credentials for @p sock.
+ *
+ * @pre sock != NULL
+ *
+ * @param[in] sock      DTLS sock object
+ * @param[in] tag       Tag of the credential to remove
+ *
+ * @return 0 on success
+ * @return -1 otherwise
+ */
+int sock_dtls_remove_credential(sock_dtls_t *sock, credman_tag_t tag);
 
 /**
  * @brief Creates a new DTLS sock object
