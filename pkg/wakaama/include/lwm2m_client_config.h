@@ -234,6 +234,13 @@ extern "C" {
 #define CONFIG_LWM2M_DEVICE_BINDINGS "U"
 #endif
 
+/**
+ * @brief Number to use as base for assigning tags to @ref net_credman credentials.
+ */
+#ifndef CONFIG_LWM2M_CREDMAN_TAG_BASE
+#define CONFIG_LWM2M_CREDMAN_TAG_BASE   (10U)
+#endif
+
 #ifdef __cplusplus
 }
 #endif
