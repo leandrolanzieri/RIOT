@@ -3,7 +3,14 @@
  * @ingroup  pkg
  * @ingroup  net
  * @brief    LwM2M implementation based on the Wakaama package
- * @see      https://github.com/eclipse/wakaama
+ *
+ * Lightweight Machine to Machine is a device management protocol designed for sensor networks,
+ * designed for remote management of M2M devices and related service enablement. It defines an
+ * extensible resource and data model and builds top of CoAP. LwM2M has been specified by the
+ * OMA SpecWorks Device Management Working Group. The specification is freely available
+ * [here](http://openmobilealliance.org/wp/index.html).
  *
  * For a list of the supported objects see @ref lwm2m_objects.
+ * The client implementation is based on the Eclipse
+ * [Wakaama project](https://github.com/eclipse/wakaama)
  */
