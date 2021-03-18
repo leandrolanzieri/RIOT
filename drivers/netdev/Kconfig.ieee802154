@@ -1,0 +1,36 @@
+# Copyright (c) 2021 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menuconfig MODULE_NETDEV_IEEE802154
+    bool "IEEE 802.15.4 drivers"
+    depends on TEST_KCONFIG
+    select MODULE_IEEE802154
+    select MODULE_RANDOM
+    select MODULE_EUI_PROVIDER
+
+if MODULE_NETDEV_IEEE802154
+
+config MODULE_NETDEV_IEEE802154_MR_FSK
+    bool "Multi-rate Frequency Shift Keying support (MR-FSK)"
+
+config MODULE_NETDEV_IEEE802154_MR_OFDM
+    bool "Multi-rate Orthogonal Frequency-Division Multiplexing support (MR-OFDM)"
+
+config MODULE_NETDEV_IEEE802154_MR_OQPSK
+    bool "Multi-rate Offset Quadrature Phase-Shift Keying support (MR-O-QPSK)"
+
+config MODULE_NETDEV_IEEE802154_MULTIMODE
+    bool "Multimode support"
+
+config MODULE_NETDEV_IEEE802154_OQPSK
+    bool "Offset Quadrature Phase-Shift Keying support (O-QPSK)"
+
+config MODULE_NETDEV_IEEE802154_SUBMAC
+    bool "Netdev IEEE 802.15.4 implementation using submac"
+    select MODULE_IEEE802154_SUBMAC
+
+endif # MODULE_NETDEV_IEEE802154
