@@ -23,10 +23,17 @@
 #include "lwm2m_platform.h"
 #include "objects/security.h"
 #include "objects/device.h"
+#include "objects/light_control.h"
 
 #include "net/credman.h"
 
-#define OBJ_COUNT (3)
+#ifdef LED0_ON
+#define LED_COLOR   "Unknown"
+#define LED_APP_TYPE "LED 0"
+# define OBJ_COUNT (4)
+#else
+# define OBJ_COUNT (3)
+#endif
 
 uint8_t connected = 0;
 lwm2m_object_t *obj_list[OBJ_COUNT];
@@ -53,6 +60,24 @@ static const credman_credential_t credential = {
         }
     },
 };
+
+#ifdef LED0_ON
+void _led_cb(lwm2m_object_t *object, uint16_t instance_id, bool status, uint8_t dimmer, void *arg)
+{
+    (void)object;
+    (void)instance_id;
+    (void)arg;
+
+    printf("Current dimmer value: %d%%\n", dimmer);
+
+    if (status) {
+        LED0_ON;
+    }
+    else {
+        LED0_OFF;
+    }
+}
+#endif
 
 void lwm2m_cli_init(void)
 {
@@ -84,6 +109,24 @@ void lwm2m_cli_init(void)
      * compile-time */
     obj_list[2] = lwm2m_object_device_get();
 
+#ifdef LED0_ON
+    obj_list[3] = lwm2m_object_light_control_get();
+    lwm2m_obj_light_control_args_t args = {
+        .cb = _led_cb,
+        .cb_arg = NULL,
+        .color = LED_COLOR,
+        .color_len = sizeof(LED_COLOR) - 1,
+        .app_type = LED_APP_TYPE,
+        .app_type_len = sizeof(LED_APP_TYPE) - 1
+    };
+
+    int res = lwm2m_object_light_control_instance_create(obj_list[3], 0, &args);
+
+    if (res < 0) {
+        puts("Error instantiating light control");
+    }
+#endif
+
     if (!obj_list[0] || !obj_list[1] || !obj_list[2]) {
         puts("Could not create mandatory objects");
     }
@@ -103,7 +146,7 @@ int lwm2m_cli_cmd(int argc, char **argv)
         return 0;
     }
 
-    if (IS_ACTIVE(DEVELHELP) && !strcmp(argv[1],"mem")) {
+    if (IS_ACTIVE(DEVELHELP) && !strcmp(argv[1], "mem")) {
         lwm2m_tlsf_status();
         return 0;
     }
