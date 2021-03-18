@@ -29,6 +29,7 @@ tests/test_tools tests/congure_* tests/prng_* tests/xtimer_* tests/ztimer_*
 tests/driver_ws281x tests/posix_sleep tests/pkg_umorse tests/cb_mux* tests/eepreg
 tests/shell tests/struct_tm_utility"}
 
+: ${TEST_KCONFIG_remote:="examples/hello-world tests/ieee802154_hal tests/ieee802154_submac"}
 : ${TEST_WITH_CONFIG_SUPPORTED:="examples/suit_update tests/driver_at86rf2xx_aes"}
 
 export RIOT_CI_BUILD=1
@@ -67,6 +68,9 @@ get_kconfig_test_apps() {
     esac
     case "$1" in
         "native") echo "${TEST_KCONFIG_native}" ;;
+    esac
+    case "$1" in
+        remote-*) echo "${TEST_KCONFIG_remote}";;
     esac
 }
 

@@ -41,8 +41,17 @@ endif
 
 ifneq (,$(filter random,$(USEMODULE)))
   # select default prng if no prng is selected
-  ifeq (,$(filter prng_%,$(USEMODULE)))
-    USEMODULE += prng_tinymt32
+    # prioritize peripheral HWRNG
+    FEATURES_OPTIONAL += periph_hwrng
+    $(info >> FEATURES_OPTIONAL += periph_hwrng)
+
+    ifneq (,$(filter periph_hwrng,$(FEATURES_USED)))
+      $(info >> USEMODULE += prng_hwrng)
+      USEMODULE += prng_hwrng
+    else
+      $(info >> USEMODULE += prng_tinymt32)
+      USEMODULE += prng_tinymt32
+    endif
   endif
 endif
 

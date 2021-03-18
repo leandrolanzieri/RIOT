@@ -13,4 +13,8 @@ if MODULE_NETDEV
 
 rsource "Kconfig.ieee802154"
 
+config MODULE_NETDEV_REGISTER
+    bool
+    default y if !MODULE_GNRC_NETIF_SINGLE
+
 endif # MODULE_NETDEV
