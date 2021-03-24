@@ -19,6 +19,7 @@
 #include "liblwm2m.h"
 #include "objects/security.h"
 #include "lwm2m_client_config.h"
+#include "lwm2m_client.h"
 #include "kernel_defines.h"
 #include "net/credman.h"
 #include "mutex.h"
@@ -54,6 +55,7 @@ typedef struct lwm2m_obj_security_inst {
      */
     uint8_t security_mode;
 
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     /**
      * @brief Tag of the credential to use with the server.
      */
@@ -78,6 +80,7 @@ typedef struct lwm2m_obj_security_inst {
      * @brief Bytes used in @ref lwm2m_obj_security_inst_t::secret_key.
      */
     size_t secret_key_len;
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
     /**
      * @brief Short ID to reference the server.
@@ -163,16 +166,6 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t * dat
 static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance);
 
 /**
- * @brief Update a credential in the credman registry with the current instance information.
- *
- * @param[in] instance      Instance to update the credential to.
- *
- * @retval 0 on success
- * @retval <0 otherwise
- */
-static int _update_credential(lwm2m_obj_security_inst_t *instance);
-
-/**
  * @brief Free an instance from the pool.
  *
  * @param[in] instance      Pointer to the instance to free. Must not be NULL.
@@ -202,10 +195,22 @@ static lwm2m_object_t _security_object = {
     .userData       = NULL,
 };
 
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
+/**
+ * @brief Update a credential in the credman registry with the current instance information.
+ *
+ * @param[in] instance      Instance to update the credential to.
+ *
+ * @retval 0 on success
+ * @retval <0 otherwise
+ */
+static int _update_credential(lwm2m_obj_security_inst_t *instance);
+
 /**
  * @brief Credential tag counter
  */
 static credman_tag_t _tag_count = CONFIG_LWM2M_CREDMAN_TAG_BASE;
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
 /**
  * @brief Pool of object instances.
@@ -245,9 +250,11 @@ static void _free_instance(lwm2m_obj_security_inst_t *instance)
     mutex_unlock(&_mutex);
 }
 
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 static int _update_credential(lwm2m_obj_security_inst_t *instance)
 {
     assert(instance);
+
     credman_credential_t cred;
 
     /* TODO: add support for RPK */
@@ -268,8 +275,11 @@ static int _update_credential(lwm2m_obj_security_inst_t *instance)
     cred.params.psk.key.s = instance->secret_key;
     cred.params.psk.key.len = instance->secret_key_len;
 
+    lwm2m_client_add_credential(instance->cred_tag);
+
     return credman_add(&cred) == CREDMAN_OK ? 0 : -1;
 }
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
 static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance)
 {
@@ -303,11 +313,19 @@ static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance)
             break;
 
         case LWM2M_SECURITY_PUBLIC_KEY_ID:
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
             lwm2m_data_encode_opaque(instance->pub_key_or_id, instance->pub_key_or_id_len, data);
+#else
+            return COAP_404_NOT_FOUND;
+#endif
             break;
 
         case LWM2M_SECURITY_SECRET_KEY_ID:
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
             lwm2m_data_encode_opaque(instance->secret_key, instance->secret_key_len, data);
+#else
+            return COAP_404_NOT_FOUND;
+#endif
             break;
 
         /* not implemented */
@@ -346,9 +364,11 @@ static uint8_t _read_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data
             LWM2M_SECURITY_URI_ID,
             LWM2M_SECURITY_BOOTSTRAP_ID,
             LWM2M_SECURITY_SECURITY_ID,
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
             LWM2M_SECURITY_PUBLIC_KEY_ID,
             LWM2M_SECURITY_SERVER_PUBLIC_KEY_ID,
             LWM2M_SECURITY_SECRET_KEY_ID,
+#endif
             /* LWM2M_SECURITY_SMS_SECURITY_ID, */
             /* LWM2M_SECURITY_SMS_KEY_PARAM_ID, */
             /* LWM2M_SECURITY_SMS_SECRET_KEY_ID, */
@@ -485,6 +505,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data_
                 break;
 
             case LWM2M_SECURITY_PUBLIC_KEY_ID:
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
                 DEBUG("[lwm2m:security:write]: writing pub. key or ID\n");
                 if (data_array[i].value.asBuffer.length >
                     CONFIG_LWM2M_OBJ_SECURITY_PUB_KEY_ID_BUFSIZE) {
@@ -500,10 +521,12 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data_
                     instance->pub_key_or_id_len = data_array[i].value.asBuffer.length;
                     _update_credential(instance);
                 }
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
                 result = COAP_204_CHANGED;
                 break;
 
             case LWM2M_SECURITY_SECRET_KEY_ID:
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
                 DEBUG("[lwm2m:security:write]: writing sec. key\n");
                 if (data_array[i].value.asBuffer.length >
                     CONFIG_LWM2M_OBJ_SECURITY_SEC_KEY_BUFSIZE) {
@@ -519,6 +542,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data_
                     instance->secret_key_len = data_array[i].value.asBuffer.length;
                     _update_credential(instance);
                 }
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
                 result = COAP_204_CHANGED;
                 break;
 
@@ -558,12 +582,15 @@ static uint8_t _delete_cb(uint16_t instance_id, lwm2m_object_t *object)
         return COAP_404_NOT_FOUND;
     }
 
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     /* if there is an associated credential, de-register */
     if (instance->cred_tag != CREDMAN_TAG_EMPTY) {
         credman_type_t type = instance->security_mode == LWM2M_SECURITY_MODE_PRE_SHARED_KEY ?
                                 CREDMAN_TYPE_PSK : CREDMAN_TYPE_ECDSA;
         credman_delete(instance->cred_tag, type);
+        lwm2m_client_remove_credential(instance->cred_tag);
     }
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
     _free_instance(instance);
 
@@ -584,7 +611,10 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t * dat
     }
 
     memset(instance, 0, sizeof(lwm2m_obj_security_inst_t));
+
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     instance->cred_tag = CREDMAN_TAG_EMPTY;
+#endif
 
     /* add to the object instance list */
     instance->list.id = instance_id;
@@ -639,7 +669,10 @@ int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t insta
     instance->is_bootstrap = args->is_bootstrap;
     instance->client_hold_off_time = args->client_hold_off_time;
     instance->bs_account_timeout = args->bootstrap_account_timeout;
+
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     instance->cred_tag = CREDMAN_TAG_EMPTY;
+#endif
 
     /* copy the URI locally */
     if (strlen(args->server_uri) > CONFIG_LWM2M_URI_MAX_SIZE - 1) {
@@ -649,56 +682,56 @@ int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t insta
 
     strcpy(instance->uri, args->server_uri);
 
-    if (IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)) {
-        if (LWM2M_SECURITY_MODE_NONE != args->security_mode) {
-            /* we need a valid credential */
-            if (!args->cred) {
-                DEBUG("[lwm2m:security]: no credential provided\n");
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
+    if (LWM2M_SECURITY_MODE_NONE != args->security_mode) {
+        /* we need a valid credential */
+        if (!args->cred) {
+            DEBUG("[lwm2m:security]: no credential provided\n");
+            goto free_out;
+        }
+
+        if (LWM2M_SECURITY_MODE_PRE_SHARED_KEY == args->security_mode) {
+            if (args->cred->type != CREDMAN_TYPE_PSK) {
+                DEBUG("[lwm2m:security]: incorrect credential type for PSK mode\n");
                 goto free_out;
             }
 
-            if (LWM2M_SECURITY_MODE_PRE_SHARED_KEY == args->security_mode) {
-                if (args->cred->type != CREDMAN_TYPE_PSK) {
-                    DEBUG("[lwm2m:security]: incorrect credential type for PSK mode\n");
-                    goto free_out;
-                }
-
-                /* copy the credential locally */
-                if (args->cred->params.psk.id.len > CONFIG_LWM2M_OBJ_SECURITY_PUB_KEY_ID_BUFSIZE) {
-                    DEBUG("[lwm2m:security]: PSK ID too long\n");
-                    goto free_out;
-                }
-                memcpy(instance->pub_key_or_id, args->cred->params.psk.id.s,
-                       args->cred->params.psk.id.len);
-                instance->pub_key_or_id_len = args->cred->params.psk.id.len;
-
-                if (args->cred->params.psk.key.len > CONFIG_LWM2M_OBJ_SECURITY_SEC_KEY_BUFSIZE) {
-                    DEBUG("[lwm2m:security]: PSK key too long\n");
-                    goto free_out;
-                }
-                memcpy(instance->secret_key, args->cred->params.psk.key.s,
-                       args->cred->params.psk.key.len);
-                instance->secret_key_len = args->cred->params.psk.key.len;
-
-                /* assign a credential tag */
-                instance->cred_tag = ++_tag_count;
-
-                if (_update_credential(instance) < 0) {
-                    DEBUG("[lwm2m:security]: could not register the credential\n");
-                    goto free_out;
-                }
-            }
-            else if (LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY == args->security_mode) {
-                // TODO: add support for RPK
-                DEBUG("[lwm2m:security]: RPK not supported yet\n");
+            /* copy the credential locally */
+            if (args->cred->params.psk.id.len > CONFIG_LWM2M_OBJ_SECURITY_PUB_KEY_ID_BUFSIZE) {
+                DEBUG("[lwm2m:security]: PSK ID too long\n");
                 goto free_out;
             }
-            else {
-                DEBUG("[lwm2m:security]: certificate mode not supported\n");
+            memcpy(instance->pub_key_or_id, args->cred->params.psk.id.s,
+                    args->cred->params.psk.id.len);
+            instance->pub_key_or_id_len = args->cred->params.psk.id.len;
+
+            if (args->cred->params.psk.key.len > CONFIG_LWM2M_OBJ_SECURITY_SEC_KEY_BUFSIZE) {
+                DEBUG("[lwm2m:security]: PSK key too long\n");
+                goto free_out;
+            }
+            memcpy(instance->secret_key, args->cred->params.psk.key.s,
+                    args->cred->params.psk.key.len);
+            instance->secret_key_len = args->cred->params.psk.key.len;
+
+            /* assign a credential tag */
+            instance->cred_tag = ++_tag_count;
+
+            if (_update_credential(instance) < 0) {
+                DEBUG("[lwm2m:security]: could not register the credential\n");
                 goto free_out;
             }
         }
+        else if (LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY == args->security_mode) {
+            // TODO: add support for RPK
+            DEBUG("[lwm2m:security]: RPK not supported yet\n");
+            goto free_out;
+        }
+        else {
+            DEBUG("[lwm2m:security]: certificate mode not supported\n");
+            goto free_out;
+        }
     }
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
     DEBUG("[lwm2m:security]: added instance with URI: %s\n", instance->uri);
 
@@ -717,6 +750,7 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
 {
     assert(object);
 
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     lwm2m_obj_security_inst_t *instance;
 
     /* try to get the requested instance from the object list */
@@ -727,4 +761,8 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
     }
 
     return instance->cred_tag;
+#else
+    (void) instance_id;
+    return CREDMAN_TAG_EMPTY;
+#endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 }
