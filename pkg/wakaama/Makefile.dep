@@ -22,3 +22,10 @@ endif
 
 # wakaama uses Sock UDP (implemented by some stack)
 USEMODULE += sock_udp
+USEMODULE += sock_async_event
+USEMODULE += sock_util
+USEMODULE += event_timeout
+
+ifneq (,$(filter wakaama_client_dtls, $(USEMODULE)))
+  USEMODULE += sock_dtls
+endif
