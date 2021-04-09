@@ -85,7 +85,7 @@ void lwm2m_cli_init(void)
     lwm2m_client_init(&client_data);
 
     /* add objects that will be registered */
-    lwm2m_obj_security_args_t args = {
+    lwm2m_obj_security_args_t sec_args = {
         .server_id = CONFIG_LWM2M_SERVER_SHORT_ID,
         .server_uri = CONFIG_LWM2M_SERVER_URI,
         .security_mode = LWM2M_SECURITY_MODE_PRE_SHARED_KEY,
@@ -96,7 +96,7 @@ void lwm2m_cli_init(void)
     };
 
     obj_list[0] = lwm2m_object_security_get();
-    int res = lwm2m_object_security_instance_create(obj_list[0], 1, &args);
+    int res = lwm2m_object_security_instance_create(obj_list[0], 1, &sec_args);
 
     if (res < 0) {
         puts("Could not instantiate the security object");
