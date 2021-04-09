@@ -111,7 +111,7 @@ void lwm2m_cli_init(void)
 
 #ifdef LED0_ON
     obj_list[3] = lwm2m_object_light_control_get();
-    lwm2m_obj_light_control_args_t args = {
+    lwm2m_obj_light_control_args_t light_args = {
         .cb = _led_cb,
         .cb_arg = NULL,
         .color = LED_COLOR,
@@ -120,7 +120,7 @@ void lwm2m_cli_init(void)
         .app_type_len = sizeof(LED_APP_TYPE) - 1
     };
 
-    int res = lwm2m_object_light_control_instance_create(obj_list[3], 0, &args);
+    int res = lwm2m_object_light_control_instance_create(obj_list[3], 0, &light_args);
 
     if (res < 0) {
         puts("Error instantiating light control");
