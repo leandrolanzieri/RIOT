@@ -1,0 +1,110 @@
+From 067d09a71ba3d4cff6075893d7fc56a069eccfd5 Mon Sep 17 00:00:00 2001
+From: Leandro Lanzieri <leandro.lanzieri@haw-hamburg.de>
+Date: Fri, 9 Apr 2021 18:10:00 +0200
+Subject: [PATCH] core: initial support for access control
+
+---
+ core/liblwm2m.h   | 13 +++++++++++
+ core/management.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/core/liblwm2m.h b/core/liblwm2m.h
+index 15fac32..3dac472 100644
+--- a/core/liblwm2m.h
++++ b/core/liblwm2m.h
+@@ -697,6 +697,19 @@ int lwm2m_remove_object(lwm2m_context_t * contextP, uint16_t id);
+ int lwm2m_update_registration(lwm2m_context_t * contextP, uint16_t shortServerID, bool withObjects);
+ 
+ void lwm2m_resource_value_changed(lwm2m_context_t * contextP, lwm2m_uri_t * uriP);
++
++/**
++ * @brief   Returns the access of a server with short ID @p server_id to a resource in @p uri.
++ *
++ * @param[in] server_id     Short ID of the server.
++ * @param[in] uri           URI of the resource to check access of.
++ * @param[in] user_data     User data provided in @ref lwm2m_init
++ *
++ * @return Access encoded according the Access Control object lists.
++ * @retval -1 if no access information is available for the given resource
++ */
++int lwm2m_get_access(uint16_t server_id, lwm2m_uri_t *uri, void *user_data);
++
+ #endif
+ 
+ #ifdef LWM2M_SERVER_MODE
+diff --git a/core/management.c b/core/management.c
+index c21de1e..028b3f6 100644
+--- a/core/management.c
++++ b/core/management.c
+@@ -159,6 +159,55 @@ static int prv_readAttributes(multi_option_t * query,
+     return 0;
+ }
+ 
++bool prv_access_guard(lwm2m_context_t *contextP, lwm2m_server_t *serverP, lwm2m_uri_t *uriP,
++                      coap_packet_t *msg)
++{
++    (void) msg;
++    int access = lwm2m_get_access(serverP->shortID, uriP, contextP->userData);
++    LOG_ARG("Server has access %i to the resource", access);
++
++    // FIXME: ! for now, when no access information is specified, we allow to pass
++    if (access < 0) {
++        LOG_ARG("No access information initialized!", access);
++    }
++
++    switch (msg->code)
++    {
++    case COAP_GET:
++        /* read, observe */
++        return (access & 0x01);
++
++    case COAP_POST:
++        if (!LWM2M_URI_IS_SET_INSTANCE(uriP)) {
++            /* create */
++            return (access & 0x10);
++        }
++        else if (!LWM2M_URI_IS_SET_RESOURCE(uriP)) {
++            /* write */
++            return (access & 0x02);
++        }
++        /* execute */
++        return (access & 0x04);
++
++    case COAP_PUT:
++        if (IS_OPTION(msg, COAP_OPTION_URI_QUERY)) {
++            /* write attributes, same as read, observe */
++            return (access & 0x01);
++        }
++        else if (LWM2M_URI_IS_SET_INSTANCE(uriP)) {
++            /* write */
++            return (access & 0x02);
++        }
++        return false;
++
++    case COAP_DELETE:
++        return (access & 0x08);
++
++    default:
++        return false;
++    }
++}
++
+ uint8_t dm_handleRequest(lwm2m_context_t * contextP,
+                          lwm2m_uri_t * uriP,
+                          lwm2m_server_t * serverP,
+@@ -193,7 +242,11 @@ uint8_t dm_handleRequest(lwm2m_context_t * contextP,
+         return COAP_IGNORE;
+     }
+ 
+-    // TODO: check ACL
++    if (!prv_access_guard(contextP, serverP, uriP, message)) {
++        /* you shall not pass */
++        LOG("Server not authorized");
++        return COAP_401_UNAUTHORIZED;
++    }
+ 
+     switch (message->code)
+     {
+-- 
+2.31.0
+
