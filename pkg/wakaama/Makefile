@@ -14,4 +14,3 @@ CFLAGS += -Wno-maybe-uninitialized
 all:
 	$(QQ)"$(MAKE)" -C $(PKG_SOURCE_DIR)/core -f $(RIOTBASE)/Makefile.base MODULE=wakaama_core
 	$(QQ)"$(MAKE)" -C $(PKG_SOURCE_DIR)/core/er-coap-13 -f $(RIOTBASE)/Makefile.base MODULE=wakaama_core_coap13
-	$(QQ)"$(MAKE)" -C $(PKG_SOURCE_DIR)/examples/client -f $(CURDIR)/wakaama_client.mk

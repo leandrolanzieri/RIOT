@@ -5,7 +5,11 @@
 # directory for more details.
 #
 
-rsource "Kconfig.device"
-rsource "Kconfig.light_control"
-rsource "Kconfig.security"
-rsource "Kconfig.server"
+
+menu "Server object"
+
+config LWM2M_SERVER_INSTANCES_MAX
+    int "Maximum number of Server object instances"
+    default 2
+
+endmenu # Server object
