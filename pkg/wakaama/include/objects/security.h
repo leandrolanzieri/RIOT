@@ -97,6 +97,12 @@ extern "C" {
 
 /* these are defined in liblwm2m.h, and are reproduced here for documentation purposes */
 #ifdef DOXYGEN
+
+/**
+ * @brief LwM2M Client Security object ID
+ */
+#define LWM2M_CLIENT_SECURITY_OBJECT_ID          11001 // TODO: to be defined
+
 /**
  * @name LwM2M Security object security modes
  * @{
@@ -204,12 +210,21 @@ typedef struct lwm2m_obj_security_args {
     uint32_t bootstrap_account_timeout;
 } lwm2m_obj_security_args_t;
 
+typedef struct lwm2m_obj_security_args lwm2m_obj_client_security_args_t;
+
 /**
  * @brief   Get the LwM2M Security object handle
  *
  * @return Pointer to the global handle of the security object.
  */
 lwm2m_object_t *lwm2m_object_security_get(void);
+
+/**
+ * @brief   Get the LwM2M Client Security object handle
+ *
+ * @return Pointer to the global handle of the client security object.
+ */
+lwm2m_object_t *lwm2m_object_client_security_get(void);
 
 /**
  * @brief   Create a new LwM2M Security object instance and add it to the @p object list.
@@ -223,6 +238,10 @@ lwm2m_object_t *lwm2m_object_security_get(void);
  */
 int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
                                           lwm2m_obj_security_args_t *args);
+
+
+int lwm2m_object_client_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                                 lwm2m_obj_client_security_args_t *args);
 
 /**
  * @brief   Get the credential of a given instance of the security object.

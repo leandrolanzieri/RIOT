@@ -56,11 +56,32 @@ static void *_event_loop(void *arg);
  */
 static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *arg);
 
+static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_udp_ep_t *remote,
+                                                                     const sock_dtls_session_t *session,
+                                                                     uint16_t sec_obj_inst_id);
+
+/**
+ * @brief   Given an UDP endpoint, find the corresponding Client Security Object instance.
+ *
+ * @param[in] remote    UDP endpoint to check against
+ *
+ * @return Instance ID of the Client Security Object
+ * @retval -1 on error
+ */
+static int _find_client_security_instance(const sock_udp_ep_t *remote);
+
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 /**
  * @brief   Callback to handle DTLS sock events.
  */
 static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void *arg);
+#endif
+
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
+/**
+ * @brief   Callback to perform a Client-to-Client read operation
+ */
+static void _client_read_handler(event_t *event);
 #endif
 
 static event_queue_t _queue;
@@ -70,6 +91,8 @@ static lwm2m_client_data_t *_client_data = NULL;
 static char _lwm2m_client_stack[2 * THREAD_STACKSIZE_MAIN + THREAD_EXTRA_STACKSIZE_PRINTF];
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
+static credman_tag_t _find_credential(sock_udp_ep_t *ep, lwm2m_object_t *sec_obj);
+
 /**
  * @brief Callback registered to the client DTLS sock to select a PSK credential to use.
  */
@@ -90,14 +113,27 @@ static credman_tag_t _client_psk_cb(sock_dtls_t *sock, sock_udp_ep_t *ep, credma
         return CREDMAN_TAG_EMPTY;
     }
 
+    credman_tag_t tag = _find_credential(ep, sec);
+
+    if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && tag == CREDMAN_TAG_EMPTY) {
+        DEBUG("[lwm2m:client:PSK] server credential not found, looking for client\n");
+        sec = lwm2m_get_object_by_id(_client_data, LWM2M_CLIENT_SECURITY_OBJECT_ID);
+        tag = _find_credential(ep, sec);
+    }
+
+    return tag;
+}
+
+static credman_tag_t _find_credential(sock_udp_ep_t *ep, lwm2m_object_t *sec_obj)
+{
     /* prepare query */
     lwm2m_uri_t query_uri = {
-        .objectId = LWM2M_SECURITY_OBJECT_ID,
+        .objectId = sec_obj->objID,
         .resourceId = LWM2M_SECURITY_URI_ID,
         .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
     };
 
-    lwm2m_list_t *instance = sec->instanceList;
+    lwm2m_list_t *instance = sec_obj->instanceList;
 
     /* check all registered security object instances */
     while(instance) {
@@ -123,8 +159,8 @@ static credman_tag_t _client_psk_cb(sock_dtls_t *sock, sock_udp_ep_t *ep, credma
             else {
                 if (sock_udp_ep_equal(ep, &inst_ep)) {
                     DEBUG("[lwm2m:client:PSK] found matching EP on instance %d\n", instance->id);
-                    DEBUG("[lwm2m:client:PSK] tag: %d\n", lwm2m_object_security_get_credential(sec, instance->id));
-                    return lwm2m_object_security_get_credential(sec, instance->id);
+                    DEBUG("[lwm2m:client:PSK] tag: %d\n", lwm2m_object_security_get_credential(sec_obj, instance->id));
+                    return lwm2m_object_security_get_credential(sec_obj, instance->id);
                 }
             }
         }
@@ -223,6 +259,71 @@ lwm2m_context_t *lwm2m_client_run(lwm2m_client_data_t *client_data,
     return _client_data->lwm2m_ctx;
 }
 
+static int _find_client_security_instance(const sock_udp_ep_t *remote)
+{
+    lwm2m_list_t *instance;
+    lwm2m_object_t *sec_obj = lwm2m_object_client_security_get();
+    lwm2m_uri_t query_uri = {
+        .objectId = sec_obj->objID,
+        .resourceId = LWM2M_SECURITY_URI_ID,
+        .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
+    };
+
+    /* check all registered client security object instances */
+    for (instance = sec_obj->instanceList; instance; instance = instance->next) {
+        char uri[CONFIG_LWM2M_URI_MAX_SIZE];
+        query_uri.instanceId = instance->id;
+        
+
+        /* get the URI */
+        int res = lwm2m_get_string(_client_data, &query_uri, uri, sizeof(uri));
+        if (res < 0) {
+            DEBUG("[lwm2m:_find_client_security_instance] could not get URI from client security object %d\n",
+                  query_uri.instanceId);
+            continue;
+        }
+
+        uri_parser_result_t parsed_uri;
+        res = uri_parser_process_string(&parsed_uri, uri);
+
+        if (0 != res || !parsed_uri.host) {
+            DEBUG("[lwm2m:_find_client_security_instance] could not parse URI of instance %d\n", query_uri.instanceId);
+            continue;
+        }
+
+        /* if port is specified, check it */
+        if (parsed_uri.port) {
+            /* check that we are inside the buffer */
+            if (&parsed_uri.port[parsed_uri.port_len] > &uri[sizeof(uri)]) {
+                DEBUG("[lwm2m:_find_client_security_instance] URI wrongly parsed\n");
+                continue;
+            }
+
+            parsed_uri.port[parsed_uri.port_len] = '\0';
+            int port = atoi(parsed_uri.port);
+            if (port != remote->port) {
+                continue;
+            }
+        }
+
+        ipv6_addr_t ipv6;
+        if (!ipv6_addr_from_buf(&ipv6, parsed_uri.ipv6addr, parsed_uri.ipv6addr_len)) {
+            DEBUG("[lwm2m:_find_client_security_instance] could not parse IPv6 of instance %d\n", query_uri.instanceId);
+            continue;
+        }
+
+        if (ipv6_addr_equal(&ipv6, (ipv6_addr_t *)&remote->addr.ipv6)) {
+            DEBUG("[lwm2m:_find_client_security_instance] client has instance %d\n", query_uri.instanceId);
+            break;
+        }
+    }
+
+    if (instance) {
+        return instance->id;
+    }
+    return -1;
+}
+
 static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *arg)
 {
     (void) arg;
@@ -238,9 +339,49 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
         }
 
         DEBUG("[lwm2m:client] finding connection\n");
+        /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
                                                                        &remote);
+
+        /* look for an existing client connection */
+        if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
+            DEBUG("[lwm2m:client] checking for existing client connection\n");
+            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote);
+        }
+
+        /* check if incoming known client request */
+        if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
+            int instance_id = _find_client_security_instance(&remote);
+            if (instance_id >= 0) {
+                DEBUG("[lwm2m:client] message from client with instance %d\n", instance_id);
+                /* we know this client, add the session */
+                conn = _create_incoming_client_connection(&remote, NULL, instance_id);
+                if (!conn) {
+                    DEBUG("[lwm2m:client] could not create a new connection for client\n");
+                    return;
+                }
+
+                /* add new connection to the client connections list */
+                if (!_client_data->client_conn_list) {
+                    _client_data->client_conn_list = conn;
+                }
+                else {
+                    lwm2m_client_connection_t *connection = _client_data->client_conn_list;
+                    while (connection->next) {
+                        connection = connection->next;
+                    }
+                    connection->next= conn;
+                }
+
+                lwm2m_set_client_session(_client_data->lwm2m_ctx, conn, instance_id);
+            }
+            else  {
+                DEBUG("[lwm2m:client] message from unknown peer\n");
+            }
+        }
+
         if (conn) {
+            DEBUG("[lwm2m:client] connection found\n");
             DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)rcv_len);
             int result = lwm2m_connection_handle_packet(conn, rcv_buf, rcv_len, _client_data);
             if (0 != result) {
@@ -265,24 +406,63 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
     if (type & SOCK_ASYNC_MSG_RECV) {
         ssize_t rcv_len = sock_dtls_recv(sock, &dtls_remote, rcv_buf, sizeof(rcv_buf), 0);
         if (rcv_len <= 0) {
-            DEBUG("[lwm2m:client] DTLS receive failure: %d\n", (int)rcv_len);
+            DEBUG("[lwm2m:client:DTLS]] DTLS receive failure: %d\n", (int)rcv_len);
             return;
         }
 
         sock_dtls_session_get_udp_ep(&dtls_remote, &remote);
 
-        DEBUG("[lwm2m:client] finding connection\n");
+        DEBUG("[lwm2m:client:DTLS]] finding connection\n");
+        /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
                                                                        &remote);
+
+        /* look for an existing client connection */
+        if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
+            DEBUG("[lwm2m:client:DTLS] checking for existing client connection\n");
+            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote);
+        }
+
+        /* check if incoming known client request */
+        if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
+            int instance_id = _find_client_security_instance(&remote);
+            if (instance_id >= 0) {
+                DEBUG("[lwm2m:client:DTLS] message from client with instance %d\n", instance_id);
+                /* we know this client, add the session */
+                conn = _create_incoming_client_connection(&remote, &dtls_remote, instance_id);
+                if (!conn) {
+                    DEBUG("[lwm2m:client:DTLS] could not create a new connection for client\n");
+                    return;
+                }
+
+                /* add new connection to the client connections list */
+                if (!_client_data->client_conn_list) {
+                    _client_data->client_conn_list = conn;
+                }
+                else {
+                    lwm2m_client_connection_t *connection = _client_data->client_conn_list;
+                    while (connection->next) {
+                        connection = connection->next;
+                    }
+                    connection->next= conn;
+                }
+
+                lwm2m_set_client_session(_client_data->lwm2m_ctx, conn, instance_id);
+            }
+            else  {
+                DEBUG("[lwm2m:client:DTLS] message from unknown peer\n");
+            }
+        }
+
         if (conn) {
-            DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)rcv_len);
+            DEBUG("[lwm2m:client:DTLS] handle packet (%i bytes)\n", (int)rcv_len);
             int result = lwm2m_connection_handle_packet(conn, rcv_buf, rcv_len, _client_data);
             if (0 != result) {
-                DEBUG("[lwm2m:client] error handling message %i\n", result);
+                DEBUG("[lwm2m:client:DTLS] error handling message %i\n", result);
             }
         }
         else {
-            DEBUG("[lwm2m:client] couldn't find incoming connection\n");
+            DEBUG("[lwm2m:client:DTLS]] couldn't find incoming connection\n");
         }
     }
 }
@@ -354,6 +534,7 @@ static void _lwm2m_step_cb(event_t *arg)
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 void lwm2m_client_add_credential(credman_tag_t tag)
 {
+
     if (!_client_data) {
         return;
     }
@@ -378,27 +559,15 @@ void lwm2m_client_remove_credential(credman_tag_t tag)
     sock_dtls_remove_credential(&_client_data->dtls_sock, tag);
 }
 
-void lwm2m_client_refresh_dtls_credentials(void)
+static void _refresh_dtls_credentials(lwm2m_object_t *sec_obj)
 {
-    if (!_client_data) {
-        return;
-    }
-
-    DEBUG("[lwm2m:client:refresh_cred] refreshing DTLS credentials\n");
-
-    lwm2m_object_t *sec = lwm2m_get_object_by_id(_client_data, LWM2M_SECURITY_OBJECT_ID);
-    if (!sec) {
-        DEBUG("[lwm2m:client:refresh_cred] no security object found\n");
-        return;
-    }
-
     /* prepare query */
     lwm2m_uri_t query_uri = {
-        .objectId = LWM2M_SECURITY_OBJECT_ID,
+        .objectId = sec_obj->objID,
         .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
     };
 
-    lwm2m_list_t *instance = sec->instanceList;
+    lwm2m_list_t *instance = sec_obj->instanceList;
     int64_t val;
 
     /* check all registered security object instances */
@@ -412,7 +581,7 @@ void lwm2m_client_refresh_dtls_credentials(void)
         }
         else {
             if (val == LWM2M_SECURITY_MODE_PRE_SHARED_KEY || val == LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY) {
-                credman_tag_t tag = lwm2m_object_security_get_credential(sec, instance->id);
+                credman_tag_t tag = lwm2m_object_security_get_credential(sec_obj, instance->id);
                 if (tag != CREDMAN_TAG_EMPTY) {
                     lwm2m_client_add_credential(tag);
                 }
@@ -422,4 +591,114 @@ void lwm2m_client_refresh_dtls_credentials(void)
         instance = instance->next;
     }
 }
+
+void lwm2m_client_refresh_dtls_credentials(void)
+{
+    if (!_client_data) {
+        return;
+    }
+
+    DEBUG("[lwm2m:client:refresh_cred] refreshing DTLS credentials\n");
+
+    lwm2m_object_t *sec = lwm2m_get_object_by_id(_client_data, LWM2M_SECURITY_OBJECT_ID);
+    if (!sec) {
+        DEBUG("[lwm2m:client:refresh_cred] no security object found\n");
+        return;
+    }
+    _refresh_dtls_credentials(sec);
+
+    sec = lwm2m_get_object_by_id(_client_data, LWM2M_CLIENT_SECURITY_OBJECT_ID);
+    if (!sec) {
+        DEBUG("[lwm2m:client:refresh_cred] no client security object found\n");
+        return;
+    }
+    _refresh_dtls_credentials(sec);
+}
+
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
+
+#if IS_USED(CONFIG_LWM2M_CLIENT_C2C)
+
+// TODO: move to lwm2m_client_connection?
+static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_udp_ep_t *remote,
+                                                                     const sock_dtls_session_t *session,
+                                                                     uint16_t sec_obj_inst_id)
+{
+    lwm2m_client_connection_t *conn = NULL;
+
+    /* try to allocate a new connection */
+    conn = lwm2m_malloc(sizeof(lwm2m_client_connection_t));
+    if (!conn) {
+        DEBUG("[lwm2m:_create_incoming_client_connection] could not allocate new connection\n");
+        return NULL;
+    }
+    memset(conn, 0, sizeof(lwm2m_client_connection_t));
+
+    conn->next = _client_data->client_conn_list;
+
+#if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
+    if (session) {
+        conn->type = LWM2M_CLIENT_CONN_DTLS;
+        memcpy(&conn->session, session, sizeof(sock_dtls_session_t));
+    }
+    else {
+        conn->type = LWM2M_CLIENT_CONN_UDP;
+    }
+#else
+    conn->type = LWM2M_CLIENT_CONN_UDP;
+#endif
+
+    conn->sec_inst_id = sec_obj_inst_id;
+    conn->last_send = lwm2m_gettime();
+    memcpy(&conn->remote, remote, sizeof(sock_udp_ep_t));
+
+    if (IS_ACTIVE(ENABLE_DEBUG)) {
+        char ep[CONFIG_SOCK_URLPATH_MAXLEN];
+        uint16_t port;
+        sock_udp_ep_fmt(&conn->remote, ep, &port);
+        DEBUG("[lwm2m:_create_incoming_client_connection] created connection for [%s]:%d\n", ep, port);
+    }
+
+    return conn;
+}
+
+typedef struct {
+    event_t event;
+    lwm2m_client_data_t *client_data;
+    uint16_t client_sec_inst_id;
+    lwm2m_uri_t uri;
+    lwm2m_result_callback_t cb;
+} lwm2m_client_request_event_t;
+
+int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
+                              lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
+{
+    lwm2m_client_request_event_t *event = NULL;
+
+    event = (lwm2m_client_request_event_t *)lwm2m_malloc(sizeof(lwm2m_client_request_event_t));
+    if (!event) {
+        DEBUG("[lwm2m:client_read] could not allocate event\n");
+        return COAP_500_INTERNAL_SERVER_ERROR;
+    }
+    memset(event, 0, sizeof(lwm2m_client_request_event_t));
+
+    event->event.handler = _client_read_handler;
+    event->client_data = client_data;
+    event->client_sec_inst_id = client_sec_instance_id;
+    event->cb = cb;
+    memcpy(&event->uri, uri, sizeof(lwm2m_uri_t));
+
+    event_post(&_queue, (event_t *)event);
+    return COAP_231_CONTINUE;
+}
+
+static void _client_read_handler(event_t *event)
+{
+    lwm2m_client_request_event_t *req = (lwm2m_client_request_event_t *)event;
+    lwm2m_c2c_read(req->client_data->lwm2m_ctx, req->client_sec_inst_id, &req->uri, req->cb,
+                   req->client_data);
+
+    lwm2m_free(req);
+}
+
+#endif /* CONFIG_LWM2M_CLIENT_C2C */

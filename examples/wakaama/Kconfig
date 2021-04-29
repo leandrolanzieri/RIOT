@@ -7,6 +7,8 @@
 
 menu "Application configuration"
 
+menu "Server configuration"
+
 config LWM2M_SERVER_URI
     string "LwM2M Server URI to register/bootstrap with"
     default "coap://[fd00:dead:beef::1]"
@@ -25,5 +27,45 @@ config PSK_ID
 config PSK_KEY
     string "PSK Key"
     default "ThisIsRIOT!"
+
+endmenu
+
+menu "Client configuration"
+
+config LWM2M_CLIENT_URI
+    string "LwM2M client URI to test C2C communication with"
+    default "coap://[fd00:dead:beef::1]"
+    help
+        The host part of the URI MUST be a valid IPv6 address.
+
+config LWM2M_CLIENT_SHORT_ID
+    int "Client Short ID"
+    default 1
+    range 1 65534
+
+choice
+    bool "Security mode"
+
+config LWM2M_CLIENT_SECURITY_NONE
+    bool "None"
+
+config LWM2M_CLIENT_SECURITY_PSK
+    bool "Pre-Shared Keys"
+
+endchoice
+
+if LWM2M_CLIENT_SECURITY_PSK
+
+config LWM2M_CLIENT_PSK_ID
+    string "PSK Identity"
+    default "C2C_Identity"
+
+config LWM2M_CLIENT_PSK_KEY
+    string "PSK Key"
+    default "C2CRocks!"
+
+endif
+
+endmenu
 
 endmenu # Application configuration

@@ -44,6 +44,7 @@
 #include "uri_parser.h"
 
 #include "liblwm2m.h"
+#include "net/sock/util.h"
 #include "net/sock/udp.h"
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
@@ -70,7 +71,7 @@
  * @return Pointer to the new connection
  */
 static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
-                                                     lwm2m_client_data_t *client_data);
+                                                     lwm2m_client_data_t *client_data, bool client);
 
 /**
  * @brief Sends data with a specified connection @p conn
@@ -112,7 +113,7 @@ void *lwm2m_connect_server(uint16_t sec_obj_inst_id, void *user_data)
 
     DEBUG("[lwm2m_connect_server] Connecting to server in sec. instance %d\n", sec_obj_inst_id);
 
-    new_conn = _connection_create(sec_obj_inst_id, client_data);
+    new_conn = _connection_create(sec_obj_inst_id, client_data, false);
     if (new_conn) {
         DEBUG("[lwm2m_connect_server] Connection created\n");
         /* if the connections list is empty this is the first node, if not
@@ -122,6 +123,33 @@ void *lwm2m_connect_server(uint16_t sec_obj_inst_id, void *user_data)
         }
         else {
             lwm2m_client_connection_t *last = client_data->conn_list;
+            while (last->next != NULL) {
+                last = last->next;
+            }
+            last->next = new_conn;
+        }
+    }
+
+    return new_conn;
+}
+
+void *lwm2m_connect_client(uint16_t sec_obj_inst_id, void *user_data)
+{
+    lwm2m_client_data_t *client_data = (lwm2m_client_data_t *)user_data;
+    lwm2m_client_connection_t *new_conn = NULL;
+
+    DEBUG("[lwm2m_connect_client] Connecting to client in sec. instance %d\n", sec_obj_inst_id);
+
+    new_conn = _connection_create(sec_obj_inst_id, client_data, true);
+    if (new_conn) {
+        DEBUG("[lwm2m_connect_client] Connection created\n");
+        /* if the connections list is empty this is the first node, if not
+         * attach to the last one */
+        if (!client_data->client_conn_list) {
+            client_data->client_conn_list = new_conn;
+        }
+        else {
+            lwm2m_client_connection_t *last = client_data->client_conn_list;
             while (last->next != NULL) {
                 last = last->next;
             }
@@ -159,9 +187,18 @@ bool lwm2m_session_is_equal(void *session1, void *session2, void *user_data)
     lwm2m_client_connection_t *conn_1 = (lwm2m_client_connection_t *)session1;
     lwm2m_client_connection_t *conn_2 = (lwm2m_client_connection_t *)session2;
 
-    return ((conn_1->remote.port == conn_2->remote.port) &&
-            ipv6_addr_equal((ipv6_addr_t *)&(conn_1->remote.addr.ipv6),
-                            (ipv6_addr_t *)&(conn_2->remote.addr.ipv6)));
+    if (IS_ACTIVE(ENABLE_DEBUG)) {
+        char ep[CONFIG_SOCK_URLPATH_MAXLEN];
+        uint16_t port;
+
+        sock_udp_ep_fmt(&conn_1->remote, ep, &port);
+        DEBUG("[lwm2m_session_is_equal] S1 [%s]:%d\n", ep, port);
+
+        sock_udp_ep_fmt(&conn_2->remote, ep, &port);
+        DEBUG("[lwm2m_session_is_equal] S2 [%s]:%d\n", ep, port);
+    }
+
+    return sock_udp_ep_equal(&conn_1->remote, &conn_2->remote);
 }
 
 uint8_t lwm2m_buffer_send(void *sessionH, uint8_t *buffer, size_t length,
@@ -186,26 +223,30 @@ uint8_t lwm2m_buffer_send(void *sessionH, uint8_t *buffer, size_t length,
 lwm2m_client_connection_t *lwm2m_client_connection_find(lwm2m_client_connection_t *conn_list,
                                                         const sock_udp_ep_t *remote)
 {
-    lwm2m_client_connection_t *conn = conn_list;
-
     char ip[128];
     uint8_t ip_len = 128;
+    lwm2m_client_connection_t *conn = conn_list;
 
-    ipv6_addr_to_str(ip, (ipv6_addr_t *)&remote->addr.ipv6, ip_len);
-    DEBUG("Looking for connection from [%s]:%d\n", ip, remote->port);
+    if (!conn_list) {
+        DEBUG("[lwm2m_client_connection_find] Connection list is null!\n");
+        return NULL;
+    }
 
-    if (conn_list == NULL) {
-        DEBUG("Conn list is null!");
+    if (IS_ACTIVE(ENABLE_DEBUG)) {
+        ipv6_addr_to_str(ip, (ipv6_addr_t *)&remote->addr.ipv6, ip_len);
+        DEBUG("[lwm2m_client_connection_find] Looking for connection from [%s]:%d\n", ip, remote->port);
     }
 
     while(conn != NULL) {
-        ipv6_addr_to_str(ip, (ipv6_addr_t *)&conn->remote.addr.ipv6, ip_len);
-        DEBUG("Comparing to [%s]:%d\n", ip, conn->remote.port);
-        if ((conn->remote.port == remote->port) &&
-            ipv6_addr_equal((ipv6_addr_t *)&(conn->remote.addr.ipv6),
-                            (ipv6_addr_t *)&(remote->addr.ipv6))) {
+        if (IS_ACTIVE(ENABLE_DEBUG)) {
+            ipv6_addr_to_str(ip, (ipv6_addr_t *)&conn->remote.addr.ipv6, ip_len);
+            DEBUG("[lwm2m_client_connection_find] Comparing to [%s]:%d\n", ip, conn->remote.port);
+        }
+
+        if (sock_udp_ep_equal(remote, &conn->remote)) {
             break;
         }
+
         conn = conn->next;
     }
     return conn;
@@ -289,10 +330,10 @@ static netif_t *_get_interface(uri_parser_result_t *uri)
 }
 
 static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
-                                                     lwm2m_client_data_t *client_data)
+                                                     lwm2m_client_data_t *client_data, bool client)
 {
     lwm2m_client_connection_t *conn = NULL;
-    char uri[CONFIG_LWM2M_URI_MAX_SIZE];
+    char uri[CONFIG_LWM2M_URI_MAX_SIZE] = {0};
     char *port;
     bool is_bootstrap;
 
@@ -305,6 +346,10 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
         .resourceId = LWM2M_SECURITY_URI_ID,
         .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
     };
+
+    if (client) {
+        resource_uri.objectId = LWM2M_CLIENT_SECURITY_OBJECT_ID;
+    }
 
     int res = lwm2m_get_string(client_data, &resource_uri, uri, ARRAY_SIZE(uri));
     if (res < 0) {
@@ -349,7 +394,15 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
         DEBUG("[_connection_create] Could not allocate new connection\n");
         goto out;
     }
-    conn->next = client_data->conn_list;
+
+    conn->sec_inst_id = sec_obj_inst_id;
+
+    if (client) {
+        conn->next = client_data->client_conn_list;
+    }
+    else {
+        conn->next = client_data->conn_list;
+    }
 
     /* configure to any IPv6 */
     conn->remote.family = AF_INET6;

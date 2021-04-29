@@ -52,6 +52,7 @@ typedef struct lwm2m_obj_server_inst {
     uint32_t disable_timeout;   /**< disable timeout */
     bool store;                 /**< notification storing */
     lwm2m_binding_t binding;    /**< binding */
+    bool client;                /**< respresents another client */
 } lwm2m_obj_server_inst_t;
 
 /**
@@ -122,6 +123,19 @@ static lwm2m_object_t _server_object = {
     .userData       = NULL
 };
 
+static lwm2m_object_t _client_object = {
+    .next           = NULL,
+    .objID          = LWM2M_CLIENT_OBJECT_ID,
+    .instanceList   = NULL,
+    .readFunc       = _read_cb,
+    .writeFunc      = _write_cb,
+    .createFunc     = _create_cb,
+    .deleteFunc     = _delete_cb,
+    .executeFunc    = _execute_cb,
+    .discoverFunc   = _discover_cb,
+    .userData       = NULL
+};
+
 static lwm2m_obj_server_inst_t *_get_free_instance(void)
 {
     lwm2m_obj_server_inst_t *instance = NULL;
@@ -133,7 +147,10 @@ static lwm2m_obj_server_inst_t *_get_free_instance(void)
             break;
         }
     }
-    memset(instance, 0, sizeof(lwm2m_obj_server_inst_t));
+
+    if (instance) {
+        memset(instance, 0, sizeof(lwm2m_obj_server_inst_t));
+    }
 
     return instance;
 }
@@ -494,17 +511,18 @@ lwm2m_object_t *lwm2m_object_server_get(void)
     return &_server_object;
 }
 
-int lwm2m_object_server_instance_create(lwm2m_object_t *object, uint16_t instance_id,
-                                        const lwm2m_obj_server_args_t *args)
+lwm2m_object_t *lwm2m_object_client_get(void)
+{
+    return &_client_object;
+}
+
+int _instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                     const lwm2m_obj_server_args_t *args, bool client)
 {
     assert(object);
     assert(args);
 
     lwm2m_obj_server_inst_t  *instance = NULL;
-
-    if (object->objID != LWM2M_SERVER_OBJECT_ID) {
-        return -1;
-    }
 
     instance = _get_free_instance();
     if (!instance) {
@@ -526,9 +544,34 @@ int lwm2m_object_server_instance_create(lwm2m_object_t *object, uint16_t instanc
     instance->max_period = args->max_period;
     instance->disable_timeout = args->disable_timeout;
     instance->binding = args->binding;
+    instance->client = client;
 
     /* add the new instance to the list */
     object->instanceList = LWM2M_LIST_ADD(object->instanceList, instance);
     DEBUG("[lwm2m:server]: added server instance with ID %d\n", instance_id);
     return 0;
+}
+
+int lwm2m_object_server_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                        const lwm2m_obj_server_args_t *args)
+{
+    assert(object);
+    assert(args);
+
+    if (object->objID != LWM2M_SERVER_OBJECT_ID) {
+        return -1;
+    }
+    return _instance_create(object, instance_id, args, false);
+}
+
+int lwm2m_object_client_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                        const lwm2m_obj_client_args_t *args)
+{
+    assert(object);
+    assert(args);
+
+    if (object->objID != LWM2M_CLIENT_OBJECT_ID) {
+        return -1;
+    }
+    return _instance_create(object, instance_id, (lwm2m_obj_server_args_t *)args, true);
 }

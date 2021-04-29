@@ -96,6 +96,8 @@ typedef struct lwm2m_obj_security_inst {
      * @brief Timeout for Bootstrap-Server account deletion.
      */
     uint32_t bs_account_timeout;
+
+    bool client;
 } lwm2m_obj_security_inst_t;
 
 /**
@@ -194,6 +196,23 @@ static lwm2m_object_t _security_object = {
     .discoverFunc   = NULL,
     .userData       = NULL,
 };
+
+/**
+ * @brief Implementation of the object interface for the Client Security Object.
+ */
+static lwm2m_object_t _client_security_object = {
+    .next           = NULL,
+    .objID          = LWM2M_CLIENT_SECURITY_OBJECT_ID,
+    .instanceList   = NULL,
+    .readFunc       = _read_cb,
+    .writeFunc      = _write_cb,
+    .createFunc     = _create_cb,
+    .deleteFunc     = _delete_cb,
+    .executeFunc    = NULL,
+    .discoverFunc   = NULL,
+    .userData       = NULL,
+};
+
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 /**
@@ -638,19 +657,18 @@ lwm2m_object_t *lwm2m_object_security_get(void)
     return &_security_object;
 }
 
-int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
-                                          lwm2m_obj_security_args_t *args)
+lwm2m_object_t *lwm2m_object_client_security_get(void)
+{
+    return &_client_security_object;
+}
+
+static int _instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                            const lwm2m_obj_security_args_t *args, bool client)
 {
     assert(object);
     assert(args);
 
     lwm2m_obj_security_inst_t *instance = NULL;
-
-    /* some sanity checks */
-    if (!object || !args || !args->server_id || !args->server_uri ||
-        object->objID != LWM2M_SECURITY_OBJECT_ID) {
-        goto out;
-    }
 
     DEBUG("[lwm2m:security]: creating new instance\n");
 
@@ -669,6 +687,7 @@ int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t insta
     instance->is_bootstrap = args->is_bootstrap;
     instance->client_hold_off_time = args->client_hold_off_time;
     instance->bs_account_timeout = args->bootstrap_account_timeout;
+    instance->client = client;
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     instance->cred_tag = CREDMAN_TAG_EMPTY;
@@ -765,4 +784,31 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
     (void) instance_id;
     return CREDMAN_TAG_EMPTY;
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
+}
+
+
+int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                          lwm2m_obj_security_args_t *args)
+{
+    /* some sanity checks */
+    if (!object || !args || !args->server_id || !args->server_uri ||
+        object->objID != LWM2M_SECURITY_OBJECT_ID) {
+        return -1;
+    }
+
+    return _instance_create(object, instance_id, args, false);
+}
+
+int lwm2m_object_client_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                                 lwm2m_obj_client_security_args_t *args)
+{
+    DEBUG("[lwm2m:client_security]: creating instance\n");
+    /* some sanity checks */
+    if (!object || !args || !args->server_id || !args->server_uri ||
+        object->objID != LWM2M_CLIENT_SECURITY_OBJECT_ID) {
+        DEBUG("[lwm2m:client_security]: wrong parameters\n");
+        return -1;
+    }
+
+    return _instance_create(object, instance_id, args, true);
 }

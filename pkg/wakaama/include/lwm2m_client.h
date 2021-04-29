@@ -33,6 +33,7 @@ extern "C" {
 #include <unistd.h>
 #include <sys/time.h>
 
+#include "event.h"
 #include "periph/pm.h"
 #include "net/sock/udp.h"
 
@@ -59,6 +60,8 @@ typedef struct lwm2m_client_connection {
 #endif
     lwm2m_client_connection_type_t type;
     time_t last_send; /**< last sent packet to the server */
+    uint16_t sec_inst_id;
+    bool should_verify_port;
 } lwm2m_client_connection_t;
 
 /**
@@ -75,6 +78,7 @@ typedef struct {
     sock_udp_ep_t local_ep;        /**< Local endpoint */
     lwm2m_context_t *lwm2m_ctx;    /**< LwM2M context */
     lwm2m_client_connection_t *conn_list; /**< LwM2M connections list */
+    lwm2m_client_connection_t *client_conn_list; /**< LwM2M connection list to other clients */
 } lwm2m_client_data_t;
 
 /**
@@ -109,6 +113,8 @@ lwm2m_context_t *lwm2m_client_run(lwm2m_client_data_t *client_data,
                                    lwm2m_object_t *obj_list[],
                                    uint16_t obj_numof);
 
+int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
+                              lwm2m_uri_t *uri, lwm2m_result_callback_t cb);
 /**
  * @brief Initializes a LwM2M client
  *
@@ -155,6 +161,11 @@ void lwm2m_client_add_credential(credman_tag_t tag);
  */
 void lwm2m_client_remove_credential(credman_tag_t tag);
 #endif /*  MODULE_WAKAAMA_CLIENT_DTLS || DOXYGEN */
+
+#if IS_USED(CONFIG_LWM2M_CLIENT_C2C) || defined(DOXYGEN)
+int lwm2m_get_client_string(lwm2m_client_data_t *client_data, uint16_t client_id,
+                            const lwm2m_uri_t *uri, char *out, size_t out_len);
+#endif /* CONFIG_LWM2M_CLIENT_C2C || DOXYGEN */
 
 #ifdef __cplusplus
 }

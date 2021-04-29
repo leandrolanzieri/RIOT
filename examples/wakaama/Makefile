@@ -28,6 +28,7 @@ DEVELHELP ?= 1
 # NOTE: Add the package for wakaama
 USEPKG += wakaama
 # Extra LwM2M objects
+USEMODULE += wakaama_objects_access_control
 USEMODULE += wakaama_objects_light_control
 
 # add DTLS support
@@ -37,6 +38,10 @@ USEMODULE += wakaama_client_dtls
 USEPKG += tinydtls
 # tinydtls needs crypto secure PRNG
 USEMODULE += prng_sha1prng
+
+# dump requests
+USEMODULE += od
+USEMODULE += od_string
 
 ## Application-specific Configuration options
 LWM2M_SERVER_URI ?= '"coap://[fd00:dead:beef::1]:5684"'

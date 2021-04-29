@@ -17,5 +17,9 @@ ifneq (,$(or $(CONFIG_LWM2M_WITH_LOGS),$(filter -DCONFIG_LWM2M_WITH_LOGS=1,$(CFL
   CFLAGS += -DLWM2M_WITH_LOGS=1
 endif
 
+ifneq (,$(CONFIG_LWM2M_CLIENT_C2C))
+  CFLAGS += -DLWM2M_CLIENT_C2C
+endif
+
 PSEUDOMODULES += wakaama
 PSEUDOMODULES += wakaama_client_dtls

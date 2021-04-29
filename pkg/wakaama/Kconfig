@@ -66,6 +66,12 @@ config LWM2M_BOOTSTRAP
     help
         Say y to support using a bootstrap server to get server information.
 
+config LWM2M_CLIENT_C2C
+    bool "[EXPERIMENTAL] Client-to-Client communication support"
+    help
+        Say y to support direct communication with other LwM2M clients. Just for experemital
+        purposes!
+
 rsource "contrib/objects/Kconfig"
 
 endif

@@ -100,6 +100,12 @@ extern "C" {
 
 /* these macros are defined in liblwm2m.h, reproduced here just for documentation purposes */
 #if defined(DOXYGEN)
+
+/**
+ * @brief LwM2M Client Object ID
+ */
+#define LWM2M_CLIENT_OBJECT_ID          11000 // TODO: to be defined
+
 /**
  * @brief Server LwM2M object ID.
  */
@@ -173,7 +179,7 @@ typedef enum {
 /**
  * @brief Arguments for the creation of a Server object instance.
  */
-typedef struct lwm2m_obj_server_args {
+struct lwm2m_obj_server_args {
     uint16_t short_id;              /**< short server ID */
     uint32_t lifetime;              /**< lifetime */
     uint32_t min_period;            /**< default minimum observation period */
@@ -181,7 +187,10 @@ typedef struct lwm2m_obj_server_args {
     uint32_t disable_timeout;       /**< period to disable the LwM2M server */
     bool notification_storing;      /**< store "Notify" operations */
     lwm2m_binding_t binding;        /**< transport binding */
-} lwm2m_obj_server_args_t;
+};
+
+typedef struct lwm2m_obj_server_args lwm2m_obj_server_args_t;
+typedef struct lwm2m_obj_server_args lwm2m_obj_client_args_t;
 
 /**
  * @brief   Get the Server object handle
@@ -189,6 +198,13 @@ typedef struct lwm2m_obj_server_args {
  * @return Pointer to the global handle of the Server object.
  */
 lwm2m_object_t *lwm2m_object_server_get(void);
+
+/**
+ * @brief   Get the Client object handle
+ *
+ * @return Pointer to the global handle of the Client object.
+ */
+lwm2m_object_t *lwm2m_object_client_get(void);
 
 /**
  * @brief   Create a server object instance.
@@ -204,6 +220,9 @@ lwm2m_object_t *lwm2m_object_server_get(void);
  */
 int lwm2m_object_server_instance_create(lwm2m_object_t *object, uint16_t instance_id,
                                         const lwm2m_obj_server_args_t *args);
+
+int lwm2m_object_client_instance_create(lwm2m_object_t *object, uint16_t instance_id,
+                                        const lwm2m_obj_client_args_t *args);
 
 #ifdef __cplusplus
 }
