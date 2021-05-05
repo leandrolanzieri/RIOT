@@ -289,6 +289,32 @@ read_usage_error:
         return 1;
     }
 
+    if (!strcmp(argv[1], "obs")) {
+        if (argc != 4) {
+            goto obs_usage_error;
+        }
+
+        lwm2m_uri_t uri;
+        if (!lwm2m_stringToUri(argv[3], strlen(argv[3]), &uri)) {
+            printf("Invalid path\n");
+            goto obs_usage_error;
+        }
+
+        int client_id = atoi(argv[2]);
+
+        int res = lwm2m_client_observe(&client_data, client_id, &uri, _read_cb);
+        if (res != COAP_231_CONTINUE) {
+            printf("Error observing client's resource\n");
+            return 1;
+        }
+
+        return 0;
+
+obs_usage_error:
+        printf("usage: %s obs <client_id> <path>\n", argv[0]);
+        return 1;
+    }
+
     if (IS_ACTIVE(DEVELHELP) && !strcmp(argv[1], "mem")) {
         lwm2m_tlsf_status();
         return 0;
@@ -301,7 +327,7 @@ help_error:
         printf("|mem");
     }
 
-    printf("|read>\n");
+    printf("|read|obs>\n");
 
     return 1;
 }

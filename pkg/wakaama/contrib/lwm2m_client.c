@@ -670,35 +670,58 @@ typedef struct {
     lwm2m_result_callback_t cb;
 } lwm2m_client_request_event_t;
 
-int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
-                              lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
+static int _post_request(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
+                            lwm2m_uri_t *uri, event_handler_t event_handler,
+                            lwm2m_result_callback_t user_cb)
 {
-    lwm2m_client_request_event_t *event = NULL;
+    lwm2m_client_request_event_t *event;
 
     event = (lwm2m_client_request_event_t *)lwm2m_malloc(sizeof(lwm2m_client_request_event_t));
     if (!event) {
-        DEBUG("[lwm2m:client_read] could not allocate event\n");
         return COAP_500_INTERNAL_SERVER_ERROR;
     }
     memset(event, 0, sizeof(lwm2m_client_request_event_t));
 
-    event->event.handler = _client_read_handler;
     event->client_data = client_data;
     event->client_sec_inst_id = client_sec_instance_id;
-    event->cb = cb;
+    event->cb = user_cb;
+    event->event.handler = event_handler;
     memcpy(&event->uri, uri, sizeof(lwm2m_uri_t));
-
     event_post(&_queue, (event_t *)event);
+
     return COAP_231_CONTINUE;
+}
+
+static void _client_observe_handler(event_t *event)
+{
+    lwm2m_client_request_event_t *req = (lwm2m_client_request_event_t *)event;
+    lwm2m_c2c_observe(req->client_data->lwm2m_ctx, req->client_sec_inst_id, &req->uri, req->cb,
+                      req->client_data);
+
+    lwm2m_free(req);
 }
 
 static void _client_read_handler(event_t *event)
 {
+    DEBUG("[lwm2m:client] got read request\n");
     lwm2m_client_request_event_t *req = (lwm2m_client_request_event_t *)event;
     lwm2m_c2c_read(req->client_data->lwm2m_ctx, req->client_sec_inst_id, &req->uri, req->cb,
                    req->client_data);
 
     lwm2m_free(req);
+}
+
+int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
+                              lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
+{
+    DEBUG("[lwm2m:client] posting read request\n");
+    return _post_request(client_data, client_sec_instance_id, uri, _client_read_handler, cb);
+}
+
+int lwm2m_client_observe(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
+                         lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
+{
+    return _post_request(client_data, client_sec_instance_id, uri, _client_observe_handler, cb);
 }
 
 #endif /* CONFIG_LWM2M_CLIENT_C2C */
