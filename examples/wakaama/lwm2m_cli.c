@@ -124,7 +124,7 @@ void lwm2m_cli_init(void)
         .server_uri = CONFIG_LWM2M_SERVER_URI,
         .security_mode = LWM2M_SECURITY_MODE_PRE_SHARED_KEY,
         .cred = &credential,
-        .is_bootstrap = false, /* set to true when using Bootstrap server */
+        .is_bootstrap = IS_ACTIVE(LWM2M_SERVER_IS_BOOTSTRAP), /* set to true when using Bootstrap server */
         .client_hold_off_time = 5,
         .bootstrap_account_timeout = 0
     };
@@ -204,7 +204,7 @@ void lwm2m_cli_init(void)
         .security_mode = LWM2M_SECURITY_MODE_NONE,
         .cred = NULL,
 #endif
-        .is_bootstrap = false,
+        .is_bootstrap = IS_ACTIVE(CONFIG_LWM2M_SERVER_IS_BOOTSTRAP),
         .client_hold_off_time = 5,
         .bootstrap_account_timeout = 0
     };
@@ -247,6 +247,13 @@ void _read_cb(uint16_t client_id, lwm2m_uri_t *uri, int status, lwm2m_media_type
 
     printf("Got response from client %d\n", client_id);
     od_hex_dump_ext(data, (size_t)data_len, 0, 0);
+}
+
+void _auth_cb (uint16_t short_server_id, uint8_t response_code, void *user_data)
+{
+    (void) user_data;
+
+    printf("Got response from server %d: %d\n", short_server_id, response_code);
 }
 
 int lwm2m_cli_cmd(int argc, char **argv)
@@ -315,6 +322,26 @@ obs_usage_error:
         return 1;
     }
 
+    if (!strcmp(argv[1], "auth")) {
+        if (argc != 4) {
+            goto auth_usage_error;
+        }
+
+        int server_id = atoi(argv[2]);
+
+        int res = lwm2m_request_authorization(&client_data, server_id, argv[3], strlen(argv[3]), _auth_cb);
+        if (res != COAP_231_CONTINUE) {
+            printf("Error observing client's resource\n");
+            return 1;
+        }
+
+        return 0;
+
+auth_usage_error:
+        printf("usage: %s auth <server_id> <client_uri>\n", argv[0]);
+        return 1;
+    }
+
     if (IS_ACTIVE(DEVELHELP) && !strcmp(argv[1], "mem")) {
         lwm2m_tlsf_status();
         return 0;
@@ -327,7 +354,7 @@ help_error:
         printf("|mem");
     }
 
-    printf("|read|obs>\n");
+    printf("|read|obs|auth>\n");
 
     return 1;
 }

@@ -28,6 +28,10 @@ config PSK_KEY
     string "PSK Key"
     default "ThisIsRIOT!"
 
+config LWM2M_SERVER_IS_BOOTSTRAP
+    bool "The server is a Bootstrap-Server"
+    depends on LWM2M_BOOTSTRAP
+
 endmenu
 
 menu "Client configuration"
