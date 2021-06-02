@@ -347,6 +347,27 @@ auth_usage_error:
         return 0;
     }
 
+    if (!strcmp(argv[1], "obj")) {
+        if (!connected) {
+            printf("First connect to the LwM2M server\n");
+            return 1;
+        }
+
+        if (argc == 2) {
+            dump_client_objects(&client_data, -1);
+        }
+        else if (argc == 3) {
+            int id = atoi(argv[2]);
+            dump_client_objects(&client_data, id);
+        }
+        else {
+            printf("usage: %s obj [object_id]\n", argv[0]);
+            return 1;
+        }
+
+        return 0;
+    }
+
 help_error:
     printf("usage: %s <start", argv[0]);
 
@@ -354,7 +375,7 @@ help_error:
         printf("|mem");
     }
 
-    printf("|read|obs|auth>\n");
+    printf("|read|obs|auth|obj>\n");
 
     return 1;
 }
