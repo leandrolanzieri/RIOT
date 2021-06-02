@@ -65,6 +65,7 @@ typedef struct lwm2m_obj_acc_ctrl_inst {
     uint16_t obj_inst_id;                       /**< object instance id */
     uint16_t owner;                             /**< access control owner */
     lwm2m_obj_acc_ctrl_acl_t *acl_list;         /**< access control lists */
+    bool client;                                /**< is an instance of Client Access Control */
 } lwm2m_obj_acc_ctrl_inst_t;
 
 /**
@@ -132,6 +133,22 @@ static lwm2m_obj_acc_ctrl_acl_t _acls[CONFIG_LWM2M_ACCESS_CONTROL_ACLS_MAX] = { 
 static lwm2m_object_t _acc_control_object = {
     .next           = NULL,
     .objID          = LWM2M_ACCESS_CONTROL_OBJECT_ID,
+    .instanceList   = NULL,
+    .readFunc       = _read_cb,
+    .writeFunc      = _write_cb,
+    .createFunc     = _create_cb,
+    .deleteFunc     = _delete_cb,
+    .executeFunc    = NULL,
+    .discoverFunc   = NULL,
+    .userData       = NULL
+};
+
+/**
+ * @brief Client Access Control object implementation descriptor.
+ */
+static lwm2m_object_t _client_acc_control_object = {
+    .next           = NULL,
+    .objID          = LWM2M_CLIENT_ACCESS_CONTROL_OBJECT_ID,
     .instanceList   = NULL,
     .readFunc       = _read_cb,
     .writeFunc      = _write_cb,
@@ -322,7 +339,7 @@ static uint8_t _write_integer(uint16_t *out, lwm2m_data_t *data, uint16_t min, u
         return COAP_400_BAD_REQUEST;
     }
 
-    if (value <= min || value >= max) {
+    if (value < min || value >= max) {
         DEBUG("[lwm2m:access_control:write]: invalid integer\n");
         return COAP_406_NOT_ACCEPTABLE;
     }
@@ -500,6 +517,11 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
 lwm2m_object_t *lwm2m_object_access_control_get(void)
 {
     return &_acc_control_object;
+}
+
+lwm2m_object_t *lwm2m_object_client_access_control_get(void)
+{
+    return &_client_acc_control_object;
 }
 
 int lwm2m_object_access_control_instance_create(lwm2m_object_t *object, uint16_t instance_id,

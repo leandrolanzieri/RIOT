@@ -47,6 +47,11 @@ extern "C" {
 #include "liblwm2m.h"
 
 /**
+ * @brief LwM2M Client Access Control Object ID
+ */
+#define LWM2M_CLIENT_ACCESS_CONTROL_OBJECT_ID          11002 // TODO: to be defined
+
+/**
  * @brief Maximum number of instances of the Access Control object.
  */
 #ifndef CONFIG_LWM2M_ACCESS_CONTROL_INSTANCES_MAX
@@ -154,6 +159,13 @@ typedef struct lwm2m_obj_access_control_acl_args {
  * @return Pointer to the global handle of the Access Control object.
  */
 lwm2m_object_t *lwm2m_object_access_control_get(void);
+
+/**
+ * @brief   Get the Client Access Control object handle
+ *
+ * @return Pointer to the global handle of the Client Access Control object.
+ */
+lwm2m_object_t *lwm2m_object_client_access_control_get(void);
 
 /**
  * @brief   Create an access control object instance.
