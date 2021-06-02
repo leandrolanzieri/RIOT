@@ -104,7 +104,7 @@ extern "C" {
 /**
  * @brief LwM2M Client Object ID
  */
-#define LWM2M_CLIENT_OBJECT_ID          11000 // TODO: to be defined
+#define LWM2M_CLIENT_OBJECT_ID          11001 // TODO: to be defined
 
 /**
  * @brief Server LwM2M object ID.

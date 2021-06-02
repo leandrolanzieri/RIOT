@@ -101,7 +101,7 @@ extern "C" {
 /**
  * @brief LwM2M Client Security object ID
  */
-#define LWM2M_CLIENT_SECURITY_OBJECT_ID          11001 // TODO: to be defined
+#define LWM2M_CLIENT_SECURITY_OBJECT_ID          11000 // TODO: to be defined
 
 /**
  * @name LwM2M Security object security modes
