@@ -39,6 +39,7 @@
 #include "debug.h"
 
 #define MAX_BINDING_LEN     3
+#define MAX_ENDPOINT_NAME   64
 
 /**
  * @brief   Server object instance descriptor.
@@ -52,6 +53,7 @@ typedef struct lwm2m_obj_server_inst {
     uint32_t disable_timeout;   /**< disable timeout */
     bool store;                 /**< notification storing */
     lwm2m_binding_t binding;    /**< binding */
+    char ep[MAX_ENDPOINT_NAME]; /**< client endpoint name */
     bool client;                /**< respresents another client */
 } lwm2m_obj_server_inst_t;
 
@@ -200,6 +202,13 @@ static uint8_t _get_resource_value(lwm2m_data_t *data, lwm2m_obj_server_inst_t *
     case LWM2M_SERVER_UPDATE_ID:
         return COAP_405_METHOD_NOT_ALLOWED;
 
+    case LWM2M_CLIENT_ENDPOINT_ID:
+        if (instance->client) {
+            lwm2m_data_encode_string(instance->ep, data);
+            return COAP_205_CONTENT;
+        }
+        return COAP_404_NOT_FOUND;
+
     default:
         return COAP_404_NOT_FOUND;
     }
@@ -314,6 +323,19 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             result = COAP_405_METHOD_NOT_ALLOWED;
             break;
 
+        case LWM2M_CLIENT_ENDPOINT_ID:
+            if (!instance->client || data_array[i].type != LWM2M_TYPE_STRING ||
+                data_array[i].value.asBuffer.length > MAX_ENDPOINT_NAME) {
+                result = COAP_400_BAD_REQUEST;
+                break;
+            }
+
+            memset(instance->ep, 0, MAX_ENDPOINT_NAME);
+            memcpy(instance->ep, data_array[i].value.asBuffer.buffer,
+                   data_array[i].value.asBuffer.length);
+            result = COAP_204_CHANGED;
+            break;
+
         default:
             return COAP_404_NOT_FOUND;
         }
@@ -345,9 +367,17 @@ static uint8_t _read_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data
             LWM2M_SERVER_MAX_PERIOD_ID,
             LWM2M_SERVER_TIMEOUT_ID,
             LWM2M_SERVER_STORING_ID,
-            LWM2M_SERVER_BINDING_ID
+            LWM2M_SERVER_BINDING_ID,
+            LWM2M_CLIENT_ENDPOINT_ID,
         };
-        int res_num = sizeof(res_list)/sizeof(uint16_t);
+        int res_num;
+        
+        if (instance->client) {
+            res_num = sizeof(res_list)/sizeof(uint16_t);
+        }
+        else {
+            res_num = sizeof(res_list)/sizeof(uint16_t) - 1;
+        }
 
         /* allocate data structs */
         *data_array = lwm2m_data_new(res_num);
@@ -545,6 +575,13 @@ int _instance_create(lwm2m_object_t *object, uint16_t instance_id,
     instance->disable_timeout = args->disable_timeout;
     instance->binding = args->binding;
     instance->client = client;
+
+    if (client) {
+        lwm2m_obj_client_args_t *_args = (lwm2m_obj_client_args_t*)args;
+        if (_args->endpoint) {
+            strcpy(instance->ep, _args->endpoint);
+        }
+    }
 
     /* add the new instance to the list */
     object->instanceList = LWM2M_LIST_ADD(object->instanceList, instance);

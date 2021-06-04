@@ -176,6 +176,12 @@ typedef enum {
 
 #endif /* DOXYGEN */
 
+
+/**
+ * @brief Endpoint name, when the object is the LwM2M Client
+ */
+#define LWM2M_CLIENT_ENDPOINT_ID        9
+
 /**
  * @brief Arguments for the creation of a Server object instance.
  */
@@ -189,8 +195,19 @@ struct lwm2m_obj_server_args {
     lwm2m_binding_t binding;        /**< transport binding */
 };
 
+struct lwm2m_obj_client_args {
+    uint16_t short_id;              /**< short client ID */
+    uint32_t lifetime;              /**< lifetime */
+    uint32_t min_period;            /**< default minimum observation period */
+    uint32_t max_period;            /**< default maximum observation period */
+    uint32_t disable_timeout;       /**< period to disable the LwM2M client */
+    bool notification_storing;      /**< store "Notify" operations */
+    lwm2m_binding_t binding;        /**< transport binding */
+    const char *endpoint;           /**< endpoint name of the client */
+};
+
 typedef struct lwm2m_obj_server_args lwm2m_obj_server_args_t;
-typedef struct lwm2m_obj_server_args lwm2m_obj_client_args_t;
+typedef struct lwm2m_obj_client_args lwm2m_obj_client_args_t;
 
 /**
  * @brief   Get the Server object handle
