@@ -44,8 +44,12 @@ config LWM2M_CLIENT_URI
 
 config LWM2M_CLIENT_SHORT_ID
     int "Client Short ID"
-    default 1
+    default 5
     range 1 65534
+
+config LWM2M_CLIENT_ENDPOINT
+    string "Client Endpoint Name"
+    default "testRIOTDevice"
 
 choice
     bool "Security mode"
