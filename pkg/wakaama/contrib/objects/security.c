@@ -349,11 +349,24 @@ static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance)
 
         /* not implemented */
         case LWM2M_SECURITY_SERVER_PUBLIC_KEY_ID:
+            lwm2m_data_encode_opaque(NULL, 0, data);
+            break;
+
         case LWM2M_SECURITY_SMS_SECURITY_ID:
+            lwm2m_data_encode_int(LWM2M_SECURITY_MODE_NONE, data);
+            break;
+
         case LWM2M_SECURITY_SMS_KEY_PARAM_ID:
+            lwm2m_data_encode_opaque(NULL, 0, data);
+            break;
+
         case LWM2M_SECURITY_SMS_SECRET_KEY_ID:
+            lwm2m_data_encode_opaque(NULL, 0, data);
+            break;
+
         case LWM2M_SECURITY_SMS_SERVER_NUMBER_ID:
-            return COAP_404_NOT_FOUND;
+            lwm2m_data_encode_int(LWM2M_SECURITY_MODE_NONE, data);
+            break;
 
         default:
             return COAP_404_NOT_FOUND;
