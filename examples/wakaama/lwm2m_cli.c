@@ -26,15 +26,16 @@
 #include "objects/access_control.h"
 #include "objects/server.h"
 
+#include "lwm2m_obj_dump.h"
 #include "net/credman.h"
 #include "od.h"
 
 #ifdef LED0_ON
 #define LED_COLOR   "Unknown"
 #define LED_APP_TYPE "LED 0"
-# define OBJ_COUNT (7)
+# define OBJ_COUNT (8)
 #else
-# define OBJ_COUNT (6)
+# define OBJ_COUNT (7)
 #endif
 
 #ifndef CONFIG_LWM2M_SERVER_SHORT_ID
@@ -47,6 +48,10 @@
 
 #ifndef CONFIG_LWM2M_CLIENT_SHORT_ID
 #define CONFIG_LWM2M_CLIENT_SHORT_ID 1
+#endif
+
+#ifndef CONFIG_LWM2M_CLIENT_ENDPOINT
+#define CONFIG_LWM2M_CLIENT_ENDPOINT "testRIOTDevice"
 #endif
 
 #ifndef CONFIG_LWM2M_CLIENT_URI
@@ -186,7 +191,8 @@ void lwm2m_cli_init(void)
         .max_period = 120,
         .min_period = 60,
         .notification_storing = false,
-        .disable_timeout = 3600 /* one hour */
+        .disable_timeout = 3600, /* one hour */
+        .endpoint = CONFIG_LWM2M_CLIENT_ENDPOINT
     };
     res = lwm2m_object_client_instance_create(obj_list[4], 0, &client_args);
     if (res < 0) {
@@ -214,8 +220,10 @@ void lwm2m_cli_init(void)
         puts("Error instantiating client security object");
     }
 
+    obj_list[6] = lwm2m_object_client_access_control_get();
+
 #ifdef LED0_ON
-    obj_list[6] = lwm2m_object_light_control_get();
+    obj_list[7] = lwm2m_object_light_control_get();
     lwm2m_obj_light_control_args_t light_args = {
         .cb = _led_cb,
         .cb_arg = NULL,
@@ -225,7 +233,7 @@ void lwm2m_cli_init(void)
         .app_type_len = sizeof(LED_APP_TYPE) - 1
     };
 
-    res = lwm2m_object_light_control_instance_create(obj_list[6], 0, &light_args);
+    res = lwm2m_object_light_control_instance_create(obj_list[7], 0, &light_args);
 
     if (res < 0) {
         puts("Error instantiating light control");
@@ -323,13 +331,29 @@ obs_usage_error:
     }
 
     if (!strcmp(argv[1], "auth")) {
-        if (argc != 4) {
+        if (argc != 6 && argc != 7) {
+            printf("%d\n", argc);
             goto auth_usage_error;
         }
 
         int server_id = atoi(argv[2]);
 
-        int res = lwm2m_request_authorization(&client_data, server_id, argv[3], strlen(argv[3]), _auth_cb);
+        // TODO: get from arguments
+        lwm2m_auth_request_t req;
+        req.uri.objectId = atoi(argv[5]);
+        req.access = LWM2M_ACCESS_CONTROL_READ;
+
+        // check if instance ID has been specified
+        if (argc == 7) {
+            req.uri.instanceId = atoi(argv[6]);
+            req.uri.flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID;
+        }
+        else {
+            req.uri.flag = LWM2M_URI_FLAG_OBJECT_ID;
+        }
+
+        int res = lwm2m_request_cred_and_auth(&client_data, server_id, argv[3], strlen(argv[3]),
+                                              &req, 1, _auth_cb);
         if (res != COAP_231_CONTINUE) {
             printf("Error observing client's resource\n");
             return 1;
@@ -338,7 +362,9 @@ obs_usage_error:
         return 0;
 
 auth_usage_error:
-        printf("usage: %s auth <server_id> <client_uri>\n", argv[0]);
+        printf("usage: %s auth <server_id> <client_endpoint> <access> <object_id> [instance_id]\n", argv[0]);
+        printf("where <access> is the OR'd value of:\n");
+        printf("  0x01: read\n  0x02: write\n  0x04: execute\n  0x08: delete \n  0x10: discover\n");
         return 1;
     }
 
