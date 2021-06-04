@@ -119,8 +119,13 @@ int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_inst
 int lwm2m_client_observe(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
                          lwm2m_uri_t *uri, lwm2m_result_callback_t cb);
 
-int lwm2m_request_authorization(lwm2m_client_data_t *client_data, uint16_t short_server_id,
-                                char *host_uri, size_t host_uri_len, lwm2m_auth_request_cb_t cb);
+int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short_server_id,
+                                char *host_uri, size_t host_uri_len, lwm2m_auth_request_t *requests,
+                                size_t requests_len, lwm2m_auth_request_cb_t cb);
+
+int lwm2m_request_auth(lwm2m_client_data_t *client_data, uint16_t short_server_id,
+                       uint16_t client_sec_instance_id, lwm2m_auth_request_t *requests,
+                       size_t requests_len, lwm2m_auth_request_cb_t cb);
 
 /**
  * @brief Initializes a LwM2M client

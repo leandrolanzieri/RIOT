@@ -676,7 +676,10 @@ typedef struct {
     event_t event;
     lwm2m_client_data_t *client_data;
     uint16_t short_server_id;
-    char host_uri[HOST_URI_LEN];
+    char host_ep[HOST_URI_LEN];
+    bool request_creds;
+    lwm2m_auth_request_t *requests;
+    size_t requests_len;
     lwm2m_auth_request_cb_t cb;
 } lwm2m_auth_request_event_t;
 
@@ -724,8 +727,11 @@ static void _client_read_handler(event_t *event)
 static void _auth_request_handler(event_t *event)
 {
     lwm2m_auth_request_event_t *req = container_of(event, lwm2m_auth_request_event_t, event);
-    lwm2m_auth_request(req->client_data->lwm2m_ctx, req->short_server_id, req->host_uri,
-                       strlen(req->host_uri), req->cb, req->client_data);
+    lwm2m_auth_request(req->client_data->lwm2m_ctx, req->short_server_id, req->host_ep,
+                       strlen(req->host_ep), req->requests, req->requests_len, req->cb,
+                       req->client_data);
+
+    lwm2m_free(req->requests);
     lwm2m_free(req);
 }
 
@@ -742,12 +748,15 @@ int lwm2m_client_observe(lwm2m_client_data_t *client_data, uint16_t client_sec_i
     return _post_request(client_data, client_sec_instance_id, uri, _client_observe_handler, cb);
 }
 
-int lwm2m_request_authorization(lwm2m_client_data_t *client_data, uint16_t short_server_id, char *host_uri, size_t host_uri_len, lwm2m_auth_request_cb_t cb)
+int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short_server_id,
+                                char *host_ep, size_t host_ep_len, lwm2m_auth_request_t *requests,
+                                size_t requests_len, lwm2m_auth_request_cb_t cb)
 {
     assert(client_data);
-    assert(host_uri);
+    assert(host_ep);
+    assert(requests);
 
-    if (HOST_URI_LEN < host_uri_len) {
+    if (HOST_URI_LEN < host_ep_len) {
         return COAP_400_BAD_REQUEST;
     }
 
@@ -758,11 +767,22 @@ int lwm2m_request_authorization(lwm2m_client_data_t *client_data, uint16_t short
     }
     memset(event, 0, sizeof(lwm2m_auth_request_event_t));
 
+    lwm2m_auth_request_t *_requests;
+    _requests = (lwm2m_auth_request_t *)lwm2m_malloc(requests_len * sizeof(lwm2m_auth_request_t));
+    if (!_requests) {
+        lwm2m_free(event);
+        return COAP_500_INTERNAL_SERVER_ERROR;
+    }
+    memcpy(_requests, requests, requests_len * sizeof(lwm2m_auth_request_t));
+
     event->client_data = client_data;
     event->short_server_id = short_server_id;
     event->cb = cb;
     event->event.handler = _auth_request_handler;
-    memcpy(&event->host_uri, host_uri, host_uri_len);
+    event->requests = _requests;
+    event->requests_len = requests_len;
+    event->request_creds = true;
+    memcpy(&event->host_ep, host_ep, host_ep_len);
     event_post(&_queue, (event_t *)event);
 
     return COAP_231_CONTINUE;
