@@ -61,7 +61,6 @@ typedef struct lwm2m_client_connection {
     lwm2m_client_connection_type_t type;
     time_t last_send; /**< last sent packet to the server */
     uint16_t sec_inst_id;
-    bool should_verify_port;
 } lwm2m_client_connection_t;
 
 /**
