@@ -66,6 +66,13 @@ config LWM2M_BOOTSTRAP
     help
         Say y to support using a bootstrap server to get server information.
 
+
+config LWM2M_CHECK_ACCESS_RIGHTS
+    bool "Check access rights"
+    help
+        Say y to enable applying access control rules to requests.
+        If n all requests are accepted.
+
 menuconfig LWM2M_CLIENT_C2C
     bool "[EXPERIMENTAL] Client-to-Client communication support"
     help
@@ -74,8 +81,9 @@ menuconfig LWM2M_CLIENT_C2C
 
 if LWM2M_CLIENT_C2C
 
-config LWM2M_CHECK_ACCESS_RIGHTS
-    bool "Check client access rights"
+config LWM2M_CLIENT_CHECK_ACCESS_RIGHTS
+    bool "[TESTING] Check client-to-client access rights"
+    depends on LWM2M_CHECK_ACCESS_RIGHTS
     help
         Say y to enable applying access control rules to client-to-client
         requests. If n all requests are accepted.
