@@ -388,6 +388,16 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
             }
             else  {
                 DEBUG("[lwm2m:client] message from unknown peer\n");
+                uint8_t snd_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+                int snd_len = lwm2m_get_unknown_conn_response(_client_data->lwm2m_ctx, rcv_buf, rcv_len,
+                                                              snd_buf, sizeof(snd_buf));
+                if (snd_len <= 0) {
+                    DEBUG("[lwm2m:client] problem handling message\n");
+                    return;
+                }
+
+                sock_udp_send(sock, snd_buf, snd_len, &remote);
+                return;
             }
         }
 
