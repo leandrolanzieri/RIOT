@@ -66,11 +66,21 @@ config LWM2M_BOOTSTRAP
     help
         Say y to support using a bootstrap server to get server information.
 
-config LWM2M_CLIENT_C2C
+menuconfig LWM2M_CLIENT_C2C
     bool "[EXPERIMENTAL] Client-to-Client communication support"
     help
-        Say y to support direct communication with other LwM2M clients. Just for experemital
-        purposes!
+        Say y to support direct communication with other LwM2M clients. Just for
+        experimental purposes!
+
+if LWM2M_CLIENT_C2C
+
+config LWM2M_CHECK_ACCESS_RIGHTS
+    bool "Check client access rights"
+    help
+        Say y to enable applying access control rules to client-to-client
+        requests. If n all requests are accepted.
+
+endif # LWM2M_CLIENT_C2C
 
 rsource "contrib/objects/Kconfig"
 
