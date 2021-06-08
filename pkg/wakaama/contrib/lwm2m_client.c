@@ -178,18 +178,27 @@ void lwm2m_client_init(lwm2m_client_data_t *client_data)
     lwm2m_platform_init();
 }
 
-
-int lwm2m_get_access(uint16_t server_id, lwm2m_uri_t *uri, void *user_data)
+static int _get_peer_access(uint16_t id, const lwm2m_uri_t *uri, lwm2m_client_data_t *client_data, bool server)
 {
-    lwm2m_client_data_t *client_data = (lwm2m_client_data_t *)user_data;
-    lwm2m_object_t *acc_ctrl = lwm2m_get_object_by_id(client_data, LWM2M_ACCESS_CONTROL_OBJECT_ID);
+    const uint16_t obj_id = server ? LWM2M_ACCESS_CONTROL_OBJECT_ID : LWM2M_CLIENT_ACCESS_CONTROL_OBJECT_ID;
+    lwm2m_object_t *acc_ctrl = lwm2m_get_object_by_id(client_data, obj_id);
 
     if (!acc_ctrl) {
         DEBUG("[lwm2m_client_get_access] Cant find Access Control object\n");
         return -1;
     }
 
-    return lwm2m_object_access_control_get_access(server_id, uri, acc_ctrl);
+    return lwm2m_object_access_control_get_access(id, uri, acc_ctrl);
+}
+
+int lwm2m_get_access(uint16_t server_id, lwm2m_uri_t *uri, void *user_data)
+{
+    return _get_peer_access(server_id, uri, user_data, true);
+}
+
+int lwm2m_get_client_access(uint16_t client_id, lwm2m_uri_t *uri, void *user_data)
+{
+    return _get_peer_access(client_id, uri, user_data, false);
 }
 
 int lwm2m_get_owner(const lwm2m_uri_t *uri, void *user_data)
