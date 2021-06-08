@@ -611,7 +611,7 @@ static lwm2m_obj_acc_ctrl_inst_t * _get_instance(const lwm2m_uri_t *uri,
     return instance;
 }
 
-int lwm2m_object_access_control_get_access(uint16_t server_id, lwm2m_uri_t *uri,
+int lwm2m_object_access_control_get_access(uint16_t server_id, const lwm2m_uri_t *uri,
                                            lwm2m_object_t *object)
 {
     int access = 0;
