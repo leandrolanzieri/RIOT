@@ -592,6 +592,25 @@ int lwm2m_object_access_control_add(lwm2m_object_t *object, uint16_t instance_id
     return 0;
 }
 
+static lwm2m_obj_acc_ctrl_inst_t * _get_instance(const lwm2m_uri_t *uri,
+                                                 const lwm2m_object_t *object)
+{
+
+    lwm2m_obj_acc_ctrl_inst_t *instance = (lwm2m_obj_acc_ctrl_inst_t *)object->instanceList;
+    while (instance) {
+        if (instance->obj_id == uri->objectId && instance->obj_inst_id == uri->instanceId) {
+            break;
+        }
+        instance = (lwm2m_obj_acc_ctrl_inst_t *)instance->list.next;
+    }
+
+    if (!instance) {
+        DEBUG("[lwm2m:access_control]: no ACL for the given resource\n");
+    }
+
+    return instance;
+}
+
 int lwm2m_object_access_control_get_access(uint16_t server_id, lwm2m_uri_t *uri,
                                            lwm2m_object_t *object)
 {
@@ -602,17 +621,9 @@ int lwm2m_object_access_control_get_access(uint16_t server_id, lwm2m_uri_t *uri,
         return 0;
     }
 
-    lwm2m_obj_acc_ctrl_inst_t *instance = (lwm2m_obj_acc_ctrl_inst_t *)object->instanceList;
+    lwm2m_obj_acc_ctrl_inst_t *instance = _get_instance(uri, object);
     lwm2m_obj_acc_ctrl_acl_t *acl = NULL;
-    while (instance) {
-        if (instance->obj_id == uri->objectId && instance->obj_inst_id == uri->instanceId) {
-            break;
-        }
-        instance = (lwm2m_obj_acc_ctrl_inst_t *)instance->list.next;
-    }
-
     if (!instance) {
-        DEBUG("[lwm2m:access_control]: no ACL for the given resource\n");
         return -1; /* no access information available */
     }
 
@@ -629,4 +640,20 @@ int lwm2m_object_access_control_get_access(uint16_t server_id, lwm2m_uri_t *uri,
     }
 
     return access;
+}
+
+int lwm2m_object_access_control_get_owner(const lwm2m_uri_t *uri, const lwm2m_object_t *object)
+{
+    DEBUG("[lwm2m:access_control]: getting owner server\n");
+
+    if (!object || !uri) {
+        return 0;
+    }
+
+    const lwm2m_obj_acc_ctrl_inst_t *instance = _get_instance(uri, object);
+    if (!instance) {
+        return -1; /* no access information available */
+    }
+
+    return instance->owner;
 }

@@ -201,6 +201,8 @@ int lwm2m_object_access_control_add(lwm2m_object_t *object, uint16_t instance_id
 int lwm2m_object_access_control_get_access(uint16_t server_id, lwm2m_uri_t *uri,
                                            lwm2m_object_t *object);
 
+int lwm2m_object_access_control_get_owner(const lwm2m_uri_t *uri, const lwm2m_object_t *object);
+
 #ifdef __cplusplus
 }
 #endif
