@@ -173,11 +173,6 @@ void lwm2m_client_add_credential(credman_tag_t tag);
 void lwm2m_client_remove_credential(credman_tag_t tag);
 #endif /*  MODULE_WAKAAMA_CLIENT_DTLS || DOXYGEN */
 
-#if IS_USED(CONFIG_LWM2M_CLIENT_C2C) || defined(DOXYGEN)
-int lwm2m_get_client_string(lwm2m_client_data_t *client_data, uint16_t client_id,
-                            const lwm2m_uri_t *uri, char *out, size_t out_len);
-#endif /* CONFIG_LWM2M_CLIENT_C2C || DOXYGEN */
-
 #ifdef __cplusplus
 }
 #endif
