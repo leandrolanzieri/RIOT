@@ -225,10 +225,12 @@ static uint8_t _set_int_value(lwm2m_data_t *data, uint32_t *dst)
             result = COAP_204_CHANGED;
         }
         else {
+            DEBUG("[lwm2m:server:set_int] value %" PRIi64 " out of range\n", value);
             result = COAP_406_NOT_ACCEPTABLE;
         }
     }
     else {
+        DEBUG("[lwm2m:server:set_int] could not decode value\n");
         result = COAP_400_BAD_REQUEST;
     }
     return result;
@@ -324,8 +326,15 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             break;
 
         case LWM2M_CLIENT_ENDPOINT_ID:
-            if (!instance->client || data_array[i].type != LWM2M_TYPE_STRING ||
+            if (!instance->client) {
+                DEBUG("[lwm2m:server:write] can't set endpoint on server object\n");
+                result = COAP_400_BAD_REQUEST;
+                break;
+            }
+
+            if ((data_array[i].type != LWM2M_TYPE_STRING && data_array[i].type != LWM2M_TYPE_OPAQUE) ||
                 data_array[i].value.asBuffer.length > MAX_ENDPOINT_NAME) {
+                DEBUG("[lwm2m:server:write] invalid endpoint name\n");
                 result = COAP_400_BAD_REQUEST;
                 break;
             }
@@ -337,6 +346,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             break;
 
         default:
+            DEBUG("[lwm2m:server:write] unknown resource ID %" PRIu16 "\n", data_array[i].id);
             return COAP_404_NOT_FOUND;
         }
         i++;
@@ -462,7 +472,9 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
         return COAP_500_INTERNAL_SERVER_ERROR;
     }
 
+    DEBUG("[lwm2m:server:create] creating instance ID: %d\n", instance_id);
     instance->list.id = instance_id;
+    instance->client = (object->objID == LWM2M_CLIENT_OBJECT_ID);
     object->instanceList = LWM2M_LIST_ADD(object->instanceList, instance);
 
     result = _write_cb(instance_id, num_data, data_array, object);
