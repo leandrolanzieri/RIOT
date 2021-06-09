@@ -600,7 +600,15 @@ static lwm2m_obj_acc_ctrl_inst_t * _get_instance(const lwm2m_uri_t *uri,
 
     lwm2m_obj_acc_ctrl_inst_t *instance = (lwm2m_obj_acc_ctrl_inst_t *)object->instanceList;
     while (instance) {
+        if (instance->obj_id == uri->objectId && !LWM2M_URI_IS_SET_INSTANCE(uri) &&
+            instance->obj_inst_id == LWM2M_MAX_ID) {
+            DEBUG("[lwm2m:access_control]: found object-level access control (ID: %d)\n", instance->obj_id);
+            break;
+        }
+
         if (instance->obj_id == uri->objectId && instance->obj_inst_id == uri->instanceId) {
+            DEBUG("[lwm2m:access_control]: found object-level access control (ID: %d, inst: %d)\n",
+                  instance->obj_id, instance->obj_inst_id);
             break;
         }
         instance = (lwm2m_obj_acc_ctrl_inst_t *)instance->list.next;
@@ -627,6 +635,12 @@ int lwm2m_object_access_control_get_access(uint16_t server_id, const lwm2m_uri_t
     lwm2m_obj_acc_ctrl_acl_t *acl = NULL;
     if (!instance) {
         return -1; /* no access information available */
+    }
+
+    if (server_id == instance->owner) {
+        /* we give the owner full access */
+        return (LWM2M_ACCESS_CONTROL_READ | LWM2M_ACCESS_CONTROL_WRITE |
+                LWM2M_ACCESS_CONTROL_EXECUTE | LWM2M_ACCESS_CONTROL_DELETE);
     }
 
     acl = (lwm2m_obj_acc_ctrl_acl_t *)LWM2M_LIST_FIND(instance->acl_list, server_id);
