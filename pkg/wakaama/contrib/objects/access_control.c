@@ -532,7 +532,8 @@ int lwm2m_object_access_control_instance_create(lwm2m_object_t *object, uint16_t
 
     lwm2m_obj_acc_ctrl_inst_t *instance = NULL;
 
-    if (object->objID != LWM2M_ACCESS_CONTROL_OBJECT_ID) {
+    if (object->objID != LWM2M_ACCESS_CONTROL_OBJECT_ID &&
+        object->objID != LWM2M_CLIENT_ACCESS_CONTROL_OBJECT_ID) {
         return -1;
     }
 
@@ -554,6 +555,7 @@ int lwm2m_object_access_control_instance_create(lwm2m_object_t *object, uint16_t
     instance->obj_inst_id = args->obj_inst_id;
     instance->owner = args->owner;
     instance->acl_list = NULL;
+    instance->client = (object->objID == LWM2M_CLIENT_ACCESS_CONTROL_OBJECT_ID);
 
     /* add the new instance to the list */
     object->instanceList = LWM2M_LIST_ADD(object->instanceList, instance);
