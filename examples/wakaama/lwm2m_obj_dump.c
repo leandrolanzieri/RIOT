@@ -36,7 +36,7 @@ void dump_client_objects(lwm2m_client_data_t *client, int obj_id) {
 static void _dump_object(lwm2m_object_t *obj) {
     assert(obj);
 
-    printf ("├─── Object %" PRIu16 "\n", obj->objID);
+    printf ("├─── Object [/%" PRIu16 "]\n", obj->objID);
 
     if (!obj->instanceList) {
         printf("│   ├─── No instances yet\n");
@@ -60,7 +60,7 @@ static void _dump_instance(lwm2m_object_t *obj, lwm2m_list_t *instance) {
     int numData = 0;
     lwm2m_data_t *data_array;
 
-    printf("│   ├─── Instance %" PRIu16 "\n", instance->id);
+    printf("│   ├─── Instance [/%" PRIu16 "/%" PRIu16 "]\n", obj->objID, instance->id);
 
     obj->readFunc(instance->id, &numData, &data_array, obj);
 
@@ -69,6 +69,8 @@ static void _dump_instance(lwm2m_object_t *obj, lwm2m_list_t *instance) {
     }
 
     lwm2m_data_free(numData, data_array);
+
+    printf("│   │\n");
 }
 
 static void _dump_resource(lwm2m_data_t *data, unsigned level) {
@@ -87,7 +89,12 @@ static void _dump_resource(lwm2m_data_t *data, unsigned level) {
         break;
 
     case LWM2M_TYPE_OPAQUE:
-        od_hex_dump(data->value.asBuffer.buffer, data->value.asBuffer.length, 0);
+        if (!data->value.asBuffer.length) {
+            printf("<empty buffer>\n");
+        }
+        else {
+            od_hex_dump(data->value.asBuffer.buffer, data->value.asBuffer.length, 0);
+        }
         break;
 
     case LWM2M_TYPE_BOOLEAN:
@@ -100,12 +107,12 @@ static void _dump_resource(lwm2m_data_t *data, unsigned level) {
 
     case LWM2M_TYPE_MULTIPLE_RESOURCE:
         for (unsigned i = 0; i < data->value.asChildren.count; i++) {
-            printf("(multi-instance resource)\n");
+            printf("<multi-instance resource>\n");
             _dump_resource(&data->value.asChildren.array[i], level+1);
         }
         break;
 
     default:
-        printf("unknown type (%d)\n", data->type);
+        printf("<unknown type (%d)>\n", data->type);
     }
 }
