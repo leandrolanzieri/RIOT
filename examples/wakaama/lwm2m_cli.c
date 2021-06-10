@@ -183,6 +183,17 @@ void lwm2m_cli_init(void)
     };
     res = lwm2m_object_access_control_add(obj_list[3], acc_ctrl_inst, &acl_args);
 
+    /* allow the server to create client object instances */
+    acc_ctrl_inst++;
+    acc_args.obj_id = LWM2M_CLIENT_OBJECT_ID;
+    acc_args.obj_inst_id = LWM2M_MAX_ID;
+    acc_args.owner = LWM2M_MAX_ID;
+    lwm2m_object_access_control_instance_create(obj_list[3], acc_ctrl_inst, &acc_args);
+
+    acl_args.access = LWM2M_ACCESS_CONTROL_CREATE;
+    acl_args.res_inst_id = CONFIG_LWM2M_SERVER_SHORT_ID;
+    lwm2m_object_access_control_add(obj_list[3], acc_ctrl_inst, &acl_args);
+
     obj_list[4] = lwm2m_object_client_get();
     lwm2m_obj_client_args_t client_args = {
         .short_id = CONFIG_LWM2M_CLIENT_SHORT_ID,
@@ -210,7 +221,7 @@ void lwm2m_cli_init(void)
         .security_mode = LWM2M_SECURITY_MODE_NONE,
         .cred = NULL,
 #endif
-        .is_bootstrap = IS_ACTIVE(CONFIG_LWM2M_SERVER_IS_BOOTSTRAP),
+        .is_bootstrap = false,
         .client_hold_off_time = 5,
         .bootstrap_account_timeout = 0
     };
@@ -249,11 +260,10 @@ void _read_cb(uint16_t client_id, lwm2m_uri_t *uri, int status, lwm2m_media_type
               uint8_t *data, int data_len, void *user_data)
 {
     (void) uri;
-    (void) status;
     (void) format;
     (void) user_data;
 
-    printf("Got response from client %d\n", client_id);
+    printf("Got response from client %d. Status %d\n", client_id, status);
     od_hex_dump_ext(data, (size_t)data_len, 0, 0);
 }
 
@@ -331,29 +341,23 @@ obs_usage_error:
     }
 
     if (!strcmp(argv[1], "auth")) {
-        if (argc != 6 && argc != 7) {
+        if (argc != 7 && argc != 8) {
             printf("%d\n", argc);
             goto auth_usage_error;
         }
 
         int server_id = atoi(argv[2]);
 
-        // TODO: get from arguments
         lwm2m_auth_request_t req;
+        req.access = atoi(argv[4]);
         req.uri.objectId = atoi(argv[5]);
-        req.access = LWM2M_ACCESS_CONTROL_READ;
+        req.uri.instanceId = atoi(argv[6]);
+        req.uri.flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID;
 
-        // check if instance ID has been specified
-        if (argc == 7) {
-            req.uri.instanceId = atoi(argv[6]);
-            req.uri.flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID;
-        }
-        else {
-            req.uri.flag = LWM2M_URI_FLAG_OBJECT_ID;
-        }
+        bool credentials = (argc == 8 && atoi(argv[7]));
 
         int res = lwm2m_request_cred_and_auth(&client_data, server_id, argv[3], strlen(argv[3]),
-                                              &req, 1, _auth_cb);
+                                              &req, 1, credentials, _auth_cb);
         if (res != COAP_231_CONTINUE) {
             printf("Error observing client's resource\n");
             return 1;
@@ -362,7 +366,7 @@ obs_usage_error:
         return 0;
 
 auth_usage_error:
-        printf("usage: %s auth <server_id> <client_endpoint> <access> <object_id> [instance_id]\n", argv[0]);
+        printf("usage: %s auth <server_id> <client_endpoint> <access> <object_id> <instance_id> [credentials]\n", argv[0]);
         printf("where <access> is the OR'd value of:\n");
         printf("  0x01: read\n  0x02: write\n  0x04: execute\n  0x08: delete \n  0x10: discover\n");
         return 1;

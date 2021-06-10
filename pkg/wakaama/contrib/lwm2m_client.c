@@ -758,8 +758,8 @@ static void _auth_request_handler(event_t *event)
 {
     lwm2m_auth_request_event_t *req = container_of(event, lwm2m_auth_request_event_t, event);
     lwm2m_auth_request(req->client_data->lwm2m_ctx, req->short_server_id, req->host_ep,
-                       strlen(req->host_ep), req->requests, req->requests_len, req->cb,
-                       req->client_data);
+                       strlen(req->host_ep), req->requests, req->requests_len, req->request_creds,
+                       req->cb, req->client_data);
 
     lwm2m_free(req->requests);
     lwm2m_free(req);
@@ -780,7 +780,7 @@ int lwm2m_client_observe(lwm2m_client_data_t *client_data, uint16_t client_sec_i
 
 int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short_server_id,
                                 char *host_ep, size_t host_ep_len, lwm2m_auth_request_t *requests,
-                                size_t requests_len, lwm2m_auth_request_cb_t cb)
+                                size_t requests_len, bool credentials, lwm2m_auth_request_cb_t cb)
 {
     assert(client_data);
     assert(host_ep);
@@ -811,7 +811,7 @@ int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short
     event->event.handler = _auth_request_handler;
     event->requests = _requests;
     event->requests_len = requests_len;
-    event->request_creds = true;
+    event->request_creds = credentials;
     memcpy(&event->host_ep, host_ep, host_ep_len);
     event_post(&_queue, (event_t *)event);
 
