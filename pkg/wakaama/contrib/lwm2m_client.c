@@ -64,11 +64,12 @@ static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_
  * @brief   Given an UDP endpoint, find the corresponding Client Security Object instance.
  *
  * @param[in] remote    UDP endpoint to check against
+ * @param[in] type      Type of connection, it should be checked against the security mode
  *
  * @return Instance ID of the Client Security Object
  * @retval -1 on error
  */
-static int _find_client_security_instance(const sock_udp_ep_t *remote);
+static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_client_connection_type_t type);
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 /**
@@ -279,7 +280,7 @@ lwm2m_context_t *lwm2m_client_run(lwm2m_client_data_t *client_data,
     return _client_data->lwm2m_ctx;
 }
 
-static int _find_client_security_instance(const sock_udp_ep_t *remote)
+static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_client_connection_type_t type)
 {
     lwm2m_list_t *instance;
     lwm2m_object_t *sec_obj = lwm2m_object_client_security_get();
@@ -293,7 +294,6 @@ static int _find_client_security_instance(const sock_udp_ep_t *remote)
     for (instance = sec_obj->instanceList; instance; instance = instance->next) {
         char uri[CONFIG_LWM2M_URI_MAX_SIZE];
         query_uri.instanceId = instance->id;
-        
 
         /* get the URI */
         int res = lwm2m_get_string(_client_data, &query_uri, uri, sizeof(uri));
@@ -332,10 +332,28 @@ static int _find_client_security_instance(const sock_udp_ep_t *remote)
             continue;
         }
 
-        if (ipv6_addr_equal(&ipv6, (ipv6_addr_t *)&remote->addr.ipv6)) {
-            DEBUG("[lwm2m:_find_client_security_instance] client has instance %d\n", query_uri.instanceId);
-            break;
+        if (!ipv6_addr_equal(&ipv6, (ipv6_addr_t *)&remote->addr.ipv6)) {
+            continue;
         }
+
+        /* get the security mode */
+        int mode = lwm2m_object_security_get_mode(lwm2m_object_client_security_get(), instance->id);
+        if (mode < 0) {
+            DEBUG("[lwm2m:_find_client_security_instance] could not get security mode from client security object %d\n",
+                  instance->id);
+            continue;
+        }
+
+        if (type == LWM2M_CLIENT_CONN_UDP &&
+            (mode == LWM2M_SECURITY_MODE_PRE_SHARED_KEY ||
+             mode == LWM2M_SECURITY_MODE_CERTIFICATE ||
+             mode == LWM2M_SECURITY_MODE_CERTIFICATE)) {
+            DEBUG("[lwm2m:_find_client_security_instance] invalid security mode\n");
+            continue;
+        }
+
+        DEBUG("[lwm2m:_find_client_security_instance] client has instance %d\n", query_uri.instanceId);
+        break;
     }
 
     if (instance) {
@@ -361,17 +379,19 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
         DEBUG("[lwm2m:client] finding connection\n");
         /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
-                                                                       &remote);
+                                                                       &remote,
+                                                                       LWM2M_CLIENT_CONN_UDP);
 
         /* look for an existing client connection */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
             DEBUG("[lwm2m:client] checking for existing client connection\n");
-            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote);
+            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote,
+                                                LWM2M_CLIENT_CONN_UDP);
         }
 
         /* check if incoming known client request */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
-            int instance_id = _find_client_security_instance(&remote);
+            int instance_id = _find_client_security_instance(&remote, LWM2M_CLIENT_CONN_UDP);
             if (instance_id >= 0) {
                 DEBUG("[lwm2m:client] message from client with instance %d\n", instance_id);
                 /* we know this client, add the session */
@@ -432,6 +452,7 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
     sock_udp_ep_t remote;
     sock_dtls_session_t dtls_remote;
     uint8_t rcv_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+    DEBUG("[lwm2m:client:DTLS]] event with flags %d\n", type);
 
     if (type & SOCK_ASYNC_MSG_RECV) {
         ssize_t rcv_len = sock_dtls_recv(sock, &dtls_remote, rcv_buf, sizeof(rcv_buf), 0);
@@ -445,17 +466,19 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
         DEBUG("[lwm2m:client:DTLS]] finding connection\n");
         /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
-                                                                       &remote);
+                                                                       &remote,
+                                                                       LWM2M_CLIENT_CONN_DTLS);
 
         /* look for an existing client connection */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
             DEBUG("[lwm2m:client:DTLS] checking for existing client connection\n");
-            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote);
+            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote,
+                                                LWM2M_CLIENT_CONN_DTLS);
         }
 
         /* check if incoming known client request */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
-            int instance_id = _find_client_security_instance(&remote);
+            int instance_id = _find_client_security_instance(&remote, LWM2M_CLIENT_CONN_DTLS);
             if (instance_id >= 0) {
                 DEBUG("[lwm2m:client:DTLS] message from client with instance %d\n", instance_id);
                 /* we know this client, add the session */
@@ -591,26 +614,16 @@ void lwm2m_client_remove_credential(credman_tag_t tag)
 
 static void _refresh_dtls_credentials(lwm2m_object_t *sec_obj)
 {
-    /* prepare query */
-    lwm2m_uri_t query_uri = {
-        .objectId = sec_obj->objID,
-        .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
-    };
-
     lwm2m_list_t *instance = sec_obj->instanceList;
-    int64_t val;
 
     /* check all registered security object instances */
     while(instance) {
-        query_uri.instanceId = instance->id;
-        /* get the security mode */
-        query_uri.resourceId = LWM2M_SECURITY_SECURITY_ID;
-        int res = lwm2m_get_int(_client_data, &query_uri, &val);
-        if (res < 0) {
+        int mode = lwm2m_object_security_get_mode(sec_obj, instance->id);
+        if (mode < 0) {
             DEBUG("[lwm2m:client:refresh_cred] could not get security mode of %d\n", instance->id);
         }
         else {
-            if (val == LWM2M_SECURITY_MODE_PRE_SHARED_KEY || val == LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY) {
+            if (mode == LWM2M_SECURITY_MODE_PRE_SHARED_KEY || mode == LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY) {
                 credman_tag_t tag = lwm2m_object_security_get_credential(sec_obj, instance->id);
                 if (tag != CREDMAN_TAG_EMPTY) {
                     lwm2m_client_add_credential(tag);

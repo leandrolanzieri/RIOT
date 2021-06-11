@@ -198,7 +198,8 @@ bool lwm2m_session_is_equal(void *session1, void *session2, void *user_data)
         DEBUG("[lwm2m_session_is_equal] S2 [%s]:%d\n", ep, port);
     }
 
-    return sock_udp_ep_equal(&conn_1->remote, &conn_2->remote);
+    return (sock_udp_ep_equal(&conn_1->remote, &conn_2->remote) &&
+            conn_1->type == conn_2->type);
 }
 
 uint8_t lwm2m_buffer_send(void *sessionH, uint8_t *buffer, size_t length,
@@ -221,7 +222,8 @@ uint8_t lwm2m_buffer_send(void *sessionH, uint8_t *buffer, size_t length,
 }
 
 lwm2m_client_connection_t *lwm2m_client_connection_find(lwm2m_client_connection_t *conn_list,
-                                                        const sock_udp_ep_t *remote)
+                                                        const sock_udp_ep_t *remote,
+                                                        lwm2m_client_connection_type_t type)
 {
     char ip[128];
     uint8_t ip_len = 128;
@@ -243,7 +245,7 @@ lwm2m_client_connection_t *lwm2m_client_connection_find(lwm2m_client_connection_
             DEBUG("[lwm2m_client_connection_find] Comparing to [%s]:%d\n", ip, conn->remote.port);
         }
 
-        if (sock_udp_ep_equal(remote, &conn->remote)) {
+        if (sock_udp_ep_equal(remote, &conn->remote) && conn->type == type) {
             break;
         }
 
