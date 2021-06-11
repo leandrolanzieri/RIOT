@@ -799,6 +799,21 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 }
 
+int lwm2m_object_security_get_mode(lwm2m_object_t *object, uint16_t instance_id)
+{
+    assert(object);
+    lwm2m_obj_security_inst_t *instance;
+
+    /* try to get the requested instance from the object list */
+    instance = (lwm2m_obj_security_inst_t *)lwm2m_list_find(object->instanceList, instance_id);
+    if (NULL == instance) {
+        DEBUG("[lwm2m:security]: no instance %d\n", instance_id);
+        return -1;
+    }
+
+    return instance->security_mode;
+}
+
 
 int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
                                           lwm2m_obj_security_args_t *args)

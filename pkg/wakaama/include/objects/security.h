@@ -254,6 +254,20 @@ int lwm2m_object_client_security_instance_create(lwm2m_object_t *object, uint16_
  */
 credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint16_t instance_id);
 
+/**
+ * @brief   Get the security mode of a given instance of the security object.
+ *
+ * @param[in] object                    Security object handle.
+ * @param[in] instance_id               ID of the instance.
+ *
+ * @return Security mode of the given instance or <0 on error
+ * @retval LWM2M_SECURITY_MODE_PRE_SHARED_KEY Pre-Shared key
+ * @retval LWM2M_SECURITY_MODE_RAW_PUBLIC_KEY Raw Public keys
+ * @retval LWM2M_SECURITY_MODE_CERTIFICATE Certificate
+ * @retval LWM2M_SECURITY_MODE_NONE No-Sec
+ */
+int lwm2m_object_security_get_mode(lwm2m_object_t *object, uint16_t instance_id);
+
 #ifdef __cplusplus
 }
 #endif
