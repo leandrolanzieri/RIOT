@@ -158,6 +158,11 @@ static credman_tag_t _find_credential(sock_udp_ep_t *ep, lwm2m_object_t *sec_obj
                 DEBUG("[lwm2m:client:PSK] could not convert URI to EP (%s)\n", parsed_uri.host);
             }
             else {
+                /* if no port is specified in the security instance, copy the incoming one, to avoid missmatch */
+                if (!parsed_uri.port) {
+                    inst_ep.port = ep->port;
+                }
+
                 if (sock_udp_ep_equal(ep, &inst_ep)) {
                     DEBUG("[lwm2m:client:PSK] found matching EP on instance %d\n", instance->id);
                     DEBUG("[lwm2m:client:PSK] tag: %d\n", lwm2m_object_security_get_credential(sec_obj, instance->id));
