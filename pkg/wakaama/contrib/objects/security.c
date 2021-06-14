@@ -814,6 +814,18 @@ int lwm2m_object_security_get_mode(lwm2m_object_t *object, uint16_t instance_id)
     return instance->security_mode;
 }
 
+int lwm2m_object_security_get_by_short_id(lwm2m_object_t *object, uint16_t short_id)
+{
+    assert(object);
+    lwm2m_obj_security_inst_t *instance = (lwm2m_obj_security_inst_t *)object->instanceList;
+
+    while (instance) {
+        if (instance->short_id == short_id) {
+            return instance->list.id;
+        }
+    }
+    return -1;
+}
 
 int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t instance_id,
                                           lwm2m_obj_security_args_t *args)

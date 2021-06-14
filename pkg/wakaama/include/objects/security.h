@@ -268,6 +268,16 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
  */
 int lwm2m_object_security_get_mode(lwm2m_object_t *object, uint16_t instance_id);
 
+/**
+ * @brief   Get the instance ID of a Security Object, by its short ID.
+ *
+ * @param[in] object                Security object handle.
+ * @param[in] short_id              Short ID to match.
+ *
+ * @return Instance ID that matches the short ID, <0 on error
+ */
+int lwm2m_object_security_get_by_short_id(lwm2m_object_t *object, uint16_t short_id);
+
 #ifdef __cplusplus
 }
 #endif
