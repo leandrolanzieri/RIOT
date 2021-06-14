@@ -429,7 +429,12 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
             port = CONFIG_LWM2M_BSSERVER_PORT;
         }
         else {
-            port = CONFIG_LWM2M_STANDARD_PORT;
+            if (security_mode == LWM2M_SECURITY_MODE_NONE) {
+                port = CONFIG_LWM2M_STANDARD_PORT;
+            }
+            else {
+                port = CONFIG_LWM2M_DTLS_PORT;
+            }
         }
     }
     else {
