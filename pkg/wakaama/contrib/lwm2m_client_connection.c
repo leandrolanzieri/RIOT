@@ -55,6 +55,7 @@
 #include "lwm2m_client_config.h"
 #include "lwm2m_client_connection.h"
 #include "objects/common.h"
+#include "objects/security.h"
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
@@ -160,25 +161,58 @@ void *lwm2m_connect_client(uint16_t sec_obj_inst_id, void *user_data)
     return new_conn;
 }
 
-void lwm2m_close_connection(void *sessionH, void *user_data)
+bool _close_connection(lwm2m_client_data_t *client_data, lwm2m_client_connection_t *list,
+                       lwm2m_client_connection_t *conn)
 {
-    lwm2m_client_connection_t *conn = (lwm2m_client_connection_t *) sessionH;
-    lwm2m_client_data_t *client_data = (lwm2m_client_data_t *) user_data;
+    if (!list || !conn) {
+        DEBUG("[_close_connection] List or connection empty\n");
+        return false;
+    }
 
-    if (conn == client_data->conn_list) {
-        client_data->conn_list = conn->next;
+    if (conn == list) {
+        DEBUG("[_close_connection] Closing connection\n");
+        list = conn->next;
+        lwm2m_free(conn);
+        return true;
     }
     else {
-        lwm2m_client_connection_t *prev = client_data->conn_list;
+        lwm2m_client_connection_t *prev = list;
 
         while(prev != NULL && prev->next != conn) {
             prev = prev->next;
         }
         if (prev != NULL) {
+            DEBUG("[_close_connection] Closing connection\n");
             prev->next = conn->next;
+
+            if (conn->type == LWM2M_CLIENT_CONN_DTLS) {
+                DEBUG("[_close_connection] Closing DTLS session\n");
+                sock_dtls_session_destroy(&client_data->dtls_sock, &conn->session);
+            }
             lwm2m_free(conn);
+            return true;
         }
     }
+    DEBUG("[_close_connection] Could not find connection\n");
+    return false;
+}
+
+void lwm2m_close_connection(void *sessionH, void *user_data)
+{
+    lwm2m_client_connection_t *conn = (lwm2m_client_connection_t *) sessionH;
+    lwm2m_client_data_t *client_data = (lwm2m_client_data_t *) user_data;
+
+    DEBUG("[lwm2m_close_connection] Will try to close connection with ID %d\n", conn->sec_inst_id);
+    _close_connection(client_data, client_data->conn_list, conn);
+}
+
+void lwm2m_close_client_connection(void *sessionH, void *user_data)
+{
+    lwm2m_client_connection_t *conn = (lwm2m_client_connection_t *) sessionH;
+    lwm2m_client_data_t *client_data = (lwm2m_client_data_t *) user_data;
+
+    DEBUG("[lwm2m_close_client_connection] Closing client connection with ID %d\n", conn->sec_inst_id);
+    _close_connection(client_data, client_data->client_conn_list, conn);
 }
 
 bool lwm2m_session_is_equal(void *session1, void *session2, void *user_data)
