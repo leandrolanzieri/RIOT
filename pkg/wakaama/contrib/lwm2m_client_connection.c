@@ -452,13 +452,7 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
     }
 
     conn->sec_inst_id = sec_obj_inst_id;
-
-    if (client) {
-        conn->next = client_data->client_conn_list;
-    }
-    else {
-        conn->next = client_data->conn_list;
-    }
+    conn->next = NULL;
 
     /* configure to any IPv6 */
     conn->remote.family = AF_INET6;
