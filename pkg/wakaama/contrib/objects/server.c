@@ -34,6 +34,7 @@
 #include "kernel_defines.h"
 #include "objects/server.h"
 #include "liblwm2m.h"
+#include "lwm2m_client.h"
 
 #define ENABLE_DEBUG    0
 #include "debug.h"
@@ -485,6 +486,10 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
     }
     else {
         result = COAP_201_CREATED;
+    }
+
+    if (object->objID == LWM2M_CLIENT_OBJECT_ID) {
+        lwm2m_client_refresh_client_list();
     }
 
     return result;

@@ -662,6 +662,10 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t * dat
         result = COAP_201_CREATED;
     }
 
+    if (object->objID == LWM2M_CLIENT_SECURITY_OBJECT_ID) {
+        lwm2m_client_refresh_client_list();
+    }
+
     return result;
 }
 

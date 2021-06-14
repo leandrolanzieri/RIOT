@@ -902,4 +902,12 @@ int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short
     return COAP_231_CONTINUE;
 }
 
+void lwm2m_client_refresh_client_list(void)
+{
+    if (_client_data) {
+        DEBUG("[lwm2m_client_refresh_client_list] refreshing list\n");
+        lwm2m_refresh_client_list(_client_data->lwm2m_ctx);
+    }
+}
+
 #endif /* CONFIG_LWM2M_CLIENT_C2C */

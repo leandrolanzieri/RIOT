@@ -149,6 +149,12 @@ static inline lwm2m_context_t *lwm2m_client_get_ctx(
     return client_data->lwm2m_ctx;
 }
 
+/**
+ * @brief Trigger a client list refresh on wakaama. Used when new security or client objects are
+ *        created.
+ */
+void lwm2m_client_refresh_client_list(void);
+
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS) || defined(DOXYGEN)
 /**
  * @brief Refreshes the client available credentials using the currently registered security objects
