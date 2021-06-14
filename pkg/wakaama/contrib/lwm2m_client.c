@@ -32,6 +32,7 @@
 #include "objects/security.h"
 #include "objects/device.h"
 #include "objects/access_control.h"
+#include "objects/server.h"
 
 #include "lwm2m_platform.h"
 #include "lwm2m_client.h"
@@ -40,6 +41,8 @@
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
+
+#define HOST_URI_LEN (64)
 
 /**
  * @brief   Callback for event timeout that performs a step on the LwM2M FSM.
@@ -70,6 +73,17 @@ static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_
  * @retval -1 on error
  */
 static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_client_connection_type_t type);
+
+/**
+ * @brief   Given an endpoint name, find the corresponding Client Object instance short ID.
+ *
+ * @param[in] ep        Peer endpoint name.
+ * @param[in] ep_len    Length of @p ep
+ *
+ * @return Short ID of the Client Object instance
+ * @retval -1 on error
+ */
+static int _find_short_id_by_endpoint(const char *ep, size_t ep_len);
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
 /**
@@ -285,6 +299,45 @@ lwm2m_context_t *lwm2m_client_run(lwm2m_client_data_t *client_data,
     return _client_data->lwm2m_ctx;
 }
 
+static int _find_short_id_by_endpoint(const char *ep, size_t ep_len)
+{
+    lwm2m_list_t *instance;
+    lwm2m_object_t *client_obj = lwm2m_object_client_get();
+    lwm2m_uri_t query_uri = {
+        .objectId = client_obj->objID,
+        .resourceId = LWM2M_CLIENT_ENDPOINT_ID,
+        .flag = LWM2M_URI_FLAG_OBJECT_ID | LWM2M_URI_FLAG_INSTANCE_ID | LWM2M_URI_FLAG_RESOURCE_ID
+    };
+
+    /* check all registered client instances */
+    for (instance = client_obj->instanceList; instance; instance = instance->next) {
+        char inst_ep[HOST_URI_LEN] = {0};
+        query_uri.instanceId = instance->id;
+
+        /* get the endpoint */
+        int res = lwm2m_get_string(_client_data, &query_uri, inst_ep, sizeof(inst_ep));
+        if (res < 0) {
+            DEBUG("[lwm2m:_find_client_instance_by_endpoint] could not get endpoint from client object %d\n",
+                  query_uri.instanceId);
+            continue;
+        }
+
+        if (ep_len == strlen(inst_ep) && !memcmp(ep, inst_ep, ep_len)) {
+            DEBUG("[lwm2m:_find_client_instance_by_endpoint] found endpoint %s\n", inst_ep);
+            break;
+        }
+    }
+
+    if (!instance) {
+        return -1;
+    }
+
+    query_uri.resourceId = LWM2M_SERVER_SHORT_ID_ID;
+    int64_t shortId = -1;
+    lwm2m_get_int(_client_data, &query_uri, &shortId);
+    return (int)shortId;
+}
+
 static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_client_connection_type_t type)
 {
     lwm2m_list_t *instance;
@@ -468,7 +521,7 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
 
         sock_dtls_session_get_udp_ep(&dtls_remote, &remote);
 
-        DEBUG("[lwm2m:client:DTLS]] finding connection\n");
+        DEBUG("[lwm2m:client:DTLS] finding connection\n");
         /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
                                                                        &remote,
@@ -483,7 +536,22 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
 
         /* check if incoming known client request */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
+            /* try to find security instance by URI */
             int instance_id = _find_client_security_instance(&remote, LWM2M_CLIENT_CONN_DTLS);
+
+            if (instance_id < 0) {
+                /* try to find security instance by endpoint name if present */
+                const char *ep;
+                int ep_len = lwm2m_get_request_endpoint(_client_data->lwm2m_ctx, rcv_buf, rcv_len, &ep);
+                if (ep_len > 0) {
+                    DEBUG("lwm2m:client:DTLS] Got EP: %.*s\n", ep_len, ep);
+                    int shortId = _find_short_id_by_endpoint(ep, ep_len);
+                    instance_id = lwm2m_object_security_get_by_short_id(lwm2m_object_client_security_get(),
+                                                                        shortId);
+                }
+            }
+
+            /* if found a correspondant security instance, create a connection for it */
             if (instance_id >= 0) {
                 DEBUG("[lwm2m:client:DTLS] message from client with instance %d\n", instance_id);
                 /* we know this client, add the session */
@@ -717,8 +785,6 @@ typedef struct {
     lwm2m_uri_t uri;
     lwm2m_result_callback_t cb;
 } lwm2m_client_request_event_t;
-
-#define HOST_URI_LEN (64)
 
 typedef struct {
     event_t event;
