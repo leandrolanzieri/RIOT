@@ -372,8 +372,23 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
     char uri[CONFIG_LWM2M_URI_MAX_SIZE] = {0};
     char *port;
     bool is_bootstrap;
+    int security_mode = -1;
 
     DEBUG("Creating connection\n");
+
+    lwm2m_object_t *obj;
+    if (client) {
+        obj = lwm2m_object_client_security_get();
+    }
+    else {
+        obj = lwm2m_object_security_get();
+    }
+
+    security_mode = lwm2m_object_security_get_mode(obj, sec_obj_inst_id);
+    if (security_mode < 0) {
+        DEBUG("[_connection_create] Could not get security mode\n");
+        goto out;
+    }
 
     /* prepare Server URI query */
     lwm2m_uri_t resource_uri = {
@@ -467,16 +482,9 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     uint8_t buf[DTLS_HANDSHAKE_BUFSIZE];
-    int64_t val;
-    resource_uri.resourceId = LWM2M_SECURITY_SECURITY_ID;
-    res = lwm2m_get_int(client_data, &resource_uri, &val);
-    if (res < 0) {
-        DEBUG("[lwm2m:client] could not get security instance mode\n");
-        goto free_out;
-    }
 
     /* TODO: add support for PSK */
-    if (val == LWM2M_SECURITY_MODE_PRE_SHARED_KEY) {
+    if (security_mode == LWM2M_SECURITY_MODE_PRE_SHARED_KEY) {
         conn->type = LWM2M_CLIENT_CONN_DTLS;
         DEBUG("[lwm2m:client] DTLS session init\n");
         res = sock_dtls_session_init(&client_data->dtls_sock, &conn->remote, &conn->session);
