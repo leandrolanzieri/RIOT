@@ -88,6 +88,15 @@ config LWM2M_CLIENT_CHECK_ACCESS_RIGHTS
         Say y to enable applying access control rules to client-to-client
         requests. If n all requests are accepted.
 
+config LwM2M_CLIENT_THIRD_PARTY_AUTH
+    bool "[EXPERIMENTAL] Support third party client authorization"
+    help
+        Say y to enable third party authorization of LwM2M peers.
+        It will add:
+        - unauthorized resource request
+        - server hints response
+        - server authorization request
+
 endif # LWM2M_CLIENT_C2C
 
 rsource "contrib/objects/Kconfig"
