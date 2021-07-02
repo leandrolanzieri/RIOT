@@ -1,0 +1,32 @@
+has-own-periph-definition = $(own-periph-def-$(1))
+
+comment "Platform has own definition of $(peripheral-str) peripheral"
+    depends on $(has-own-periph-definition,$(peripheral))
+
+if !$(has-own-periph-definition,$(peripheral))
+
+config MODULE_$(peripheral)
+    bool "$(peripheral-str) peripheral driver"
+    depends on HAS_$(peripheral)
+
+endif
+
+if $(has-own-periph-definition,$(peripheral))
+config MODULE_$(peripheral)
+    bool "Platform-specific peripheral driver definition"
+    depends on HAS_$(peripheral)
+    depends on HAS_SOME_OTHER_DEP
+    select SOME_OTHER_MODULE
+endif
+
+config HAS_$(peripheral)
+    bool
+    default y
+    help
+        Indicates that the $(peripheral-str) peripheral is available.
+
+config HAS_SOME_OTHER_DEP
+    bool "some other dep"
+
+config SOME_OTHER_MODULE
+    bool "Some other"

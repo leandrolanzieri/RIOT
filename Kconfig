@@ -50,3 +50,12 @@ config TEST_KCONFIG
         This is used during the Kconfig migration to test the module dependency
         modelling. Don't change the default value unless you know what you are
         doing.
+
+
+# in platform
+own-periph-def-TEST := y
+
+# for each peripheral
+peripheral := TEST
+peripheral-str := "Test"
+rsource "drivers/periph_common/Kconfig.periph"
