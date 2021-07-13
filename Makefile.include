@@ -743,7 +743,10 @@ preflash: $(BUILD_BEFORE_FLASH)
 # graphical memory usage analyzer
 COSY_TOOL ?= $(PKGDIRBASE)/cosy/cosy.py
 cosy: $(ELFFILE) $(COSY_TOOL)
-	$(COSY_TOOL) --riot-base $(RIOTBASE) $(APPDIR) $(BOARD) $(ELFFILE) $(MAPFILE)
+	$(COSY_TOOL) --debug --riot-base $(RIOTBASE) $(APPDIR) $(BOARD) $(ELFFILE) $(MAPFILE)
+
+cosy-dump: $(ELFFILE) $(COSY_TOOL)
+	$(COSY_TOOL) -t -e $(COSY_EXPORT) --debug --riot-base $(RIOTBASE) $(APPDIR) $(BOARD) $(ELFFILE) $(MAPFILE)
 
 ifneq (,$(TERMLOG)$(TERMTEE))
   TERMTEE ?= | tee -a $(TERMLOG)
