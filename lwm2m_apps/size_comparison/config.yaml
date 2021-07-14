@@ -1,0 +1,142 @@
+# configuration file for run.py
+boards:
+  - "iotlab-m3"
+
+profiles:
+  no_extensions:
+    config: ""
+    label: "No extensions"
+  c2c:
+    config: "c2c_only.config"
+    label: "C2C"
+  c2c_auth:
+    config: "c2c_auth.config"
+    label: "C2C + Auth"
+
+groups:
+  # For now we ignore common OS and DTLS parts
+  
+  # ? "RIOT OS"
+  # :
+  #    modules:
+  #      - ["core"]
+  #      - ["boards"]
+  #      - ["cpu"]
+  #      - ["drivers"]
+  #      - ["sys"]
+  #      - ["fill"]
+  #      - ["unspecified"]
+  #      - ["pkg"]
+  #      - ["~", "pkg", "wakaama"]
+  #      - ["~", "pkg", "tinydtls"]
+
+  # ? "DTLS"
+  # :
+  #   modules:
+  #     - ["pkg", "tinydtls"]
+
+  ? "CoAP"
+  :
+    modules:
+      - ["pkg", "wakaama", "core", "er-coap-13"]
+    config:
+      hatch: "|/"
+
+  ? "LwM2M Core"
+  :
+    modules:
+      - ["pkg", "wakaama", "core"]
+      - ["pkg", "wakaama", "contrib"]
+
+      # grouped under "other objects"
+      - ["~", "pkg", "wakaama", "contrib", "objects"]
+
+      # grouped under "connection handling"
+      - ["~", "pkg", "wakaama", "contrib", "lwm2m_client"]
+      - ["~", "pkg", "wakaama", "contrib", "lwm2m_client_connection"]
+
+      # grouped under "client to client"
+      - ["~", "pkg", "wakaama", "core", "client_to_client"]
+
+      # grouped under "authorization request"
+      - ["~", "pkg", "wakaama", "core", "auth_request"]
+
+      # grouped under "coap"
+      - ["~", "pkg", "wakaama", "core", "er-coap-13"]
+
+      # grouped under "utils"
+      - ["~", "pkg", "wakaama", "core", "utils"]
+      - ["~", "pkg", "wakaama", "core", "uri"]
+      - ["~", "pkg", "wakaama", "core", "packet"]
+      - ["~", "pkg", "wakaama", "core", "objects"]
+      - ["~", "pkg", "wakaama", "core", "tinycbor"]
+    config:
+      hatch: "\\\\"
+
+  ? "Utils"
+  :
+    modules:
+      - ["pkg", "wakaama", "core", "utils"]
+      - ["pkg", "wakaama", "core", "uri"]
+      - ["pkg", "wakaama", "core", "packet"]
+      - ["pkg", "wakaama", "core", "objects"]
+      - ["pkg", "wakaama", "core", "tinycbor"]
+    config:
+      hatch: "||"
+
+  ? "Connections\n handling"
+  :
+    modules:
+      - ["pkg", "wakaama", "contrib", "lwm2m_client"]
+      - ["pkg", "wakaama", "contrib", "lwm2m_client_connection"]
+    config:
+      hatch: "+"
+
+  ? "Security object"
+  :
+    modules:
+      - ["pkg", "wakaama", "contrib", "objects", "security"]
+    config:
+      hatch: "x"
+
+  ? "Server object"
+  :
+    modules:
+      - ["pkg", "wakaama", "contrib", "objects", "server"]
+    config:
+      hatch: "---"
+
+  ? "Other objects"
+  :
+    modules:
+      - ["pkg", "wakaama", "contrib", "objects"]
+
+      # grouped under "security object"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "security"]
+
+      # grouped under "server object"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "server"]
+    config:
+      hatch: "//"
+
+  ? "Client to client"
+  :
+    modules:
+      - ["pkg", "wakaama", "core", "client_to_client"]
+    config:
+      hatch: ".."
+
+  ? "Authorization"
+  :
+    modules:
+      - ["pkg", "wakaama", "core", "auth_request"]
+    config:
+          hatch: "//"
+
+# # some plot configuration
+plots:
+  config:
+    hatch:
+      linewidth: 0.5
+    label:
+      width: 20

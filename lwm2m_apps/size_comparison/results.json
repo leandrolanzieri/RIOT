@@ -1,0 +1,1 @@
+[{"board": "iotlab-m3", "runs": [{"dump_path": "/tmp/iotlab-m3_no-extensions.json", "profile": "No extensions"}, {"dump_path": "/tmp/iotlab-m3_client-to-client-extension.json", "profile": "Client-to-Client extension"}, {"dump_path": "/tmp/iotlab-m3_client-to-client-and-authorization-extensions.json", "profile": "Client-to-Client and Authorization extensions"}]}]
