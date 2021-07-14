@@ -475,15 +475,17 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
             }
             else  {
                 DEBUG("[lwm2m:client] message from unknown peer\n");
-                uint8_t snd_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
-                int snd_len = lwm2m_get_unknown_conn_response(_client_data->lwm2m_ctx, rcv_buf, rcv_len,
-                                                              snd_buf, sizeof(snd_buf));
-                if (snd_len <= 0) {
-                    DEBUG("[lwm2m:client] problem handling message\n");
-                    return;
-                }
+                if (IS_ACTIVE(CONFIG_LwM2M_CLIENT_THIRD_PARTY_AUTH)) {
+                    uint8_t snd_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+                    int snd_len = lwm2m_get_unknown_conn_response(_client_data->lwm2m_ctx, rcv_buf, rcv_len,
+                                                                snd_buf, sizeof(snd_buf));
+                    if (snd_len <= 0) {
+                        DEBUG("[lwm2m:client] problem handling message\n");
+                        return;
+                    }
 
-                sock_udp_send(sock, snd_buf, snd_len, &remote);
+                    sock_udp_send(sock, snd_buf, snd_len, &remote);
+                }
                 return;
             }
         }
@@ -733,8 +735,6 @@ void lwm2m_client_refresh_dtls_credentials(void)
 
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
-#if IS_USED(CONFIG_LWM2M_CLIENT_C2C)
-
 // TODO: move to lwm2m_client_connection?
 static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_udp_ep_t *remote,
                                                                      const sock_dtls_session_t *session,
@@ -852,6 +852,10 @@ static void _auth_request_handler(event_t *event)
 int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
                               lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
 {
+    if (!IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
+        return COAP_400_BAD_REQUEST;
+    }
+
     DEBUG("[lwm2m:client] posting read request\n");
     return _post_request(client_data, client_sec_instance_id, uri, _client_read_handler, cb);
 }
@@ -859,6 +863,10 @@ int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_inst
 int lwm2m_client_observe(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
                          lwm2m_uri_t *uri, lwm2m_result_callback_t cb)
 {
+    if (!IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
+        return COAP_400_BAD_REQUEST;
+    }
+
     return _post_request(client_data, client_sec_instance_id, uri, _client_observe_handler, cb);
 }
 
@@ -869,6 +877,10 @@ int lwm2m_request_cred_and_auth(lwm2m_client_data_t *client_data, uint16_t short
     assert(client_data);
     assert(host_ep);
     assert(requests);
+
+    if (!IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
+        return COAP_400_BAD_REQUEST;
+    }
 
     if (HOST_URI_LEN < host_ep_len) {
         return COAP_400_BAD_REQUEST;
@@ -909,5 +921,3 @@ void lwm2m_client_refresh_client_list(void)
         lwm2m_refresh_client_list(_client_data->lwm2m_ctx);
     }
 }
-
-#endif /* CONFIG_LWM2M_CLIENT_C2C */

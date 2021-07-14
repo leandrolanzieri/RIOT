@@ -54,8 +54,10 @@ typedef struct lwm2m_obj_server_inst {
     uint32_t disable_timeout;   /**< disable timeout */
     bool store;                 /**< notification storing */
     lwm2m_binding_t binding;    /**< binding */
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
     char ep[MAX_ENDPOINT_NAME]; /**< client endpoint name */
     bool client;                /**< respresents another client */
+#endif
 } lwm2m_obj_server_inst_t;
 
 /**
@@ -92,6 +94,75 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
  */
 static uint8_t _discover_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data_array,
                             lwm2m_object_t *object);
+
+/**
+ * @brief   Determines if an object instance corresponds to a client.
+ *
+ * @retval true     Instance corresponds to a client
+ * @retval false    Instance corresponds to a server
+ */
+bool _is_client_instance(lwm2m_obj_server_inst_t *instance) {
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
+    return instance->client;
+#else
+    (void) instance;
+    return false;
+#endif
+}
+
+/**
+ * @brief   Sets a given instance as corresponding to a client.
+ *
+ * @param instance  Instance to modify.
+ */
+void _set_instance_as_client(lwm2m_obj_server_inst_t *instance) {
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
+    instance->client = true;
+#else
+    (void) instance;
+#endif
+}
+
+/**
+ * @brief   gets the Endpoint Name value of an instance.
+ *
+ * @param instance  Instance to get the endpoint name from
+ * @param data      Data to store the endpoint name
+ *
+ * @return CoAP return code
+ */
+int _get_client_instance_ep(lwm2m_obj_server_inst_t *instance, lwm2m_data_t *data) {
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
+    lwm2m_data_encode_string(instance->ep, data);
+    return COAP_205_CONTENT;
+#else
+    (void) instance;
+    (void) data;
+    return COAP_404_NOT_FOUND;
+#endif
+}
+
+/**
+ * @brief   sets the Endpoint Name value of an instance.
+ *
+ * @param instance  Instance to set the endpoint name to
+ * @param ep        Buffer containing the new endpoint name
+ * @param ep_len    Length of @p ep
+ *
+ * @return CoAP return code
+ */
+int _set_client_instance_ep(lwm2m_obj_server_inst_t *instance, const char *ep, size_t ep_len) {
+#if IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)
+    memset(instance->ep, 0, MAX_ENDPOINT_NAME);
+    memcpy(instance->ep, ep, ep_len);
+    return COAP_204_CHANGED;
+#else
+    (void) instance;
+    (void) ep;
+    (void) ep_len;
+    return COAP_400_BAD_REQUEST;
+#endif
+}
 
 /**
  * @brief Transport binding strings.
@@ -204,9 +275,8 @@ static uint8_t _get_resource_value(lwm2m_data_t *data, lwm2m_obj_server_inst_t *
         return COAP_405_METHOD_NOT_ALLOWED;
 
     case LWM2M_CLIENT_ENDPOINT_ID:
-        if (instance->client) {
-            lwm2m_data_encode_string(instance->ep, data);
-            return COAP_205_CONTENT;
+        if (_is_client_instance(instance)) {
+            return _get_client_instance_ep(instance, data);
         }
         return COAP_404_NOT_FOUND;
 
@@ -327,7 +397,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             break;
 
         case LWM2M_CLIENT_ENDPOINT_ID:
-            if (!instance->client) {
+            if (!_is_client_instance(instance) || !IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
                 DEBUG("[lwm2m:server:write] can't set endpoint on server object\n");
                 result = COAP_400_BAD_REQUEST;
                 break;
@@ -340,10 +410,8 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
                 break;
             }
 
-            memset(instance->ep, 0, MAX_ENDPOINT_NAME);
-            memcpy(instance->ep, data_array[i].value.asBuffer.buffer,
-                   data_array[i].value.asBuffer.length);
-            result = COAP_204_CHANGED;
+            result = _set_client_instance_ep(instance, (char *)data_array[i].value.asBuffer.buffer,
+                                             data_array[i].value.asBuffer.length);
             break;
 
         default:
@@ -382,8 +450,8 @@ static uint8_t _read_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data
             LWM2M_CLIENT_ENDPOINT_ID,
         };
         int res_num;
-        
-        if (instance->client) {
+
+        if (_is_client_instance(instance)) {
             res_num = sizeof(res_list)/sizeof(uint16_t);
         }
         else {
@@ -475,7 +543,11 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
 
     DEBUG("[lwm2m:server:create] creating instance ID: %d\n", instance_id);
     instance->list.id = instance_id;
-    instance->client = (object->objID == LWM2M_CLIENT_OBJECT_ID);
+
+    if ((LWM2M_CLIENT_OBJECT_ID == object->objID) && IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
+        _set_instance_as_client(instance);
+    }
+
     object->instanceList = LWM2M_LIST_ADD(object->instanceList, instance);
 
     result = _write_cb(instance_id, num_data, data_array, object);
@@ -488,7 +560,7 @@ static uint8_t _create_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data
         result = COAP_201_CREATED;
     }
 
-    if (object->objID == LWM2M_CLIENT_OBJECT_ID) {
+    if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && LWM2M_CLIENT_OBJECT_ID == object->objID) {
         lwm2m_client_refresh_client_list();
     }
 
@@ -591,12 +663,12 @@ int _instance_create(lwm2m_object_t *object, uint16_t instance_id,
     instance->max_period = args->max_period;
     instance->disable_timeout = args->disable_timeout;
     instance->binding = args->binding;
-    instance->client = client;
 
     if (client) {
+        _set_instance_as_client(instance);
         lwm2m_obj_client_args_t *_args = (lwm2m_obj_client_args_t*)args;
         if (_args->endpoint) {
-            strcpy(instance->ep, _args->endpoint);
+            _set_client_instance_ep(instance, _args->endpoint, strlen(_args->endpoint));
         }
     }
 
