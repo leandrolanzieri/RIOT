@@ -1,0 +1,6 @@
+MODULE := uoscore
+
+CFLAGS += -DOSCORE_WITH_TINYCRYPT
+CFLAGS += -Wno-sign-compare -Wno-unused-parameter -Wno-pedantic -Wno-return-type
+
+include $(RIOTBASE)/Makefile.base

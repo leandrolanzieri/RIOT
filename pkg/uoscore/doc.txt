@@ -1,0 +1,9 @@
+/**
+ * @defgroup pkg_uoscore uOSCORE
+ * @ingroup  pkg
+ * @brief    Provides the uOSCORE library
+ *
+ * @see https://github.com/Fraunhofer-AISEC/uoscore-uedhoc
+ *
+ * # uOSCORE
+ */

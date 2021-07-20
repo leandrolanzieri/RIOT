@@ -1,0 +1,3 @@
+USEPKG += tinycbor
+USEPKG += tinycrypt
+USEPKG += compact25519
