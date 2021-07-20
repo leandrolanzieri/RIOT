@@ -1,0 +1,10 @@
+/**
+ * @defgroup pkg_compact25519 compact25519
+ * @ingroup  pkg
+ * @brief    A compact portable X25519 + Ed25519 implementation
+ * library
+ * @see https://github.com/DavyLandman/compact25519
+ *
+ * # compact25519
+ * A compact portable X25519 + Ed25519 implementation
+ */

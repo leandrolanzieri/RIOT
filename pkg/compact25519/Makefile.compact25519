@@ -1,0 +1,5 @@
+MODULE := compact25519
+
+SRC += compact25519.c
+
+include $(RIOTBASE)/Makefile.base
