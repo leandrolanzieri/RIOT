@@ -6,4 +6,5 @@
 #
 
 rsource "Kconfig.device"
+rsource "Kconfig.oscore"
 rsource "Kconfig.security"
