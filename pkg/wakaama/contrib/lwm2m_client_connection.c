@@ -44,6 +44,7 @@
 #include "uri_parser.h"
 
 #include "liblwm2m.h"
+#include "er-coap-13/er-coap-13.h"
 #include "net/sock/udp.h"
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
@@ -54,6 +55,10 @@
 #include "lwm2m_client_config.h"
 #include "lwm2m_client_connection.h"
 #include "objects/common.h"
+#include "objects/security.h"
+#include "objects/oscore.h"
+#include "oscore.h"
+#include "od.h"
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
@@ -215,14 +220,73 @@ static int _connection_send(lwm2m_client_connection_t *conn, uint8_t *buffer,
                             lwm2m_client_data_t *client_data)
 {
     DEBUG("[_connection_send] trying to send %d bytes\n", buffer_size);
-    if (conn->type == LWM2M_CLIENT_CONN_UDP) {
-        ssize_t sent_bytes = sock_udp_send(&(client_data->sock), buffer,
-                                        buffer_size, &(conn->remote));
-        if (sent_bytes <= 0) {
-            DEBUG("[_connection_send] Could not send UDP packet: %i\n", (int)sent_bytes);
-            return -1;
+
+    uint8_t *buffer_to_send = buffer;
+    size_t len_to_send = buffer_size;
+    int result = 0;
+
+    if (conn->type == LWM2M_CLIENT_CONN_OSCORE) {
+        //TODO: we should be able to use only one context
+        /* recover corresponding OSCORE security context */
+        lwm2m_object_t *oscore_obj = lwm2m_object_oscore_get();
+        struct context *oscore_ctx;
+
+        coap_packet_t message;
+        const coap_status_t coap_code = coap_parse_message(&message, buffer, buffer_size);
+
+        if (coap_code != NO_ERROR) {
+            DEBUG("Could not parse CoAP message");
+            result = -1;
+            goto out;
+        }
+
+        if (message.code != COAP_GET && message.code != COAP_POST && message.code != COAP_PUT &&
+            message.code != COAP_DELETE) {
+            /* is a response */
+            DEBUG("[_connection_send] using server OSCORE ctx\n");
+            oscore_ctx = lwm2m_object_oscore_get_server_ctx(oscore_obj, conn->oscore_instance_id);
+        }
+        else {
+            DEBUG("[_connection_send] using client OSCORE ctx\n");
+            oscore_ctx = lwm2m_object_oscore_get_client_ctx(oscore_obj, conn->oscore_instance_id);
+        }
+
+        if (!oscore_ctx) {
+            DEBUG("[_connection_send] Could not get OSCORE security context.\n");
+            result = -1;
+            goto out;
+        }
+
+        // TODO: check this size (MAX_PLAINTEXT_LEN?)
+        len_to_send = 256;
+        buffer_to_send = (uint8_t *)lwm2m_malloc(len_to_send);
+        memset(buffer_to_send, 0, len_to_send);
+
+        if (!buffer_to_send) {
+            DEBUG("[_connection_send] Could not allocate OSCORE buffer\n");
+            result = -1;
+            goto out;
+        }
+
+        int res = coap2oscore(buffer, buffer_size, buffer_to_send, (uint16_t *)&len_to_send, oscore_ctx);
+        if (res != OscoreNoError) {
+            DEBUG("[_connection_send] Could not encrypt message (%d)\n", res);
+            result = -res;
+            goto out;
         }
     }
+
+    if (conn->type == LWM2M_CLIENT_CONN_UDP || conn->type == LWM2M_CLIENT_CONN_OSCORE) {
+        ssize_t sent_bytes = sock_udp_send(&(client_data->sock), buffer_to_send, len_to_send,
+                                           &(conn->remote));
+
+        if (sent_bytes <= 0) {
+            DEBUG("[_connection_send] Could not send UDP packet: %i\n", (int)sent_bytes);
+            result = -1;
+            goto out;
+        }
+    }
+
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     else {
         ssize_t sent_bytes = sock_dtls_send(&client_data->dtls_sock, &conn->session, buffer,
@@ -235,10 +299,16 @@ static int _connection_send(lwm2m_client_connection_t *conn, uint8_t *buffer,
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
 
     conn->last_send = lwm2m_gettime();
-    return 0;
+out:
+    /* check if we need to free buffer */
+    if (buffer_to_send != buffer) {
+        lwm2m_free(buffer_to_send);
+    }
+
+    return result;
 }
 
-static netif_t *_get_interface(char *host)
+static netif_t *_get_interface(uri_parser_result_t *uri)
 {
     netif_t *netif = NULL;
 
@@ -358,8 +428,8 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
     }
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
-    uint8_t buf[DTLS_HANDSHAKE_BUFSIZE];
     int64_t val;
+    uint8_t buf[DTLS_HANDSHAKE_BUFSIZE];
     resource_uri.resourceId = LWM2M_SECURITY_SECURITY_ID;
     res = lwm2m_get_int(client_data, &resource_uri, &val);
     if (res < 0) {
@@ -391,6 +461,20 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
 #else
     conn->type = LWM2M_CLIENT_CONN_UDP;
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
+
+    /* check if OSCORE should be used with this security object */
+    resource_uri.resourceId = LWM2M_SECURITY_OSCORE_MODE_ID;
+    uint16_t obj_id;
+    uint16_t inst_id;
+    res = lwm2m_get_objlink(client_data, &resource_uri, &obj_id, &inst_id);
+    if (!res && LWM2M_MAX_ID != inst_id) {
+        DEBUG("[lwm2m:client] we should use OSCORE\n");
+        conn->oscore_instance_id = inst_id;
+        conn->type = LWM2M_CLIENT_CONN_OSCORE; // TODO: probably will change when DTLS + OSCORE
+    }
+    else {
+        DEBUG("[lwm2m:client] we don't use OSCORE (%d, %d)\n", res, inst_id);
+    }
 
     conn->last_send = lwm2m_gettime();
     goto out;

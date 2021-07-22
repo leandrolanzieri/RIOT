@@ -19,3 +19,4 @@ endif
 
 PSEUDOMODULES += wakaama
 PSEUDOMODULES += wakaama_client_dtls
+PSEUDOMODULES += wakaama_client_oscore

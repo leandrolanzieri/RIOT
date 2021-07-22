@@ -31,6 +31,9 @@
 #include "objects/common.h"
 #include "objects/security.h"
 #include "objects/device.h"
+#include "objects/oscore.h"
+#include "er-coap-13/er-coap-13.h"
+#include "oscore.h"
 
 #include "lwm2m_platform.h"
 #include "lwm2m_client.h"
@@ -212,11 +215,15 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
 
     sock_udp_ep_t remote;
     uint8_t rcv_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+    uint8_t oscore_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+    uint16_t oscore_len = sizeof(oscore_buf);
+    uint8_t *reception_buf = rcv_buf;
+    ssize_t reception_len;
 
     if (type & SOCK_ASYNC_MSG_RECV) {
-        ssize_t rcv_len = sock_udp_recv(sock, rcv_buf, sizeof(rcv_buf), 0, &remote);
-        if (rcv_len <= 0) {
-            DEBUG("[lwm2m:client] UDP receive failure: %d\n", (int)rcv_len);
+        reception_len = sock_udp_recv(sock, rcv_buf, sizeof(rcv_buf), 0, &remote);
+        if (reception_len <= 0) {
+            DEBUG("[lwm2m:client] UDP receive failure: %d\n", (int)reception_len);
             return;
         }
 
@@ -224,8 +231,45 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
                                                                        &remote);
         if (conn) {
-            DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)rcv_len);
-            int result = lwm2m_connection_handle_packet(conn, rcv_buf, rcv_len, _client_data);
+
+            if (conn->type == LWM2M_CLIENT_CONN_OSCORE) {
+                //TODO: we should be able to use only one context
+                /* recover corresponding OSCORE security context */
+                lwm2m_object_t *oscore_obj = lwm2m_object_oscore_get();
+                struct context *oscore_ctx;
+
+                coap_packet_t message;
+                coap_parse_message(&message, reception_buf, reception_len);
+
+                if (message.code != COAP_GET && message.code != COAP_POST && message.code != COAP_PUT &&
+                    message.code != COAP_DELETE) {
+                    /* is a response */
+                    DEBUG("[_udp_event_handler] using client OSCORE ctx\n");
+                    oscore_ctx = lwm2m_object_oscore_get_client_ctx(oscore_obj, conn->oscore_instance_id);
+                }
+                else {
+                    DEBUG("[_udp_event_handler] using server OSCORE ctx\n");
+                    oscore_ctx = lwm2m_object_oscore_get_server_ctx(oscore_obj, conn->oscore_instance_id);
+                }
+
+                bool is_oscore = false;
+                int res = oscore2coap(rcv_buf, reception_len, oscore_buf, &oscore_len, &is_oscore, oscore_ctx);
+
+                if (res != OscoreNoError) {
+                    DEBUG("Could not decode the OSCORE packet (res=%d)\n", res);
+                    return;
+                }
+
+                if (!is_oscore) {
+                    DEBUG("No OSCORE packet found\n");
+                    return;
+                }
+                reception_buf = oscore_buf;
+                reception_len = oscore_len;
+            }
+
+            DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)reception_len);
+            int result = lwm2m_connection_handle_packet(conn, reception_buf, reception_len, _client_data);
             if (0 != result) {
                 DEBUG("[lwm2m:client] error handling message %i\n", result);
             }
