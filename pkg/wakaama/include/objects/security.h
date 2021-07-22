@@ -123,6 +123,12 @@ extern "C" {
 /** @} */
 #endif /* DOXYGEN */
 
+
+/**
+ * @brief OSCORE security mode resource ID
+ */
+#define LWM2M_SECURITY_OSCORE_MODE_ID       17
+
 /**
  * @defgroup lwm2m_objects_security_config LwM2M Security object compile configurations
  * @ingroup lwm2m_client_config
@@ -202,6 +208,13 @@ typedef struct lwm2m_obj_security_args {
      *        account. 0 means never.
      */
     uint32_t bootstrap_account_timeout;
+
+    /**
+     * @brief Instance ID of an OSCORE object to use to secure the communication.
+     *
+     * Set to LWM2M_MAX_ID to indicate none.
+     */
+    uint16_t oscore_object_inst_id;
 } lwm2m_obj_security_args_t;
 
 /**
@@ -234,6 +247,17 @@ int lwm2m_object_security_instance_create(lwm2m_object_t *object, uint16_t insta
  * @retval CREDMAN_TAG_EMPTY when no credential is assigned.
  */
 credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint16_t instance_id);
+
+/**
+ * @brief   Get the object instance ID of the related OSCORE object.
+ *
+ * @param[in] object                        Security object handle.
+ * @param[in] instance_id                   ID of the instance.
+ *
+ * @return Object instance ID of the OSCORE object.
+ * @retval LWM2M_MAX_ID if none assigned.
+ */
+uint16_t lwm2m_object_security_get_oscore_instance(lwm2m_object_t *object, uint16_t instance_id);
 
 #ifdef __cplusplus
 }

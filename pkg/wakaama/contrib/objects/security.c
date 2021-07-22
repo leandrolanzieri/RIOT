@@ -18,6 +18,7 @@
 
 #include "liblwm2m.h"
 #include "objects/security.h"
+#include "objects/oscore.h"
 #include "lwm2m_client_config.h"
 #include "lwm2m_client.h"
 #include "kernel_defines.h"
@@ -96,6 +97,11 @@ typedef struct lwm2m_obj_security_inst {
      * @brief Timeout for Bootstrap-Server account deletion.
      */
     uint32_t bs_account_timeout;
+
+    /**
+     * @brief OSCORE security mode, a reference to an OSCORE object instance to use.
+     */
+    uint16_t oscore_instance_id;
 } lwm2m_obj_security_inst_t;
 
 /**
@@ -328,6 +334,10 @@ static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance)
 #endif
             break;
 
+        case LWM2M_SECURITY_OSCORE_MODE_ID:
+            lwm2m_data_encode_objlink(LWM2M_OSCORE_OBJECT_ID, instance->oscore_instance_id, data);
+            break;
+
         /* not implemented */
         case LWM2M_SECURITY_SERVER_PUBLIC_KEY_ID:
         case LWM2M_SECURITY_SMS_SECURITY_ID:
@@ -375,7 +385,8 @@ static uint8_t _read_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data
             /* LWM2M_SECURITY_SMS_SERVER_NUMBER_ID, */
             LWM2M_SECURITY_SHORT_SERVER_ID,
             LWM2M_SECURITY_HOLD_OFF_ID,
-            LWM2M_SECURITY_BOOTSTRAP_TIMEOUT_ID
+            LWM2M_SECURITY_BOOTSTRAP_TIMEOUT_ID,
+            LWM2M_SECURITY_OSCORE_MODE_ID
         };
 
         /* try to allocate data structures for all resources */
@@ -765,4 +776,18 @@ credman_tag_t lwm2m_object_security_get_credential(lwm2m_object_t *object, uint1
     (void) instance_id;
     return CREDMAN_TAG_EMPTY;
 #endif /* MODULE_WAKAAMA_CLIENT_DTLS */
+}
+
+uint16_t lwm2m_object_security_get_oscore_instance(lwm2m_object_t *object, uint16_t instance_id)
+{
+    lwm2m_obj_security_inst_t *instance;
+
+    /* try to get the requested instance from the object list */
+    instance = (lwm2m_obj_security_inst_t *)lwm2m_list_find(object->instanceList, instance_id);
+    if (NULL == instance) {
+        DEBUG("[lwm2m:security]: no instance %d\n", instance_id);
+        return LWM2M_MAX_ID;
+    }
+
+    return instance->oscore_instance_id;
 }
