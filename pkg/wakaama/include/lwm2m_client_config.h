@@ -80,6 +80,13 @@ extern "C" {
 #endif
 
 /**
+ * @brief Maximum length of an URI allowed.
+ */
+#ifndef CONFIG_LWM2M_URI_MAX_SIZE
+#define CONFIG_LWM2M_URI_MAX_SIZE       (64U)
+#endif
+
+/**
  * @brief Define to 1 to add bootstrap server support
  *
  * To define just add it to your `CFLAGS` in your application's Makefile:
