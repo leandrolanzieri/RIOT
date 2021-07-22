@@ -18,6 +18,7 @@
 
 #include "liblwm2m.h"
 #include "objects/security.h"
+#include "objects/oscore.h"
 #include "lwm2m_client_config.h"
 #include "lwm2m_client.h"
 #include "kernel_defines.h"
@@ -98,6 +99,11 @@ typedef struct lwm2m_obj_security_inst {
     uint32_t bs_account_timeout;
 
     bool client;
+
+    /**
+     * @brief OSCORE security mode, a reference to an OSCORE object instance to use.
+     */
+    uint16_t oscore_instance_id;
 } lwm2m_obj_security_inst_t;
 
 /**
@@ -347,6 +353,10 @@ static int _get_value(lwm2m_data_t *data, lwm2m_obj_security_inst_t *instance)
 #endif
             break;
 
+        case LWM2M_SECURITY_OSCORE_MODE_ID:
+            lwm2m_data_encode_objlink(LWM2M_OSCORE_OBJECT_ID, instance->oscore_instance_id, data);
+            break;
+
         /* not implemented */
         case LWM2M_SECURITY_SERVER_PUBLIC_KEY_ID:
             lwm2m_data_encode_opaque(NULL, 0, data);
@@ -407,7 +417,8 @@ static uint8_t _read_cb(uint16_t instance_id, int *num_data, lwm2m_data_t **data
             /* LWM2M_SECURITY_SMS_SERVER_NUMBER_ID, */
             LWM2M_SECURITY_SHORT_SERVER_ID,
             LWM2M_SECURITY_HOLD_OFF_ID,
-            LWM2M_SECURITY_BOOTSTRAP_TIMEOUT_ID
+            LWM2M_SECURITY_BOOTSTRAP_TIMEOUT_ID,
+            LWM2M_SECURITY_OSCORE_MODE_ID
         };
 
         /* try to allocate data structures for all resources */
@@ -587,6 +598,12 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t *data_
                 result = COAP_204_CHANGED;
                 break;
 
+            case LWM2M_SECURITY_OSCORE_MODE_ID:
+                instance->oscore_instance_id = data_array[i].value.asObjLink.objectInstanceId;
+                DEBUG("[lwm2m:security:write]: OSCORE mode %d\n", data_array[i].value.asObjLink.objectInstanceId);
+                result = COAP_204_CHANGED;
+                break;
+
             default:
                 DEBUG("[lwm2m:security:write]: unknown resource %d\n", data_array[i].id);
                 result = COAP_404_NOT_FOUND;
@@ -705,6 +722,7 @@ static int _instance_create(lwm2m_object_t *object, uint16_t instance_id,
     instance->client_hold_off_time = args->client_hold_off_time;
     instance->bs_account_timeout = args->bootstrap_account_timeout;
     instance->client = client;
+    instance->oscore_instance_id = args->oscore_object_inst_id;
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     instance->cred_tag = CREDMAN_TAG_EMPTY;
@@ -827,6 +845,22 @@ int lwm2m_object_security_get_by_short_id(lwm2m_object_t *object, uint16_t short
         if (instance->short_id == short_id) {
             return instance->list.id;
         }
+        instance = (lwm2m_obj_security_inst_t*)instance->list.next;
+    }
+    return -1;
+}
+
+
+int lwm2m_object_security_get_by_oscore_instance(lwm2m_object_t *object, uint16_t oscore_instance)
+{
+    assert(object);
+    lwm2m_obj_security_inst_t *instance = (lwm2m_obj_security_inst_t *)object->instanceList;
+
+    while (instance) {
+        if (instance->oscore_instance_id == oscore_instance) {
+            return instance->list.id;
+        }
+        instance = (lwm2m_obj_security_inst_t*)instance->list.next;
     }
     return -1;
 }
@@ -855,4 +889,18 @@ int lwm2m_object_client_security_instance_create(lwm2m_object_t *object, uint16_
     }
 
     return _instance_create(object, instance_id, args, true);
+}
+
+uint16_t lwm2m_object_security_get_oscore_instance(lwm2m_object_t *object, uint16_t instance_id)
+{
+    lwm2m_obj_security_inst_t *instance;
+
+    /* try to get the requested instance from the object list */
+    instance = (lwm2m_obj_security_inst_t *)lwm2m_list_find(object->instanceList, instance_id);
+    if (NULL == instance) {
+        DEBUG("[lwm2m:security]: no instance %d\n", instance_id);
+        return LWM2M_MAX_ID;
+    }
+
+    return instance->oscore_instance_id;
 }

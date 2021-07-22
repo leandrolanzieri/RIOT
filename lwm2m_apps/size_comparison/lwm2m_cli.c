@@ -92,7 +92,8 @@ void lwm2m_cli_init(void)
         .cred = &credential,
         .is_bootstrap = IS_ACTIVE(LWM2M_SERVER_IS_BOOTSTRAP), /* set to true when using Bootstrap server */
         .client_hold_off_time = 5,
-        .bootstrap_account_timeout = 0
+        .bootstrap_account_timeout = 0,
+        .oscore_object_inst_id = LWM2M_MAX_ID,
     };
 
     obj_list[0] = lwm2m_object_security_get();
@@ -196,7 +197,8 @@ void lwm2m_cli_init(void)
         .cred = NULL,
         .is_bootstrap = false,
         .client_hold_off_time = 5,
-        .bootstrap_account_timeout = 0
+        .bootstrap_account_timeout = 0,
+        .oscore_object_inst_id = LWM2M_MAX_ID,
     };
     lwm2m_object_client_security_instance_create(obj_list[6], 0, &client_sec_args);
 
