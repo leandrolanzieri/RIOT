@@ -1,0 +1,18 @@
+# Copyright (c) 2021 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "OSCORE object"
+
+config LWM2M_OSCORE_OBJ_BUF_SIZE
+    int "Buffer size to store OSCORE credentials"
+    default 16
+
+config LWM2M_OBJ_OSCORE_INSTANCES_MAX
+    int "Maximum number of instances of the OSCORE object"
+    default 2
+
+endmenu # OSCORE menu
