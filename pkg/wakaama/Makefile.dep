@@ -30,3 +30,8 @@ USEMODULE += event_timeout
 ifneq (,$(filter wakaama_client_dtls, $(USEMODULE)))
   USEMODULE += sock_dtls
 endif
+
+ifneq (,$(filter wakaama_client_oscore, $(USEMODULE)))
+  USEMODULE += wakaama_objects_oscore
+  USEPKG += uoscore
+endif

@@ -33,6 +33,15 @@
 #include "objects/device.h"
 #include "objects/access_control.h"
 #include "objects/server.h"
+#include "objects/oscore.h"
+
+#include "od.h"
+
+#include "er-coap-13/er-coap-13.h"
+#if IS_USED(MODULE_WAKAAMA_CLIENT_OSCORE)
+#include "objects/oscore.h"
+#include "oscore.h"
+#endif /* MODULE_WAKAAMA_CLIENT_OSCORE */
 
 #include "lwm2m_platform.h"
 #include "lwm2m_client.h"
@@ -61,7 +70,8 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
 
 static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_udp_ep_t *remote,
                                                                      const sock_dtls_session_t *session,
-                                                                     uint16_t sec_obj_inst_id);
+                                                                     uint16_t sec_obj_inst_id,
+                                                                     lwm2m_client_connection_type_t connection_type);
 
 /**
  * @brief   Given an UDP endpoint, find the corresponding Client Security Object instance.
@@ -420,40 +430,151 @@ static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_cli
     return -1;
 }
 
+
+/*
+
+          0 1 2 3 4 5 6 7 <------------- n bytes -------------->
+         +-+-+-+-+-+-+-+-+--------------------------------------
+         |0 0 0|h|k|  n  |       Partial IV (if any) ...
+         +-+-+-+-+-+-+-+-+--------------------------------------
+
+          <- 1 byte -> <----- s bytes ------>
+         +------------+----------------------+------------------+
+         | s (if any) | kid context (if any) | kid (if any) ... |
+         +------------+----------------------+------------------+
+
+                    Figure 10: The OSCORE Option Value
+*/
+int _get_oscore_kid(const coap_packet_t *packet, uint8_t **out, size_t *out_len)
+{
+    assert(packet);
+    assert(out);
+    assert(out_len);
+
+    if (!packet->oscore) {
+        DEBUG("[lwm2m:client] no OSCORE option found\n");
+        return -1;
+    }
+
+    DEBUG("[lwm2m:client] found OSCORE option\n");
+
+    /* parse OSCORE flags */
+    uint8_t *flags = packet->oscore->data;
+    bool kid_ctx_present = (*flags & 0x10) != 0;
+    bool kid_present = (*flags & 0x08) != 0;
+
+    DEBUG("[lwm2m:client] KID ctx %spresent\n", kid_ctx_present ? "" : "not ");
+    DEBUG("[lwm2m:client] KID %spresent\n", kid_present ? "" : "not ");
+
+    uint8_t *partial_iv = flags + 1;
+    uint8_t partial_iv_len = *flags & 0x07;
+
+    if (!kid_present) {
+        return -1;
+    }
+
+
+    uint8_t *kid = NULL;
+
+    if (kid_ctx_present) {
+        uint8_t kid_ctx_len = *(partial_iv + partial_iv_len);
+        uint8_t *kid_ctx = partial_iv + partial_iv_len + 1;
+        kid = kid_ctx + kid_ctx_len;
+    }
+    else {
+        kid = partial_iv + partial_iv_len;
+    }
+
+    *out = kid;
+    *out_len = packet->oscore->len - (kid - flags);
+    return 0;
+}
+
 static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *arg)
 {
     (void) arg;
 
     sock_udp_ep_t remote;
     uint8_t rcv_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+    uint8_t *reception_buf = rcv_buf;
+    ssize_t reception_len;
 
     if (type & SOCK_ASYNC_MSG_RECV) {
-        ssize_t rcv_len = sock_udp_recv(sock, rcv_buf, sizeof(rcv_buf), 0, &remote);
-        if (rcv_len <= 0) {
-            DEBUG("[lwm2m:client] UDP receive failure: %d\n", (int)rcv_len);
+        reception_len = sock_udp_recv(sock, rcv_buf, sizeof(rcv_buf), 0, &remote);
+        if (reception_len <= 0) {
+            DEBUG("[lwm2m:client] UDP receive failure: %d\n", (int)reception_len);
             return;
+        }
+
+        coap_packet_t message;
+        coap_parse_message(&message, reception_buf, reception_len);
+        lwm2m_client_connection_type_t conn_type = LWM2M_CLIENT_CONN_UDP;
+        if (IS_USED(MODULE_WAKAAMA_CLIENT_OSCORE) && message.oscore) {
+            DEBUG("[lwm2m:client] got an OSCORE message\n");
+            conn_type = LWM2M_CLIENT_CONN_OSCORE;
         }
 
         DEBUG("[lwm2m:client] finding connection\n");
         /* look for server connection */
         lwm2m_client_connection_t *conn = lwm2m_client_connection_find(_client_data->conn_list,
-                                                                       &remote,
-                                                                       LWM2M_CLIENT_CONN_UDP);
+                                                                       &remote, conn_type);
 
         /* look for an existing client connection */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
             DEBUG("[lwm2m:client] checking for existing client connection\n");
-            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote,
-                                                LWM2M_CLIENT_CONN_UDP);
+            conn = lwm2m_client_connection_find(_client_data->client_conn_list, &remote, conn_type);
         }
 
         /* check if incoming known client request */
         if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C) && !conn) {
-            int instance_id = _find_client_security_instance(&remote, LWM2M_CLIENT_CONN_UDP);
+            /* try to find security instance by URI */
+            DEBUG("[lwm2m:client] trying to find client by URI\n");
+            int instance_id = _find_client_security_instance(&remote, conn_type);
+
+            /* if could not find by IP, try to find it by endpoint name */
+            if ((instance_id < 0) && (LWM2M_CLIENT_CONN_UDP == conn_type)) {
+                DEBUG("[lwm2m:client] not found, looking by endpoint name\n");
+                const char *ep;
+                int ep_len = lwm2m_get_request_endpoint(_client_data->lwm2m_ctx, reception_buf,
+                                                        reception_len, &ep);
+                if (ep_len > 0) {
+                    DEBUG("lwm2m:client] Got EP: %.*s\n", ep_len, ep);
+                    int shortId = _find_short_id_by_endpoint(ep, ep_len);
+                    instance_id = lwm2m_object_security_get_by_short_id(lwm2m_object_client_security_get(),
+                                                                        shortId);
+                }
+            }
+
+            /* for OSCORE messages, we need to find the corresponding sender ID */
+            if ((instance_id < 0) && (LWM2M_CLIENT_CONN_OSCORE == conn_type)) {
+                DEBUG("[lwm2m:client] trying to find client by OSCORE KID\n");
+                uint8_t *kid = NULL;
+                size_t kid_len = 0;
+                if (!_get_oscore_kid(&message, &kid, &kid_len)) {
+                    DEBUG("[lwm2m:client] Found OSCORE KID %.*s\n", kid_len, kid);
+
+                    lwm2m_object_t *oscore_obj = lwm2m_object_oscore_get();
+                    int oscore_instance = lwm2m_object_oscore_find_by_recipient_id(oscore_obj, kid,
+                                                                                   kid_len);
+                    if (oscore_instance >= 0) {
+                        DEBUG("[lwm2m:client] We use OSCORE instance %d\n", oscore_instance);
+                        lwm2m_object_t *security_obj = lwm2m_object_client_security_get();
+                        instance_id = lwm2m_object_security_get_by_oscore_instance(security_obj, oscore_instance);
+                    }
+                    else {
+                        DEBUG("[lwm2m:client] No OSCORE instance with that ID\n");
+                    }
+                }
+                else {
+                    DEBUG("[lwm2m:client] No OSCORE sender ID found\n");
+                }
+            }
+
+            /* if we found the security instance, create a new connection for it */
             if (instance_id >= 0) {
                 DEBUG("[lwm2m:client] message from client with instance %d\n", instance_id);
                 /* we know this client, add the session */
-                conn = _create_incoming_client_connection(&remote, NULL, instance_id);
+                conn = _create_incoming_client_connection(&remote, NULL, instance_id, conn_type);
                 if (!conn) {
                     DEBUG("[lwm2m:client] could not create a new connection for client\n");
                     return;
@@ -477,8 +598,8 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
                 DEBUG("[lwm2m:client] message from unknown peer\n");
                 if (IS_ACTIVE(CONFIG_LwM2M_CLIENT_THIRD_PARTY_AUTH)) {
                     uint8_t snd_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
-                    int snd_len = lwm2m_get_unknown_conn_response(_client_data->lwm2m_ctx, rcv_buf, rcv_len,
-                                                                snd_buf, sizeof(snd_buf));
+                    int snd_len = lwm2m_get_unknown_conn_response(_client_data->lwm2m_ctx, reception_buf, reception_len,
+                                                                  snd_buf, sizeof(snd_buf));
                     if (snd_len <= 0) {
                         DEBUG("[lwm2m:client] problem handling message\n");
                         return;
@@ -491,9 +612,47 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
         }
 
         if (conn) {
-            DEBUG("[lwm2m:client] connection found\n");
-            DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)rcv_len);
-            int result = lwm2m_connection_handle_packet(conn, rcv_buf, rcv_len, _client_data);
+
+#if IS_USED(MODULE_WAKAAMA_CLIENT_OSCORE)
+            uint8_t oscore_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
+            uint16_t oscore_len = sizeof(oscore_buf);
+
+            if (conn->type == LWM2M_CLIENT_CONN_OSCORE) {
+                //TODO: we should be able to use only one context
+                /* recover corresponding OSCORE security context */
+                lwm2m_object_t *oscore_obj = lwm2m_object_oscore_get();
+                struct context *oscore_ctx;
+
+                if (message.code != COAP_GET && message.code != COAP_POST && message.code != COAP_PUT &&
+                    message.code != COAP_DELETE) {
+                    /* is a response */
+                    DEBUG("[_udp_event_handler] using client OSCORE ctx\n");
+                    oscore_ctx = lwm2m_object_oscore_get_client_ctx(oscore_obj, conn->oscore_instance_id);
+                }
+                else {
+                    DEBUG("[_udp_event_handler] using server OSCORE ctx\n");
+                    oscore_ctx = lwm2m_object_oscore_get_server_ctx(oscore_obj, conn->oscore_instance_id);
+                }
+
+                bool is_oscore = false;
+                int res = oscore2coap(rcv_buf, reception_len, oscore_buf, &oscore_len, &is_oscore, oscore_ctx);
+
+                if (res != OscoreNoError) {
+                    DEBUG("Could not decode the OSCORE packet (res=%d)\n", res);
+                    return;
+                }
+
+                if (!is_oscore) {
+                    DEBUG("No OSCORE packet found\n");
+                    return;
+                }
+                reception_buf = oscore_buf;
+                reception_len = oscore_len;
+            }
+#endif /* MODULE_WAKAAMA_CLIENT_OSCORE */
+
+            DEBUG("[lwm2m:client] handle packet (%i bytes)\n", (int)reception_len);
+            int result = lwm2m_connection_handle_packet(conn, reception_buf, reception_len, _client_data);
             if (0 != result) {
                 DEBUG("[lwm2m:client] error handling message %i\n", result);
             }
@@ -557,7 +716,7 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
             if (instance_id >= 0) {
                 DEBUG("[lwm2m:client:DTLS] message from client with instance %d\n", instance_id);
                 /* we know this client, add the session */
-                conn = _create_incoming_client_connection(&remote, &dtls_remote, instance_id);
+                conn = _create_incoming_client_connection(&remote, &dtls_remote, instance_id, LWM2M_CLIENT_CONN_DTLS);
                 if (!conn) {
                     DEBUG("[lwm2m:client:DTLS] could not create a new connection for client\n");
                     return;
@@ -738,7 +897,8 @@ void lwm2m_client_refresh_dtls_credentials(void)
 // TODO: move to lwm2m_client_connection?
 static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_udp_ep_t *remote,
                                                                      const sock_dtls_session_t *session,
-                                                                     uint16_t sec_obj_inst_id)
+                                                                     uint16_t sec_obj_inst_id,
+                                                                     lwm2m_client_connection_type_t connection_type)
 {
     lwm2m_client_connection_t *conn = NULL;
 
@@ -751,17 +911,12 @@ static lwm2m_client_connection_t *_create_incoming_client_connection(const sock_
     memset(conn, 0, sizeof(lwm2m_client_connection_t));
 
     conn->next = _client_data->client_conn_list;
+    conn->type = connection_type;
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
     if (session) {
-        conn->type = LWM2M_CLIENT_CONN_DTLS;
         memcpy(&conn->session, session, sizeof(sock_dtls_session_t));
     }
-    else {
-        conn->type = LWM2M_CLIENT_CONN_UDP;
-    }
-#else
-    conn->type = LWM2M_CLIENT_CONN_UDP;
 #endif
 
     conn->sec_inst_id = sec_obj_inst_id;

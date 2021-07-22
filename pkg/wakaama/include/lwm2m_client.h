@@ -46,7 +46,8 @@ extern "C" {
 
 typedef enum {
     LWM2M_CLIENT_CONN_UDP,
-    LWM2M_CLIENT_CONN_DTLS
+    LWM2M_CLIENT_CONN_DTLS,
+    LWM2M_CLIENT_CONN_OSCORE
 } lwm2m_client_connection_type_t;
 
 /**
@@ -61,6 +62,7 @@ typedef struct lwm2m_client_connection {
     lwm2m_client_connection_type_t type;
     time_t last_send; /**< last sent packet to the server */
     uint16_t sec_inst_id;
+    uint16_t oscore_instance_id;
 } lwm2m_client_connection_t;
 
 /**
