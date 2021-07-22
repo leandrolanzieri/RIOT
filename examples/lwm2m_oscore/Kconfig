@@ -1,0 +1,41 @@
+# Copyright (c) 2021 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Application configuration"
+
+config LWM2M_SERVER_URI
+    string "LwM2M Server URI to register"
+    default "coap://[fd00:dead:beef::1]"
+    help
+        The host part of the URI MUST be a valid IPv6 address.
+
+config LWM2M_SERVER_SHORT_ID
+    int "Server Short ID"
+    default 1
+    range 1 65534
+
+menu "OSCORE Pre-shared parameters"
+
+config OSCORE_MASTER_SECRET
+    string "Master secret"
+    default "0123456789abcdef"
+
+config OSCORE_MASTER_SALT
+    string "Master salt"
+    default "mastersalt"
+
+config OSCORE_RECIPIENT_ID
+    string "Recipient id"
+    default "r"
+
+config OSCORE_SENDER_ID
+    string "Sender id"
+    default "s"
+
+endmenu
+
+endmenu # Application configuration
