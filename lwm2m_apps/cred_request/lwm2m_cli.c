@@ -27,6 +27,7 @@
 #include "objects/server.h"
 
 #include "lwm2m_obj_dump.h"
+#include "lwm2m_get_set.h"
 #include "net/credman.h"
 #include "od.h"
 
@@ -357,6 +358,10 @@ close_usage_error:
         }
 
         return 0;
+    }
+
+    if (!strcmp(argv[1], "get") || !strcmp(argv[1], "set")) {
+        return lwm2m_get_set_cmd(argc, argv, &client_data);
     }
 
 help_error:

@@ -102,7 +102,7 @@ static void _dump_resource(lwm2m_data_t *data, unsigned level) {
         break;
 
     case LWM2M_TYPE_INTEGER:
-        printf("%" PRIi64 "\n", data->value.asInteger);
+        printf("%" PRIi32 "\n", (int32_t)data->value.asInteger);
         break;
 
     case LWM2M_TYPE_MULTIPLE_RESOURCE:
