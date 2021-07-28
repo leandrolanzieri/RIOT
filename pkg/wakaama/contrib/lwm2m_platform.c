@@ -36,6 +36,7 @@
 
 #include "xtimer.h"
 #include "tlsf.h"
+#include "kernel_defines.h"
 
 #include "lwm2m_platform.h"
 #include "lwm2m_client_config.h"
@@ -43,10 +44,14 @@
 static uint32_t _tlsf_heap[(CONFIG_LWM2M_TLSF_BUFFER / sizeof(uint32_t))];
 static tlsf_t _tlsf;
 
+
 typedef struct {
     unsigned free;          /**< total free size */
     unsigned used;          /**< total used size */
 } _tlsf_size_container_t;
+
+size_t used_heap = 0;
+
 
  static void _tlsf_size_walker(void* ptr, size_t size, int used, void* user)
 {
@@ -57,6 +62,15 @@ typedef struct {
     }
     else {
         ((_tlsf_size_container_t *)user)->free += (unsigned int)size;
+    }
+}
+
+ static void _tlsf_small_size_walker(void* ptr, size_t size, int used, void* user)
+{
+    (void) ptr;
+    size_t *counter = (size_t *)user;
+    if (used) {
+        *counter += size;
     }
 }
 
@@ -72,16 +86,35 @@ void lwm2m_tlsf_status(void)
 void lwm2m_platform_init(void)
 {
     _tlsf = tlsf_create_with_pool(_tlsf_heap, sizeof(_tlsf_heap));
+    if (IS_ACTIVE(CONFIG_LWM2M_HEAP_TRACE)) {
+        _tlsf_size_container_t sizes = { .free = 0, .used = 0 };
+        tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_size_walker, &sizes);
+        printf("\tTotal free size: %u\n", sizes.free);
+    }
 }
 
 void *lwm2m_malloc(size_t s)
 {
-    return tlsf_malloc(_tlsf, s);
+    void *m = tlsf_malloc(_tlsf, s);
+
+    if (IS_ACTIVE(CONFIG_LWM2M_HEAP_TRACE)) {
+        used_heap = 0;
+        tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_small_size_walker, &used_heap);
+        printf("%u\n", used_heap);
+    }
+
+    return m;
 }
 
 void lwm2m_free(void *p)
 {
     tlsf_free(_tlsf, p);
+
+    if (IS_ACTIVE(CONFIG_LWM2M_HEAP_TRACE)) {
+        used_heap = 0;
+        tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_small_size_walker, &used_heap);
+        printf("%u\n", used_heap);
+    }
 }
 
 char *lwm2m_strdup(const char *str)

@@ -39,6 +39,14 @@ static const shell_command_t my_commands[] = {
 
 int main(void)
 {
+
+    puts("=== LwM2M Client-to-Client auth request ===");
+    if (IS_ACTIVE(CONFIG_CLIENT_TYPE_REQUESTER)) {
+        puts("[Requester node - Client 1]");
+    }
+    else {
+        puts("[Host node - Client 2]");
+    }
     /* initiates LwM2M client */
     lwm2m_cli_init();
 

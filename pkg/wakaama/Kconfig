@@ -73,6 +73,9 @@ config LWM2M_CHECK_ACCESS_RIGHTS
         Say y to enable applying access control rules to requests.
         If n all requests are accepted.
 
+config LWM2M_HEAP_TRACE
+    bool "Print heap usage (debug purposes)"
+
 menuconfig LWM2M_CLIENT_C2C
     bool "[EXPERIMENTAL] Client-to-Client communication support"
     help
