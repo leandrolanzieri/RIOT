@@ -17,13 +17,13 @@ USEMODULE += gnrc_ipv6_router_default
 USEMODULE += gnrc_icmpv6_echo
 # Add also the shell, some shell commands
 USEMODULE += shell
-USEMODULE += shell_commands
+#USEMODULE += shell_commands
 USEMODULE += ps
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
-DEVELHELP ?= 1
+#DEVELHELP ?= 1
 
 # NOTE: Add the package for wakaama
 USEPKG += wakaama
