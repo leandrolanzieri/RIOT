@@ -378,7 +378,12 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
 
     lwm2m_object_t *obj;
     if (client) {
-        obj = lwm2m_object_client_security_get();
+        if (IS_ACTIVE(CONFIG_LWM2M_CLIENT_C2C)) {
+            obj = lwm2m_object_client_security_get();
+        }
+        else {
+            goto out;
+        }
     }
     else {
         obj = lwm2m_object_security_get();
