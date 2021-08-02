@@ -112,14 +112,14 @@ int lwm2m_get_set_cmd(int argc, char **argv, lwm2m_client_data_t *client_data)
             break;
         }
 
-        case 'b':
+        case 'b': {
             unsigned val = atoi(value);
             res = lwm2m_set_bool_by_path(client_data, path, path_len, !!val);
             if (res != 0) {
                 goto set_error_out;
             }
             break;
-
+        }
         default:
             printf("Unknown type\n");
             goto set_error_out;
