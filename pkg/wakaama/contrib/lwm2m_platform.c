@@ -93,14 +93,19 @@ void lwm2m_platform_init(void)
     }
 }
 
+static void _trace_heap(void)
+{
+    used_heap = 0;
+    tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_small_size_walker, &used_heap);
+    printf("[ht]: %u\n", used_heap);
+}
+
 void *lwm2m_malloc(size_t s)
 {
     void *m = tlsf_malloc(_tlsf, s);
 
     if (IS_ACTIVE(CONFIG_LWM2M_HEAP_TRACE)) {
-        used_heap = 0;
-        tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_small_size_walker, &used_heap);
-        printf("%u\n", used_heap);
+        _trace_heap();
     }
 
     return m;
@@ -111,9 +116,7 @@ void lwm2m_free(void *p)
     tlsf_free(_tlsf, p);
 
     if (IS_ACTIVE(CONFIG_LWM2M_HEAP_TRACE)) {
-        used_heap = 0;
-        tlsf_walk_pool(tlsf_get_pool(_tlsf), _tlsf_small_size_walker, &used_heap);
-        printf("%u\n", used_heap);
+        _trace_heap();
     }
 }
 
