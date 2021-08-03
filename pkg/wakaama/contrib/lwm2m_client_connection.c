@@ -382,6 +382,7 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
             obj = lwm2m_object_client_security_get();
         }
         else {
+            DEBUG("ATTENTION! Enable client-to-client module\n");
             goto out;
         }
     }
@@ -498,8 +499,9 @@ static lwm2m_client_connection_t *_connection_create(uint16_t sec_obj_inst_id,
         }
 
         DEBUG("[lwm2m:client] receiving DTLS handshake\n");
-        res = sock_dtls_recv(&client_data->dtls_sock, &conn->session, buf, sizeof(buf), US_PER_SEC);
+        res = sock_dtls_recv(&client_data->dtls_sock, &conn->session, buf, sizeof(buf), 3 * US_PER_SEC);
         if (res != -SOCK_DTLS_HANDSHAKE) {
+            sock_dtls_session_destroy(&client_data->dtls_sock, &conn->session);
             DEBUG("[lwm2m:client] error creating session: %d\n", res);
             goto free_out;
         }
