@@ -806,6 +806,7 @@ void sock_dtls_init(void)
 
 static void _ep_to_session(const sock_udp_ep_t *ep, session_t *session)
 {
+    memset(session, 0, sizeof(session_t));
     session->port = ep->port;
     session->size = sizeof(ipv6_addr_t) +       /* addr */
                     sizeof(unsigned short);     /* port */
