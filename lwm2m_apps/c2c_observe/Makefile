@@ -15,6 +15,9 @@ USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_default
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
+
+USEMODULE += gnrc_netif_events
+
 # Add also the shell, some shell commands
 USEMODULE += shell
 USEMODULE += shell_commands
