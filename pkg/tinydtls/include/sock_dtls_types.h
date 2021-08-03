@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 #ifndef SOCK_DTLS_MBOX_SIZE
-#define SOCK_DTLS_MBOX_SIZE     (4)         /**< Size of DTLS sock mailbox */
+#define SOCK_DTLS_MBOX_SIZE     (8)         /**< Size of DTLS sock mailbox */
 #endif
 
 /**
