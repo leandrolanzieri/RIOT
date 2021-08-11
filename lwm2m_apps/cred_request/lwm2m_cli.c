@@ -364,6 +364,19 @@ close_usage_error:
         return lwm2m_get_set_cmd(argc, argv, &client_data);
     }
 
+    // mark a resource as changed, to trigger notifications if observed
+    if (!strcmp(argv[1], "changed")) {
+        if (argc != 3) {
+            printf("usage: %s changed <resource URI>\n", argv[0]);
+            return 1;
+        }
+
+        lwm2m_uri_t uri;
+        lwm2m_stringToUri(argv[2], strlen(argv[2]), &uri);
+        lwm2m_resource_value_changed(client_data.lwm2m_ctx, &uri);
+        return 0;
+    }
+
 help_error:
     printf("usage: %s <start", argv[0]);
 
@@ -371,7 +384,7 @@ help_error:
         printf("|mem");
     }
 
-    printf("|read|obs|auth|obj|close>\n");
+    printf("|read|obs|auth|obj|changed|close>\n");
 
     return 1;
 }
