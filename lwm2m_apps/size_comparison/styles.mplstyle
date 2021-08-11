@@ -2,9 +2,8 @@ text.usetex: True
 font.family: sans-serif
 font.size: 20
 legend.fontsize: 18
-#text.latex.preamble: \usepackage{cmbright}
 xtick.labelsize : 20
 ytick.labelsize : 20
 axes.titlesize  : 20
-axes.labelsize  : 20
+axes.labelsize  : 18
 xtick.major.pad: 1

@@ -5,7 +5,7 @@ boards:
 profiles:
   no_extensions:
     config: ""
-    label: "No extensions"
+    label: "Baseline"
   c2c:
     config: "c2c_only.config"
     label: "C2C"
@@ -15,38 +15,40 @@ profiles:
 
 groups:
   # For now we ignore common OS and DTLS parts
-  
-  # ? "RIOT OS"
-  # :
-  #    modules:
-  #      - ["core"]
-  #      - ["boards"]
-  #      - ["cpu"]
-  #      - ["drivers"]
-  #      - ["sys"]
-  #      - ["fill"]
-  #      - ["unspecified"]
-  #      - ["pkg"]
-  #      - ["~", "pkg", "wakaama"]
-  #      - ["~", "pkg", "tinydtls"]
-
-  # ? "DTLS"
+  # ? "RIOT"
   # :
   #   modules:
+  #     - ["core"]
+  #     - ["boards"]
+  #     - ["cpu"]
+  #     - ["drivers"]
+  #     - ["sys"]
+  #     - ["pkg", "wakaama", "core", "er-coap-13"]
   #     - ["pkg", "tinydtls"]
+  #     - ["unspecified"]
+  #   config:
+  #     hatch: "|/"
+  #     base: true
 
-  ? "CoAP"
-  :
-    modules:
-      - ["pkg", "wakaama", "core", "er-coap-13"]
-    config:
-      hatch: "|/"
-
-  ? "LwM2M Core"
+  ? "LwM2M core"
   :
     modules:
       - ["pkg", "wakaama", "core"]
       - ["pkg", "wakaama", "contrib"]
+
+      - ["pkg", "wakaama", "contrib", "objects"]
+
+      # grouped under "utilities"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "common"]
+
+      # grouped under "security object"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "security"]
+
+      # grouped under "server object"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "server"]
+
+      # grouped under "access control object"
+      - ["~", "pkg", "wakaama", "contrib", "objects", "access_control"]
 
       # grouped under "other objects"
       - ["~", "pkg", "wakaama", "contrib", "objects"]
@@ -70,10 +72,11 @@ groups:
       - ["~", "pkg", "wakaama", "core", "packet"]
       - ["~", "pkg", "wakaama", "core", "objects"]
       - ["~", "pkg", "wakaama", "core", "tinycbor"]
+
     config:
       hatch: "\\\\"
 
-  ? "Utils"
+  ? "Utilities"
   :
     modules:
       - ["pkg", "wakaama", "core", "utils"]
@@ -81,16 +84,22 @@ groups:
       - ["pkg", "wakaama", "core", "packet"]
       - ["pkg", "wakaama", "core", "objects"]
       - ["pkg", "wakaama", "core", "tinycbor"]
+      - ["pkg", "wakaama", "contrib", "objects", "common"]
+
+      # only needed for shell
+      - ["~", "pkg", "wakaama", "core", "uri", "lwm2m_stringToUri"]
+
+      # grouped under "client to client"
+      - ["~", "pkg", "wakaama", "core", "objects", "object_getClients"]
     config:
       hatch: "||"
 
-  ? "Connections\n handling"
+  ? "Access ctrl. object"
   :
     modules:
-      - ["pkg", "wakaama", "contrib", "lwm2m_client"]
-      - ["pkg", "wakaama", "contrib", "lwm2m_client_connection"]
+      - ["pkg", "wakaama", "contrib", "objects", "access_control"]
     config:
-      hatch: "+"
+      hatch: "\\\\.."
 
   ? "Security object"
   :
@@ -106,23 +115,25 @@ groups:
     config:
       hatch: "---"
 
-  ? "Other objects"
+  ? "Peer handling"
   :
     modules:
-      - ["pkg", "wakaama", "contrib", "objects"]
+      - ["pkg", "wakaama", "contrib", "lwm2m_client"]
+      - ["pkg", "wakaama", "contrib", "lwm2m_client_connection"]
 
-      # grouped under "security object"
-      - ["~", "pkg", "wakaama", "contrib", "objects", "security"]
-
-      # grouped under "server object"
-      - ["~", "pkg", "wakaama", "contrib", "objects", "server"]
+      # grouped under "client to client"
+      - ["~", "pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_read"]
+      - ["~", "pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_observe"]
     config:
-      hatch: "//"
+      hatch: "+"
 
-  ? "Client to client"
+  ? "Client-to-client"
   :
     modules:
       - ["pkg", "wakaama", "core", "client_to_client"]
+      - ["pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_read"]
+      - ["pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_observe"]
+      - ["pkg", "wakaama", "core", "objects", "object_getClients"]
     config:
       hatch: ".."
 
@@ -139,4 +150,4 @@ plots:
     hatch:
       linewidth: 0.5
     label:
-      width: 20
+      width: 10

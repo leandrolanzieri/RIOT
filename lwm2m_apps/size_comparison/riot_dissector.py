@@ -4,6 +4,7 @@ import subprocess
 from os import path, environ
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from matplotlib.ticker import FuncFormatter
 import json
 import numpy as np
 import argparse
@@ -59,7 +60,11 @@ LATEX_TEXT_WIDTH_PT = 505.89
  
 LATEX_FIG_HEIGHT_PT = 250
 LATEX_FIG_HEIGHT_PT_SMALL = 180
- 
+
+def transparent_formater(a, b):
+    res = f"{a:.0f}"
+    return res
+
 def pt2inch(pt):
     """ Convert `pt` points to inches."""
     return pt * 0.0138889
@@ -90,7 +95,7 @@ def compile_for_board_and_profile(board, profile):
         logging.error("Could not clean the application")
         raise RuntimeError(err)
 
-    p = subprocess.Popen((MAKE, 'cosy-dump'),env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen((MAKE, 'cosy-dump', '-j'),env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     res = p.wait()
     err = p.stderr.read()
     if res != 0:
@@ -128,6 +133,8 @@ def plot_for_board(results, export_path=None):
     for group in CONFIG['groups'].keys():
         sizes[group] = {'flash': [], 'ram': []}
 
+    sizes_sum = {'flash': [], 'ram': []}
+
     # one value on x axis per run configuration
     runs = []
     for run in results['runs']:
@@ -139,7 +146,10 @@ def plot_for_board(results, export_path=None):
         with open(run['dump_path'], "r") as d:
             dump = json.load(d)
 
-        for group in sizes.keys():
+        sizes_sum['flash'].append(dump['size']['t'] + dump['size']['d'])
+        sizes_sum['ram'].append(dump['size']['b'] + dump['size']['d'])
+
+        for group in CONFIG['groups'].keys():
             (flash, ram) = aggregate_group_sizes(group, dump)
             sizes[group]['flash'].append(flash)
             sizes[group]['ram'].append(ram)
@@ -152,9 +162,15 @@ def plot_for_board(results, export_path=None):
                                            figsize=(pt2inch(3*LATEX_COLUM_WIDTH_PT),
                                                     pt2inch(1.6*LATEX_FIG_HEIGHT_PT)))
 
-    plt.subplots_adjust(wspace=0.25, hspace=None)
-    flash_ax.grid(linestyle='-.', linewidth=1, color='black', zorder=0)
-    ram_ax.grid(linestyle='-.', linewidth=1, color='black', zorder=0)
+
+    # PLOTS Position
+    # - on the right
+    plt.subplots_adjust(right=1.2, wspace=0.9)
+    # - split
+    #plt.subplots_adjust(wspace=0.25, hspace=None, right=0.89)
+
+    flash_ax.grid(linestyle='-.', linewidth=1, zorder=0)
+    ram_ax.grid(linestyle='-.', linewidth=1, zorder=0)
 
     axs = {'flash': flash_ax, 'ram': ram_ax}
 
@@ -163,7 +179,17 @@ def plot_for_board(results, export_path=None):
         'ram': np.zeros(len(runs))
     }
 
+    accumulated_percentage = {
+        'flash': np.zeros(len(runs)),
+        'ram': np.zeros(len(runs)),
+    }
+
     max_value = {
+        'flash': 0,
+        'ram': 0
+    }
+
+    axis_base = {
         'flash': 0,
         'ram': 0
     }
@@ -171,8 +197,17 @@ def plot_for_board(results, export_path=None):
     colors = plt.get_cmap("Set3").colors
     i = 0
 
+    logging.info("Total: {}".format(sizes_sum))
+
     for (group, size) in sizes.items():
-        logging.info("{}:{}".format(group, size))
+        percentage = {
+            'flash': np.divide(np.multiply(size['flash'], np.full(len(size['flash']), 100)), sizes_sum['flash']),
+            'ram': np.divide(np.multiply(size['ram'], np.full(len(size['ram']), 100)), sizes_sum['ram'])
+        }
+        logging.info("{}:{} ({})".format(group, size, percentage))
+
+        accumulated_percentage['flash'] += percentage['flash']
+        accumulated_percentage['ram'] += percentage['ram']
 
         # use KiB
         values = {
@@ -180,16 +215,22 @@ def plot_for_board(results, export_path=None):
             'ram': np.divide(size['ram'], 1024)
         }
 
-        # load group plot configuration
-        hatch = get_group_configuration(group, 'hatch', get_hatch(i))
-        color = get_group_configuration(group, 'color', colors[0])
-        edge_color = get_group_configuration(group, 'edge-color', '#333')
+        is_base = get_group_configuration(group, 'base', False)
 
-        # add new bars
-        axs['flash'].bar(runs, values['flash'], width, bottom=accumulated['flash'],
-                         edgecolor=edge_color, label=group, color=color, hatch=hatch, zorder=2)
-        axs['ram'].bar(runs, values['ram'], width, bottom=accumulated['ram'], edgecolor=edge_color,
-                       label=group, color=color, hatch=hatch, zorder=2)
+        if is_base and get_plot_configuration('base/show', False) or not is_base:
+            # load group plot configuration
+            hatch = get_group_configuration(group, 'hatch', get_hatch(i))
+            color = get_group_configuration(group, 'color', colors[0])
+            edge_color = get_group_configuration(group, 'edge-color', '#333')
+
+            # add new bars
+            axs['flash'].bar(runs, values['flash'], width, bottom=accumulated['flash'],
+                            edgecolor=edge_color, label=group, color=color, hatch=hatch, zorder=2)
+            axs['ram'].bar(runs, values['ram'], width, bottom=accumulated['ram'], edgecolor=edge_color,
+                        label=group, color=color, hatch=hatch, zorder=2)
+
+            #remove last used color
+            colors = colors[1:]
 
         # update the maximum and the accumulated array
         accumulated['flash'] = np.add(accumulated['flash'], values['flash']).tolist()
@@ -197,20 +238,54 @@ def plot_for_board(results, export_path=None):
         max_value['flash'] = np.max([np.max(accumulated['flash']), max_value['flash']])
         max_value['ram'] = np.max([np.max(accumulated['ram']), max_value['ram']])
 
-        #remove last used color
-        colors = colors[1:]
+        if is_base:
+            axis_base['flash'] = accumulated['flash']
+            axis_base['ram'] = accumulated['ram']
+
         i += 1
 
-    # set maximum value for Y axis
-    axs['flash'].set_ylim(0, max_value['flash'] * 1.1)
-    axs['ram'].set_ylim(0, max_value['ram'] * 1.1)
+
+    y_min = {
+        'flash': 0,
+        'ram': 0
+    }
+
+    # draw percentage of total size
+    for key, ax in axs.items():
+        percentage_offset = max_value[key] * 0.04
+        for i, run in enumerate(runs):
+            value = str(round(accumulated_percentage[key][i], 1)) + ' \%'
+            axs[key].text(run, accumulated[key][i] + percentage_offset, value, ha='center',
+                          backgroundcolor='white', fontsize='small')
+
+    # # set the minimum to the base
+    if get_plot_configuration('base/offset', False):
+        y_min['flash'] = np.min(axis_base['flash'])
+        y_min['ram'] = np.min(axis_base['ram'])
+
+    # set maximum and minimum values for Y axis
+    axs['flash'].set_ylim(y_min['flash'], max_value['flash'] * 1.11)
+    axs['ram'].set_ylim(y_min['ram'], max_value['ram'] * 1.11)
 
     # set labels and legends
-    axs['flash'].set_ylabel('FLASH [KiB]')
+    axs['flash'].set_ylabel('ROM [KiB]')
     axs['ram'].set_ylabel('RAM [KiB]')
 
-    # put a legend below the axis
-    fig.legend(sizes.keys(), ncol=1, bbox_to_anchor=(1.02, 0.5), loc='center', handletextpad=0.5)
+    # set a formatter to avoid serif tabels
+    axs['ram'].xaxis.set_major_formatter(FuncFormatter(transparent_formater))
+    axs['ram'].yaxis.set_major_formatter(FuncFormatter(transparent_formater))
+    axs['flash'].xaxis.set_major_formatter(FuncFormatter(transparent_formater))
+    axs['flash'].yaxis.set_major_formatter(FuncFormatter(transparent_formater))
+
+    handles, labels = axs['flash'].get_legend_handles_labels()
+
+    # LEGEND
+    # - in the middle
+    fig.legend(handles[::-1], labels[::-1], ncol=1, bbox_to_anchor=(0.63, 0.5), loc='center',
+               handletextpad=0.5, frameon=False, handlelength=1.0)
+    # - to the right
+    #fig.legend(handles[::-1], labels[::-1], ncol=1, bbox_to_anchor=(1.02, 0.5), loc='center', handletextpad=0.5, frameon=False)
+
     axs['flash'].set_xticklabels(runs, rotation=45, va='top', ha='right')
     axs['ram'].set_xticklabels(runs, rotation=45, va='top', ha='right')
 
