@@ -1,0 +1,32 @@
+From beb948e5c9aa20c76278a0f9fa40f4700e91542e Mon Sep 17 00:00:00 2001
+From: Leandro Lanzieri <leandro.lanzieri@haw-hamburg.de>
+Date: Mon, 9 Aug 2021 11:23:46 +0200
+Subject: [PATCH] HACK: add delay in handshake messages for RIOT
+
+---
+ dtls.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/dtls.c b/dtls.c
+index 3fed395..71dbdcc 100644
+--- a/dtls.c
++++ b/dtls.c
+@@ -64,6 +64,7 @@
+ 
+ #ifdef RIOT_VERSION
+ # include <memarray.h>
++#include "xtimer.h"
+ 
+ dtls_context_t dtlscontext_storage_data[DTLS_CONTEXT_MAX];
+ memarray_t dtlscontext_storage;
+@@ -1513,6 +1514,7 @@ dtls_send_handshake_msg(dtls_context_t *ctx,
+ 			uint8 header_type,
+ 			uint8 *data, size_t data_length)
+ {
++  xtimer_msleep(10);
+   return dtls_send_handshake_msg_hash(ctx, peer, &peer->session,
+ 				      header_type, data, data_length, 1);
+ }
+-- 
+2.32.0
+
