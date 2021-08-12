@@ -3,7 +3,6 @@ DIRS += $(RIOTBASE)/pkg/wakaama/contrib
 INCLUDES += -I$(RIOTBASE)/pkg/wakaama/include
 INCLUDES += -I$(PKGDIRBASE)/wakaama/core
 INCLUDES += -I$(PKGDIRBASE)/wakaama/core/er-coap-13
-INCLUDES += -I$(PKGDIRBASE)/wakaama/core/tinycbor
 
 # NOTE: Use wakaama in client mode
 CFLAGS += -DLWM2M_CLIENT_MODE

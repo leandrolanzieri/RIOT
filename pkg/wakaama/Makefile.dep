@@ -1,4 +1,4 @@
-USEMODULE += wakaama_core wakaama_core_coap13 wakaama_core_tinycbor
+USEMODULE += wakaama_core wakaama_core_coap13
 
 # include contrib code (platform adaption and client implementation)
 USEMODULE += wakaama_contrib
@@ -35,3 +35,5 @@ ifneq (,$(filter wakaama_client_oscore, $(USEMODULE)))
   USEMODULE += wakaama_objects_oscore
   USEPKG += uoscore
 endif
+
+USEPKG += tinycbor
