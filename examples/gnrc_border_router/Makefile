@@ -104,7 +104,8 @@ endif
 
 # As there is an 'Kconfig' we want to explicitly disable Kconfig by setting
 # the variable to empty
-SHOULD_RUN_KCONFIG ?=
+SHOULD_RUN_KCONFIG ?=1
+ETHOS_BAUDRATE=500000
 
 include $(RIOTBASE)/Makefile.include
 
