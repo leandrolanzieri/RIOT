@@ -22,7 +22,6 @@
 #include "lwm2m_platform.h"
 #include "objects/security.h"
 #include "objects/device.h"
-#include "objects/light_control.h"
 #include "objects/access_control.h"
 #include "objects/server.h"
 
@@ -30,13 +29,7 @@
 #include "net/credman.h"
 #include "od.h"
 
-#ifdef LED0_ON
-#define LED_COLOR   "Unknown"
-#define LED_APP_TYPE "LED 0"
-# define OBJ_COUNT (8)
-#else
-# define OBJ_COUNT (7)
-#endif
+#define OBJ_COUNT (7)
 
 #ifndef CONFIG_LWM2M_SERVER_SHORT_ID
 #define CONFIG_LWM2M_SERVER_SHORT_ID 1
@@ -60,6 +53,7 @@
 
 uint8_t connected = 0;
 lwm2m_object_t *obj_list[OBJ_COUNT];
+uint8_t obj_count = 0;
 lwm2m_client_data_t client_data;
 
 #ifndef CONFIG_PSK_ID
@@ -100,26 +94,19 @@ static const credman_credential_t credential = {
     },
 };
 
-#ifdef LED0_ON
-void _led_cb(lwm2m_object_t *object, uint16_t instance_id, bool status, uint8_t dimmer, void *arg)
+void _set_point_cb(lwm2m_object_t *object, uint16_t instance_id, uint32_t value, void *arg)
 {
     (void)object;
     (void)instance_id;
     (void)arg;
 
-    printf("Current dimmer value: %d%%\n", dimmer);
-
-    if (status) {
-        LED0_ON;
-    }
-    else {
-        LED0_OFF;
-    }
+    printf("Current set point value: %" PRId32 "\n", value);
 }
-#endif
 
 void lwm2m_cli_init(void)
 {
+    lwm2m_object_t *obj = NULL;
+
     /* this call is needed before creating any objects */
     lwm2m_client_init(&client_data);
 
@@ -131,18 +118,19 @@ void lwm2m_cli_init(void)
         .cred = &credential,
         .is_bootstrap = IS_ACTIVE(LWM2M_SERVER_IS_BOOTSTRAP), /* set to true when using Bootstrap server */
         .client_hold_off_time = 5,
-        .bootstrap_account_timeout = 0
+        .bootstrap_account_timeout = 0,
+        .oscore_object_inst_id = LWM2M_MAX_ID,
     };
 
-    obj_list[0] = lwm2m_object_security_get();
-    int res = lwm2m_object_security_instance_create(obj_list[0], 0, &sec_args);
-
+    obj = lwm2m_object_security_get();
+    int res = lwm2m_object_security_instance_create(obj, 0, &sec_args);
+    obj_list[obj_count++] = obj;
     if (res < 0) {
         puts("Could not instantiate the security object");
         return;
     }
 
-    obj_list[1] = lwm2m_object_server_get();
+    obj = lwm2m_object_server_get();
     lwm2m_obj_server_args_t server_args = {
         .short_id = CONFIG_LWM2M_SERVER_SHORT_ID, /* must match the one use in the security */
         .binding = BINDING_U,
@@ -153,7 +141,8 @@ void lwm2m_cli_init(void)
         .disable_timeout = 3600 /* one hour */
     };
 
-    res = lwm2m_object_server_instance_create(obj_list[1], 0, &server_args);
+    res = lwm2m_object_server_instance_create(obj, 0, &server_args);
+    obj_list[obj_count++] = obj;
     if (res < 0) {
         puts("Could not instantiate the server object");
         return;
@@ -161,40 +150,32 @@ void lwm2m_cli_init(void)
 
     /* device object has a single instance. All the information for now is defined at
      * compile-time */
-    obj_list[2] = lwm2m_object_device_get();
+    obj_list[obj_count++] = lwm2m_object_device_get();
 
-    /* configure access to light control */
-    obj_list[3] = lwm2m_object_access_control_get();
+    /* allow the server to create client object instances */
+    obj = lwm2m_object_access_control_get();
     uint16_t acc_ctrl_inst = 0;
     lwm2m_obj_access_control_args_t acc_args = {
-        .owner = CONFIG_LWM2M_SERVER_SHORT_ID,
-        .obj_id = LWM2M_LIGHT_CONTROL_OBJECT_ID,
-        .obj_inst_id = 0
+        .owner = LWM2M_MAX_ID,
+        .obj_id = LWM2M_CLIENT_OBJECT_ID,
+        .obj_inst_id = LWM2M_MAX_ID
     };
-
-    res = lwm2m_object_access_control_instance_create(obj_list[3], acc_ctrl_inst, &acc_args);
+    res = lwm2m_object_access_control_instance_create(obj, acc_ctrl_inst, &acc_args);
     if (res < 0) {
         puts("Error instantiating access control");
     }
 
     lwm2m_obj_access_control_acl_args_t acl_args = {
-        .access = LWM2M_ACCESS_CONTROL_READ | LWM2M_ACCESS_CONTROL_WRITE,
-        .res_inst_id = 0 /* default access */
+        .access = LWM2M_ACCESS_CONTROL_CREATE,
+        .res_inst_id = CONFIG_LWM2M_SERVER_SHORT_ID
     };
-    res = lwm2m_object_access_control_add(obj_list[3], acc_ctrl_inst, &acl_args);
+    res = lwm2m_object_access_control_add(obj, acc_ctrl_inst, &acl_args);
+    obj_list[obj_count++] = obj;
+    if (res < 0) {
+        puts("Error instantiating ACLs");
+    }
 
-    /* allow the server to create client object instances */
-    acc_ctrl_inst++;
-    acc_args.obj_id = LWM2M_CLIENT_OBJECT_ID;
-    acc_args.obj_inst_id = LWM2M_MAX_ID;
-    acc_args.owner = LWM2M_MAX_ID;
-    lwm2m_object_access_control_instance_create(obj_list[3], acc_ctrl_inst, &acc_args);
-
-    acl_args.access = LWM2M_ACCESS_CONTROL_CREATE;
-    acl_args.res_inst_id = CONFIG_LWM2M_SERVER_SHORT_ID;
-    lwm2m_object_access_control_add(obj_list[3], acc_ctrl_inst, &acl_args);
-
-    obj_list[4] = lwm2m_object_client_get();
+    obj = lwm2m_object_client_get();
     lwm2m_obj_client_args_t client_args = {
         .short_id = CONFIG_LWM2M_CLIENT_SHORT_ID,
         .binding = BINDING_U,
@@ -205,12 +186,13 @@ void lwm2m_cli_init(void)
         .disable_timeout = 3600, /* one hour */
         .endpoint = CONFIG_LWM2M_CLIENT_ENDPOINT
     };
-    res = lwm2m_object_client_instance_create(obj_list[4], 0, &client_args);
+    res = lwm2m_object_client_instance_create(obj, 0, &client_args);
+    obj_list[obj_count++] = obj;
     if (res < 0) {
         puts("Error instantiating client object");
     }
 
-    obj_list[5] = lwm2m_object_client_security_get();
+    obj = lwm2m_object_client_security_get();
     lwm2m_obj_client_security_args_t client_sec_args = {
         .server_id = CONFIG_LWM2M_CLIENT_SHORT_ID,
         .server_uri = CONFIG_LWM2M_CLIENT_URI,
@@ -226,34 +208,16 @@ void lwm2m_cli_init(void)
         .bootstrap_account_timeout = 0,
         .oscore_object_inst_id = LWM2M_MAX_ID,
     };
-    res = lwm2m_object_client_security_instance_create(obj_list[5], 0, &client_sec_args);
-
+    res = lwm2m_object_client_security_instance_create(obj, 0, &client_sec_args);
+    obj_list[obj_count++] = obj;
     if (res < 0) {
         puts("Error instantiating client security object");
     }
 
-    obj_list[6] = lwm2m_object_client_access_control_get();
+    obj_list[obj_count++] = lwm2m_object_client_access_control_get();
 
-#ifdef LED0_ON
-    obj_list[7] = lwm2m_object_light_control_get();
-    lwm2m_obj_light_control_args_t light_args = {
-        .cb = _led_cb,
-        .cb_arg = NULL,
-        .color = LED_COLOR,
-        .color_len = sizeof(LED_COLOR) - 1,
-        .app_type = LED_APP_TYPE,
-        .app_type_len = sizeof(LED_APP_TYPE) - 1
-    };
-
-    res = lwm2m_object_light_control_instance_create(obj_list[7], 0, &light_args);
-
-    if (res < 0) {
-        puts("Error instantiating light control");
-    }
-#endif
-
-    if (!obj_list[0] || !obj_list[1] || !obj_list[2]) {
-        puts("Could not create mandatory objects");
+    if (obj_count > OBJ_COUNT) {
+        puts("Error: Too many objects instantiated");
     }
 }
 
@@ -283,7 +247,7 @@ int lwm2m_cli_cmd(int argc, char **argv)
 
     if (!strcmp(argv[1], "start")) {
         /* run the LwM2M client */
-        if (!connected && lwm2m_client_run(&client_data, obj_list, ARRAY_SIZE(obj_list))) {
+        if (!connected && lwm2m_client_run(&client_data, obj_list, obj_count)) {
             connected = 1;
         }
         return 0;

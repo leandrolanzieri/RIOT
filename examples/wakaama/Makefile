@@ -29,7 +29,7 @@ DEVELHELP ?= 1
 USEPKG += wakaama
 # Extra LwM2M objects
 USEMODULE += wakaama_objects_access_control
-USEMODULE += wakaama_objects_light_control
+USEMODULE += wakaama_objects_set_point
 
 # add DTLS support
 USEMODULE += wakaama_client_dtls
