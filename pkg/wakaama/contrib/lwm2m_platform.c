@@ -36,6 +36,7 @@
 
 #include "xtimer.h"
 #include "tlsf.h"
+#include "random.h"
 #include "kernel_defines.h"
 
 #include "lwm2m_platform.h"
@@ -155,4 +156,9 @@ void lwm2m_printf(const char *format, ...)
     vfprintf(stderr, format, ap);
 
     va_end(ap);
+}
+
+int lwm2m_random(void)
+{
+    return random_uint32();
 }
