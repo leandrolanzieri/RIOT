@@ -130,11 +130,14 @@ extern "C" {
  * @param[in] instance_id           ID of the instance where the resource changed.
  * @param[in] status                Light status.
  * @param[in] dimmer                Dimmer value.
+ * @param[in] color                 Pointer to the color string.
+ * @param[in] color_len             Length of @p color.
  * @param[in] arg                   Argument registered in
  *                                  @ref lwm2m_object_light_control_instance_create.
  */
 typedef void (*lwm2m_obj_light_control_cb_t)(lwm2m_object_t *object, uint16_t instance_id,
-                                             bool status, uint8_t dimmer, void *arg);
+                                             bool status, uint8_t dimmer, const char *color,
+                                             size_t color_len, void *arg);
 
 /**
  * @brief Arguments for the creation of a Light Control object instance.

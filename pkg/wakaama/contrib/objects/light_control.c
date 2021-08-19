@@ -202,6 +202,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
 {
     lwm2m_obj_light_control_inst_t *instance;
     uint8_t result = COAP_204_CHANGED;
+    bool call_callback = false;
 
     /* try to get the requested instance from the object list */
     instance = (lwm2m_obj_light_control_inst_t *)lwm2m_list_find(object->instanceList, instance_id);
@@ -219,10 +220,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
                 instance->on_time = xtimer_now();
             }
 
-            if (instance->cb) {
-                instance->cb(object, instance_id, instance->status, instance->dimmer,
-                             instance->cb_arg);
-            }
+            call_callback = true;
             break;
 
         case LWM2M_LIGHT_CONTROL_DIMMER_ID:
@@ -234,11 +232,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
                 result = COAP_400_BAD_REQUEST;
             } else {
                 instance->dimmer = (uint8_t)val;
-
-                if (instance->cb) {
-                    instance->cb(object, instance_id, instance->status, instance->dimmer,
-                                 instance->cb_arg);
-                }
+                call_callback = true;
             }
             break;
         }
@@ -258,6 +252,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             memcpy(instance->color, data_array[i].value.asBuffer.buffer,
                    data_array[i].value.asBuffer.length);
             instance->color[data_array[i].value.asBuffer.length] = '\0';
+            call_callback = true;
             break;
 
         case LWM2M_LIGHT_CONTROL_APP_TYPE_ID:
@@ -277,6 +272,11 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
             instance->app_type[data_array[i].value.asBuffer.length] = '\0';
             break;
         }
+    }
+
+    if (call_callback && instance->cb) {
+        instance->cb(object, instance_id, instance->status, instance->dimmer,
+                     instance->color, strlen(instance->color), instance->cb_arg);
     }
 
     return result;

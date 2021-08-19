@@ -63,11 +63,14 @@ static const credman_credential_t credential = {
     },
 };
 
-void _led_cb(lwm2m_object_t *object, uint16_t instance_id, bool status, uint8_t dimmer, void *arg)
+void _led_cb(lwm2m_object_t *object, uint16_t instance_id, bool status, uint8_t dimmer,
+             const char *color, size_t color_len, void *arg)
 {
     (void)object;
     (void)instance_id;
     (void)arg;
+    (void)color;
+    (void)color_len;
 
     printf("Current dimmer value: %d%%\n", dimmer);
 
