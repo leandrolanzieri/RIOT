@@ -800,7 +800,15 @@ static void _lwm2m_step_cb(event_t *arg)
     }
 
     /* perform step on the LwM2M FSM */
+    lwm2m_client_state_t old_state = _client_data->lwm2m_ctx->state;
     lwm2m_step(_client_data->lwm2m_ctx, &next_step);
+
+    if (old_state != _client_data->lwm2m_ctx->state &&
+        STATE_READY == _client_data->lwm2m_ctx->state) {
+        DEBUG("[lwm2m:client] Registered ");
+        puts("reg");
+    }
+
     DEBUG("[lwm2m:client] state: ");
     switch (_client_data->lwm2m_ctx->state) {
         case STATE_INITIAL:
