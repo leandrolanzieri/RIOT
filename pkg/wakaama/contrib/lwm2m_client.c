@@ -111,6 +111,7 @@ static void _client_read_handler(event_t *event);
 
 static event_queue_t _queue;
 static event_t _lwm2m_step_event = { .handler = _lwm2m_step_cb };
+static event_t _lwm2m_force_step_event = { .handler = _lwm2m_step_cb };
 static event_timeout_t _lwm2m_step_event_timeout;
 static lwm2m_client_data_t *_client_data = NULL;
 static char _lwm2m_client_stack[2 * THREAD_STACKSIZE_MAIN + THREAD_EXTRA_STACKSIZE_PRINTF];
@@ -771,6 +772,11 @@ static void *_event_loop(void *arg)
     event_loop(&_queue);
 
     return 0;
+}
+
+void lwm2m_client_force_step(void)
+{
+    event_post(&_queue, &_lwm2m_force_step_event);
 }
 
 static void _lwm2m_step_cb(event_t *arg)

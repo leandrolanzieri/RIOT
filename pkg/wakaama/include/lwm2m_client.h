@@ -114,6 +114,11 @@ lwm2m_context_t *lwm2m_client_run(lwm2m_client_data_t *client_data,
                                    lwm2m_object_t *obj_list[],
                                    uint16_t obj_numof);
 
+/**
+ * @brief Force a step in the client, to trigger updates faster than the next check.
+ */
+void lwm2m_client_force_step(void);
+
 int lwm2m_client_read(lwm2m_client_data_t *client_data, uint16_t client_sec_instance_id,
                               lwm2m_uri_t *uri, lwm2m_result_callback_t cb);
 
