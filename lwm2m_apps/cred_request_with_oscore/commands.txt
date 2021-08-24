@@ -1,0 +1,22 @@
+# remember to set:
+#   - server correct URI (local or border router)
+#   - peer URI on client 1 configuration
+#
+# DTLS keys:
+# - client <-> server 54686973497352494f5421
+# - client <-> client 7365637265746B6579
+
+/timer 20 lwm2m start
+/timer 30 lwm2m auth 1 riot:client:0002 1 3311 0 1
+/timer 34 lwm2m read 0 /3311/0/5850
+
+
+
+/timer 20 lwm2m start
+
+
+lwm2m obs /3311/0/5850
+lwm2m read /3311/0/5850
+
+m3-322;lwm2m auth 1 riot:client:0002 1 3311 0 1
+m3-322;lwm2m obs 0 /3311/0/5850
