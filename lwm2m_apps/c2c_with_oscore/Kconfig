@@ -1,0 +1,99 @@
+# Copyright (c) 2021 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Application configuration"
+
+choice CLIENT_TYPE
+    bool "Select the client type"
+
+config CLIENT_TYPE_OBSERVER
+    bool "Client 1 - Observer"
+
+config CLIENT_TYPE_HOST
+    bool "Client 2 - Host"
+
+endchoice # CLIENT_TYPE
+
+menu "Server configuration"
+
+config LWM2M_SERVER_URI
+    string "LwM2M Server URI to register/bootstrap with"
+    default "coap://[fd00:dead:beef::1]"
+    help
+        The host part of the URI MUST be a valid IPv6 address.
+
+config LWM2M_SERVER_SHORT_ID
+    int "Server Short ID"
+    default 1
+    range 1 65534
+
+config PSK_ID
+    string "PSK Identity"
+    default "Client_Identity"
+
+config PSK_KEY
+    string "PSK Key"
+    default "ThisIsRIOT!"
+
+config LWM2M_SERVER_IS_BOOTSTRAP
+    bool "The server is a Bootstrap-Server"
+    depends on LWM2M_BOOTSTRAP
+
+endmenu # Server configuration
+
+menu "Client configuration"
+
+config LWM2M_CLIENT_URI
+    string "LwM2M client URI to test C2C communication with"
+    default "coap://[fd00:dead:beef::1]"
+    help
+        The host part of the URI MUST be a valid IPv6 address.
+
+config LWM2M_CLIENT_SHORT_ID
+    int "Client Short ID"
+    default 5
+    range 1 65534
+
+config LWM2M_CLIENT_ENDPOINT
+    string "Client Endpoint Name"
+    default "testRIOTDevice"
+
+menu "OSCORE Pre-shared parameters for client"
+
+config OSCORE_MASTER_SECRET
+    string "Master secret"
+    default "0123456789abcdef"
+
+config OSCORE_MASTER_SALT
+    string "Master salt"
+    default "mastersalt"
+
+config OSCORE_RECIPIENT_ID
+    string "Recipient id"
+    default "r"
+
+config OSCORE_SENDER_ID
+    string "Sender id"
+    default "s"
+
+endmenu
+
+endmenu # Client configuration
+
+menu "Light object configuration"
+
+config LED_COLOR
+    string "Color"
+    default "Unknown"
+
+config LED_APP_TYPE
+    string "Application type"
+    default "LED 0"
+
+endmenu # Light object configuration
+
+endmenu # Application configuration
