@@ -238,13 +238,9 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
         }
 
         case LWM2M_LIGHT_CONTROL_COLOUR_ID:
-            if (data_array[i].type != LWM2M_TYPE_STRING) {
-                result = COAP_400_BAD_REQUEST;
-                break;
-            }
-
             if (data_array[i].value.asBuffer.length >
                 CONFIG_LWM2M_LIGHT_CONTROL_COLOR_MAX_SIZE - 1) {
+                DEBUG("[lwm2m:light_control:write]: color string too long\n");
                 result = COAP_500_INTERNAL_SERVER_ERROR;
                 break;
             }
