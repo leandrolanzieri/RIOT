@@ -446,7 +446,7 @@ static int _find_client_security_instance(const sock_udp_ep_t *remote, lwm2m_cli
 
                     Figure 10: The OSCORE Option Value
 */
-int _get_oscore_kid(const coap_packet_t *packet, uint8_t **out, size_t *out_len)
+int _get_oscore_kid(const coap_packet_t *packet, const uint8_t **out, size_t *out_len)
 {
     assert(packet);
     assert(out);
@@ -460,14 +460,14 @@ int _get_oscore_kid(const coap_packet_t *packet, uint8_t **out, size_t *out_len)
     DEBUG("[lwm2m:client] found OSCORE option\n");
 
     /* parse OSCORE flags */
-    uint8_t *flags = packet->oscore->data;
+    const uint8_t *flags = packet->oscore;
     bool kid_ctx_present = (*flags & 0x10) != 0;
     bool kid_present = (*flags & 0x08) != 0;
 
     DEBUG("[lwm2m:client] KID ctx %spresent\n", kid_ctx_present ? "" : "not ");
     DEBUG("[lwm2m:client] KID %spresent\n", kid_present ? "" : "not ");
 
-    uint8_t *partial_iv = flags + 1;
+    const uint8_t *partial_iv = flags + 1;
     uint8_t partial_iv_len = *flags & 0x07;
 
     if (!kid_present) {
@@ -475,11 +475,11 @@ int _get_oscore_kid(const coap_packet_t *packet, uint8_t **out, size_t *out_len)
     }
 
 
-    uint8_t *kid = NULL;
+    const uint8_t *kid = NULL;
 
     if (kid_ctx_present) {
         uint8_t kid_ctx_len = *(partial_iv + partial_iv_len);
-        uint8_t *kid_ctx = partial_iv + partial_iv_len + 1;
+        const uint8_t *kid_ctx = partial_iv + partial_iv_len + 1;
         kid = kid_ctx + kid_ctx_len;
     }
     else {
@@ -487,7 +487,7 @@ int _get_oscore_kid(const coap_packet_t *packet, uint8_t **out, size_t *out_len)
     }
 
     *out = kid;
-    *out_len = packet->oscore->len - (kid - flags);
+    *out_len = packet->oscore_len - (kid - flags);
     return 0;
 }
 
@@ -549,7 +549,7 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
             /* for OSCORE messages, we need to find the corresponding sender ID */
             if ((instance_id < 0) && (LWM2M_CLIENT_CONN_OSCORE == conn_type)) {
                 DEBUG("[lwm2m:client] trying to find client by OSCORE KID\n");
-                uint8_t *kid = NULL;
+                const uint8_t *kid = NULL;
                 size_t kid_len = 0;
                 if (!_get_oscore_kid(&message, &kid, &kid_len)) {
                     DEBUG("[lwm2m:client] Found OSCORE KID %.*s\n", kid_len, kid);
