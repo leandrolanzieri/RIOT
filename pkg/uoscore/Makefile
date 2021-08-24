@@ -1,6 +1,6 @@
 PKG_NAME=uoscore
-PKG_URL=https://github.com/Fraunhofer-AISEC/uoscore-uedhoc
-PKG_VERSION=b57a44b5bfd115b81628903ab544bda86f86fd3a
+PKG_URL=https://github.com/leandrolanzieri/uoscore-uedhoc
+PKG_VERSION=tinydtls_aes
 PKG_LICENSE=MIT
 
 include $(RIOTBASE)/pkg/pkg.mk

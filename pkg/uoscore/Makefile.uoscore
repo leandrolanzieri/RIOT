@@ -1,6 +1,8 @@
 MODULE := uoscore
 
-CFLAGS += -DOSCORE_WITH_TINYCRYPT
+#CFLAGS += -DOSCORE_WITH_TINYCRYPT
+CFLAGS += -DOSCORE_WITH_TINYDTLS_AES_128
+CFLAGS += -DOSCORE_WITH_TINYCRYPT_SHA_256
 CFLAGS += -Wno-sign-compare -Wno-unused-parameter -Wno-pedantic -Wno-return-type
 
 include $(RIOTBASE)/Makefile.base
