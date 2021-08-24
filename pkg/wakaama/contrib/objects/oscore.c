@@ -314,6 +314,7 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
     int i;
     uint8_t result = COAP_404_NOT_FOUND;
     lwm2m_obj_oscore_inst_t *instance;
+    int64_t val = 0;
 
     instance = (lwm2m_obj_oscore_inst_t *)LWM2M_LIST_FIND(object->instanceList, instance_id);
     if (!instance) {
@@ -351,23 +352,24 @@ static uint8_t _write_cb(uint16_t instance_id, int num_data, lwm2m_data_t * data
 
         case LWM2M_OSCORE_AEAD_ALG_ID:
             DEBUG("[lwm2m:OSCORE:write]: AEAD alg. ID");
-            if (data_array[i].value.asInteger != AEAD_ALG_AES_CCM_16_64_128) {
-                    DEBUG("wrong value\n");
+            lwm2m_data_decode_int(&data_array[i], &val);
+            if (val != AEAD_ALG_AES_CCM_16_64_128) {
+                    DEBUG("wrong value %d\n", (uint16_t)val);
                     result = COAP_400_BAD_REQUEST;
             }
-            lwm2m_data_decode_int(&data_array[i], (int64_t *)&(instance->aead_alg));
+            instance->aead_alg = val;
             DEBUG(" set to %d\n", instance->aead_alg);
             result = COAP_204_CHANGED;
             break;
 
         case LWM2M_OSCORE_HMAC_ALG_ID:
             DEBUG("[lwm2m:OSCORE:write]: HMAC alg. ID");
-            if (data_array[i].value.asInteger != HMAC_ALG_SHA_256) {
-                    DEBUG("wrong value\n");
+            lwm2m_data_decode_int(&data_array[i], &val);
+            if (val != HMAC_ALG_SHA_256) {
+                    DEBUG("wrong value %d\n", (uint16_t)val);
                     result = COAP_400_BAD_REQUEST;
             }
-
-            lwm2m_data_decode_int(&data_array[i], (int64_t *)&(instance->hmac_alg));
+            instance->hmac_alg = val;
             DEBUG(" set to %d\n", instance->hmac_alg);
             result = COAP_204_CHANGED;
             break;
