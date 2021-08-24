@@ -37,3 +37,5 @@ ifneq (,$(filter wakaama_client_oscore, $(USEMODULE)))
 endif
 
 USEPKG += tinycbor
+USEMODULE += random
+FEATURES_REQUIRED_ANY += periph_hwrng|puf_sram
