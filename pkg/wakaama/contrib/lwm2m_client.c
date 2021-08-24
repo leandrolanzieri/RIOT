@@ -499,15 +499,16 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
     uint8_t rcv_buf[LWM2M_CLIENT_RCV_BUFFER_SIZE];
     uint8_t *reception_buf = rcv_buf;
     ssize_t reception_len;
+    coap_packet_t message;
 
     if (type & SOCK_ASYNC_MSG_RECV) {
         reception_len = sock_udp_recv(sock, rcv_buf, sizeof(rcv_buf), 0, &remote);
         if (reception_len <= 0) {
             DEBUG("[lwm2m:client] UDP receive failure: %d\n", (int)reception_len);
-            return;
+            goto out;
         }
 
-        coap_packet_t message;
+        DEBUG("[lwm2m:client] got UDP message\n");
         coap_parse_message(&message, reception_buf, reception_len);
         lwm2m_client_connection_type_t conn_type = LWM2M_CLIENT_CONN_UDP;
         if (IS_USED(MODULE_WAKAAMA_CLIENT_OSCORE) && message.oscore) {
@@ -578,7 +579,7 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
                 conn = _create_incoming_client_connection(&remote, NULL, instance_id, conn_type);
                 if (!conn) {
                     DEBUG("[lwm2m:client] could not create a new connection for client\n");
-                    return;
+                    goto free_out;
                 }
 
                 /* add new connection to the client connections list */
@@ -603,12 +604,12 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
                                                                   snd_buf, sizeof(snd_buf));
                     if (snd_len <= 0) {
                         DEBUG("[lwm2m:client] problem handling message\n");
-                        return;
+                        goto free_out;
                     }
 
                     sock_udp_send(sock, snd_buf, snd_len, &remote);
                 }
-                return;
+                goto free_out;
             }
         }
 
@@ -640,12 +641,12 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
 
                 if (res != OscoreNoError) {
                     DEBUG("Could not decode the OSCORE packet (res=%d)\n", res);
-                    return;
+                    goto free_out;
                 }
 
                 if (!is_oscore) {
                     DEBUG("No OSCORE packet found\n");
-                    return;
+                    goto free_out;
                 }
                 reception_buf = oscore_buf;
                 reception_len = oscore_len;
@@ -661,7 +662,15 @@ static void _udp_event_handler(sock_udp_t *sock, sock_async_flags_t type, void *
         else {
             DEBUG("[lwm2m:client] couldn't find incoming connection\n");
         }
+
+free_out:
+        DEBUG("[lwm2m:client] freeing CoAP header\n");
+        coap_free_header(&message);
+        goto out;
     }
+
+out:
+    return;
 }
 
 #if IS_USED(MODULE_WAKAAMA_CLIENT_DTLS)
