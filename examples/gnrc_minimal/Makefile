@@ -10,15 +10,12 @@ RIOTBASE ?= $(CURDIR)/../..
 # Set this to 1 to enable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
-DEVELHELP ?= 0
+DEVELHELP ?= 1
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
 USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
-# Enable single interface optimization.
-# Remove this if more than one interface is present
-USEMODULE += gnrc_netif_single
 # Specify the minimum networking modules for IPv6
 USEMODULE += gnrc_ipv6
 # Additional networking modules that can be dropped if not needed
