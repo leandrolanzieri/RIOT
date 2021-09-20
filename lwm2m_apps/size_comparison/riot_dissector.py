@@ -5,6 +5,7 @@ from os import path, environ
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 import json
 import numpy as np
 import argparse
@@ -169,9 +170,6 @@ def plot_for_board(results, export_path=None):
     # - split
     #plt.subplots_adjust(wspace=0.25, hspace=None, right=0.89)
 
-    flash_ax.grid(linestyle='-.', linewidth=1, zorder=0)
-    ram_ax.grid(linestyle='-.', linewidth=1, zorder=0)
-
     axs = {'flash': flash_ax, 'ram': ram_ax}
 
     accumulated = {
@@ -271,11 +269,42 @@ def plot_for_board(results, export_path=None):
     axs['flash'].set_ylabel('ROM [KiB]')
     axs['ram'].set_ylabel('RAM [KiB]')
 
+    axs['flash_sec'] = axs['flash'].secondary_yaxis('right')
+    axs['ram_sec'] = axs['ram'].secondary_yaxis('right')
+
+    axs['flash'].yaxis.set_major_locator(MultipleLocator(8))
+    axs['flash_sec'].yaxis.set_major_locator(MultipleLocator(8))
+    axs['ram'].yaxis.set_major_locator(MultipleLocator(2))
+    axs['ram_sec'].yaxis.set_major_locator(MultipleLocator(2))
+
+    # auto-locate minor tick
+    axs['flash'].yaxis.set_minor_locator(AutoMinorLocator())
+    axs['flash_sec'].yaxis.set_minor_locator(AutoMinorLocator())
+    axs['ram'].yaxis.set_minor_locator(AutoMinorLocator())
+    axs['ram_sec'].yaxis.set_minor_locator(AutoMinorLocator())
+
+    # show label on left of primary axes, put ticks inside
+    axs['flash'].tick_params(axis='y', which='major', direction='in', length=8, labelleft=True)
+    axs['flash'].tick_params(axis='y', which='minor', direction='in', length=5, labelleft=False)
+    axs['flash_sec'].tick_params(axis='y', direction='in', length=8, labelright=False)
+    axs['flash_sec'].tick_params(axis='y', which='minor', direction='in', length=5, labelleft=False)
+
+    axs['ram'].tick_params(axis='y', which='major', direction='in', length=8, labelleft=True)
+    axs['ram'].tick_params(axis='y', which='minor', direction='in', length=5, labelleft=False)
+    axs['ram_sec'].tick_params(axis='y', direction='in', length=8, labelright=False)
+    axs['ram_sec'].tick_params(axis='y', which='minor', direction='in', length=5, labelleft=False)
+
+    # show grid only on the y axis
+    axs['flash'].grid(linestyle='-.', linewidth=1, zorder=0, which='major', axis='y')
+    axs['ram'].grid(linestyle='-.', linewidth=1, zorder=0, which='major', axis='y')
+
+    axs['flash'].margins(x=0.08)
+    axs['ram'].margins(x=0.08)
+
     # set a formatter to avoid serif tabels
-    axs['ram'].xaxis.set_major_formatter(FuncFormatter(transparent_formater))
-    axs['ram'].yaxis.set_major_formatter(FuncFormatter(transparent_formater))
-    axs['flash'].xaxis.set_major_formatter(FuncFormatter(transparent_formater))
-    axs['flash'].yaxis.set_major_formatter(FuncFormatter(transparent_formater))
+    for ax in axs.values():
+        ax.xaxis.set_major_formatter(FuncFormatter(transparent_formater))
+        ax.yaxis.set_major_formatter(FuncFormatter(transparent_formater))
 
     handles, labels = axs['flash'].get_legend_handles_labels()
 
