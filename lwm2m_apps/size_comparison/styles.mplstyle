@@ -1,7 +1,7 @@
 text.usetex: True
 font.family: sans-serif
 font.size: 20
-legend.fontsize: 18
+legend.fontsize: 19
 xtick.labelsize : 20
 ytick.labelsize : 20
 axes.titlesize  : 20

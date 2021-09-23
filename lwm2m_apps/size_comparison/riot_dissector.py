@@ -262,8 +262,8 @@ def plot_for_board(results, export_path=None):
         y_min['ram'] = np.min(axis_base['ram'])
 
     # set maximum and minimum values for Y axis
-    axs['flash'].set_ylim(y_min['flash'], max_value['flash'] * 1.11)
-    axs['ram'].set_ylim(y_min['ram'], max_value['ram'] * 1.11)
+    axs['flash'].set_ylim(y_min['flash'], 33)
+    axs['ram'].set_ylim(y_min['ram'], 12.5)
 
     # set labels and legends
     axs['flash'].set_ylabel('ROM [KiB]')
@@ -272,8 +272,8 @@ def plot_for_board(results, export_path=None):
     axs['flash_sec'] = axs['flash'].secondary_yaxis('right')
     axs['ram_sec'] = axs['ram'].secondary_yaxis('right')
 
-    axs['flash'].yaxis.set_major_locator(MultipleLocator(8))
-    axs['flash_sec'].yaxis.set_major_locator(MultipleLocator(8))
+    axs['flash'].yaxis.set_major_locator(MultipleLocator(4))
+    axs['flash_sec'].yaxis.set_major_locator(MultipleLocator(4))
     axs['ram'].yaxis.set_major_locator(MultipleLocator(2))
     axs['ram_sec'].yaxis.set_major_locator(MultipleLocator(2))
 
@@ -311,7 +311,7 @@ def plot_for_board(results, export_path=None):
     # LEGEND
     # - in the middle
     fig.legend(handles[::-1], labels[::-1], ncol=1, bbox_to_anchor=(0.63, 0.5), loc='center',
-               handletextpad=0.5, frameon=False, handlelength=1.0)
+               handletextpad=0.5, frameon=False, handlelength=1.5)
     # - to the right
     #fig.legend(handles[::-1], labels[::-1], ncol=1, bbox_to_anchor=(1.02, 0.5), loc='center', handletextpad=0.5, frameon=False)
 

@@ -74,7 +74,7 @@ groups:
       - ["~", "pkg", "wakaama", "core", "tinycbor"]
 
     config:
-      hatch: "\\\\"
+      hatch: "/"
 
   ? "Utilities"
   :
@@ -92,14 +92,14 @@ groups:
       # grouped under "client to client"
       - ["~", "pkg", "wakaama", "core", "objects", "object_getClients"]
     config:
-      hatch: "||"
+      hatch: "|"
 
   ? "Access ctrl. object"
   :
     modules:
       - ["pkg", "wakaama", "contrib", "objects", "access_control"]
     config:
-      hatch: "\\\\.."
+      hatch: "\\."
 
   ? "Security object"
   :
@@ -113,7 +113,7 @@ groups:
     modules:
       - ["pkg", "wakaama", "contrib", "objects", "server"]
     config:
-      hatch: "---"
+      hatch: "--"
 
   ? "Peer handling"
   :
@@ -125,7 +125,7 @@ groups:
       - ["~", "pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_read"]
       - ["~", "pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_observe"]
     config:
-      hatch: "+"
+      hatch: "\\"
 
   ? "Client-to-client"
   :
@@ -135,14 +135,14 @@ groups:
       - ["pkg", "wakaama", "contrib", "lwm2m_client", "lwm2m_client_observe"]
       - ["pkg", "wakaama", "core", "objects", "object_getClients"]
     config:
-      hatch: ".."
+      hatch: "."
 
   ? "Authorization"
   :
     modules:
       - ["pkg", "wakaama", "core", "auth_request"]
     config:
-          hatch: "//"
+          hatch: "+"
 
 # # some plot configuration
 plots:
