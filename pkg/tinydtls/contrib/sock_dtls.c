@@ -117,6 +117,12 @@ static int _write(struct dtls_context_t *ctx, session_t *session, uint8_t *buf,
     _session_to_ep(session, &remote);
     remote.family = AF_INET6;
 
+    if (IS_ACTIVE(CONFIG_DTLS_DELAY_HANDSHAKE) &&
+        (buf[0] == DTLS_CT_HANDSHAKE || buf[0] == DTLS_CT_CHANGE_CIPHER_SPEC)) {
+        DEBUG("sock_dtls: delaying handshake message by a bit\n");
+        xtimer_usleep(100 * US_PER_MS);
+    }
+
     ssize_t res = sock_udp_send(sock->udp_sock, buf, len, &remote);
     if (res < 0) {
         DEBUG("sock_dtls: failed to send DTLS record: %d\n", (int)res);

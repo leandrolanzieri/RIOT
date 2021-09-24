@@ -54,4 +54,7 @@ config DTLS_MAX_BUF
     help
         The maximum buffer size for sending records.
 
+config DTLS_DELAY_HANDSHAKE
+    bool "HACK: delay handshake to avoid packet loss"
+
 endif # KCONFIG_USEPKG_TINYDTLS
