@@ -219,7 +219,7 @@ def plot_for_board(results, export_path=None):
             # load group plot configuration
             hatch = get_group_configuration(group, 'hatch', get_hatch(i))
             color = get_group_configuration(group, 'color', colors[0])
-            edge_color = get_group_configuration(group, 'edge-color', '#333')
+            edge_color = get_group_configuration(group, 'edge-color', 'dimgray')
 
             # add new bars
             axs['flash'].bar(runs, values['flash'], width, bottom=accumulated['flash'],
