@@ -15,6 +15,9 @@ rsource "kconfigs/Kconfig.features"
 # Load error symbols
 rsource "kconfigs/Kconfig.errors"
 
+# Load Kconfig macros
+rsource "kconfigs/Kconfig.macros"
+
 # For now, get used modules as macros from this file (see kconfig.mk)
 osource "$(KCONFIG_GENERATED_DEPENDENCIES)"
 

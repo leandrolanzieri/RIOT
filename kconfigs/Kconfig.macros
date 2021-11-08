@@ -1,0 +1,26 @@
+# Copyright (c) 2021 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+# Kconfig macro functions.
+#
+# These functions are evaluated at parsing time when loading Kconfig files.
+# For more information see https://www.kernel.org/doc/html/latest/kbuild/kconfig-macro-language.html
+#
+
+# Compares two string values
+#
+# parameters:
+#   1. first value to compare
+#   2. second value to compare
+#   3. value returned when 1 and 2 match
+#   4. value returned when 1 and 2 do not match
+#
+# usage:
+#   - $(if-eq,foo,foo,y) -> resolves to y
+#   - $(if-eq,foo,bar,,n) -> resolves to n
+#
+if-eq = $(shell, [[ $(1) = $(2) ]] && echo $(3) || echo $(4))
