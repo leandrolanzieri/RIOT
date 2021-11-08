@@ -24,7 +24,7 @@ menu "Backends"
 config MODULE_ZTIMER_PERIPH_RTC
     bool "RTC peripheral"
     depends on HAS_PERIPH_RTC
-    select MODULE_PERIPH_RTC
+    select $(if-eq,$(BOARD),native,MODULE_ZTIMER_PERIPH_TIMER,MODULE_PERIPH_RTC)
 
 config MODULE_ZTIMER_PERIPH_RTT
     bool "RTT peripheral"
