@@ -1,0 +1,15 @@
+/**
+ * @defgroup pkg_nrfxlib   nrfxlib
+ * @ingroup  pkg
+ * @brief    RTOS-independent libraries and modules to be used with Nordic Semiconductor SoCs.
+ *
+ * # Introduction
+ *
+ * Currently this brings only the crypto support.
+ *
+ * # License
+ *
+ * Licensed under Nordic-5-Clause.
+ *
+ * @see      https://github.com/nrfconnect/sdk-nrfxlib.git
+ */
