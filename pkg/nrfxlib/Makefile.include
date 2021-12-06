@@ -1,0 +1,4 @@
+INCLUDES += -I$(PKGDIRBASE)/nrfxlib/crypto/nrf_cc310_platform/include
+ARCHIVES += $(BINDIR)/libnrf_cc310_platform_0.9.12.a
+
+PSEUDOMODULES += nrfxlib_interrupt
