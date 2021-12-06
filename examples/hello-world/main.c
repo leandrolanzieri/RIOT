@@ -20,13 +20,26 @@
  */
 
 #include <stdio.h>
+#include "cc310.h"
+#include "board.h"
 
 int main(void)
 {
+    LED0_OFF;
     puts("Hello World!");
 
     printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
     printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+
+    int res = cc310_init();
+    if (!res) {
+        puts("Success initializing CC310");
+        LED1_OFF;
+    }
+    else {
+        puts("ERROR initializing CC310");
+        LED0_ON;
+    }
 
     return 0;
 }
