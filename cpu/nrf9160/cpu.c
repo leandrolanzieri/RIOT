@@ -23,6 +23,7 @@
 #include "periph_conf.h"
 #include "periph/init.h"
 #include "stdio_base.h"
+#include "vendor/system_nrf9160.h"
 
 /**
  * @brief   Initialize the CPU, set IRQ priorities
@@ -31,6 +32,7 @@ void cpu_init(void)
 {
     /* initialize hf clock */
     clock_init_hf();
+    SystemInit();
 
 #ifdef NVMC_ICACHECNF_CACHEEN_Msk
     /* enable instruction cache */
