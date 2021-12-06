@@ -2,3 +2,11 @@ USEMODULE += nrf9160_vectors
 
 include $(RIOTCPU)/nrf5x_common/Makefile.dep
 include $(RIOTCPU)/cortexm_common/Makefile.dep
+
+ifneq (,$(filter periph_cc310,$(USEMODULE)))
+  USEPKG += nrfxlib
+endif
+
+ifneq (,$(filter cc310_interrupt,$(USEMODULE)))
+  USEPKG += nrfxlib_interrupt
+endif

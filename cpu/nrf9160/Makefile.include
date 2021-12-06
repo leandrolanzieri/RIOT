@@ -12,5 +12,8 @@ FLASHFILE ?= $(BINFILE)
 PROGRAMMER ?= jlink
 JLINK_DEVICE = NRF9160_XXAA
 
+CFLAGS += -DNRF9160_XXAA
+PSEUDOMODULES += cc310_interrupt
+
 include $(RIOTCPU)/nrf5x_common/Makefile.include
 include $(RIOTMAKE)/arch/cortexm.inc.mk
