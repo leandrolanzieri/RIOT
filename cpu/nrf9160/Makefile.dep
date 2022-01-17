@@ -8,5 +8,5 @@ ifneq (,$(filter periph_cc310,$(USEMODULE)))
 endif
 
 ifneq (,$(filter cc310_interrupt,$(USEMODULE)))
-  USEPKG += nrfxlib_interrupt
+  USEMODULE += nrfxlib_interrupt
 endif

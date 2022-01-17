@@ -24,6 +24,8 @@ int cc310_init(void)
         NVIC_EnableIRQ(CRYPTOCELL_IRQn);
     }
 
+    NRF_CRYPTOCELL_S->ENABLE=1;
+
     /* Set the RTOS abort APIs */
     nrf_cc3xx_platform_abort_init();
 
@@ -31,10 +33,10 @@ int cc310_init(void)
     nrf_cc3xx_platform_mutex_init();
 
     /* Initialize the cc3xx HW with RNG support */
-    res = nrf_cc3xx_platform_init();
+    res = nrf_cc3xx_platform_init_hmac_drbg();
     if (res)
     {
-        DEBUG("Could not initialize cc310 platform (%d)\n", res);
+        DEBUG("Could not initialize cc310 platform (%x)\n", -res);
     }
     else
     {

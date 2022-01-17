@@ -15,6 +15,10 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
+USEMODULE += od
 USEMODULE += periph_cc310
+# use interrupts on the peripheral
+# USEMODULE += cc310_interrupt
+export PKG_SOURCE_LOCAL_NRFXLIB = /home/leandro/Work/git/github/nrfconnect/sdk-nrfxlib
 
 include $(RIOTBASE)/Makefile.include
