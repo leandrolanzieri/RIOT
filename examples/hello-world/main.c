@@ -24,9 +24,18 @@
 #include "board.h"
 #include "od.h"
 
+#include "kernel_defines.h"
+
 #include "nrf_cc3xx_platform.h"
 #include "nrf_cc3xx_platform_entropy.h"
 #include "nrf_cc3xx_platform_kmu.h"
+#include "platform_alt.h"
+// #include "nrf-config-cc310.h"
+// #include "platform_alt.h"
+#include "cc3xx_kmu.h"
+#include "platform.h"
+
+#include "mbedtls/aes.h"
 
 #define ENTROPY_LENGTH  16
 uint8_t entropy_buffer[ENTROPY_LENGTH] = { 0 };
@@ -40,7 +49,12 @@ nrf_cc3xx_platform_key_buff_t key_buff = {
     }
 };
 
-uint8_t plain_text[] = "thisisriot";
+// static const unsigned char new_key[] = {
+//     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+//     'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'
+// };
+
+const unsigned char plain_text[32] = "12345678912345612345678912345";
 
 int main(void)
 {
@@ -49,8 +63,9 @@ int main(void)
 
     printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
     printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+    int res;
 
-    int res = cc310_init();
+    res = cc310_init();
     if (!res) {
         puts("Success initializing CC310");
         LED1_ON;
@@ -93,6 +108,49 @@ int main(void)
     else {
         puts("ERROR writing key");
     }
+
+    static mbedtls_platform_context platform_context = {0};
+    res = mbedtls_platform_setup(&platform_context);
+    if (res != 0) {
+            puts("ERROR initializing mbedtls");
+            return res;
+    }
+    else {
+        puts("Mbedtls initialized");
+    }
+
+    mbedtls_aes_context context = {0};
+    mbedtls_aes_init(&context);
+
+    res = mbedtls_aes_setkey_enc_shadow_key(&context, KEY_SLOT, 128);
+    if (!res) {
+        puts("Set key slot 2 as AES key");
+    }
+    else {
+        puts("ERROR setting key slot 2 as AES key");
+    }
+
+    // res = mbedtls_aes_setkey_enc(&context, new_key, 128);
+    // if (!res) {
+    //     puts("Set new key as AES key");
+    // }
+    // else {
+    //     puts("ERROR setting new key as AES key");
+    // }
+
+    unsigned char output[ARRAY_SIZE(plain_text)] = {0};
+
+    // uint8_t iv[16] = {0};
+    res = mbedtls_aes_crypt_cbc(&context, MBEDTLS_AES_ENCRYPT, ARRAY_SIZE(plain_text), entropy_buffer, plain_text, output);
+
+    // res = mbedtls_internal_aes_encrypt(&context, plain_text, output);
+    if (!res) {
+        puts("Successfully encrypted text");
+    }
+    else {
+        printf("ERROR encrypting text 0x%04x\n", -res);
+    }
+    od_hex_dump(output, ARRAY_SIZE(plain_text), 0);
 
     return 0;
 }

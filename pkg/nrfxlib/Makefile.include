@@ -1,5 +1,13 @@
-INCLUDES += -I$(PKGDIRBASE)/nrfxlib/crypto/nrf_cc310_platform/include
 INCLUDES += -I$(RIOTCPU)/$(CPU)/include/vendor
+
+INCLUDES += -I$(PKGDIRBASE)/nrfxlib/crypto/nrf_cc310_platform/include
+INCLUDES += -I$(PKGDIRBASE)/nrfxlib/crypto/nrf_cc310_mbedcrypto/include/mbedtls
+INCLUDES += -I$(RIOTBASE)/pkg/nrfxlib/include
+INCLUDES += -I$(RIOTBASE)/pkg/nrfxlib/include/mbedtls
+
+CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
+
 ARCHIVES += $(BINDIR)/libnrf_cc310_platform_0.9.12.a
+ARCHIVES += $(BINDIR)/libnrf_cc310_mbedcrypto_0.9.12.a
 
 PSEUDOMODULES += nrfxlib_interrupt

@@ -17,7 +17,7 @@
 
 int cc310_init(void)
 {
-    int res;
+    int res = 0;
 
     if (IS_USED(CC310_INTERRUPT)) {
         /* Enable interrupts */
@@ -33,7 +33,9 @@ int cc310_init(void)
     nrf_cc3xx_platform_mutex_init();
 
     /* Initialize the cc3xx HW with RNG support */
-    res = nrf_cc3xx_platform_init_hmac_drbg();
+    // res = nrf_cc3xx_platform_init_hmac_drbg();
+    // res = nrf_cc3xx_platform_init_no_rng();
+    res = nrf_cc3xx_platform_init();
     if (res)
     {
         DEBUG("Could not initialize cc310 platform (%x)\n", -res);
