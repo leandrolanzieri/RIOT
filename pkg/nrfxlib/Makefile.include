@@ -8,6 +8,6 @@ INCLUDES += -I$(RIOTBASE)/pkg/nrfxlib/include/mbedtls
 CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
 
 ARCHIVES += $(BINDIR)/libnrf_cc310_platform_0.9.12.a
-ARCHIVES += $(BINDIR)/libnrf_cc310_mbedcrypto_0.9.12.a
+# ARCHIVES += $(BINDIR)/libnrf_cc310_mbedcrypto_0.9.12.a
 
 PSEUDOMODULES += nrfxlib_interrupt

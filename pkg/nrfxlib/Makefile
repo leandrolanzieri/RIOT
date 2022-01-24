@@ -5,7 +5,7 @@ PKG_LICENSE=Nordic-5-Clause
 
 include $(RIOTBASE)/pkg/pkg.mk
 
-all: $(BINDIR)/libnrf_cc310_platform_0.9.12.a $(BINDIR)/libnrf_cc310_mbedcrypto_0.9.12.a
+all: $(BINDIR)/libnrf_cc310_platform_0.9.12.a # $(BINDIR)/libnrf_cc310_mbedcrypto_0.9.12.a
 	$(QQ)"$(MAKE)" -C $(PKG_SOURCE_DIR)/crypto/nrf_cc310_platform/src -f $(CURDIR)/$(PKG_NAME).mk
 
 # bring either the blob with or without interrupts

@@ -1,0 +1,15 @@
+/**
+ * @defgroup pkg_cc312_runtime   cc312_runtime
+ * @ingroup  pkg
+ * @brief    ARM cc312 cryptocell runtime.
+ *
+ * # Introduction
+ *
+ * Currently this brings only the crypto support.
+ *
+ * # License
+ *
+ * Licensed under BSD-3.
+ *
+ * @see      https://github.com/ARM-software/cryptocell-312-runtime
+ */

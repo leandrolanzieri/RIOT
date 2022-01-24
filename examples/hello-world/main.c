@@ -33,6 +33,9 @@
 // #include "nrf-config-cc310.h"
 // #include "platform_alt.h"
 #include "cc3xx_kmu.h"
+
+#include "aes_driver.h"
+
 #include "platform.h"
 
 #include "mbedtls/aes.h"
@@ -49,10 +52,10 @@ nrf_cc3xx_platform_key_buff_t key_buff = {
     }
 };
 
-// static const unsigned char new_key[] = {
-//     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-//     'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'
-// };
+static const unsigned char new_key[] = {
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+    'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'
+};
 
 const unsigned char plain_text[32] = "12345678912345612345678912345";
 
@@ -109,6 +112,8 @@ int main(void)
         puts("ERROR writing key");
     }
 
+    // we don't need it, internally does the same as platform_init in cc310.c
+    //
     static mbedtls_platform_context platform_context = {0};
     res = mbedtls_platform_setup(&platform_context);
     if (res != 0) {
@@ -130,6 +135,7 @@ int main(void)
         puts("ERROR setting key slot 2 as AES key");
     }
 
+    (void) new_key;
     // res = mbedtls_aes_setkey_enc(&context, new_key, 128);
     // if (!res) {
     //     puts("Set new key as AES key");
@@ -138,7 +144,10 @@ int main(void)
     //     puts("ERROR setting new key as AES key");
     // }
 
-    unsigned char output[ARRAY_SIZE(plain_text)] = {0};
+    AesContext_t *ctx = (AesContext_t *)(&context);
+    printf("Context key type: %d\n", ctx->cryptoKey);
+
+    unsigned char output[2 * ARRAY_SIZE(plain_text)] = {0};
 
     // uint8_t iv[16] = {0};
     res = mbedtls_aes_crypt_cbc(&context, MBEDTLS_AES_ENCRYPT, ARRAY_SIZE(plain_text), entropy_buffer, plain_text, output);
@@ -150,7 +159,7 @@ int main(void)
     else {
         printf("ERROR encrypting text 0x%04x\n", -res);
     }
-    od_hex_dump(output, ARRAY_SIZE(plain_text), 0);
+    od_hex_dump(output, ARRAY_SIZE(output), 0);
 
     return 0;
 }

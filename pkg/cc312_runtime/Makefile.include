@@ -1,0 +1,37 @@
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/hw/include
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/mbedtls
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/crypto_api
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/crypto_api/cc3x
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/proj/cc3x
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/pal
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/shared/include/pal/no_os
+
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/cc3x_sym/api
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/cc3x_sym/driver
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/common
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/pki/common
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/pki/ec_edw
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/pki/ec_wrst
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/codesafe/src/crypto_api/pki/poly
+
+
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/host/src/hal
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/host/src/cc3x_lib
+INCLUDES += -I$(PKGDIRBASE)/cc312_runtime/host/src/tests/common
+
+CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
+
+CFLAGS += -DCC_IOT
+
+
+# CFLAGS += -DMBEDTLS_AES_ALT
+# CFLAGS += -DMBEDTLS_CCM_ALT
+# CFLAGS += -DMBEDTLS_CHACHA20_ALT
+# CFLAGS += -DMBEDTLS_CHACHAPOLY_ALT
+# CFLAGS += -DMBEDTLS_CMAC_ALT
+# CFLAGS += -DMBEDTLS_DHM_ALT
+# CFLAGS += -DMBEDTLS_POLY1305_ALT
+# CFLAGS += -DMBEDTLS_RSA_ALT
+# CFLAGS += -DMBEDTLS_SHA1_ALT
+# CFLAGS += -DMBEDTLS_SHA256_ALT

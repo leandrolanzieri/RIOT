@@ -15,6 +15,9 @@
 #define ENABLE_DEBUG 1
 #include "debug.h"
 
+
+unsigned long gCcRegBase = 0;
+
 int cc310_init(void)
 {
     int res = 0;
@@ -24,7 +27,7 @@ int cc310_init(void)
         NVIC_EnableIRQ(CRYPTOCELL_IRQn);
     }
 
-    NRF_CRYPTOCELL_S->ENABLE=1;
+    // NRF_CRYPTOCELL_S->ENABLE=1;
 
     /* Set the RTOS abort APIs */
     nrf_cc3xx_platform_abort_init();

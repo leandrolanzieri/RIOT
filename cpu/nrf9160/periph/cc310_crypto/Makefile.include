@@ -1,0 +1,4 @@
+INCLUDES += -I$(RIOTCPU)/$(CPU)/periph/cc310_crypto/include
+
+CFLAGS += -DCC_IOT
+CFLAGS += -DDLLI_MAX_BUFF_SIZE=0x10000

@@ -5,6 +5,8 @@ include $(RIOTCPU)/cortexm_common/Makefile.dep
 
 ifneq (,$(filter periph_cc310,$(USEMODULE)))
   USEPKG += nrfxlib
+  USEMODULE += cc310_crypto
+  # USEPKG += cc312_runtime
 endif
 
 ifneq (,$(filter cc310_interrupt,$(USEMODULE)))

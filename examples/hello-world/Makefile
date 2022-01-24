@@ -21,4 +21,8 @@ USEMODULE += periph_cc310
 # USEMODULE += cc310_interrupt
 export PKG_SOURCE_LOCAL_NRFXLIB = /home/leandro/Work/git/github/nrfconnect/sdk-nrfxlib
 
+INCLUDES += -I$(RIOTCPU)/$(CPU)/periph/cc310_crypto/include
+
+
+CFLAGS += -Og
 include $(RIOTBASE)/Makefile.include
