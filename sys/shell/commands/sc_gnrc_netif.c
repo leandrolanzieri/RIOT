@@ -229,6 +229,9 @@ static void _set_usage(char *cmd_name)
          "       * \"chip_rate\" - BPSK/QPSK chip rate in kChip/s\n"
          "       * \"rate_mode\" - BPSK/QPSK rate mode\n"
 #endif
+#ifdef MODULE_NETDEV_IEEE802154_OQPSK
+         "       * \"rate\" - OQPSK rate mode\n"
+#endif
 #ifdef MODULE_NETDEV_IEEE802154_MR_OFDM
          "       * \"option\" - OFDM option\n"
          "       * \"scheme\" - OFDM modulation & coding scheme\n"
@@ -1509,6 +1512,11 @@ static int _netif_set(char *cmd_name, netif_t *iface, char *key, char *value)
         return _netif_set_u8(iface, NETOPT_MR_OQPSK_RATE, 0, value);
     }
 #endif /* MODULE_NETDEV_IEEE802154_MR_OQPSK */
+#ifdef MODULE_NETDEV_IEEE802154_OQPSK
+    if (strcmp("rate", key) == 0) {
+        return _netif_set_u8(iface, NETOPT_OQPSK_RATE, 0, value);
+    }
+#endif /* MODULE_NETDEV_IEEE802154_OQPSK */
 #ifdef MODULE_NETDEV_IEEE802154_MR_OFDM
     else if ((strcmp("option", key) == 0) || (strcmp("opt", key) == 0)) {
         return _netif_set_u8(iface, NETOPT_MR_OFDM_OPTION, 0, value);
