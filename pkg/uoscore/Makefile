@@ -1,5 +1,5 @@
 PKG_NAME=uoscore
-PKG_URL=https://github.com/leandrolanzieri/uoscore-uedhoc
+PKG_URL=https://github.com/inetrg/uoscore-uedhoc
 PKG_VERSION=tinydtls_aes
 PKG_LICENSE=MIT
 
