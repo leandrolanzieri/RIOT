@@ -47,6 +47,10 @@ USEMODULE += od_string
 LWM2M_SERVER_URI ?= '"coap://[fd00:dead:beef::1]:5684"'
 LWM2M_SERVER_SHORT_ID ?= 1
 
+USEMODULE += dbgpin
+# Connector GPIOs
+CFLAGS += -DDBGPIN_PINS="GPIO_PIN(PORT_A,3), GPIO_PIN(PORT_B, 9), GPIO_PIN(PORT_C, 11)"
+
 include $(RIOTBASE)/Makefile.include
 
 # Configure via CFLAGS only if not done via Kconfig

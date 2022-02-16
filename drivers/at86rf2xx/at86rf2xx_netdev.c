@@ -43,6 +43,8 @@
 #include "at86rf2xx_aes.h"
 #endif
 
+#include "dbgpin.h"
+
 #define ENABLE_DEBUG 0
 #include "debug.h"
 
@@ -117,6 +119,9 @@ static int _send(netdev_t *netdev, const iolist_t *iolist)
     at86rf2xx_t *dev = (at86rf2xx_t *)netdev;
     size_t len = 0;
 
+    dbgpin_toggle(1);
+    dbgpin_signal(2, 1);
+
     at86rf2xx_tx_prepare(dev);
 
     /* load packet data into FIFO */
@@ -138,6 +143,7 @@ static int _send(netdev_t *netdev, const iolist_t *iolist)
     }
     /* return the number of bytes that were actually loaded into the frame
      * buffer/send out */
+    dbgpin_toggle(1);
     return (int)len;
 }
 
@@ -665,6 +671,7 @@ static int _set(netdev_t *netdev, netopt_t opt, const void *val, size_t len)
 
 static void _isr_send_complete(at86rf2xx_t *dev, uint8_t trac_status)
 {
+    dbgpin_clear(2);
     netdev_t *netdev = &dev->netdev.netdev;
     if (IS_ACTIVE(AT86RF2XX_BASIC_MODE)) {
         netdev->event_callback(netdev, NETDEV_EVENT_TX_COMPLETE);
@@ -715,6 +722,9 @@ static void _isr_send_complete(at86rf2xx_t *dev, uint8_t trac_status)
 static inline void _isr_recv_complete(netdev_t *netdev)
 {
     at86rf2xx_t *dev = (at86rf2xx_t *)netdev;
+
+    dbgpin_set(2);
+
     if (!netdev->event_callback) {
         return;
     }

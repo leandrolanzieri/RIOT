@@ -51,6 +51,8 @@
 #define ENABLE_DEBUG 0
 #include "debug.h"
 
+#include "dbgpin.h"
+
 #define HOST_URI_LEN (64)
 
 /**
@@ -689,6 +691,9 @@ static void _dtls_event_handler(sock_dtls_t *sock, sock_async_flags_t type, void
             DEBUG("[lwm2m:client:DTLS]] DTLS receive failure: %d\n", (int)rcv_len);
             return;
         }
+
+        dbgpin_toggle(0);
+        dbgpin_signal(2, 7);
 
         sock_dtls_session_get_udp_ep(&dtls_remote, &remote);
 

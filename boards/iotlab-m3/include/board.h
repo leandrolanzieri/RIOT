@@ -27,6 +27,7 @@
 #include "cpu.h"
 #include "periph_conf.h"
 #include "board_common.h"
+#include "periph/gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +65,10 @@ extern "C" {
 #define LSM303DLHC_PARAM_ACC_PIN   GPIO_PIN(PORT_B, 12)
 #define LSM303DLHC_PARAM_MAG_PIN   GPIO_PIN(PORT_B, 2)
 /** @} */
+
+#define GPIO_1  GPIO_PIN(PORT_A, 3)
+#define GPIO_2  GPIO_PIN(PORT_B, 9)
+#define GPIO_3  GPIO_PIN(PORT_C, 11)
 
 #ifdef __cplusplus
 }

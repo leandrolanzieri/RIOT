@@ -29,6 +29,7 @@
 #include "random.h"
 
 #include "gnrc_sock_internal.h"
+#include "dbgpin.h"
 
 #ifdef MODULE_GNRC_SOCK_CHECK_REUSE
 static sock_udp_t *_udp_socks = NULL;
@@ -288,6 +289,9 @@ ssize_t sock_udp_send_aux(sock_udp_t *sock, const void *data, size_t len,
     sock_ip_ep_t local;
     sock_udp_ep_t remote_cpy;
     sock_ip_ep_t *rem;
+
+    dbgpin_toggle(1);
+    dbgpin_signal(2, 5);
 
     assert((sock != NULL) || (remote != NULL));
     assert((len == 0) || (data != NULL)); /* (len != 0) => (data != NULL) */

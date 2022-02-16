@@ -23,7 +23,7 @@
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
-
+#include "dbgpin.h"
 #include "od.h"
 
 static int _send(gnrc_netif_t *netif, gnrc_pktsnip_t *pkt);
@@ -95,6 +95,11 @@ static gnrc_pktsnip_t *_recv(gnrc_netif_t *netif)
     netdev_t *dev = netif->dev;
     netdev_ieee802154_rx_info_t rx_info;
     gnrc_pktsnip_t *pkt = NULL;
+
+    // we consider the double call to recv and the allocation part of the driver logic
+    dbgpin_toggle(0);
+    dbgpin_signal(2, 1);
+
     int bytes_expected = dev->driver->recv(dev, NULL, 0, NULL);
 
     if (bytes_expected >= (int)IEEE802154_MIN_FRAME_LEN) {
@@ -112,6 +117,8 @@ static gnrc_pktsnip_t *_recv(gnrc_netif_t *netif)
             gnrc_pktbuf_release(pkt);
             return NULL;
         }
+        dbgpin_toggle(0);
+        dbgpin_signal(2, 2);
 #ifdef MODULE_NETSTATS_L2
         netif->stats.rx_count++;
         netif->stats.rx_bytes += nread;
@@ -237,6 +244,8 @@ static gnrc_pktsnip_t *_recv(gnrc_netif_t *netif)
 
 static int _send(gnrc_netif_t *netif, gnrc_pktsnip_t *pkt)
 {
+    dbgpin_toggle(1);
+    dbgpin_signal(2, 2);
     netdev_t *dev = netif->dev;
     netdev_ieee802154_t *state = (netdev_ieee802154_t *)netif->dev;
     gnrc_netif_hdr_t *netif_hdr;

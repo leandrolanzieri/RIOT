@@ -32,6 +32,8 @@
 #include "debug.h"
 #include "dtls_debug.h"
 
+#include "dbgpin.h"
+
 #ifdef CONFIG_DTLS_PSK
 static int _get_psk_info(struct dtls_context_t *ctx, const session_t *session,
                          dtls_credentials_type_t type,
@@ -603,6 +605,9 @@ ssize_t sock_dtls_send_aux(sock_dtls_t *sock, sock_dtls_session_t *remote,
     assert(remote);
     assert(data);
 
+    dbgpin_toggle(1);
+    dbgpin_signal(2, 6);
+
     /* check if session exists, if not create session first then send */
     if (!dtls_get_peer(sock->dtls_ctx, &remote->dtls_session)) {
         if (timeout == 0) {
@@ -875,6 +880,8 @@ void _udp_cb(sock_udp_t *udp_sock, sock_async_flags_t flags, void *ctx)
             _check_more_chunks(udp_sock, &data, &data_ctx, &remote_ep);
             return;
         }
+        dbgpin_toggle(0);
+        dbgpin_signal(2, 6);
         _ep_to_session(&remote_ep, &remote);
         sock->buf_ctx = data_ctx;
         res = dtls_handle_message(sock->dtls_ctx, &remote,

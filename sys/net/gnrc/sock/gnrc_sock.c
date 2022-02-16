@@ -31,6 +31,8 @@
 #include "sock_types.h"
 #include "gnrc_sock_internal.h"
 
+#include "dbgpin.h"
+
 #ifdef MODULE_FUZZING
 extern gnrc_pktsnip_t *gnrc_pktbuf_fuzzptr;
 gnrc_pktsnip_t *gnrc_sock_prevpkt = NULL;
@@ -199,6 +201,10 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
 ssize_t gnrc_sock_send(gnrc_pktsnip_t *payload, sock_ip_ep_t *local,
                        const sock_ip_ep_t *remote, uint8_t nh)
 {
+
+    dbgpin_toggle(1);
+    dbgpin_signal(2, 4);
+
     gnrc_pktsnip_t *pkt;
     kernel_pid_t iface = KERNEL_PID_UNDEF;
     gnrc_nettype_t type;

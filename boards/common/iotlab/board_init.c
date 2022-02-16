@@ -33,4 +33,8 @@ void board_init(void)
     gpio_set(LED0_PIN);
     gpio_set(LED1_PIN);
     gpio_set(LED2_PIN);
+
+    gpio_init(GPIO_1, GPIO_OUT);
+    gpio_init(GPIO_2, GPIO_OUT);
+    gpio_init(GPIO_3, GPIO_OUT);
 }

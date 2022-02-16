@@ -115,7 +115,7 @@ groups:
     config:
       hatch: "--"
 
-  ? "Peer handling"
+  ? "Client handling"
   :
     modules:
       - ["pkg", "wakaama", "contrib", "lwm2m_client"]

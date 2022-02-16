@@ -1,4 +1,5 @@
 PKG_NAME=wakaama
+PKG_SOURCE_LOCAL := /home/leandro/Work/lwm2m/wakaama
 PKG_URL=https://github.com/leandrolanzieri/wakaama.git
 PKG_VERSION=dev/client_to_client
 PKG_LICENSE=EDL-1.0,EPL-1.0

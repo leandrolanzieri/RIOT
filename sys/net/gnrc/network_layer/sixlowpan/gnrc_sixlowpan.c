@@ -33,6 +33,11 @@
 #define ENABLE_DEBUG 0
 #include "debug.h"
 
+
+#if IS_ACTIVE(MODULE_DBGPIN)
+#include "dbgpin.h"
+#endif
+
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
 
 static char _stack[GNRC_SIXLOWPAN_STACK_SIZE + DEBUG_EXTRA_STACKSIZE];
@@ -410,11 +415,15 @@ static void *_event_loop(void *args)
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
                 DEBUG("6lo: GNRC_NETDEV_MSG_TYPE_RCV received\n");
+                dbgpin_toggle(0);
+                dbgpin_signal(2, 3);
                 _receive(msg.content.ptr);
                 break;
 
             case GNRC_NETAPI_MSG_TYPE_SND:
                 DEBUG("6lo: GNRC_NETDEV_MSG_TYPE_SND received\n");
+                dbgpin_toggle(1);
+                dbgpin_signal(2, 3);
                 _send(msg.content.ptr);
                 break;
 

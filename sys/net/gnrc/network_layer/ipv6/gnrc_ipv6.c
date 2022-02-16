@@ -47,6 +47,10 @@
 #define ENABLE_DEBUG        0
 #include "debug.h"
 
+#if IS_ACTIVE(MODULE_DBGPIN)
+#include "dbgpin.h"
+#endif
+
 #define _MAX_L2_ADDR_LEN    (8U)
 
 static char _stack[GNRC_IPV6_STACK_SIZE + DEBUG_EXTRA_STACKSIZE];
@@ -197,6 +201,8 @@ static void *_event_loop(void *args)
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
                 DEBUG("ipv6: GNRC_NETAPI_MSG_TYPE_RCV received\n");
+                dbgpin_toggle(0);
+                dbgpin_signal(2, 4);
                 _receive(msg.content.ptr);
                 break;
 
