@@ -44,6 +44,9 @@ welcome:
 print-versions:
 	@./dist/tools/ci/print_toolchain_versions.sh
 
+kernelversion:
+	@echo 4.15.0-39-generic
+
 include makefiles/boards.inc.mk
 include makefiles/app_dirs.inc.mk
 

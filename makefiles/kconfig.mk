@@ -149,7 +149,7 @@ CFLAGS += -imacros '$(KCONFIG_GENERATED_AUTOCONF_HEADER_C)'
 USEMODULE_W_PREFIX = $(addprefix USEMODULE_,$(USEMODULE))
 USEPKG_W_PREFIX = $(addprefix USEPKG_,$(USEPKG))
 
-.PHONY: menuconfig
+.PHONY: menuconfig autokernel
 
 # Opens the menuconfig interface for configuration of modules using the Kconfig
 # system. It will try to update the autoconf.h, which will update if needed
@@ -157,6 +157,12 @@ USEPKG_W_PREFIX = $(addprefix USEPKG_,$(USEPKG))
 menuconfig: $(MENUCONFIG) $(KCONFIG_OUT_CONFIG)
 	$(Q)KCONFIG_CONFIG=$(KCONFIG_OUT_CONFIG) $(MENUCONFIG) $(KCONFIG)
 	$(MAKE) $(KCONFIG_GENERATED_AUTOCONF_HEADER_C)
+
+dependencies-of-%:
+	@autokernel -K $(RIOTBASE) revdeps $*
+
+satisfy-%:
+	@autokernel -K $(RIOTBASE) satisfy -g $*
 
 # Variable used to conditionally depend on KCONFIG_GENERATED_DEPDENDENCIES
 # When testing Kconfig module modelling this file is not needed
