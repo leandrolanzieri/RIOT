@@ -47,20 +47,6 @@ comment "Some configuration options may not be here. Use CFLAGS instead."
 comment "!! ERROR: There are conflicting modules active !!"
     depends on ERROR_MODULES_CONFLICT != ""
 
-config FOO
-    bool "The foo"
-
-config BAR
-    bool "The Bar"
-    depends on FOO
-
-config BAZ
-    int "The Baz"
-    default 5 if FOO
-    default 3 if BAR
-    default 1
-
-
 config TEST_KCONFIG
     bool
     default y if '$(TEST_KCONFIG)' = '1'

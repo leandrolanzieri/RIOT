@@ -1,0 +1,4 @@
+config APPLICATION
+    bool
+    default y
+    imply MODULE_PERIPH_RTC

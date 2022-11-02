@@ -7,6 +7,10 @@
 
 menuconfig MODULE_ZTIMER
     bool "ztimer - High level timer abstraction layer"
+    select MODULE_ZTIMER_CORE
+    select MODULE_ZTIMER_CONVERT_FRAC
+    select MODULE_ZTIMER_CONVERT_SHIFT
+    select MODULE_ZTIMER_EXTEND
 
 if MODULE_ZTIMER
 
@@ -28,6 +32,12 @@ endmenu # Clocks
 
 menu "Ztimer hardware backends"
 
+config MODULE_ZTIMER_NO_PERIPH_RTT
+    bool "Disable ztimer_periph_rtt auto-inclusion"
+    help
+        This module disables the auto-inclusion of ztimer_periph_rtt as a backend
+        for ztimer_msec and ztimer_sec.
+
 config MODULE_ZTIMER_PERIPH_RTC
     bool "RTC peripheral"
     depends on MODULE_PERIPH_RTC
@@ -35,6 +45,7 @@ config MODULE_ZTIMER_PERIPH_RTC
 config MODULE_ZTIMER_PERIPH_RTT
     bool "RTT peripheral"
     depends on MODULE_PERIPH_RTT
+    depends on !MODULE_ZTIMER_NO_PERIPH_RTT
 
 config MODULE_ZTIMER_PERIPH_PTP
     bool "PTP peripheral"
@@ -45,5 +56,111 @@ config MODULE_ZTIMER_PERIPH_TIMER
     depends on MODULE_PERIPH_TIMER
 
 endmenu # Backends
+
+menu "Frequency conversion"
+
+config MODULE_ZTIMER_CONVERT_MULDIV64
+    bool "64-bits arithmetic conversion"
+    select MODULE_ZTIMER_CONVERT
+    help
+        muldiv64 is very precise, but the overhead is the highest. On MCUs
+        without hardware division this might not be a good choice.
+
+config MODULE_ZTIMER_CONVERT_SHIFT
+    bool
+    select MODULE_ZTIMER_CONVERT
+    help
+        Shift conversion is both fast and super precise, but cannot work for
+        arbitrary frequencies. It's kind of a software prescaler for the
+        underlying clock. So if the hardware clock frequency and the target
+        clock frequency differ by a factor that is a power of two, this is the
+        best choice - otherwise it is simply not usable.
+
+config MODULE_ZTIMER_CONVERT_FRAC
+    bool
+    select MODULE_ZTIMER_CONVERT
+    depends on MODULE_FRAC
+    help
+        Frac can be used for arbitrary frequency conversions, but trades in
+        precision to gain speed. In cases where shift conversion cannot be used,
+        this is likely the best trade off.
+
+config MODULE_ZTIMER_CONVERT
+    bool
+
+endmenu # Frequency conversion
+
+
+menu "xtimer and evtimer compatibility"
+
+choice
+    bool "xtimer compatibility"
+    depends on MODULE_XTIMER && MODULE_ZTIMER
+
+config MODULE_ZTIMER_XTIMER_COMPAT
+    bool "map xtimer calls to ztimer"
+    select MODULE_DIV
+    select MODULE_ZTIMER_USEC
+    select MODULE_ZTIMER_PERIPH_TIMER
+    help
+        This is a wrapper of xtimer API on ztimer_usec.
+
+config MODULE_XTIMER_ON_ZTIMER
+    bool "ztimer_usec as timer backend for xtimer"
+    select MODULE_ZTIMER_USEC
+    select MODULE_ZTIMER_PERIPH_TIMER
+endchoice
+
+config MODULE_ZTIMER64_XTIMER_COMPAT
+    bool "map xtimer calls to ztimer64"
+    select MODULE_DIV
+    select MODULE_ZTIMER64
+    select MODULE_ZTIMER64_USEC
+    help
+        This is a wrapper of xtimer API on ztimer64_usec.
+
+config MODULE_EVTIMER_ON_ZTIMER
+    bool "Use ztimer_msec as timer backend for evtimer"
+    depends on MODULE_ZTIMER_MSEC
+
+endmenu # xtimer compatibility
+
+config MODULE_ZTIMER
+    bool
+    depends on TEST_KCONFIG
+
+
+config MODULE_AUTO_INIT_ZTIMER
+    bool "Auto initialize ztimer"
+    depends on MODULE_AUTO_INIT
+    select MODULE_ZTIMER_INIT
+    default y
+
+config MODULE_ZTIMER_AUTO_ADJUST
+    bool "Auto adjust ztimer set and sleep values"
+    select MODULE_ZTIMER_OVERHEAD
+
+config MODULE_ZTIMER_NOW64
+    bool "Use a 64-bits result for ztimer_now()"
+
+config MODULE_ZTIMER_OVERHEAD
+    bool "Overhead measurement functionalities"
+
+config MODULE_ZTIMER_MOCK
+    bool "Mock backend (for testing only)"
+    help
+        This ztimer module implements a virtual clock that can be used for
+        unittests. It can be manually adjusted to different timestamps and
+        manually fired to simulate different scenarios and test the ztimer
+        implementation using this as a backing timer.
+
+config MODULE_ZTIMER_INIT
+    bool
+
+config MODULE_ZTIMER_CORE
+    bool
+
+config MODULE_ZTIMER_EXTEND
+    bool
 
 endif # MODULE_ZTIMER

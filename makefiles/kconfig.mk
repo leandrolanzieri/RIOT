@@ -164,6 +164,11 @@ dependencies-of-%:
 satisfy-%:
 	@autokernel -K $(RIOTBASE) satisfy -g $*
 
+AUTOKERNEL_CONFIG = $(APPDIR)/app.conf
+
+generate-config: $(AUTOKERNEL_CONFIG)
+	@autokernel -K $(RIOTBASE) -C $(AUTOKERNEL_CONFIG) generate-config -o $(APPDIR)/$(BOARD)_generated.config
+
 # Variable used to conditionally depend on KCONFIG_GENERATED_DEPDENDENCIES
 # When testing Kconfig module modelling this file is not needed
 ifneq (1, $(TEST_KCONFIG))
