@@ -27,7 +27,7 @@
 
 #include "kernel_defines.h"
 
-#if (IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A)
 #include "psa/crypto_values.h"
 #endif
 
@@ -58,7 +58,7 @@ extern "C" {
 #define ATCA_PARAM_I2C_DEV0      I2C_DEV(0)
 #endif
 
-#if (IS_ACTIVE(CONFIG_PSA_MULTIPLE_SECURE_ELEMENTS))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENTS_MULTIPLE)
 #ifndef ATCA_PARAM_I2C_DEV1
 #define ATCA_PARAM_I2C_DEV1      I2C_DEV(1)
 #endif
@@ -74,7 +74,7 @@ extern "C" {
 #define ATCA_DEVTYPE            (ATECC608A)
 #endif
 
-#if (IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A)
 #define PSA_ATCA_LOCATION_DEV0  (PSA_KEY_LOCATION_SE_MIN + 1)
 #define PSA_ATCA_LOCATION_DEV1  (PSA_KEY_LOCATION_SE_MIN + 2)
 #endif
@@ -92,7 +92,7 @@ extern "C" {
                                             .rx_retries = ATCA_RX_RETRIES }
 #endif
 
-#if (IS_ACTIVE(CONFIG_PSA_MULTIPLE_SECURE_ELEMENTS))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENTS_MULTIPLE)
 #ifndef ATCA_PARAMS_DEV1
 #define ATCA_PARAMS_DEV1                {   .iface_type = ATCA_I2C_IFACE, \
                                             .devtype = ATCA_DEVTYPE, \
@@ -110,7 +110,7 @@ extern "C" {
  * @brief   Structure to store ATCA device configuration
  */
 typedef struct {
-#if (IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A)
     psa_key_location_t atca_loc;
 #endif
     ATCAIfaceCfg cfg;   /**< ATCA configuration parameters */
@@ -121,14 +121,14 @@ typedef struct {
  */
 static const atca_params_t atca_params[] =
 {
-#if (IS_ACTIVE(CONFIG_PSA_MULTIPLE_SECURE_ELEMENTS))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENTS_MULTIPLE)
     {
         .atca_loc = PSA_ATCA_LOCATION_DEV1,
         .cfg = ATCA_PARAMS_DEV1
     },
 #endif
     {
-#if (IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A)
         .atca_loc = PSA_ATCA_LOCATION_DEV0,
 #endif
         .cfg = ATCA_PARAMS_DEV0

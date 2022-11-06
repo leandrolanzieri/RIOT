@@ -22,6 +22,56 @@ config MODULE_SAUL_NRF_VDDH
     depends on HAS_PERIPH_ADC
     select MODULE_PERIPH_ADC
 
+# Asymmetric Crypto Peripheral
+config MODULE_PERIPH_ECC_P192R1
+    bool
+    depends on HAS_PERIPH_ECC_P192R1
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_ECC_P192
+
+config MODULE_PERIPH_ECC_P256R1
+    bool
+    depends on HAS_PERIPH_ECC_P256R1
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_ECC_P256
+
+# Hash Related Symbols
+config MODULE_PERIPH_HASH_SHA_1
+    bool
+    depends on HAS_PERIPH_HASH_SHA_1
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_HASHES_SHA1
+
+config MODULE_PERIPH_HASH_SHA_224
+    bool
+    depends on HAS_PERIPH_HASH_SHA_224
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_HASHES_SHA224
+
+config MODULE_PERIPH_HASH_SHA_256
+    bool
+    depends on HAS_PERIPH_HASH_SHA_256
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_HASHES_SHA256
+
+config MODULE_PERIPH_HASH_SHA_512
+    bool
+    depends on HAS_PERIPH_HASH_SHA_512
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_HASHES_SHA512
+
+config MODULE_PERIPH_CIPHER_AES_128_CBC
+    bool
+    depends on HAS_PERIPH_CIPHER_AES_128_CBC
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_AES_CBC
+
+config MODULE_PERIPH_HMAC_SHA_256
+    bool
+    depends on HAS_PERIPH_HMAC_SHA_256
+    select PACKAGE_DRIVER_CRYPTOCELL
+    select MODULE_PSA_CC_HMAC
+
 endif # TEST_KCONFIG
 
 config HAVE_SAUL_NRF_VDDH

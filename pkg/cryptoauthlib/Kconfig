@@ -9,6 +9,7 @@ menuconfig PACKAGE_CRYPTOAUTHLIB
     bool "Microchip CryptoAuthentication Library package"
     depends on TEST_KCONFIG
     depends on !HAS_ARCH_EFM32
+    depends on HAS_PERIPH_I2C
     select MODULE_AUTO_INIT_SECURITY
     select MODULE_CRYPTOAUTHLIB_CONTRIB
 

@@ -60,12 +60,12 @@
  * ## Using Cryptoauthlib as a backend for PSA Crypto
  *
  * To use symmetric cryptography, just specify the Cryptoauth package in `menuconfig` or add
- * CONFIG_PSA_SECURE_ELEMENT=y
- * CONFIG_PSA_SE_ATECCX08A=y
+ * CONFIG_MODULE_PSA_SECURE_ELEMENT=y
+ * CONFIG_MODULE_PSA_SECURE_ELEMENT_ATECCX08A=y
  * to the `app.config.test` file of the application.
  *
  * When using the Elliptic Curve operations, please also add
- * CONFIG_PSA_SE_ATECCX08A_ECC=y
+ * CONFIG_MODULE_PSA_SECURE_ELEMENT_ATECCX08A_ECC=y
  * to `app.config.test` or choose the symbol in `menuconfig`. This is required for the correct
  * configuration of the PSA key management.
  *

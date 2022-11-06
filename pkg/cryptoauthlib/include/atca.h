@@ -39,7 +39,7 @@ extern "C" {
 #define ATCA_DATA_ADDR   (0x03) /**< Word address to read and write to data area */
 /** @} */
 
-#if (IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A)
 #include "psa/crypto_types.h"
 
 /**
@@ -52,7 +52,7 @@ typedef struct {
         atca_aes_cbc_ctx_t aes_cbc;
     } aes_ctx;
 } psa_atca_cipher_context_t;
-#endif /* CONFIG_PSA_SE_ATECCX08A */
+#endif /* MODULE_PSA_SECURE_ELEMENT_ATECCX08A */
 
 #ifdef __cplusplus
 }
