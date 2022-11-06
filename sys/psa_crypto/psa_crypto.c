@@ -926,7 +926,7 @@ static psa_status_t psa_validate_key_for_key_generation(psa_key_type_t type, siz
     if (PSA_KEY_TYPE_IS_UNSTRUCTURED(type)) {
         return psa_validate_unstructured_key_size(type, bits);
     }
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC)) || (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC) || IS_USED(MODULE_PSA_SECURE_ELEMENT_ASYMMETRIC)
     else if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(type)) {
         return PSA_ECC_KEY_SIZE_IS_VALID(bits) ? PSA_SUCCESS : PSA_ERROR_INVALID_ARGUMENT;
     }
@@ -1023,7 +1023,7 @@ static psa_status_t psa_start_key_creation(psa_key_creation_method_t method,
         slot->attr.id = key_id;
     }
 
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
     /* Find a free slot on a secure element and store SE slot number in key_data */
     if (*p_drv != NULL) {
         psa_key_slot_number_t *slot_number = psa_key_slot_get_slot_number(slot);

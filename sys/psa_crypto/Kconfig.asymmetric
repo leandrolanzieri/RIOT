@@ -5,82 +5,57 @@
 # directory for more details.
 #
 
-menuconfig PSA_ASYMMETRIC
+menuconfig MODULE_PSA_ASYMMETRIC
     bool "PSA Asymmetric Crypto"
     select PSA_KEY_CONFIG
     select MODULE_PSA_KEY_SLOT_MGMT
 
-if PSA_ASYMMETRIC
+if MODULE_PSA_ASYMMETRIC
 
-menuconfig PSA_ECC_P192_R1
-    bool "NIST P192"
+menuconfig MODULE_PSA_ASYMMETRIC_ECC_P192R1
+    bool "ECC NIST-P192R1"
     select PSA_KEY_SIZE_192
-    select PSA_ECC
 
-if PSA_ECC_P192_R1
+if MODULE_PSA_ASYMMETRIC_ECC_P192R1
 
-choice PSA_ECC_P192_R1_IMPLEMENTATION
-    bool "NIST P192 Implementation"
-    default HARDWARE_ECC_P192 if HAS_PERIPH_ECC_P192
-    default MICRO_ECC_CURVE_P192
+choice PSA_ASYMMETRIC_ECC_P192R1_BACKEND
+    bool "ECC NIST-P192R1 Implementation"
 
-config HARDWARE_ECC_P192
-    bool "Hardware Accelerated"
-    depends on HAS_PERIPH_ECC_P192
-    select PSA_ECC_P192_R1_DRIVER
-    select PERIPH_ECC_P192
+config MODULE_PSA_ASYMMETRIC_ECC_P192R1_BACKEND_PERIPH
+    bool "Hardware accelerated with peripheral"
+    depends on HAS_PERIPH_ECC_P192R1
+    select MODULE_PERIPH_ECC_P192R1
 
-config MICRO_ECC_CURVE_P192
+config MODULE_PSA_ASYMMETRIC_ECC_P192R1_BACKEND_MICROECC
     bool "Micro-ECC Package"
     select PACKAGE_MICRO-ECC
-    select PSA_ECC_P192_R1_DRIVER
     select MODULE_PSA_UECC_P192
 
 endchoice
 
-endif # PSA_ECC_P192_R1
+endif # MODULE_PSA_ASYMMETRIC_ECC_P192R1
 
-menuconfig PSA_ECC_P256
-    bool "NIST P256"
+menuconfig MODULE_PSA_ASYMMETRIC_ECC_P256R1
+    bool "ECC NIST-P256R1"
     select PSA_KEY_SIZE_256
-    select PSA_ECC
 
-if PSA_ECC_P256
+if MODULE_PSA_ASYMMETRIC_ECC_P256R1
 
-choice PSA_ECC_P256_IMPLEMENTATION
-    bool "NIST P256 Implementation"
-    default HARDWARE_ECC_P256 if HAS_PERIPH_ECC_P256
-    default MICRO_ECC_CURVE_P256
+choice PSA_ASYMMETRIC_ECC_P256R1_BACKEND
+    bool "ECC NIST-P256R1 Implementation"
 
-config HARDWARE_ECC_P256
+config MODULE_PSA_ASYMMETRIC_ECC_P256R1_BACKEND_PERIPH
     bool "Hardware Accelerated"
-    depends on HAS_PERIPH_ECC_P256
-    select PSA_ECC_P256_R1_DRIVER
-    select PERIPH_ECC_P256
+    depends on HAS_PERIPH_ECC_P256R1
+    select MODULE_PERIPH_ECC_P256R1
 
-config MICRO_ECC_CURVE_P256
+config MODULE_PSA_ASYMMETRIC_ECC_P256R1_BACKEND_MICROECC
     bool "Micro-ECC Package"
     select PACKAGE_MICRO-ECC
-    select PSA_ECC_P256_R1_DRIVER
     select MODULE_PSA_UECC_P256
 
 endchoice
 
-endif # PSA_ECC_P256
+endif # MODULE_PSA_ASYMMETRIC_ECC_P256R1
 
-config PSA_ECC
-    bool
-    help
-        Indicates that an elliptic curve operation is being used
-
-config PSA_ECC_P256_R1_DRIVER
-    bool
-    help
-        Indicates that an ECC Curve implementation other than a secure element is present
-
-config PSA_ECC_P192_R1_DRIVER
-    bool
-    help
-        Indicates that an ECC Curve implementation other than a secure element is present
-
-endif # PSA_ASYMMETRIC
+endif # MODULE_PSA_ASYMMETRIC

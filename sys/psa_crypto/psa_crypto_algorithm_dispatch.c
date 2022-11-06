@@ -176,12 +176,12 @@ psa_status_t psa_algorithm_dispatch_sign_hash(  const psa_key_attributes_t *attr
     psa_get_key_data_from_key_slot(slot, &key_data, &key_bytes);
 
     switch (asym_key) {
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P192_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P192R1)
     case PSA_ECC_P192_R1:
         return psa_ecc_p192r1_sign_hash(attributes, alg, key_data, *key_bytes, hash, hash_length,
                                         signature, signature_size, signature_length);
 #endif
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P256_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P256)
     case PSA_ECC_P256_R1:
         return psa_ecc_p256r1_sign_hash(attributes, alg, key_data, *key_bytes, hash, hash_length,
                                         signature, signature_size, signature_length);
@@ -222,12 +222,12 @@ psa_status_t psa_algorithm_dispatch_verify_hash(  const psa_key_attributes_t *at
     psa_get_public_key_data_from_key_slot(slot, &pubkey_data, &pubkey_data_len);
 
     switch (asym_key) {
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P192_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P192R1)
     case PSA_ECC_P192_R1:
         return psa_ecc_p192r1_verify_hash(attributes, alg, pubkey_data, *pubkey_data_len, hash,
                                           hash_length, signature, signature_length);
 #endif
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P256_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P256)
     case PSA_ECC_P256_R1:
         return psa_ecc_p256r1_verify_hash(attributes, alg, pubkey_data, *pubkey_data_len, hash,
                                           hash_length, signature, signature_length);
@@ -273,12 +273,12 @@ psa_status_t psa_algorithm_dispatch_generate_key(   const psa_key_attributes_t *
         }
 
         switch (asym_key) {
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P192_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P192R1)
         case PSA_ECC_P192_R1:
             return psa_generate_ecc_p192r1_key_pair(attributes, key_data, pubkey_data, key_bytes,
                                                     pubkey_data_len);
 #endif
-#if (IS_ACTIVE(CONFIG_PSA_ECC_P256_R1_DRIVER))
+#if IS_USED(MODULE_PSA_ASYMMETRIC_ECC_P256)
         case PSA_ECC_P256_R1:
             return psa_generate_ecc_p256r1_key_pair(attributes, key_data, pubkey_data, key_bytes,
                                                     pubkey_data_len);
@@ -313,17 +313,17 @@ psa_status_t psa_algorithm_dispatch_cipher_encrypt( const psa_key_attributes_t *
     }
 
     switch (op) {
-#if (IS_ACTIVE(CONFIG_PSA_CIPHER_AES_128))
+#if IS_USED(MODULE_PSA_CIPHER_AES_128)
     case PSA_CBC_NO_PAD_AES_128:
         return psa_cipher_cbc_aes_128_encrypt(attributes, key_data, *key_bytes, alg, input,
                                               input_length, output, output_size, output_length);
 #endif
-#if (IS_ACTIVE(CONFIG_PSA_CIPHER_AES_192))
+#if IS_USED(MODULE_PSA_CIPHER_AES_192)
     case PSA_CBC_NO_PAD_AES_192:
         return psa_cipher_cbc_aes_192_encrypt(attributes, key_data, *key_bytes, alg, input,
                                               input_length, output, output_size, output_length);
 #endif
-#if (IS_ACTIVE(CONFIG_PSA_CIPHER_AES_256))
+#if IS_USED(MODULE_PSA_CIPHER_AES_256)
     case PSA_CBC_NO_PAD_AES_256:
         return psa_cipher_cbc_aes_256_encrypt(attributes, key_data, *key_bytes, alg, input,
                                               input_length, output, output_size, output_length);
@@ -355,7 +355,7 @@ psa_status_t psa_algorithm_dispatch_mac_compute(const psa_key_attributes_t *attr
     psa_get_key_data_from_key_slot(slot, &key_data, &key_bytes);
 
     switch (alg) {
-    #if (IS_ACTIVE(CONFIG_PSA_MAC_HMAC_SHA_256))
+    #if IS_USED(MODULE_PSA_MAC_HMAC_SHA_256)
     case PSA_ALG_HMAC(PSA_ALG_SHA_256):
         status = psa_mac_compute_hmac_sha256(attributes, key_data, *key_bytes, input, input_length,
                                              mac, mac_size, mac_length);

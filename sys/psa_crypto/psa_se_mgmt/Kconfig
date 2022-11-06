@@ -5,43 +5,42 @@
 # directory for more details.
 #
 
-menuconfig PSA_SECURE_ELEMENT
-    bool "PSA Secure Element Configuration"
+menuconfig MODULE_PSA_SECURE_ELEMENT
+    bool "PSA Secure Elements"
     select MODULE_PSA_KEY_SLOT_MGMT
     select MODULE_PSA_SE_MGMT
 
-if PSA_SECURE_ELEMENT
+if MODULE_PSA_SECURE_ELEMENT
 
-config MODULE_PSA_SE_MGMT
-    bool
+config MODULE_PSA_SECURE_ELEMENTS_MULTIPLE
+    bool "Use multiple secure elements"
 
-menuconfig PSA_SE_ATECCX08A
-    bool "Microchip Cryptoauthlib Driver"
+config PSA_MAX_SE_COUNT
+    int
+    prompt "Maximum number of secure elements" if MODULE_PSA_SECURE_ELEMENTS_MULTIPLE
+    range 2 255 if MODULE_PSA_SECURE_ELEMENTS_MULTIPLE
+    range 1 255
+
+menuconfig MODULE_PSA_SECURE_ELEMENT_ATECCX08A
+    bool "Microchip ATECCX08A"
     select PACKAGE_CRYPTOAUTHLIB
+    depends on HAS_PERIPH_I2C
     help
         When using Cryptoauthlib as a backend for elliptic curve operations,
         please also choose the ECC symbol.
 
-if PSA_SE_ATECCX08A
-
-config PSA_SE_ATECCX08A_ECC
-    bool "Cryptoauthlib Elliptic Curve P256"
+config MODULE_PSA_SECURE_ELEMENT_ATECCX08A_ECC
+    bool "Microchip ATECCX08A Elliptic Curve P256"
     select PSA_KEY_SIZE_256
-    select PSA_SECURE_ELEMENT_ASYMMETRIC
+    select HAVE_PSA_SECURE_ELEMENT_ASYMMETRIC
+    depends on MODULE_PSA_SECURE_ELEMENT_ATECCX08A
 
-endif # PSA_SE_ATECCX08A
+config MODULE_PSA_SE_MGMT
+    bool
 
-config PSA_MULTIPLE_SECURE_ELEMENTS
-    bool "Use multiple secure elements"
-
-config PSA_MAX_SE_COUNT
-    int "Sets maximum number of usable SEs"
-    default 2 if PSA_MULTIPLE_SECURE_ELEMENTS
-    default 1
-
-config PSA_SECURE_ELEMENT_ASYMMETRIC
+config HAVE_PSA_SECURE_ELEMENT_ASYMMETRIC
     bool
     help
-        Indicate that an asymmetric operation is used
+        Indicates that an asymmetric operation is used with secure elements.
 
-endif # PSA_SECURE_ELEMENT
+endif # MODULE_PSA_SECURE_ELEMENT

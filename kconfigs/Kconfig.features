@@ -157,15 +157,15 @@ config HAS_PERIPH_DMA
     help
         Indicates that a DMA peripheral is present.
 
-config HAS_PERIPH_ECC_P192
+config HAS_PERIPH_ECC_P192R1
     bool
     help
-        Indicates that there is ECC P192 hardware acceleration present
+        Indicates that there is ECC P192R1 hardware acceleration peripheral present.
 
-config HAS_PERIPH_ECC_P256
+config HAS_PERIPH_ECC_P256R1
     bool
     help
-        Indicates that there is ECC P256 hardware acceleration present
+        Indicates that there is ECC P256R1 hardware acceleration peripheral present.
 
 config HAS_PERIPH_EEPROM
     bool
@@ -249,27 +249,27 @@ config HAS_PERIPH_HASH_MD5
     help
         Indicates that there is MD5 hardware acceleration present.
 
-config HAS_PERIPH_HASH_SHA1
+config HAS_PERIPH_HASH_SHA_1
     bool
     help
         Indicates that there is SHA-1 hardware acceleration present.
 
-config HAS_PERIPH_HASH_SHA224
+config HAS_PERIPH_HASH_SHA_224
     bool
     help
         Indicates that there is SHA-224 hardware acceleration present.
 
-config HAS_PERIPH_HASH_SHA256
+config HAS_PERIPH_HASH_SHA_256
     bool
     help
         Indicates that there is SHA-256 hardware acceleration present.
 
-config HAS_PERIPH_HASH_SHA512
+config HAS_PERIPH_HASH_SHA_512
     bool
     help
         Indicates that there is SHA-512 hardware acceleration present.
 
-config HAS_PERIPH_HMAC_SHA256
+config HAS_PERIPH_HMAC_SHA_256
     bool
     help
         Indicates that there is HMAC SHA-256 hardware acceleration present.

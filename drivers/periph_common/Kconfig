@@ -74,6 +74,8 @@ config MODULE_PERIPH_INIT_EEPROM
     default y if MODULE_PERIPH_INIT
     depends on MODULE_PERIPH_EEPROM
 
+rsource "Kconfig.crypto"
+
 rsource "Kconfig.flashpage"
 
 rsource "Kconfig.gpio"

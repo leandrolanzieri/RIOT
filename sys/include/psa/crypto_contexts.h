@@ -55,13 +55,13 @@ typedef union {
  */
 typedef union {
     unsigned dummy; /**< Make the union non-empty even with no supported algorithms. */
-#if IS_ACTIVE(CONFIG_PSA_CIPHER_AES_128) || defined(DOXYGEN)
+#if IS_USED(MODULE_PSA_CIPHER_AES_128_ECB) || IS_USED(MODULE_PSA_CIPHER_AES_128_CBC) || defined(DOXYGEN)
     psa_cipher_aes_128_ctx_t aes_128;   /**< AES 128 context*/
 #endif
-#if IS_ACTIVE(CONFIG_PSA_CIPHER_AES_192) || defined(DOXYGEN)
+#if IS_USED(MODULE_PSA_CIPHER_AES_192_CBC) || defined(DOXYGEN)
     psa_cipher_aes_192_ctx_t aes_192;   /**< AES 192 context*/
 #endif
-#if IS_ACTIVE(CONFIG_PSA_CIPHER_AES_256) || defined(DOXYGEN)
+#if IS_USED(MODULE_PSA_CIPHER_AES_256_CBC) || defined(DOXYGEN)
     psa_cipher_aes_256_ctx_t aes_256;   /**< AES 256 context*/
 #endif
 } psa_cipher_context_t;
@@ -75,7 +75,7 @@ typedef struct {
     /** Structure containing a driver specific cipher context */
     union driver_context {
         unsigned dummy; /**< Make the union non-empty even with no supported algorithms. */
-    #if IS_ACTIVE(CONFIG_PSA_SE_ATECCX08A) || defined(DOXYGEN)
+    #if IS_USED(MODULE_PSA_SECURE_ELEMENT_ATECCX08A) || defined(DOXYGEN)
         atca_aes_cbc_ctx_t atca_aes_cbc;    /**< ATCA AES CBC context*/
     #endif
     } drv_ctx;  /**< SE specific cipher operation context */

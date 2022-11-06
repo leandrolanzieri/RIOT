@@ -1,0 +1,46 @@
+# Copyright (c) 2022 HAW Hamburg
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+menu "Crypto acceleration"
+
+menu "Asymmetric crypto"
+
+config MODULE_PERIPH_ECC_P192R1
+    bool "ECC P192 acceleration peripheral driver"
+    depends on HAS_PERIPH_ECC_P192R1
+
+config MODULE_PERIPH_ECC_P256R1
+    bool "ECC P256 acceleration peripheral driver"
+    depends on HAS_PERIPH_ECC_P256R1
+
+endmenu # Asymmetric crypto
+
+menu "Hashing algorithms"
+
+config MODULE_PERIPH_HASH_SHA_1
+    bool "SHA-1 hash peripheral driver"
+    depends on HAS_PERIPH_HASH_SHA_1
+
+config MODULE_PERIPH_HASH_SHA_224
+    bool "SHA-224 hash peripheral driver"
+    depends on HAS_PERIPH_HASH_SHA_224
+
+config MODULE_PERIPH_HASH_SHA_256
+    bool "SHA-256 hash peripheral driver"
+    depends on HAS_PERIPH_HASH_SHA_256
+
+config MODULE_PERIPH_HASH_SHA_512
+    bool "SHA-512 hash peripheral driver"
+    depends on HAS_PERIPH_HASH_SHA_512
+
+endmenu # Hashing algorithms
+
+config MODULE_PERIPH_HMAC_SHA_256
+    bool "HMAC SHA-256 peripheral driver"
+    depends on HAS_PERIPH_HMAC_SHA_256
+
+endmenu # Crypto acceleration

@@ -5,22 +5,27 @@
 # directory for more details.
 #
 
-menuconfig PSA_KEY_CONFIG
-    bool "PSA Key Management Configuration"
-
-if PSA_KEY_CONFIG
+menu "PSA Key Management Configuration"
 
 config PSA_KEY_SIZE_128
     bool "Application uses key of size 128 Bits"
+    help
+      Indicates that the maximum PSA key size should be at least 128 bits.
 
 config PSA_KEY_SIZE_192
     bool
+    help
+      Indicates that the maximum PSA key size should be at least 192 bits.
 
 config PSA_KEY_SIZE_256
     bool
+    help
+      Indicates that the maximum PSA key size should be at least 256 bits.
 
 config PSA_KEY_SIZE_512
     bool
+    help
+      Indicates that the maximum PSA key size should be at least 512 bits.
 
 config PSA_MAX_KEY_SIZE
     int
@@ -29,15 +34,17 @@ config PSA_MAX_KEY_SIZE
     default 24 if PSA_KEY_SIZE_192
     default 16 if PSA_KEY_SIZE_128
     default 0
+    help
+      Indicates the maximum PSA key size in bytes.
 
 config PSA_PROTECTED_KEY_COUNT
     int "Specifies number of allocated protected key slots"
-    default 5 if PSA_SECURE_ELEMENT
+    default 5 if MODULE_PSA_SECURE_ELEMENT
     default 0
 
 config PSA_ASYMMETRIC_KEYPAIR_COUNT
     int "Specifies number of allocated key pair slots"
-    default 5 if PSA_ASYMMETRIC
+    default 5 if MODULE_PSA_ASYMMETRIC
     default 0
 
 config PSA_SINGLE_KEY_COUNT
@@ -45,4 +52,4 @@ config PSA_SINGLE_KEY_COUNT
     default 5 if PSA_MAX_KEY_SIZE != 0
     default 0
 
-endif # PSA_KEY_CONFIG
+endmenu # PSA Key Management Configuration

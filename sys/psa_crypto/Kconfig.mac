@@ -5,34 +5,33 @@
 # directory for more details.
 #
 
-menuconfig PSA_MAC
+menuconfig MODULE_PSA_MAC
     bool "PSA Message Authenticated Ciphers"
     select PSA_KEY_CONFIG
     select MODULE_PSA_KEY_SLOT_MGMT
 
-if PSA_MAC
+if MODULE_PSA_MAC
 
-menuconfig PSA_MAC_HMAC_SHA_256
+menuconfig MODULE_PSA_MAC_HMAC_SHA_256
     bool "HMAC SHA-256"
     select PSA_KEY_SIZE_256
 
-if PSA_MAC_HMAC_SHA_256
+if MODULE_PSA_MAC_HMAC_SHA_256
 
-choice HMAC_SHA256_IMPLEMENTATION
+choice PSA_MAC_HMAC_SHA_256_BACKEND
     bool "HMAC SHA256 Implementation"
-    default PERIPH_HMAC_SHA256 if HAS_PERIPH_HMAC_SHA256
-    default RIOT_HMAC_SHA256
 
-config RIOT_HMAC_SHA256
+config MODULE_PSA_MAC_HMAC_SHA_256_BACKEND_PERIPH
+    bool "Hardware Accelerated"
+    depends on HAS_PERIPH_HMAC_SHA_256
+    select MODULE_PERIPH_HMAC_SHA_256
+
+config MODULE_PSA_MAC_HMAC_SHA_256_BACKEND_RIOT
     bool "RIOT HMAC SHA-256"
     select MODULE_PSA_RIOT_HASHES_HMAC_SHA256
 
-config PERIPH_HMAC_SHA256
-    bool "Hardware Accelerated"
-    select PERIPH_HMAC
+endchoice # PSA_MAC_HMAC_SHA_256_BACKEND
 
-endchoice # HMAC_SHA256_IMPLEMENTATION
+endif # MODULE_PSA_MAC_HMAC_SHA_256
 
-endif # PSA_MAC_HMAC_SHA_256
-
-endif # PSA_MAC
+endif # MODULE_PSA_MAC

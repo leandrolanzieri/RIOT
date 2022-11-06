@@ -24,7 +24,7 @@
 #define ENABLE_DEBUG    0
 #include "debug.h"
 
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
 /**
  * @brief   Structure for a protected key slot.
  *
@@ -37,7 +37,7 @@ typedef struct {
     psa_key_attributes_t attr;
     struct prot_key_data {
         psa_key_slot_number_t slot_number;
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ASYMMETRIC)
         uint8_t pubkey_data[PSA_EXPORT_PUBLIC_KEY_MAX_SIZE];
         size_t pubkey_data_len;
 #endif
@@ -55,7 +55,7 @@ static psa_prot_key_slot_t protected_key_slots[PSA_PROTECTED_KEY_COUNT];
 static clist_node_t protected_list_empty;
 #endif /* CONFIG_PSA_SECURE_ELEMENT */
 
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
 /**
  * @brief   Structure for asymmetric key pairs.
  *
@@ -87,7 +87,7 @@ static psa_key_pair_slot_t key_pair_slots[PSA_ASYMMETRIC_KEYPAIR_COUNT];
  * @brief   List pointing to empty asymmetric key slots
  */
 static clist_node_t key_pair_list_empty;
-#endif /* CONFIG_PSA_ASYMMETRIC */
+#endif /* MODULE_PSA_ASYMMETRIC */
 
 /**
  * @brief   Array containing the single key slots
@@ -119,14 +119,14 @@ static psa_key_id_t key_id_count = PSA_KEY_ID_VOLATILE_MIN;
 static clist_node_t * psa_get_empty_key_slot_list(const psa_key_attributes_t *attr)
 {
     if (!psa_key_lifetime_is_external(attr->lifetime)) {
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
         if (PSA_KEY_TYPE_IS_KEY_PAIR(attr->type)) {
             return &key_pair_list_empty;
         }
-#endif /* CONFIG_PSA_ASYMMETRIC */
+#endif /* MODULE_PSA_ASYMMETRIC */
         return &single_key_list_empty;
     }
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
     return &protected_list_empty;
 #else
     return NULL;
@@ -136,7 +136,7 @@ static clist_node_t * psa_get_empty_key_slot_list(const psa_key_attributes_t *at
 void psa_init_key_slots(void)
 {
     DEBUG("List Node Size: %d\n", sizeof(clist_node_t));
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
     memset(protected_key_slots, 0, sizeof(protected_key_slots));
 
 #if PSA_PROTECTED_KEY_COUNT
@@ -151,7 +151,7 @@ void psa_init_key_slots(void)
     DEBUG("Protected Slot Empty List Size: %d\n", clist_count(&protected_list_empty));
 #endif /* CONFIG_PSA_SECURE_ELEMENT */
 
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
     memset(key_pair_slots, 0, sizeof(key_pair_slots));
 
 #if PSA_ASYMMETRIC_KEYPAIR_COUNT
@@ -163,7 +163,7 @@ void psa_init_key_slots(void)
           sizeof(psa_key_pair_slot_t));
     DEBUG("Asymmetric Slot Array Size: %d\n", sizeof(key_pair_slots));
     DEBUG("Asymmetric Slot Empty List Size: %d\n", clist_count(&key_pair_list_empty));
-#endif /* CONFIG_PSA_ASYMMETRIC */
+#endif /* MODULE_PSA_ASYMMETRIC */
 
     memset(single_key_slots, 0, sizeof(single_key_slots));
 #if PSA_SINGLE_KEY_COUNT
@@ -189,14 +189,14 @@ static void psa_wipe_real_slot_type(psa_key_slot_t *slot)
         if (!PSA_KEY_TYPE_IS_KEY_PAIR(attr.type)) {
             memset(slot, 0, sizeof(psa_key_slot_t));
         }
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
         else {
 
             memset((psa_key_pair_slot_t *)slot, 0, sizeof(psa_key_pair_slot_t));
         }
 #endif
     }
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
     else {
         memset((psa_prot_key_slot_t *)slot, 0, sizeof(psa_prot_key_slot_t));
     }
@@ -419,7 +419,7 @@ psa_status_t psa_unlock_key_slot(psa_key_slot_t *slot)
 psa_status_t psa_validate_key_location(psa_key_lifetime_t lifetime, psa_se_drv_data_t **p_drv)
 {
     if (psa_key_lifetime_is_external(lifetime)) {
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
         psa_se_drv_data_t *driver = psa_get_se_driver_data(lifetime);
         if (driver != NULL) {
             if (p_drv != NULL) {
@@ -477,7 +477,7 @@ void psa_get_key_data_from_key_slot(const psa_key_slot_t *slot, uint8_t **key_da
             *key_bytes = &((psa_key_slot_t *)slot)->key.data_len;
             return;
         }
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
         else {
             *key_data = ((psa_key_pair_slot_t *)slot)->key.privkey_data;
             *key_bytes = &((psa_key_pair_slot_t *)slot)->key.privkey_data_len;
@@ -487,7 +487,7 @@ void psa_get_key_data_from_key_slot(const psa_key_slot_t *slot, uint8_t **key_da
     }
 }
 
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT)
 psa_key_slot_number_t * psa_key_slot_get_slot_number(const psa_key_slot_t *slot)
 {
     return &(((psa_prot_key_slot_t *)slot)->key.slot_number);
@@ -512,7 +512,7 @@ void psa_get_public_key_data_from_key_slot(const psa_key_slot_t *slot, uint8_t *
             *pubkey_data_len = &((psa_key_slot_t *)slot)->key.data_len;
             return;
         }
-#if (IS_ACTIVE(CONFIG_PSA_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_ASYMMETRIC)
         else {
             *pubkey_data = ((psa_key_pair_slot_t *)slot)->key.pubkey_data;
             *pubkey_data_len = &((psa_key_pair_slot_t *)slot)->key.pubkey_data_len;
@@ -520,7 +520,7 @@ void psa_get_public_key_data_from_key_slot(const psa_key_slot_t *slot, uint8_t *
         }
 #endif
     }
-#if (IS_ACTIVE(CONFIG_PSA_SECURE_ELEMENT_ASYMMETRIC))
+#if IS_USED(MODULE_PSA_SECURE_ELEMENT_ASYMMETRIC)
     *pubkey_data = ((psa_prot_key_slot_t *)slot)->key.pubkey_data;
     *pubkey_data_len = &((psa_prot_key_slot_t *)slot)->key.pubkey_data_len;
 #endif
