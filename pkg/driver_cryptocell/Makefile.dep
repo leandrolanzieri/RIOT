@@ -1,3 +1,6 @@
 USEMODULE += driver_cryptocell_contrib
-
 FEATURES_REQUIRED += periph_cryptocell
+
+ifneq (,$(filter psa_cc_%,$(USEMODULE)))
+  include $(RIOTPKG)/driver_cryptocell/psa_cc/Makefile.dep
+endif
