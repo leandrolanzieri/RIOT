@@ -53,7 +53,7 @@ static psa_prot_key_slot_t protected_key_slots[PSA_PROTECTED_KEY_COUNT];
  * @brief   List pointing to empty protected key slots
  */
 static clist_node_t protected_list_empty;
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT_ASYMMETRIC */
 
 #if IS_USED(MODULE_PSA_ASYMMETRIC)
 /**
@@ -130,7 +130,7 @@ static clist_node_t * psa_get_empty_key_slot_list(const psa_key_attributes_t *at
     return &protected_list_empty;
 #else
     return NULL;
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
 }
 
 void psa_init_key_slots(void)
@@ -149,7 +149,7 @@ void psa_init_key_slots(void)
           sizeof(psa_prot_key_slot_t));
     DEBUG("Protected Slot Array Size: %d\n", sizeof(protected_key_slots));
     DEBUG("Protected Slot Empty List Size: %d\n", clist_count(&protected_list_empty));
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
 
 #if IS_USED(MODULE_PSA_ASYMMETRIC)
     memset(key_pair_slots, 0, sizeof(key_pair_slots));
@@ -429,7 +429,7 @@ psa_status_t psa_validate_key_location(psa_key_lifetime_t lifetime, psa_se_drv_d
         }
 #else
         (void)p_drv;
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
         return PSA_ERROR_INVALID_ARGUMENT;
     }
     else {

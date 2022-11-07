@@ -25,19 +25,20 @@ extern "C" {
 
 #include "kernel_defines.h"
 
-#if IS_ACTIVE(CONFIG_MODULE_PSA_RIOT_CIPHER)
+#if IS_USED(MODULE_PSA_RIOT_CIPHER)
 #include "crypto/psa/riot_ciphers.h"
 #endif
 
-#if IS_ACTIVE(CONFIG_MODULE_PSA_RIOT_HASHES)
+#if IS_USED(MODULE_PSA_RIOT_HASHES)
 #include "hashes/psa/riot_hashes.h"
 #endif
 
-#if IS_ACTIVE(CONFIG_PERIPH_CIPHER_AES)
+#if IS_USED(MODULE_PERIPH_CIPHER_AES_128_CBC)
 #include "psa_periph_aes_ctx.h"
 #endif
 
-#if IS_ACTIVE(CONFIG_PERIPH_HASHES)
+#if IS_USED(MODULE_PERIPH_HASH_SHA_1) || IS_USED(MODULE_PERIPH_HASH_SHA_224) || \
+    IS_USED(MODULE_PERIPH_HASH_SHA_256) || IS_USED(MODULE_PERIPH_HASH_SHA_512)
 #include "psa_periph_hashes_ctx.h"
 #endif
 

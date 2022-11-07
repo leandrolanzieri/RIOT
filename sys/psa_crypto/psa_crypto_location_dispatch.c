@@ -50,7 +50,7 @@ psa_status_t psa_location_dispatch_generate_key(const psa_key_attributes_t *attr
         return drv->key_management->p_generate(drv_context, *slot_number, attributes, pubkey_data,
                                                *pubkey_data_len, pubkey_data_len);
     }
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
 
     return psa_algorithm_dispatch_generate_key(attributes, slot);
 }
@@ -87,7 +87,7 @@ psa_status_t psa_location_dispatch_import_key( const psa_key_attributes_t *attri
         }
         return PSA_SUCCESS;
     }
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
 
     switch (location) {
     case PSA_KEY_LOCATION_LOCAL_STORAGE:
@@ -128,7 +128,7 @@ psa_status_t psa_location_dispatch_cipher_encrypt_setup(   psa_cipher_operation_
             return PSA_SUCCESS;
         }
     }
-#endif /* CONFIG_PSA_SECURE_ELEMENT */
+#endif /* MODULE_PSA_SECURE_ELEMENT */
     (void)operation;
     (void)attributes;
     (void)slot;
