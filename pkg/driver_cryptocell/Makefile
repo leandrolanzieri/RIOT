@@ -13,7 +13,10 @@ ifneq ($(RIOTBASE),)
 include $(RIOTBASE)/Makefile.base
 endif
 
-.PHONY: all clean distclean
+.PHONY: all clean distclean prepare
+
+prepare: $(PKG_PREPARED)
+	@:
 
 all: $(PKGDIRBASE)/$(PKG_ZIPFILE)
 	$(Q)$(UNZIP_HERE) -D -n -d $(PKGDIRBASE) $(PKGDIRBASE)/$(PKG_ZIPFILE)

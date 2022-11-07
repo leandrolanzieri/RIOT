@@ -24,30 +24,31 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include "kernel_defines.h"
 #include "crys_hash.h"
 
-#if (IS_ACTIVE(CONFIG_PERIPH_HASH_SHA1))
+#if IS_USED(MODULE_PERIPH_HASH_SHA_1)
 /**
  * @brief   Map driver specific SHA1 context to PSA context
  */
 typedef CRYS_HASHUserContext_t psa_hashes_sha1_ctx_t;
 #endif
 
-#if (IS_ACTIVE(CONFIG_PERIPH_HASH_SHA224))
+#if IS_USED(MODULE_PERIPH_HASH_SHA_224)
 /**
  * @brief   Map driver specific SHA224 context to PSA context
  */
 typedef CRYS_HASHUserContext_t psa_hashes_sha224_ctx_t;
 #endif
 
-#if (IS_ACTIVE(CONFIG_PERIPH_HASH_SHA256))
+#if IS_USED(MODULE_PERIPH_HASH_SHA_256)
 /**
  * @brief   Map driver specific SHA256 context to PSA context
  */
 typedef CRYS_HASHUserContext_t psa_hashes_sha256_ctx_t;
 #endif
 
-#if (IS_ACTIVE(CONFIG_PERIPH_HASH_SHA512))
+#if IS_USED(MODULE_PERIPH_HASH_SHA_512)
 /**
  * @brief   Map driver specific SHA512 context to PSA context
  */

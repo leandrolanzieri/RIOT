@@ -26,7 +26,7 @@ extern "C" {
 #include "ssi_aes.h"
 #include "kernel_defines.h"
 
-#if (IS_ACTIVE(CONFIG_PERIPH_CIPHER_AES_128_CBC))
+#if IS_USED(MODULE_PERIPH_CIPHER_AES_128_CBC)
 /**
  * @brief   Map driver specific AES context to PSA context
  */
