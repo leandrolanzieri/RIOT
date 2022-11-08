@@ -13,7 +13,7 @@ PSEUDOMODULES += psa_asymmetric_ecc_p192r1_backend_microecc
 
 # check that one and only one backend has been selected
 ifneq (,$(filter psa_asymmetric_ecc_p192r1,$(USEMODULE)))
-  ifneq (1,$(backends, psa_asymmetric_ecc_p192r1))
+  ifneq (1,$(call backends, psa_asymmetric_ecc_p192r1))
     $(error "One (and only one) backend should be selected for psa_asymmetric_ecc_p192r1")
   endif
 endif
