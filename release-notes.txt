@@ -486,9 +486,10 @@ Fixed Issues since the last release (2025.10)
 - gnrc_rpl: old routes are not deleted (#19423)
 - examples/gnrc_border_router: esp_wifi_init failed with return value
   257 on ESP32-C3 with nimble_rpble (#19319)
+- add periph_rtc to STM32WL cpu and boards (#18789)
 - gomach: Resetting netif with cli doesn't return (#10370)
 
-6 fixed issues since last release (2025.10)
+7 fixed issues since last release (2025.10)
 
 
 Acknowledgements
