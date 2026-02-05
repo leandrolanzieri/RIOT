@@ -22,7 +22,7 @@ Here are some highlights of the 2026.01 "GroundhogLoop" release:
 
 - You can hack with RIOT on some new hardware! We now support yet another
 ESP32-C3-based board: The [Seeed Studio Xiao
-ESP32C3](https://api.riot-os.org/group__boards__seeedstudio-xiao-esp32c3.html)
+ESP32-C3](https://api.riot-os.org/group__boards__seeedstudio-xiao-esp32c3.html)
 with WiFI and Bluetooth capabilities, and a tiny form factor (#21829). RIOT can
 now also drive the GP8XXX family of voltage and current DACs (#21182), as well
 as the PMW3901 and PAA5100JE optical flow sensors (#21856).
