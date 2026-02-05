@@ -125,6 +125,7 @@ Documentation
 + doc/guides/advanced_tutorials: added event queue guide (#21899)
 + doc/guides: Add FileTree to Create Project Guide (#21948)
 + doc/starlight: add SECURITY.md (#21983)
++ .well-known/security.txt: Implement RFC 9116 ([riot-os.org #156](https://github.com/RIOT-OS/riot-os.org/pull/156))
 * dist/tools,doc/doxygen: use `doc-ci` in the doccheck if possible,
   update to Doxygen 1.15.0 (#21372)
 * doc/doxygen: remove deprecated pages (#21934)
