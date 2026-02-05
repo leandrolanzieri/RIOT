@@ -71,6 +71,7 @@ System Libraries
 ----------------
 
 + sys/psa_crypto: add monocypher as ed25519 software backend (#21822)
++ sys/walltime: add module for system time (#21343)
 + sys/ztimer/xtimer_compat: provide more fallback options (#20494)
 * sys/event: manage event thread size via build system (#21941)
 * sys/psa_crypto: unify buffer size size handling for ed25519 backends (#21821)
@@ -101,7 +102,6 @@ CPU
 ---
 
 + cpu/native: introduce periph_i2c_mock (#20430)
-+ sys/walltime: add module for system time (#21343)
 * cpu/esp32: fix compilation for GCC 15.2 on ESP32x RISC-V SoCs (#22017)
 * cpu/native,core: better contain ugly hacks (#21955)
 * cpu/sam0_common: clear tamper wake on `gpio_irq_disable()` (#21846)
@@ -120,8 +120,6 @@ Device Drivers
 Documentation
 -------------
 
-+ dist/tools/zsh-completion: Add completion for DOCKER_IMAGE and
-  OPENOCD_FTDI_ADAPTER (#21860)
 + doc/guides/advanced_tutorials: added event queue guide (#21899)
 + doc/guides: Add FileTree to Create Project Guide (#21948)
 + doc/starlight: add SECURITY.md (#21983)
@@ -139,6 +137,8 @@ Documentation
 Build System / Tooling
 ----------------------
 
++ dist/tools/zsh-completion: Add completion for DOCKER_IMAGE and
+  OPENOCD_FTDI_ADAPTER (#21860)
 + tests/unittests: allow out-of-tree tests (#21328)
 * build: allow external module dirs with the same name when not
   building in Docker (#21933)
